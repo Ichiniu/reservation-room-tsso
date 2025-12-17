@@ -1,0 +1,152 @@
+/* ============================================================
+   SMART OFFICE – CUSTOM THEME (OVERRIDE MATERIALIZECSS)
+   ============================================================ */
+
+   :root {
+    --ts-main: #2A7C80;
+    --ts-dark: #1F5C5F;
+    --ts-light: #E1F1F1;
+}
+
+/* =============================
+   GLOBAL LAYOUT FIX (SIDEBAR)
+   ============================= */
+body {
+    padding-left: 240px !important;
+    background: #f8f9fa;
+}
+
+@media only screen and (max-width: 992px) {
+    body {
+        padding-left: 0 !important;
+    }
+}
+
+/* =============================
+   HEADER
+   ============================= */
+.top-nav {
+    background: var(--ts-main) !important;
+    padding: 18px 0 !important;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.22);
+}
+.page-title {
+    font-size: 26px !important;
+    font-weight: 700 !important;
+    letter-spacing: .5px;
+    color: white !important;
+}
+
+/* =============================
+   SIDEBAR MODERN
+   ============================= */
+.side-nav.fixed {
+    background: #ffffff !important;
+    border-right: 1px solid #e5e5e5;
+    padding-top: 20px;
+}
+
+.side-nav.fixed li a {
+    padding: 14px 20px !important;
+    color: var(--ts-main) !important;
+    font-weight: 600 !important;
+    font-size: 15px !important;
+    display: flex;
+    align-items: center;
+    transition: 0.25s;
+}
+
+.side-nav.fixed li a:hover {
+    background: var(--ts-light) !important;
+}
+
+.side-nav .active {
+    background: var(--ts-light) !important;
+    border-left: 4px solid var(--ts-main);
+}
+
+/* Collapsible Groups */
+.collapsible-header {
+    font-weight: 700 !important;
+    color: var(--ts-main) !important;
+}
+.collapsible-body a {
+    padding-left: 40px !important;
+    color: var(--ts-dark) !important;
+}
+
+/* =============================
+   SEARCH BAR
+   ============================= */
+.search-box {
+    border-radius: 10px !important;
+    background: #eef3f3 !important;
+    padding-left: 45px !important;
+    height: 45px !important;
+    border: 2px solid #d2dada !important;
+    transition: 0.25s;
+}
+
+.search-box:focus {
+    border: 2px solid var(--ts-main) !important;
+    box-shadow: 0px 0px 10px rgba(42,124,128,0.3);
+}
+
+.search-box + i,
+.search-box + label i {
+    position: absolute !important;
+    left: 12px !important;
+    top: 10px !important;
+    color: var(--ts-main) !important;
+}
+
+/* =============================
+   SORT BUTTON
+   ============================= */
+.sort-btn {
+    background: var(--ts-main) !important;
+    border-radius: 10px !important;
+    padding: 10px 20px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2) !important;
+    transition: 0.25s;
+}
+
+.sort-btn:hover {
+    background: var(--ts-dark) !important;
+    transform: translateY(-2px);
+}
+
+/* =============================
+   CARD GEDUNG
+   ============================= */
+.card {
+    border-radius: 14px !important;
+    overflow: hidden !important;
+    box-shadow: 0px 4px 18px rgba(0,0,0,0.18) !important;
+    transition: 0.25s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 8px 25px rgba(0,0,0,0.25) !important;
+}
+
+.card-image img {
+    height: 220px !important;
+    object-fit: cover !important;
+}
+
+.card-title {
+    color: var(--ts-main) !important;
+    font-weight: 700 !important;
+    font-size: 20px !important;
+}
+
+/* =============================
+   SECTION SPACING
+   ============================= */
+.section-top {
+    margin-top: 25px !important;
+}
