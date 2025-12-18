@@ -39,6 +39,12 @@ module.exports = {
         "status-success": "#16A34A",
         "status-warning": "#F59E0B",
         "status-error": "#DC2626",
+        /* ================= DROPDOWN ================= */
+        "dropdown-bg": "#ECFEFF", // background option
+        "dropdown-border": "#5EEAD4", // border dropdown
+        "dropdown-text": "#134E4A", // text option (teal gelap)
+        "dropdown-selected": "#0F766E", // text saat dipilih
+
         /* ================= WARNA CADANGAN ================= */
       },
     },

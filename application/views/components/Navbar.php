@@ -26,7 +26,7 @@ $username = $this->session->userdata('username');
             Smart Office
           </div>
           <div class="text-sm font-semibold text-slate-800">
-            E-Booking Room
+            SIRERU
           </div>
         </div>
       </div>
