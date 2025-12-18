@@ -84,6 +84,8 @@ public function index() {
 		$data['jadwal'] = $this->gedung_model->jadwal_gedung($first_date, $second_date);
 		$data['flag'] = $this->gedung_model->get_pemesanan_flag($username);
 		$this->load->view('gedung/jadwal_gedung', $data);
+		$data['jadwal'] = $this->gedung_model->jadwal_gedung_upcoming();
+
 	}
 
 	public function jadwal_per_periode($start_date, $end_date) {
@@ -198,9 +200,11 @@ public function index() {
 
     // Aturan jam paket (UBAH sesuai kebutuhan)
     $paket = [
-        'HALF_DAY' => ['08:00', '12:00'],
-        'FULL_DAY' => ['08:00', '17:00'],
-    ];
+		'HALF_DAY_PAGI'  => ['08:00', '12:00'],
+		'HALF_DAY_SIANG' => ['13:00', '16:00'],
+		'FULL_DAY'       => ['08:00', '17:00'],
+		];
+
 
     // Tentukan jam mulai & jam selesai final (server-side)
     if ($tipe_jam === 'CUSTOM') {
