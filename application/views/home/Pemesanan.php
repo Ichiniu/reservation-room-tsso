@@ -59,13 +59,13 @@ $id_gedung = $this->uri->segment(3);
                      <td class="px-4 py-3">
                          <?php $date = date_create($row['TANGGAL_PEMESANAN']); echo date_format($date, 'd F Y') ?>
                      </td>
-                     <td class="px-4 py-3">
-         <?php if (!empty($row->JAM_PEMESANAN)): ?>
-             <?= date('H:i', strtotime($row->JAM_PEMESANAN)); ?> WIB
-         <?php else: ?>
-             -
-         <?php endif; ?>
-     </td>
+                    <td class="px-4 py-3">
+                                <?php if (!empty($row['JAM_PEMESANAN']) && !empty($row['JAM_SELESAI'])): ?>
+                                    <?= date('H:i', strtotime($row['JAM_PEMESANAN'])); ?> - <?= date('H:i', strtotime($row['JAM_SELESAI'])); ?> WIB
+                                <?php else: ?>  
+                                <?php endif; ?>
+                                </td>
+                  </td>
                      <td class="px-4 py-3">
                          <?php echo $row['NAMA_PAKET']; ?>
                      </td class="px-4 py-3">
