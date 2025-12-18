@@ -94,17 +94,7 @@ $this->load->helper('text');
     <li class="no-padding">
         <ul class="collapsible collapsible-accordion">
             <li class="bold">
-                <a class="collapsible-header waves-effect waves-teal">
-                    <i class="material-icons left">build</i> Perawatan
-                </a>
-                <div class="collapsible-body">
-                    <ul>
-                        <li><a class="waves-effect waves-teal" href="<?php echo site_url('admin/pembayaran-listrik') ?>">Pembayaran Listrik</a></li>
-                        <li><a class="waves-effect waves-teal" href="<?php echo site_url('admin/pembayaran-air') ?>">Pembayaran Air</a></li>
-                        <li><a class="waves-effect waves-teal" href="<?php echo site_url('admin/pembayaran-kebersihan') ?>">Pembayaran Kebersihan</a></li>
-                        <li><a class="waves-effect waves-teal" href="<?php echo site_url('admin/rekap_pembayaran') ?>">Rekap Pembayaran</a></li>
-                    </ul>
-                </div>
+                <a class="collapsible-header waves-effect waves-teal"></a>
             </li>
         </ul>
     </li>
@@ -144,9 +134,11 @@ $this->load->helper('text');
                     <th>Gedung</th>
                     <th>Username</th>
                     <th>Tanggal Acara</th>
+                    <th>Jam</th>
                     <th>Status Pemesanan</th>
                     <th>Details</th>
                 </tr>
+
                 <?php $no = 1; foreach($front_data as $data): ?>
                 <?php $id_gedung = $data['ID_PEMESANAN']; ?>
                 <tr>
@@ -155,6 +147,8 @@ $this->load->helper('text');
                         <td><?php echo $data['NAMA_GEDUNG'] ?></td>
                         <td><?php echo $data['USERNAME'] ?></td>
                         <td><?php echo $data['TANGGAL_FINAL_PEMESANAN'] ?></td>
+                        <td>
+                        <?php echo $data['JAM_PEMESANAN'].' - '.$data['JAM_SELESAI']; ?></td>
                         <td><?php echo $data['FINAL_STATUS'] ?></td>
                         <td>
                         <a href="<?php echo site_url('admin/detail_pemesanan/PMSN000'.$id_gedung.'') ?>"><i class="material-icons">open_in_new</i></a>

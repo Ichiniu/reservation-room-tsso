@@ -16,18 +16,7 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
         <!-- Favicons-->
         <link rel="apple-touch-icon-precomposed" href="<?php echo base_url(); ?>assets/home/assets/img/favicon/apple-touch-icon-152x152.png">
         <meta name="msapplication-TileColor" content="#FFFFFF">
-        <meta name="msapplication-TileImage" content="<?php echo base_url(); ?>assets/home/assets/img/favicon/mstile-144x144.png">
-        <link rel="icon" href="<?php echo base_url(); ?>assets/home/assets/img/favicon/favicon-32x32.png" sizes="32x32">
-        <title>Detail Transaksi</title>
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <!-- Materialize core CSS -->
-        <link href="<?php echo base_url(); ?>assets/home/materialize/css/materialize.css" rel="stylesheet" type="text/css">
-        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
-            <script src="assets/js/html5shiv.js"></script>
-            <script src="assets/js/respond.min.js"></script>
-        <![endif]-->
-        <link href="<?php echo base_url(); ?>assets/home/template.css" rel="stylesheet" type="text/css">
+       <title>Detail Transaksi</title>
     </head>
     <body>
         <header>
@@ -133,6 +122,11 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
                             <td><b>TANGGAL PEMESANAN</b></td>
                             <td>:</td>
                             <td><?php $date = date_create($hasil->TANGGAL_PEMESANAN); echo date_format($date, 'd F Y') ?></td>
+                        </tr>
+                        <tr>
+                        <td><b>JAM PEMESANAN</b></td>
+                        <td>:</td>
+                        <td><?php echo $hasil->JAM_PEMESANAN.' - '.$hasil->JAM_SELESAI; ?></td>
                         </tr>
                         <tr>
                             <td><b>EMAIL</b></td>

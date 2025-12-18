@@ -178,29 +178,30 @@ $id_gedung = $this->uri->segment(3);
   <main class="relative">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
       <section
-        x-data="{
-          catering: 'tidak',
-          tipeJam: 'CUSTOM',
-          RULES: {
-            HALF_DAY: { start: '08:00', end: '12:00', label: 'HALF DAY (08:00 - 12:00)' },
-            FULL_DAY: { start: '08:00', end: '17:00', label: 'FULL DAY (08:00 - 17:00)' }
-          },
-          get cateringEnabled(){ return this.catering === 'ya' },
-          get isCustom(){ return this.tipeJam === 'CUSTOM' },
-          jamMulai: '',
-          jamSelesai: '',
-          init(){
-            // set default custom values kosong
-            this.jamMulai = '';
-            this.jamSelesai = '';
-          },
-          applyJam(){
-            if(this.isCustom) return;
-            this.jamMulai = this.RULES[this.tipeJam].start;
-            this.jamSelesai = this.RULES[this.tipeJam].end;
-          }
-        }"
-        class="rounded-3xl border border-white/15 bg-white/10 shadow-2xl shadow-black/20 overflow-hidden">
+  x-data="{
+    catering: 'tidak',
+    tipeJam: 'CUSTOM',
+    RULES: {
+      HALF_DAY_PAGI:  { start: '08:00', end: '12:00', label: 'HALF DAY (08:00 - 12:00)' },
+      HALF_DAY_SIANG: { start: '13:00', end: '16:00', label: 'HALF DAY (13:00 - 16:00)' },
+      FULL_DAY:       { start: '08:00', end: '17:00', label: 'FULL DAY (08:00 - 17:00)' }
+    },
+    get cateringEnabled(){ return this.catering === 'ya' },
+    get isCustom(){ return this.tipeJam === 'CUSTOM' },
+    jamMulai: '',
+    jamSelesai: '',
+    init(){
+      this.jamMulai = '';
+      this.jamSelesai = '';
+    },
+    applyJam(){
+      if(this.isCustom) return;
+      this.jamMulai = this.RULES[this.tipeJam].start;
+      this.jamSelesai = this.RULES[this.tipeJam].end;
+    }
+  }"
+  class="rounded-3xl border border-white/15 bg-white/10 shadow-2xl shadow-black/20 overflow-hidden"
+>
 
         <div class="p-6 sm:p-8">
           <div class="flex items-end justify-between gap-4">
@@ -247,11 +248,10 @@ $id_gedung = $this->uri->segment(3);
               <div class="rounded-2xl bg-white/40 ring-1 ring-black/5 p-5">
                 <label class="block text-xs font-semibold tracking-widest text-black/60">PILIHAN JAM</label>
                 <select name="tipe_jam" id="tipe_jam" required
-                        x-model="tipeJam" @change="applyJam()"
-                  class="mt-2 w-full rounded-xl bg-white/70 border border-black/10 px-4 py-3
-                         text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0A7F81]/30 focus:border-[#0A7F81]/30">
+                   x-model="tipeJam" @change="applyJam()">
                   <option value="CUSTOM">HH:MM - HH:MM (Input sendiri)</option>
-                  <option value="HALF_DAY">HALF DAY</option>
+                  <option value="HALF_DAY_PAGI">HALF DAY (08-12)</option>
+                  <option value="HALF_DAY_SIANG">HALF DAY (13-16)</option>
                   <option value="FULL_DAY">FULL DAY</option>
                 </select>
 
