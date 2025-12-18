@@ -12,7 +12,7 @@
   bg-cover bg-center bg-no-repeat bg-fixed">
 
   <!-- Metallic + glossy overlay -->
-  <div class="absolute inset-0 bg-gradient-to-br from-[#034B4C]/30 via-[#0A7F81]/75 to-[#2CC7C0]/30"></div>
+  <div class="absolute inset-0 "></div>
   <div class="pointer-events-none absolute -top-40 -left-40 h-[560px] w-[560px] rounded-full bg-white/20 blur-3xl"></div>
   <div class="pointer-events-none absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 opacity-60"></div>
   <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-black/15"></div>
@@ -22,7 +22,7 @@
       <!-- Card glass -->
       <div class="rounded-2xl border border-white/15 bg-white/10 backdrop-blur-xl shadow-2xl p-8">
         <div class="flex flex-col items-center text-center">
-          <img src="<?= base_url('assets/login/logo.jpg') ?>" alt="Logo" class="h-16 w-auto mb-4 rounded-md" />
+          <img src="<?= base_url('assets/login/LogoTSNew.png') ?>" alt="Logo" class="h-16 w-auto mb-4 " />
           <h1 class="text-xl sm:text-2xl font-semibold text-[#D7FFF8] tracking-wide">
             SIGN IN YOUR ACCOUNT
           </h1>

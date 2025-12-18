@@ -11,7 +11,7 @@
   bg-cover bg-center bg-no-repeat bg-fixed">
 
   <!-- Overlay lebih terang (metallic + glossy) -->
-  <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#034B4C]/55 via-[#0A7F81]/45 to-[#2CC7C0]/45"></div>
+  <div class="pointer-events-none absolute inset-0></div>
   <div class="pointer-events-none absolute -top-40 -left-40 h-[560px] w-[560px] rounded-full bg-white/20 blur-3xl"></div>
   <div class="pointer-events-none absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 opacity-60"></div>
   <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/15 via-black/0 to-black/5"></div>
@@ -21,8 +21,8 @@
       <!-- Glass Card -->
       <div class="rounded-2xl border border-white/15 bg-white/10 backdrop-blur-xl shadow-2xl p-8">
         <div class="flex flex-col items-center text-center">
-          <img src="<?= base_url('assets/login/logo.jpg') ?>" alt="Logo"
-               class="h-16 w-auto mb-4 rounded-md" />
+          <img src="<?= base_url('assets/login/LogoTSNew.png') ?>" alt="Logo"
+               class="h-16 w-auto mb-4 " />
           <h1 class="text-xl sm:text-2xl font-semibold text-[#D7FFF8] tracking-wide">
             REGISTRASI
           </h1>
