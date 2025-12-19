@@ -29,101 +29,6 @@ $second_date_period = date_create($last_period);
         <link href="<?php echo base_url(); ?>assets/home/template.css" rel="stylesheet" type="text/css">
     </head>
     <body>
-        <header>
-              <nav class="top-nav">
-    <!-- HAMBURGER BUTTON -->
-    <a href="#" data-activates="nav-mobile" class="button-collapse menu-btn show-on-large">
-        <i class="material-icons">menu</i>
-    </a>
-    <div class="nav-wrapper center-title">
-    <span class="page-title">Administrator</span>
-</div>
-</nav>
-<ul id="nav-mobile" class="side-nav" style="width: 240px;">
-    <li class="logo"></li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/dashboard') ?>" class="waves-effect waves-teal">Home</a>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/list') ?>" class="waves-effect waves-teal">List User</a>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/gedung') ?>" class="waves-effect waves-teal">List Gedung</a>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/catering') ?>" class="waves-effect waves-teal">Catering</a>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/pemesanan2') ?>" class="waves-effect waves-teal">List Pemesanan</a>
-                </li>
-                <li class="bold">
-                <?php if($result > 0): ?>
-                    <a href="<?php echo site_url('admin/transaksi') ?>" class="waves-effect waves-teal">Inbox Pemesanan<span class="new badge"><?php echo $result ?></span></a>
-                <?php endif;?>
-                <?php if($result <= 0): ?>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/transaksi') ?>" class="waves-effect waves-teal">Inbox Pemesanan</a>
-                </li>
-                <?php endif; ?>
-                </li>
-                <li class="bold">
-                <?php if($get_transaction > 0): ?>
-                    <a href="<?php echo site_url('admin/pembayaran') ?>" class="waves-effect waves-teal">Transaksi<span class="new badge"><?php echo $get_transaction ?></span></a>
-                <?php endif;?>
-                <?php if($get_transaction <= 0): ?>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/pembayaran') ?>" class="waves-effect waves-teal">Transaksi</a>
-                </li>
-                <?php endif; ?>
-                </li>
-                <!--
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/pembayaran') ?>" class="waves-effect waves-teal">Transaksi</a>
-                </li>-->
-                <li class="no-padding">
-                <ul class="collapsible collapsible-accordion">
-                    <li class="bold">
-                            <a class="collapsible-header waves-effect waves-teal">Perawatan</a>
-                            <div class="collapsible-body">
-                                <ul>
-                                    <li> 
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/pembayaran-listrik') ?>">Pembayaran Listrik</a>
-                                    </li>
-                                    <li>
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/pembayaran-air') ?>">Pembayaran Air</a>
-                                    </li>
-                                    <li>
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/pembayaran-kebersihan') ?>">Pembayaran Kebersihan</a>
-                                    </li>
-                                    <li>
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/rekap_pembayaran') ?>">Rekap Pembayaran</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                </ul>
-                </li>
-                <li class="no-padding">
-                <ul class="collapsible collapsible-accordion">
-                    <li class="bold">
-                            <a class="collapsible-header waves-effect waves-teal">Rekapitulasi</a>
-                            <div class="collapsible-body">
-                                <ul>
-                                    <li> 
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/rekap_aktivitas') ?>">Rekap Aktivitas</a>
-                                    </li>
-                                    <li>
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/rekap_transaksi') ?>">Rekap Transaksi</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                </ul>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/log_out') ?>" class="waves-effect waves-teal">Sign Out</a>
-                </li>
-            </ul>
             <center><h5>Rekapitulasi Aktivitas</h5>
             <div class="container">
                 <div class="row">
@@ -134,18 +39,40 @@ $second_date_period = date_create($last_period);
                                 <th>Nama Gedung</th>
                                 <th>Tanggal Pemesanan</th>
                                 <th>Tanggal Approval</th>
-                                <th>Acara</th>
+                                <th>Kegiatan</th>
+                                <th>Jam Kegiatan</th>
                                 <th>Nama Pemesan</th>
                             </tr>
                             <?php foreach($hasil as $row): ?>
                             <?php $date = date_create($row['TANGGAL_FINAL_PEMESANAN']) ?>
                             <?php $date_approval = date_create($row['TANGGAL_APPROVAL']) ?>
+                            <?php
+                                $jamMulai = null;
+                                if (isset($row['JAM_MULAI']) && $row['JAM_MULAI'] != '') {
+                                    $jamMulai = $row['JAM_MULAI'];
+                                } elseif (isset($row['JAM_PEMESANAN']) && $row['JAM_PEMESANAN'] != '') {
+                                    $jamMulai = $row['JAM_PEMESANAN'];
+                                }
+
+                                $jamSelesai = null;
+                                if (isset($row['JAM_SELESAI']) && $row['JAM_SELESAI'] != '') {
+                                    $jamSelesai = $row['JAM_SELESAI'];
+                                }
+
+                                $jamText = '-';
+                                if (!empty($jamMulai) && !empty($jamSelesai)) {
+                                    $jamText = date('H:i', strtotime($jamMulai)) . ' - ' . date('H:i', strtotime($jamSelesai));
+                                } elseif (!empty($jamMulai)) {
+                                    $jamText = date('H:i', strtotime($jamMulai));
+                                }
+                                ?>
                             <tr>
                                 <td><?php echo $no++?></td>
                                 <td><?php echo $row['NAMA_GEDUNG']?></td>
                                 <td><?php echo date_format($date, 'd M Y')?></td>
                                 <td><?php echo date_format($date_approval, 'd M Y')?></td>
-                                <td><?php echo $row['DESKRIPSI_ACARA']?></td>
+                                <td><?php echo $row['DESKRIPSI_ACARA']?></td>                                
+                                <td><?php echo $jamText; ?></td>
                                 <td><?php echo $row['NAMA_LENGKAP']?></td>
                             </tr>
                             <?php endforeach;?>
