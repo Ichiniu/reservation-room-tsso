@@ -7,6 +7,12 @@ $tanggal_pesan = $result->TANGGAL_PEMESANAN;
 $min_refund = date('Y-m-d', time());
 $perbedaan = date_diff(new DateTime($tanggal_pesan), new DateTime($min_refund));
 $temp_id = substr($result->ID_PEMESANAN, 7);
+$status = '';
+if (isset($result->STATUS)) {
+    $status = strtoupper(trim($result->STATUS));
+}
+
+$allowed = array( 'PROPOSAL APPROVE', 'SUBMITED');
 ?>
 
 <!DOCTYPE html>
@@ -55,10 +61,12 @@ $temp_id = substr($result->ID_PEMESANAN, 7);
         </a>
 
         <!-- Bayar -->
-        <button onclick="openModal()"
-                class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-            Bayar
-        </button>
+       <?php if (in_array($status, $allowed, true)): ?>
+    <button onclick="openModal()"
+            class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+        Bayar
+    </button>
+<?php endif; ?>
     </div>
 </div>
 

@@ -202,7 +202,7 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
                             <td>
                                 <input class="with-gap" name="status-proposal" type="radio" id="ya" value="1" onclick="return showInput();" />
                                     <label for="ya">TERIMA PROPOSAL</label> <br> <br>
-                                <input class="with-gap" name="status-proposal" type="radio" id="tidak" value="2" onclick="return showInput();" />
+                                <input class="with-gap" name="status-proposal" type="radio" id="tidak" value="5" onclick="return showInput();" />
                                     <label for="tidak">TOLAK PROPOSAL</label>
                             </td>
                         </tr>

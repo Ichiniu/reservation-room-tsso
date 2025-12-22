@@ -233,26 +233,27 @@ class Admin_Controls extends CI_Controller {
 			);
 
 		if(!empty($submit)) {
-			$status = $this->input->post('status-proposal');
-			$remarks =  $this->input->post('remarks');
+    $status  = (int)$this->input->post('status-proposal');
+    $remarks = $this->input->post('remarks');
 
-		    if($this->input->post('status-proposal') == 1) {
-		    	$this->gedung_model->insert_pemesanan_fix_detail($pemesanan_fix_detail);
-		    	$this->gedung_model->update_transaksi($temp_id, $status, $remarks);
-		    	$pesan = $this->load->view('admin/mail_body', $mail, true);
-		    	$this->send_mail($email, $pesan);
-		    	//$this->load->view('admin/mail_body', $mail);
-		    	redirect('admin/transaksi');
-		    } else if($this->input->post('status-proposal') == 2) {
-		    	$this->gedung_model->update_transaksi($temp_id, $status, $remarks);
-		    	$reject = $this->load->view('admin/reject_pesanan', $mail, true);
-		    	$this->gedung_model->update_transaksi($temp_id, $status, $remarks);
-		    	$this->send_mail($email, $reject);
-		    	redirect('admin/transaksi');
-		    	//$this->load->view('admin/reject_pesanan', $mail);
-		    }
-		}
+    // TERIMA PROPOSAL -> status 2 (Proposal Approved / Pending Payment)
+    if($status == 2) {
+        // JANGAN insert ke pemesanan_fix_detail di sini (biar tidak langsung final/submited)
+        $this->gedung_model->update_transaksi($temp_id, 2, '');
+        $pesan = $this->load->view('admin/mail_body', $mail, true);
+        $this->send_mail($email, $pesan);
+        redirect('admin/transaksi');
+
+    // TOLAK PROPOSAL -> status 5 (Rejected)
+    } else if($status == 5) {
+        $this->gedung_model->update_transaksi($temp_id, 5, $remarks);
+        $reject = $this->load->view('admin/reject_pesanan', $mail, true);
+        $this->send_mail($email, $reject);
+        redirect('admin/transaksi');
+		
+    		}
 	}
+}
 
 	function send_mail($to_email, $pesan) {
 		$from_email = "Admin Pembayaran";
