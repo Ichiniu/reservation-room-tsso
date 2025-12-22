@@ -112,7 +112,7 @@ $this->load->helper('form');
              style="display: inline-block; padding: 32px 70px 20px 70px; border: 1px solid #EEE; border-radius:12px;">
 
           <!-- LOGO -->
-          <img src="<?= base_url('assets/login/logo.png') ?>" class="login-logo">
+          <img src="<?= base_url('assets/login/LogoTSNew.png') ?>" class="login-logo">
 
           <?php echo form_open('admin/log_in'); ?>
 

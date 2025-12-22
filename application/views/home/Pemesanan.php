@@ -6,7 +6,7 @@ $id_gedung = $this->uri->segment(3);
 <!DOCTYPE html>
 <html lang="en">
     <head>
-          <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
