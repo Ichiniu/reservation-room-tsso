@@ -8,7 +8,7 @@ $this->load->helper('text');
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Admin Smart Office</title>
+    <title>Inbox Pemesanan</title>
 
     <!-- Favicons -->
     <link rel="apple-touch-icon-precomposed" href="<?= base_url('assets/home/assets/img/favicon/apple-touch-icon-152x152.png') ?>">

@@ -204,11 +204,10 @@ public function jadwal_gedung_upcoming() {
 	}
 
 	public function get_pending_transaction() {
-		$sql = "SELECT STATUS FROM V_PEMESANAN WHERE STATUS =  'PENDING'";
-		$query = $this->db->query($sql);
-		$hasil = $query->num_rows();
-		return $hasil;
-	}
+    $sql = "SELECT STATUS FROM V_PEMESANAN WHERE STATUS = 'PROCESS'";
+    $query = $this->db->query($sql);
+    return $query->num_rows();
+}
 
 	public function get_all_pemesanan() {
 		$sql = "SELECT * FROM V_PEMESANAN";
@@ -218,7 +217,7 @@ public function jadwal_gedung_upcoming() {
 	}
 
 	public function get_all_pending_transaction() {
-		$sql = "SELECT * FROM V_PEMESANAN WHERE STATUS = 'PENDING'";
+		$sql = "SELECT * FROM V_PEMESANAN WHERE STATUS = 'PROCESS'";
 		$query = $this->db->query($sql);
 		$hasil = $query->result_array();
 		return $hasil;

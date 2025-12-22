@@ -6,7 +6,18 @@ $tax = 0.1 * $result->HARGA_SEWA;
 $tanggal_pesan = $result->TANGGAL_PEMESANAN;
 $min_refund = date('Y-m-d', time());
 $perbedaan = date_diff(new DateTime($tanggal_pesan), new DateTime($min_refund));
-$temp_id = substr($result->ID_PEMESANAN, 7);
+$temp_id=substr($result->ID_PEMESANAN,7);
+$statusText = isset($result->STATUS)
+  ? strtoupper(trim(preg_replace('/\s+/', ' ', $result->STATUS)))
+  : 'UNKNOWN';
+$map = [
+  'PROCESS' => 1,
+  'PROPOSAL APPROVE' => 2,
+  'APPROVE & PAID' => 3,
+  'SUBMITED' => 4,
+  'REJECTED' => 5,
+];
+$statusCode = isset($map[$statusText]) ? $map[$statusText] : 0;
 ?>
 
 <!DOCTYPE html>
@@ -55,10 +66,13 @@ $temp_id = substr($result->ID_PEMESANAN, 7);
         </a>
 
         <!-- Bayar -->
-        <button onclick="openModal()"
-                class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-            Bayar
-        </button>
+        <?php if ($statusText === 'PROPOSAL APPROVE'): ?>
+  <button onclick="openModal()"
+          class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+    Bayar
+  </button>
+<?php endif; ?>
+
     </div>
 </div>
 
