@@ -25,187 +25,183 @@ function is_active($uri, $current_uri)
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<title>Admin Smart Office</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- ICON -->
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Admin Smart Office</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- ICON -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
 
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
 
-<style>
-/* ===== SIDEBAR ===== */
-.sidebar-mini {
-    width: 72px !important;
-}
-.sidebar-mini .menu-text {
-    display: none;
-}
-.sidebar-mini nav a {
-    justify-content: center;
-}
-.sidebar-mini .material-icons-outlined {
-    margin-right: 0 !important;
-}
+    <style>
+    /* ===== SIDEBAR ===== */
+    .sidebar-mini {
+        width: 72px !important;
+    }
 
-/* ===== CONTENT ===== */
-.content-mini {
-    margin-left: 72px !important;
-}
+    .sidebar-mini .menu-text {
+        display: none;
+    }
 
-/* ===== ACTIVE MENU ===== */
-.menu-active {
-    background-color: #ffffff;
-    font-weight: 600;
-}
+    .sidebar-mini nav a {
+        justify-content: center;
+    }
 
-/* ===== BADGE INBOX ===== */
-.inbox-badge {
-    margin-left: auto;
-}
-.sidebar-mini .inbox-badge {
-    position: absolute;
-    top: 8px;
-    right: 12px;
-    width: 18px;
-    height: 18px;
-    font-size: 10px;
-    margin-left: 0;
-}
-</style>
+    .sidebar-mini .material-icons-outlined {
+        margin-right: 0 !important;
+    }
+
+    /* ===== CONTENT ===== */
+    .content-mini {
+        margin-left: 72px !important;
+    }
+
+    /* ===== ACTIVE MENU ===== */
+    .menu-active {
+        background-color: #ffffff;
+        font-weight: 600;
+    }
+
+    /* ===== BADGE INBOX ===== */
+    .inbox-badge {
+        margin-left: auto;
+    }
+
+    .sidebar-mini .inbox-badge {
+        position: absolute;
+        top: 8px;
+        right: 12px;
+        width: 18px;
+        height: 18px;
+        font-size: 10px;
+        margin-left: 0;
+    }
+    </style>
 </head>
 
 <body class="bg-white text-gray-800">
 
-<!-- ================= TOPBAR ================= -->
-<header class="fixed top-0 left-0 right-0 z-40 bg-white border-b h-16">
-    <div class="flex items-center px-6 h-full gap-4">
-        <span id="toggleSidebar"
-              class="material-icons cursor-pointer select-none">
-            menu
-        </span>
-        <span class="font-semibold text-lg">Administrator</span>
-        <span class="ml-auto text-sm text-gray-500">
-            <?= htmlspecialchars($username); ?>
-        </span>
-    </div>
-</header>
+    <!-- ================= TOPBAR ================= -->
+    <header class="fixed top-0 left-0 right-0 z-40 bg-white border-b h-16">
+        <div class="flex items-center px-6 h-full gap-4">
+            <span id="toggleSidebar" class="material-icons cursor-pointer select-none">
+                menu
+            </span>
+            <span class="font-semibold text-lg">Administrator</span>
+            <span class="ml-auto text-sm text-gray-500">
+                <?= htmlspecialchars($username); ?>
+            </span>
+        </div>
+    </header>
 
-<!-- ================= SIDEBAR ================= -->
-<aside id="sidebar"
-class="fixed top-16 left-0 z-30 w-64 h-full bg-[#f9f7f2] border-r transition-all duration-300">
+    <!-- ================= SIDEBAR ================= -->
+    <aside id="sidebar" class="fixed top-16 left-0 z-30 w-64 h-full bg-[#f9f7f2] border-r transition-all duration-300">
 
-<nav class="px-3 py-6 space-y-1 text-sm">
+        <nav class="px-3 py-6 space-y-1 text-sm">
 
-<a href="<?= site_url('admin/dashboard') ?>"
-class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white
+            <a href="<?= site_url('admin/dashboard') ?>" class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white
 <?= is_active('admin/dashboard', $current_uri) ? 'menu-active' : '' ?>">
-<span class="material-icons">dashboard</span>
-<span class="menu-text">Home</span>
-</a>
+                <span class="material-icons">dashboard</span>
+                <span class="menu-text">Home</span>
+            </a>
 
-<a href="<?= site_url('admin/list') ?>"
-class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white
+            <a href="<?= site_url('admin/list') ?>" class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white
 <?= is_active('admin/list', $current_uri) ? 'menu-active' : '' ?>">
-<span class="material-icons">people</span>
-<span class="menu-text">List User</span>
-</a>
+                <span class="material-icons">people</span>
+                <span class="menu-text">List User</span>
+            </a>
 
-<a href="<?= site_url('admin/gedung') ?>"
-class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white
+            <a href="<?= site_url('admin/gedung') ?>" class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white
 <?= is_active('admin/gedung', $current_uri) ? 'menu-active' : '' ?>">
-<span class="material-icons">business</span>
-<span class="menu-text">List Gedung</span>
-</a>
+                <span class="material-icons">business</span>
+                <span class="menu-text">List Gedung</span>
+            </a>
 
-<a href="<?= site_url('admin/catering') ?>"
-class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white
+            <a href="<?= site_url('admin/catering') ?>" class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white
 <?= is_active('admin/catering', $current_uri) ? 'menu-active' : '' ?>">
-<span class="material-icons">restaurant</span>
-<span class="menu-text">Catering</span>
-</a>
+                <span class="material-icons">restaurant</span>
+                <span class="menu-text">Catering</span>
+            </a>
 
-<a href="<?= site_url('admin/pemesanan2') ?>"
-class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white
+            <a href="<?= site_url('admin/pemesanan2') ?>" class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white
 <?= is_active('admin/pemesanan', $current_uri) ? 'menu-active' : '' ?>">
-<span class="material-icons">assignment</span>
-<span class="menu-text">List Pemesanan</span>
-</a>
+                <span class="material-icons">assignment</span>
+                <span class="menu-text">List Pemesanan</span>
+            </a>
 
-<!-- INBOX / TRANSAKSI -->
-<?php $jumlah_inbox = isset($result) ? $result : 0; ?>
-<a href="<?= site_url('admin/transaksi') ?>"
-class="relative flex items-center gap-3 px-4 py-3 rounded hover:bg-white
+            <!-- INBOX / TRANSAKSI -->
+            <?php $jumlah_inbox = isset($result) ? $result : 0; ?>
+            <a href="<?= site_url('admin/transaksi') ?>" class="relative flex items-center gap-3 px-4 py-3 rounded hover:bg-white
 <?php if($current_uri == 'admin/transaksi'){ echo 'menu-active'; } ?>">
-    <span class="material-icons-outlined">inbox</span>
-    <span class="menu-text">Inbox</span>
+                <span class="material-icons-outlined">inbox</span>
+                <span class="menu-text">Inbox</span>
 
-    <?php if($jumlah_inbox > 0){ ?>
-    <span class="inbox-badge bg-red-500 text-white rounded-full
+                <?php if($jumlah_inbox > 0){ ?>
+                <span class="inbox-badge bg-red-500 text-white rounded-full
                  w-5 h-5 flex items-center justify-center text-xs">
-        <?= $jumlah_inbox ?>
-    </span>
-    <?php } ?>
-</a>
+                    <?= $jumlah_inbox ?>
+                </span>
+                <?php } ?>
+            </a>
 
 
 
-<!-- TRANSAKSI -->
-<details class="group" <?= is_active('admin/rekap', $current_uri) ? 'open' : '' ?>>
-<summary class="flex items-center justify-between px-4 py-3 cursor-pointer rounded hover:bg-white list-none
+            <!-- TRANSAKSI -->
+            <details class="group" <?= is_active('admin/rekap', $current_uri) ? 'open' : '' ?>>
+                <summary class="flex items-center justify-between px-4 py-3 cursor-pointer rounded hover:bg-white list-none
 <?= is_active('admin/rekap', $current_uri) ? 'menu-active' : '' ?>">
-<div class="flex items-center gap-3">
-    <span class="material-icons">payment</span>
-    <span class="menu-text">Transaksi</span>
-</div>
-<span class="material-icons arrow-icon transition-transform group-open:rotate-180">
-expand_more
-</span>
-</summary>
+                    <div class="flex items-center gap-3">
+                        <span class="material-icons">payment</span>
+                        <span class="menu-text">Transaksi</span>
+                    </div>
+                    <span class="material-icons arrow-icon transition-transform group-open:rotate-180">
+                        expand_more
+                    </span>
+                </summary>
 
-<div class="ml-10 mt-1 space-y-1">
-<a href="<?= site_url('admin/rekap_aktivitas') ?>"
-class="block px-3 py-2 rounded hover:bg-white
+                <div class="ml-10 mt-1 space-y-1">
+                    <a href="<?= site_url('admin/rekap_aktivitas') ?>" class="block px-3 py-2 rounded hover:bg-white
 <?= is_active('admin/rekap_aktivitas', $current_uri) ? 'menu-active' : '' ?>">
-Rekap Aktivitas
-</a>
+                        Rekap Aktivitas
+                    </a>
 
-<a href="<?= site_url('admin/rekap_transaksi') ?>"
-class="block px-3 py-2 rounded hover:bg-white
+                    <a href="<?= site_url('admin/rekap_transaksi') ?>" class="block px-3 py-2 rounded hover:bg-white
 <?= is_active('admin/rekap_transaksi', $current_uri) ? 'menu-active' : '' ?>">
-Rekap Transaksi
-</a>
-</div>
-</details>
+                        Rekap Transaksi
+                    </a>
+                </div>
+            </details>
 
-<hr class="my-4">
+            <hr class="my-4">
 
-<a href="<?= site_url('admin/log_out') ?>"
-class="flex items-center gap-3 px-4 py-3 rounded text-red-600 hover:bg-red-50">
-<span class="material-icons">logout</span>
-<span class="menu-text">Sign Out</span>
-</a>
+            <a href="<?= site_url('admin/log_out') ?>"
+                class="flex items-center gap-3 px-4 py-3 rounded text-red-600 hover:bg-red-50">
+                <span class="material-icons">logout</span>
+                <span class="menu-text">Sign Out</span>
+            </a>
 
-</nav>
-</aside>
+        </nav>
+    </aside>
 
-<!-- CONTENT PLACEHOLDER -->
-<main id="content" class="pt-20 ml-64 transition-all duration-300 px-6"></main>
+    <!-- CONTENT PLACEHOLDER -->
+    <main id="content" class=" ml-64 transition-all duration-300 px-6"></main>
 
-<!-- ===== SCRIPT TOGGLE ===== -->
-<script>
-const toggleBtn = document.getElementById('toggleSidebar');
-const sidebar   = document.getElementById('sidebar');
-const content   = document.getElementById('content');
+    <!-- ===== SCRIPT TOGGLE ===== -->
+    <script>
+    const toggleBtn = document.getElementById('toggleSidebar');
+    const sidebar = document.getElementById('sidebar');
+    const content = document.getElementById('content');
 
-toggleBtn.addEventListener('click', function () {
-    sidebar.classList.toggle('sidebar-mini');
-    content.classList.toggle('content-mini');
-});
-</script>
+    toggleBtn.addEventListener('click', function() {
+        sidebar.classList.toggle('sidebar-mini');
+        content.classList.toggle('content-mini');
+    });
+    </script>
 
 </body>
+
 </html>

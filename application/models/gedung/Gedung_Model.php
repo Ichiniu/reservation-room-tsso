@@ -14,30 +14,12 @@ class Gedung_Model extends CI_Model {
 		return $query->num_rows();
 	}
 
-	public function laporan_perawatan($nama_perawatan) {
-		$sql = "SELECT * FROM PERAWATAN WHERE NAMA_PERAWATAN LIKE '%$nama_perawatan%'";
-		$query = $this->db->query($sql);
-		return $query->result_array();
-	}
-
-	public function laporan_perawatan_keseluruhan() {
-		$sql = "SELECT * FROM PERAWATAN ORDER BY NAMA_PERAWATAN";
-		$query = $this->db->query($sql);
-		return $query->result_array();
-	}
-
 	public function laporan_pembayaran_periodic($start_date, $end_date) {
 		$sql = "SELECT * FROM PEMBAYARAN WHERE TANGGAL_TRANSFER BETWEEN '$start_date' AND '$end_date' ORDER BY ATAS_NAMA ASC";
 		$query = $this->db->query($sql);
 		return $query->result_array();
 	}
 
-	public function laporan_perawatan_periodic($start_date, $end_date) {
-		$sql = "SELECT * FROM PERAWATAN WHERE TANGGAL_PEMBAYARAN BETWEEN '$start_date' AND '$end_date' 
-		        ORDER BY NAMA_PERAWATAN";
-		$query = $this->db->query($sql);
-		return $query->result_array();
-	}
 
 	public function delete_jadwal($id_pemesanan, $data) {
 		$this->db->where('ID_PEMESANAN', $id_pemesanan);

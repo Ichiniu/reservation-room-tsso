@@ -3,8 +3,13 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
+<<<<<<<< HEAD:database/bookingsmarts.sql
 -- Generation Time: Dec 22, 2025 at 09:53 AM
 -- Server version: 10.1.21-MariaDB
+========
+-- Generation Time: 19 Des 2025 pada 03.06
+-- Versi Server: 10.1.21-MariaDB
+>>>>>>>> 00eb2ad621f17de1479e612e3ee819f7e7da4fef:database/Bookingsmarts.sql
 -- PHP Version: 5.6.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -190,6 +195,7 @@ INSERT INTO `pemesanan` (`ID_PEMESANAN`, `USERNAME`, `EMAIL`, `TANGGAL_PEMESANAN
 (34, 'pogbay', 'antonprio22@gmail.com', '2025-12-27', '15:00:00', 'CUSTOM', '17:00:00', NULL, 2, NULL, 1, NULL, 2),
 (35, 'awkarin', 'awakarin_gendut@gmail.com', '2026-02-02', '08:00:00', 'HALF_DAY', '12:00:00', NULL, 1, NULL, 1, NULL, 2),
 (36, 'Wahyu', 'WAHYU@GMAIL.COM', '2026-02-17', '13:00:00', '', '16:00:00', NULL, 3, NULL, 1, NULL, 2),
+<<<<<<<< HEAD:database/bookingsmarts.sql
 (37, 'Wahyu', 'WAHYU@GMAIL.COM', '2026-01-22', '13:00:00', '', '16:00:00', NULL, 1, NULL, 1, NULL, 2),
 (38, 'Wahyu', 'WAHYU@GMAIL.COM', '2026-06-30', '08:00:00', 'FULL_DAY', '17:00:00', NULL, 1, NULL, 0, NULL, 2),
 (39, 'Wahyu', 'WAHYU@GMAIL.COM', '2026-06-30', '08:00:00', 'FULL_DAY', '17:00:00', NULL, 1, NULL, 1, NULL, 2),
@@ -197,6 +203,12 @@ INSERT INTO `pemesanan` (`ID_PEMESANAN`, `USERNAME`, `EMAIL`, `TANGGAL_PEMESANAN
 (41, 'Wahyu', 'WAHYU@GMAIL.COM', '2026-09-30', '08:00:00', 'FULL_DAY', '17:00:00', NULL, 3, NULL, 0, NULL, 2),
 (42, 'Wahyu', 'WAHYU@GMAIL.COM', '2026-09-30', '08:00:00', 'FULL_DAY', '17:00:00', NULL, 3, NULL, 0, NULL, 0),
 (43, 'Wahyu', 'WAHYU@GMAIL.COM', '2026-06-26', '08:00:00', '', '12:00:00', 1, 3, 10, 1, NULL, 2);
+========
+(37, 'Wahyu', 'WAHYU@GMAIL.COM', '2026-01-22', '13:00:00', '', '16:00:00', NULL, 1, NULL, 1, NULL, 1),
+(38, 'Wahyu', 'WAHYU@GMAIL.COM', '2026-06-30', '08:00:00', 'FULL_DAY', '17:00:00', NULL, 1, NULL, 0, NULL, 0),
+(39, 'Wahyu', 'WAHYU@GMAIL.COM', '2026-06-30', '08:00:00', 'FULL_DAY', '17:00:00', NULL, 1, NULL, 1, NULL, 2),
+(40, 'Wahyu', 'WAHYU@GMAIL.COM', '2026-04-09', '10:00:00', 'CUSTOM', '15:00:00', NULL, 3, NULL, 0, NULL, 0);
+>>>>>>>> 00eb2ad621f17de1479e612e3ee819f7e7da4fef:database/Bookingsmarts.sql
 
 -- --------------------------------------------------------
 
@@ -223,9 +235,13 @@ INSERT INTO `pemesanan_details` (`ID_DETAILS`, `ID_PEMESANAN`, `PATH`, `FILE_NAM
 (16, 34, 'http://localhost/Warsito/assets/user-proposal/', 'pogbay_16122025_074235.pdf', 'BELAJAR AJA SI'),
 (17, 35, 'http://localhost/Warsito/assets/user-proposal/', 'awkarin_16122025_082619.pdf', 'bagi bagi sembakoo'),
 (18, 36, 'http://localhost/Warsito/assets/user-proposal/', 'Wahyu_17122025_075737.pdf', 'TESTING TERBARU'),
+<<<<<<<< HEAD:database/bookingsmarts.sql
 (19, 39, 'http://localhost/Warsito/assets/user-proposal/', 'Wahyu_18122025_032453.pdf', 'memandu untuk paymen'),
 (20, 42, 'http://localhost/BookingSmartOffice/assets/user-proposal/', 'Wahyu_19122025_031230.pdf', 'TESTING DB BARU'),
 (21, 43, 'http://localhost/BookingSmartOffice/assets/user-proposal/', 'Wahyu_22122025_025107.pdf', '');
+========
+(19, 39, 'http://localhost/Warsito/assets/user-proposal/', 'Wahyu_18122025_032453.pdf', 'memandu untuk paymen');
+>>>>>>>> 00eb2ad621f17de1479e612e3ee819f7e7da4fef:database/Bookingsmarts.sql
 
 -- --------------------------------------------------------
 
@@ -261,8 +277,12 @@ INSERT INTO `pemesanan_fix_detail` (`ID_FIX_DETAIL`, `ID_PEMESANAN`, `USERNAME`,
 (53, 25, 'awkarin', '2025-12-17', '2025-12-30', '2025-12-19', 1),
 (54, 36, 'Wahyu', '2025-12-17', '2026-02-17', '2025-12-19', 1),
 (55, 37, 'Wahyu', '2025-12-18', '2026-01-22', '2025-12-20', 1),
+<<<<<<<< HEAD:database/bookingsmarts.sql
 (56, 39, 'Wahyu', '2025-12-18', '2026-06-30', '2025-12-20', 1),
 (57, 43, 'Wahyu', '2025-12-22', '2026-06-26', '2025-12-24', 1);
+========
+(56, 39, 'Wahyu', '2025-12-18', '2026-06-30', '2025-12-20', 1);
+>>>>>>>> 00eb2ad621f17de1479e612e3ee819f7e7da4fef:database/Bookingsmarts.sql
 
 -- --------------------------------------------------------
 
@@ -359,7 +379,11 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `v_pemesanan`;
 
+<<<<<<<< HEAD:database/bookingsmarts.sql
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_pemesanan`  AS  select concat('PMSN000',`p`.`ID_PEMESANAN`) AS `ID_PEMESANAN`,`p`.`USERNAME` AS `USERNAME`,`p`.`TANGGAL_PEMESANAN` AS `TANGGAL_PEMESANAN`,`p`.`JAM_PEMESANAN` AS `JAM_PEMESANAN`,`p`.`JAM_SELESAI` AS `JAM_SELESAI`,`p`.`EMAIL` AS `EMAIL`,coalesce(`p`.`JUMLAH_CATERING`,'Tidak Ada') AS `JUMLAH_CATERING`,coalesce(`c`.`NAMA_PAKET`,'Tidak Ada') AS `NAMA_PAKET`,`g`.`NAMA_GEDUNG` AS `NAMA_GEDUNG`,`c`.`HARGA` AS `HARGA_SATUAN`,coalesce((`c`.`HARGA` * `p`.`JUMLAH_CATERING`),0) AS `TOTAL_HARGA`,(case `p`.`STATUS` when 0 then 'PROCESS' when 1 then 'PROPOSAL APPROVE' when 2 then 'APPROVE & PAID' when 3 then 'SUBMITED' when 4 then 'REJECTED' else 'UNKNOWN' end) AS `STATUS`,`g`.`HARGA_SEWA` AS `HARGA_SEWA`,(`g`.`HARGA_SEWA` + coalesce((`c`.`HARGA` * `p`.`JUMLAH_CATERING`),0)) AS `TOTAL_KESELURUHAN`,`pemesanan_details`.`DESKRIPSI_ACARA` AS `DESKRIPSI_ACARA`,`p`.`REMARKS` AS `REMARKS` from (((`pemesanan` `p` left join `catering` `c` on((`c`.`ID_CATERING` = `p`.`ID_CATERING`))) left join `gedung` `g` on((`g`.`ID_GEDUNG` = `p`.`ID_GEDUNG`))) left join `pemesanan_details` on((`pemesanan_details`.`ID_PEMESANAN` = `p`.`ID_PEMESANAN`))) ;
+========
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_pemesanan`  AS  select concat('PMSN000',`p`.`ID_PEMESANAN`) AS `ID_PEMESANAN`,`p`.`USERNAME` AS `USERNAME`,`p`.`TANGGAL_PEMESANAN` AS `TANGGAL_PEMESANAN`,`p`.`JAM_PEMESANAN` AS `JAM_PEMESANAN`,`p`.`JAM_SELESAI` AS `JAM_SELESAI`,`p`.`EMAIL` AS `EMAIL`,coalesce(`p`.`JUMLAH_CATERING`,'Tidak Ada') AS `JUMLAH_CATERING`,coalesce(`c`.`NAMA_PAKET`,'Tidak Ada') AS `NAMA_PAKET`,`g`.`NAMA_GEDUNG` AS `NAMA_GEDUNG`,`c`.`HARGA` AS `HARGA_SATUAN`,coalesce((`c`.`HARGA` * `p`.`JUMLAH_CATERING`),0) AS `TOTAL_HARGA`,(case `p`.`STATUS` when 0 then 'PENDING' when 1 then 'DISETUJUI' when 2 then 'DITOLAK' when 3 then 'CANCELED WITH REFUND' when 4 then 'CANCELED WITHOUT REFUND' end) AS `STATUS`,`g`.`HARGA_SEWA` AS `HARGA_SEWA`,(`g`.`HARGA_SEWA` + coalesce((`c`.`HARGA` * `p`.`JUMLAH_CATERING`),0)) AS `TOTAL_KESELURUHAN`,`pemesanan_details`.`DESKRIPSI_ACARA` AS `DESKRIPSI_ACARA`,`p`.`REMARKS` AS `REMARKS` from (((`pemesanan` `p` left join `catering` `c` on((`c`.`ID_CATERING` = `p`.`ID_CATERING`))) left join `gedung` `g` on((`g`.`ID_GEDUNG` = `p`.`ID_GEDUNG`))) left join `pemesanan_details` on((`pemesanan_details`.`ID_PEMESANAN` = `p`.`ID_PEMESANAN`))) ;
+>>>>>>>> 00eb2ad621f17de1479e612e3ee819f7e7da4fef:database/Bookingsmarts.sql
 
 --
 -- Indexes for dumped tables
@@ -453,17 +477,29 @@ ALTER TABLE `pembayaran`
 -- AUTO_INCREMENT for table `pemesanan`
 --
 ALTER TABLE `pemesanan`
+<<<<<<<< HEAD:database/bookingsmarts.sql
   MODIFY `ID_PEMESANAN` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+========
+  MODIFY `ID_PEMESANAN` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+>>>>>>>> 00eb2ad621f17de1479e612e3ee819f7e7da4fef:database/Bookingsmarts.sql
 --
 -- AUTO_INCREMENT for table `pemesanan_details`
 --
 ALTER TABLE `pemesanan_details`
+<<<<<<<< HEAD:database/bookingsmarts.sql
   MODIFY `ID_DETAILS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+========
+  MODIFY `ID_DETAILS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+>>>>>>>> 00eb2ad621f17de1479e612e3ee819f7e7da4fef:database/Bookingsmarts.sql
 --
 -- AUTO_INCREMENT for table `pemesanan_fix_detail`
 --
 ALTER TABLE `pemesanan_fix_detail`
+<<<<<<<< HEAD:database/bookingsmarts.sql
   MODIFY `ID_FIX_DETAIL` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
+========
+  MODIFY `ID_FIX_DETAIL` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+>>>>>>>> 00eb2ad621f17de1479e612e3ee819f7e7da4fef:database/Bookingsmarts.sql
 --
 -- AUTO_INCREMENT for table `perawatan`
 --

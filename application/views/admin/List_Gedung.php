@@ -3,79 +3,171 @@ $session_id = $this->session->userdata('username');
 $this->load->helper('text');
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Admin Smart Office</title>
 
-    <!-- Favicons -->
-    <link rel="apple-touch-icon-precomposed" href="<?= base_url('assets/home/assets/img/favicon/apple-touch-icon-152x152.png') ?>">
-    <meta name="msapplication-TileColor" content="#FFFFFF">
-    <meta name="msapplication-TileImage" content="<?= base_url('assets/home/assets/img/favicon/mstile-144x144.png') ?>">
-    <link rel="icon" href="<?= base_url('assets/home/assets/img/favicon/favicon-32x32.png') ?>" sizes="32x32">
-
-    <!-- Tailwind CSS -->
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Materialize (UNTUK TABLE & GRID SAJA) -->
+    <!-- Materialize -->
     <link href="<?= base_url('assets/home/materialize/css/materialize.css') ?>" rel="stylesheet">
     <link href="<?= base_url('assets/home/style.css') ?>" rel="stylesheet">
 </head>
 
-<body class="bg-gray-50">
+<body class="bg-slate-200 min-h-screen">
 
-<!-- ================= SIDEBAR COMPONENT ================= -->
-<?php $this->load->view('admin/components/sidebar'); ?>
-<!-- ===================================================== -->
+    <!-- SIDEBAR -->
+    <?php $this->load->view('admin/components/sidebar'); ?>
 
-<!-- ================= MAIN CONTENT ================= -->
-<main class="pt-24 pl-0 md:pl-64 px-6">
-<!-- ================= CONTENT ================= -->
-<!-- <div class="container" style="margin-left:260px"> -->
+    <!-- MAIN -->
+    <main class="pt-24 pl-0 md:pl-64 px-4 md:px-6 pb-10">
 
-    <div class="row">
-        <div class="col s12">
-            <a class="waves-effect waves-light btn"
-               href="<?= site_url('admin/add_gedung') ?>">
-                <i class="material-icons right">add</i>Tambah Gedung
+        <!-- HEADER -->
+        <div class="max-w-6xl mx-auto mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-800">Data Gedung</h1>
+                <p class="text-sm text-slate-500">Daftar gedung yang tersedia</p>
+            </div>
+
+            <a href="<?= site_url('admin/add_gedung') ?>" class="inline-flex items-center gap-2 px-4 py-2
+              bg-blue-600 text-white text-sm font-medium
+              rounded-lg hover:bg-blue-700 transition">
+                Tambah Gedung
             </a>
         </div>
-    </div>
 
-    <table class="bordered">
-        <tr>
-            <th>Nama</th>
-            <th>Kapasitas</th>
-            <th>Alamat</th>
-            <th>Deskripsi</th>
-            <th>Harga</th>
-            <th colspan="2">Action</th>
-        </tr>
+        <!-- CARD -->
+        <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-md p-6">
 
-        <?php foreach($res as $row): ?>
-        <tr>
-            <td><?= $row['NAMA_GEDUNG'] ?></td>
-            <td><?= $row['KAPASITAS'] ?> Orang</td>
-            <td><?= $row['ALAMAT'] ?></td>
-            <td><?= $row['DESKRIPSI_GEDUNG'] ?></td>
-            <td><?= number_format($row['HARGA_SEWA']) ?></td>
-            <td><a href="<?= site_url('admin/edit/'.$row['ID_GEDUNG']) ?>">Edit</a></td>
-            <td><a href="<?= site_url('admin/admin_controls/delete_gedung/'.$row['ID_GEDUNG']) ?>" onclick="return dialog()">Delete</a></td>
-        </tr>
-        <?php endforeach; ?>
-    </table>
+            <div class="overflow-x-auto max-h-[420px] overflow-y-auto relative">
+                <table class="w-full text-sm border border-slate-200 rounded-lg bg-white">
+                    <thead class="sticky top-0 z-20 bg-slate-100 shadow-sm">
+                        <tr>
+                            <th class="px-4 py-3 text-center">Nama</th>
+                            <th class="px-4 py-3 text-center">Kapasitas</th>
+                            <th class="px-4 py-3 ">Alamat</th>
+                            <th class="px-4 py-3 text-center">Deskripsi</th>
+                            <th class="px-14 py-3 ">Harga</th>
+                            <th class="px-4 py-3 text-center">Aksi</th>
+                        </tr>
+                    </thead>
 
-<!-- </div> -->
+                    <tbody class="divide-y">
+                        <?php foreach($res as $row): ?>
+                        <tr class="table-row hover:bg-slate-50 transition">
+                            <td class="px-4 py-3 font-medium"><?= $row['NAMA_GEDUNG'] ?></td>
+                            <td class="px-4 py-3"><?= $row['KAPASITAS'] ?> Orang</td>
+                            <td class="px-4 py-3"><?= $row['ALAMAT'] ?></td>
+                            <td class="px-4 py-3"><?= $row['DESKRIPSI_GEDUNG'] ?></td>
+                            <td class="px-4 py-3 font-semibold">
+                                Rp <?= number_format($row['HARGA_SEWA'], 0, ',', '.') ?>
+                            </td>
+                            <td class="px-4 py-3 ">
+                                <div class="flex justify-center gap-2">
+                                    <a href="<?= site_url('admin/edit/'.$row['ID_GEDUNG']) ?>"
+                                        class="px-3 py-1.5 text-xs bg-yellow-400 rounded hover:bg-yellow-500">
+                                        Edit
+                                    </a>
+                                    <a href="<?= site_url('admin/admin_controls/delete_gedung/'.$row['ID_GEDUNG']) ?>"
+                                        onclick="return confirm('Yakin ingin menghapus gedung ini?')"
+                                        class="px-3 py-1.5 text-xs bg-red-600 text-white rounded hover:bg-red-700">
+                                        Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
 
-</main>
-<!-- ================= END MAIN CONTENT ================= -->
+                        <?php if(empty($res)): ?>
+                        <tr>
+                            <td colspan="6" class="px-4 py-6 text-center text-slate-500">
+                                Data gedung belum tersedia
+                            </td>
+                        </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
 
-<!-- OPTIONAL JS (Materialize untuk table saja) -->
-<script src="<?= base_url('assets/home/assets/js/jquery.min.js') ?>"></script>
-<script src="<?= base_url('assets/home/materialize/js/materialize.js') ?>"></script>
+            <!-- PAGINATION -->
+            <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+                <button id="prevBtn" class="px-4 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 disabled:opacity-40">
+                    Prev
+                </button>
+
+                <span id="pageInfo" class="text-sm text-slate-600 text-center"></span>
+
+                <div class="flex items-center gap-3">
+                    <select id="rowsPerPage" class="rounded-lg border px-3 py-2 text-sm">
+                        <option value="5">5 rows</option>
+                        <option value="10" selected>10 rows</option>
+                        <option value="25">25 rows</option>
+                    </select>
+
+                    <button id="nextBtn"
+                        class="px-4 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 disabled:opacity-40">
+                        Next
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- PAGINATION SCRIPT -->
+    <script>
+    const rows = document.querySelectorAll(".table-row");
+    const rowsPerPageSelect = document.getElementById("rowsPerPage");
+    const pageInfo = document.getElementById("pageInfo");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+
+    let currentPage = 1;
+    let rowsPerPage = parseInt(rowsPerPageSelect.value);
+
+    function renderTable() {
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+
+        rows.forEach((row, index) => {
+            row.style.display = index >= start && index < end ? "" : "none";
+        });
+
+        const totalPages = Math.ceil(rows.length / rowsPerPage) || 1;
+        pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
+
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = currentPage === totalPages;
+    }
+
+    rowsPerPageSelect.onchange = () => {
+        rowsPerPage = parseInt(rowsPerPageSelect.value);
+        currentPage = 1;
+        renderTable();
+    };
+
+    prevBtn.onclick = () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderTable();
+        }
+    };
+
+    nextBtn.onclick = () => {
+        if (currentPage < Math.ceil(rows.length / rowsPerPage)) {
+            currentPage++;
+            renderTable();
+        }
+    };
+
+    renderTable();
+    </script>
 
 </body>
-</body>
+
 </html>
