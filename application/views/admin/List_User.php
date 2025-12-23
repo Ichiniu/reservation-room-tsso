@@ -3,64 +3,157 @@ $session_id = $this->session->userdata('username');
 $this->load->helper('text');
 ?>
 <!DOCTYPE html>
-<html lang="en">
-    <head>
+<html lang="id">
+
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Admin Smart Office</title>
 
-    <!-- Favicons -->
-    <link rel="apple-touch-icon-precomposed" href="<?= base_url('assets/home/assets/img/favicon/apple-touch-icon-152x152.png') ?>">
-    <meta name="msapplication-TileColor" content="#FFFFFF">
-    <meta name="msapplication-TileImage" content="<?= base_url('assets/home/assets/img/favicon/mstile-144x144.png') ?>">
-    <link rel="icon" href="<?= base_url('assets/home/assets/img/favicon/favicon-32x32.png') ?>" sizes="32x32">
-
-    <!-- Tailwind CSS -->
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Materialize (UNTUK TABLE & GRID SAJA) -->
+    <!-- Materialize -->
     <link href="<?= base_url('assets/home/materialize/css/materialize.css') ?>" rel="stylesheet">
     <link href="<?= base_url('assets/home/style.css') ?>" rel="stylesheet">
 </head>
-    <body class="bg-gray-50">
-        <!-- ================= SIDEBAR COMPONENT ================= -->
-<?php $this->load->view('admin/components/sidebar'); ?>
-<!-- ===================================================== -->
 
-<!-- ================= MAIN CONTENT ================= -->
-<main class="pt-24 pl-0 md:pl-64 px-6">
-            <div class="container">
-                  <div class="nav-wrapper">
-                  <table class="bordered" style="width: 1000px">
-                  	<tr>
-                  		<th>No</th>
-                  		<th>Username</th>
-                  		<th>Email</th>
-                  		<th>No Telepon</th>
-                  		<th>Alamat User</th>
-                  		<th>Tanggal Lahir</th>
-                  	</tr>
-                  	<tr>
-                  	<?php $no = 0; foreach($res as $row): $no++; $date = date_create($row['TANGGAL_LAHIR']);?>
-                  		<td><?php echo $no; ?></td>
-                  		<td hidden="true"><?php echo $row['ID_GEDUNG'] ?></td>
-                  		<td><?php echo $row['USERNAME']; ?></td>
-                  		<td><?php echo $row['EMAIL']; ?></td>
-                  		<td><?php echo $row['NO_TELEPON']; ?></td>
-                  		<td><?php echo $row['ALAMAT']; ?></td>
-                  		<td><?php echo date_format($date, "d F Y"); ?></td>
-                  	</tr>
-                  	<?php endforeach; ?>
-                  </table>
-                  </div>
+<body class="bg-slate-200 min-h-screen">
+
+    <!-- SIDEBAR -->
+    <?php $this->load->view('admin/components/sidebar'); ?>
+
+    <!-- MAIN -->
+    <main class="pt-24 pl-0 md:pl-64 px-4 md:px-6 pb-10">
+
+        <!-- HEADER -->
+        <div class="max-w-6xl mx-auto mb-6">
+            <h1 class="text-2xl font-bold text-slate-800">Daftar User</h1>
+            <p class="text-sm text-slate-500">Data pengguna yang terdaftar</p>
+        </div>
+
+        <!-- CARD -->
+        <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-md p-6">
+
+            <div class="overflow-x-auto max-h-[420px] overflow-y-auto relative">
+                <table class="w-full text-sm border border-slate-200 rounded-lg bg-white">
+                    <thead class="sticky top-0 z-20 bg-slate-100 shadow-sm">
+                        <tr>
+                            <th class="px-4 py-3 text-center">No</th>
+                            <th class="px-4 py-3 text-center">Username</th>
+                            <th class="px-4 py-3 text-center">Email</th>
+                            <th class="px-4 py-3 text-center">No Telepon</th>
+                            <th class="px-4 py-3 text-center">Alamat</th>
+                            <th class="px-4 py-3 text-center">Tanggal Lahir</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="tableBody" class="divide-y">
+                        <?php $no=1; foreach($res as $row):
+$date = date_create($row['TANGGAL_LAHIR']);
+?>
+                        <tr class="table-row hover:bg-slate-50">
+                            <td class="px-4 py-3 text-center"><?= $no++ ?></td>
+                            <td class="px-4 py-3 text-center font-medium"><?= $row['USERNAME']; ?></td>
+                            <td class="px-4 py-3 text-center"><?= $row['EMAIL']; ?></td>
+                            <td class="px-4 py-3 text-center"><?= $row['NO_TELEPON']; ?></td>
+                            <td class="px-4 py-3 text-center"><?= $row['ALAMAT']; ?></td>
+                            <td class="px-4 py-3 text-center">
+                                <?= date_format($date, "d F Y"); ?>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+
+                        <?php if(empty($res)): ?>
+                        <tr>
+                            <td colspan="6" class="px-4 py-6 text-center text-slate-500">
+                                Data user belum tersedia
+                            </td>
+                        </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
             </div>
-</main>
-<!-- ================= END MAIN CONTENT ================= -->
 
-<!-- OPTIONAL JS (Materialize untuk table saja) -->
-<script src="<?= base_url('assets/home/assets/js/jquery.min.js') ?>"></script>
-<script src="<?= base_url('assets/home/materialize/js/materialize.js') ?>"></script>
+            <!-- PAGINATION -->
+            <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+                <!-- PREV -->
+                <button id="prevBtn" class="px-4 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 disabled:opacity-40">
+                    Prev
+                </button>
+
+                <!-- INFO -->
+                <span id="pageInfo" class="text-sm text-slate-600 text-center"></span>
+
+                <!-- NEXT + ROWS -->
+                <div class="flex items-center gap-3">
+                    <select id="rowsPerPage" class="rounded-lg border px-3 py-2 text-sm">
+                        <option value="5">5 rows</option>
+                        <option value="10" selected>10 rows</option>
+                        <option value="25">25 rows</option>
+                    </select>
+
+                    <button id="nextBtn"
+                        class="px-4 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 disabled:opacity-40">
+                        Next
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- PAGINATION SCRIPT -->
+    <script>
+    const rows = document.querySelectorAll(".table-row");
+    const rowsPerPageSelect = document.getElementById("rowsPerPage");
+    const pageInfo = document.getElementById("pageInfo");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+
+    let currentPage = 1;
+    let rowsPerPage = parseInt(rowsPerPageSelect.value);
+
+    function renderTable() {
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+
+        rows.forEach((row, index) => {
+            row.style.display = index >= start && index < end ? "" : "none";
+        });
+
+        const totalPages = Math.ceil(rows.length / rowsPerPage) || 1;
+        pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
+
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = currentPage === totalPages;
+    }
+
+    rowsPerPageSelect.addEventListener("change", () => {
+        rowsPerPage = parseInt(rowsPerPageSelect.value);
+        currentPage = 1;
+        renderTable();
+    });
+
+    prevBtn.onclick = () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderTable();
+        }
+    };
+
+    nextBtn.onclick = () => {
+        const totalPages = Math.ceil(rows.length / rowsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderTable();
+        }
+    };
+
+    renderTable();
+    </script>
 
 </body>
+
 </html>

@@ -13,7 +13,7 @@ $this->load->helper('form');
     :root {
         --ts-main: #2A7C80;     /* warna teal logo */
         --ts-dark: #225F62;
-        --ts-light: #E1F1F1;
+        --ts-light: #E1F1F156;
     }
 
     body {
