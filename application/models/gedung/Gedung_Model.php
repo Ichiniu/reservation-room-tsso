@@ -453,4 +453,5 @@ public function jadwal_gedung_upcoming() {
 		$sql = $this->db->query($query);
 		return $sql->result_array();
 	}
+	
 }

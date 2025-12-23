@@ -20,8 +20,6 @@ $this->load->helper('text');
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Materialize (UNTUK TABLE & GRID SAJA) -->
-    <link href="<?= base_url('assets/home/materialize/css/materialize.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('assets/home/style.css') ?>" rel="stylesheet">
 </head>
 
 <body class="bg-gray-50">
@@ -61,11 +59,7 @@ $this->load->helper('text');
                 </div>
             </div>
             </header>
-            <</main>
+            </main>
 <!-- ================= END MAIN CONTENT ================= -->
-
-<!-- OPTIONAL JS (Materialize untuk table saja) -->
-<script src="<?= base_url('assets/home/assets/js/jquery.min.js') ?>"></script>
-<script src="<?= base_url('assets/home/materialize/js/materialize.js') ?>"></script>
 </body>
 </html>

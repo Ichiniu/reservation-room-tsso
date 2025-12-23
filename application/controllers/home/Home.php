@@ -332,4 +332,77 @@ public function index() {
 		$data['flag'] = $this->gedung_model->get_pemesanan_flag($username);
 		$this->load->view('home/search_gedung', $data);
 	}
+
+	public function upload_bukti()
+{
+    $this->load->helper(['form','url']);
+    $this->load->model('pembayaran/pembayaran_model');
+    $this->load->model('gedung/gedung_model');
+    $this->load->library('upload');
+
+    $username = $this->session->userdata('username');
+
+    // ambil data dari form
+    $id_pemesanan_view = $this->input->post('id_pemesanan', TRUE);      // contoh: PMSN00031 (dari view)
+    $id_pemesanan_raw  = (int)$this->input->post('id_pemesanan_raw', TRUE); // contoh: 31 (int)
+
+    $atas_nama         = $this->input->post('atas_nama', TRUE);
+    $tanggal_transfer  = $this->input->post('tanggal_transfer', TRUE);
+    $bank_pengirim     = $this->input->post('bank_pengirim', TRUE);
+    $nominal_transfer  = (int)$this->input->post('nominal_transfer', TRUE);
+
+    // (opsional tapi bagus) pastikan pesanan ini milik user yang login
+    $detail = $this->gedung_model->get_detail_pesanan($id_pemesanan_view);
+    if (!$detail || $detail->USERNAME !== $username) {
+        show_error('Pemesanan tidak valid.');
+        return;
+    }
+
+    // upload bukti (gambar)
+    $upload_path = FCPATH . 'assets/images/client-bukti-pembayaran/';
+    $image_path  = base_url('assets/images/client-bukti-pembayaran/');
+
+    if (!is_dir($upload_path)) {
+        @mkdir($upload_path, 0755, true);
+    }
+
+    $filename = 'client-trf_' . date('dmY_His'); // tanpa ekstensi, CI akan menambahkan sesuai file
+
+    $config = [
+        'upload_path'   => $upload_path,
+        'allowed_types' => 'jpg|jpeg|png',
+        'max_size'      => 2048, // 2MB
+        'file_name'     => $filename,
+        'overwrite'     => false,
+    ];
+
+    $this->upload->initialize($config);
+
+    if (!$this->upload->do_upload('bukti')) {
+        $this->session->set_flashdata('error', strip_tags($this->upload->display_errors()));
+        redirect('home/pemesanan/details/' . $id_pemesanan_view);
+        return;
+    }
+
+    $upload_data = $this->upload->data(); // data file yang sudah sukses diupload
+
+    // simpan ke tabel pembayaran
+    $data = [
+        'ID_PEMESANAN'      => $id_pemesanan_raw,
+        'ATAS_NAMA'         => $atas_nama,
+        'NOMINAL_TRANSFER'  => $nominal_transfer,
+        'BANK_PENGIRIM'     => $bank_pengirim,
+        'TANGGAL_TRANSFER'  => $tanggal_transfer,
+        'FLAG'              => 0, // 0 = belum dibaca admin (badge admin akan naik)
+        'PATH'              => $image_path,
+        'IMG_NAME'          => $upload_data['file_name'], // sudah termasuk ext
+        // KODE_PEMBAYARAN & KODE_PEMESANAN akan pakai DEFAULT dari DB (TRS000 / PMSN000)
+    ];
+
+    $this->pembayaran_model->insert_pembayaran($data);
+
+    $this->session->set_flashdata('success', 'Bukti pembayaran berhasil dikirim.');
+    redirect('home/pemesanan');
+}
+
 }

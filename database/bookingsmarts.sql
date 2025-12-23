@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 17 Des 2025 pada 03.59
--- Versi Server: 10.1.21-MariaDB
+-- Generation Time: Dec 22, 2025 at 09:53 AM
+-- Server version: 10.1.21-MariaDB
 -- PHP Version: 5.6.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -17,13 +17,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `warsito`
+-- Database: `bookingsmarts`
 --
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `catering`
+-- Table structure for table `catering`
 --
 
 CREATE TABLE `catering` (
@@ -36,7 +36,7 @@ CREATE TABLE `catering` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data untuk tabel `catering`
+-- Dumping data for table `catering`
 --
 
 INSERT INTO `catering` (`ID_CATERING`, `NAMA_PAKET`, `MENU_PEMBUKA`, `MENU_UTAMA`, `MENU_PENUTUP`, `HARGA`) VALUES
@@ -50,7 +50,7 @@ INSERT INTO `catering` (`ID_CATERING`, `NAMA_PAKET`, `MENU_PEMBUKA`, `MENU_UTAMA
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `gedung`
+-- Table structure for table `gedung`
 --
 
 CREATE TABLE `gedung` (
@@ -63,7 +63,7 @@ CREATE TABLE `gedung` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data untuk tabel `gedung`
+-- Dumping data for table `gedung`
 --
 
 INSERT INTO `gedung` (`ID_GEDUNG`, `NAMA_GEDUNG`, `KAPASITAS`, `ALAMAT`, `HARGA_SEWA`, `DESKRIPSI_GEDUNG`) VALUES
@@ -75,7 +75,7 @@ INSERT INTO `gedung` (`ID_GEDUNG`, `NAMA_GEDUNG`, `KAPASITAS`, `ALAMAT`, `HARGA_
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `gedung_img`
+-- Table structure for table `gedung_img`
 --
 
 CREATE TABLE `gedung_img` (
@@ -87,23 +87,23 @@ CREATE TABLE `gedung_img` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data untuk tabel `gedung_img`
+-- Dumping data for table `gedung_img`
 --
 
 INSERT INTO `gedung_img` (`ID_IMG`, `ID_GEDUNG`, `NAMA_GEDUNG`, `PATH`, `IMG_NAME`) VALUES
-(1, 1, 'The Ritz Carlton', 'http://localhost/Warsito/assets/images/gedung/', 'am2.jpeg'),
-(2, 2, 'Pullman Hotel Jakarta', 'http://localhost/Warsito/assets/images/gedung/', 'ast3.jpeg'),
-(3, 3, 'Hotel Santika Bintaro', 'http://localhost/Warsito/assets/images/gedung/', 'ast2.jpeg'),
-(4, 4, 'Milennium Hotel Jakarta', 'http://localhost/Warsito/assets/images/gedung/', 'am5.jpeg'),
-(7, 1, 'The Ritz Carlton', 'http://localhost/Warsito/assets/images/gedung/', 'am2.jpeg'),
-(8, 1, 'The Ritz Carlton', 'http://localhost/Warsito/assets/images/gedung/', 'am3.jpeg'),
-(9, 1, 'The Ritz Carlton', 'http://localhost/Warsito/assets/images/gedung/', 'am4.jpeg');
+(1, 1, 'The Ritz Carlton', 'http://localhost/BookingSmartOffice/assets/images/gedung/', 'am2.jpeg'),
+(2, 2, 'Pullman Hotel Jakarta', 'http://localhost/BookingSmartOffice/assets/images/gedung/', 'ast3.jpeg'),
+(3, 3, 'Hotel Santika Bintaro', 'http://localhost/BookingSmartOffice/assets/images/gedung/', 'ast2.jpeg'),
+(4, 4, 'Milennium Hotel Jakarta', 'http://localhost/BookingSmartOffice/assets/images/gedung/', 'am5.jpeg'),
+(7, 1, 'The Ritz Carlton', 'http://localhost/BookingSmartOffice/assets/images/gedung/', 'am2.jpeg'),
+(8, 1, 'The Ritz Carlton', 'http://localhost/BookingSmartOffice/assets/images/gedung/', 'am3.jpeg'),
+(9, 1, 'The Ritz Carlton', 'http://localhost/BookingSmartOffice/assets/images/gedung/', 'am4.jpeg');
 
 -- --------------------------------------------------------
 
 --
 -- Stand-in structure for view `home_data`
--- (Lihat di bawah untuk tampilan aktual)
+-- (See below for the actual view)
 --
 CREATE TABLE `home_data` (
 `ID_GEDUNG` int(11)
@@ -117,7 +117,7 @@ CREATE TABLE `home_data` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `pembayaran`
+-- Table structure for table `pembayaran`
 --
 
 CREATE TABLE `pembayaran` (
@@ -135,7 +135,7 @@ CREATE TABLE `pembayaran` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data untuk tabel `pembayaran`
+-- Dumping data for table `pembayaran`
 --
 
 INSERT INTO `pembayaran` (`KODE_PEMBAYARAN`, `ID_PEMBAYARAN`, `KODE_PEMESANAN`, `ID_PEMESANAN`, `ATAS_NAMA`, `NOMINAL_TRANSFER`, `BANK_PENGIRIM`, `TANGGAL_TRANSFER`, `FLAG`, `PATH`, `IMG_NAME`) VALUES
@@ -147,7 +147,7 @@ INSERT INTO `pembayaran` (`KODE_PEMBAYARAN`, `ID_PEMBAYARAN`, `KODE_PEMESANAN`, 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `pemesanan`
+-- Table structure for table `pemesanan`
 --
 
 CREATE TABLE `pemesanan` (
@@ -167,7 +167,7 @@ CREATE TABLE `pemesanan` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data untuk tabel `pemesanan`
+-- Dumping data for table `pemesanan`
 --
 
 INSERT INTO `pemesanan` (`ID_PEMESANAN`, `USERNAME`, `EMAIL`, `TANGGAL_PEMESANAN`, `JAM_PEMESANAN`, `TIPE_JAM`, `JAM_SELESAI`, `ID_CATERING`, `ID_GEDUNG`, `JUMLAH_CATERING`, `STATUS`, `REMARKS`, `FLAG`) VALUES
@@ -188,12 +188,20 @@ INSERT INTO `pemesanan` (`ID_PEMESANAN`, `USERNAME`, `EMAIL`, `TANGGAL_PEMESANAN
 (32, 'pogbay', 'antonprio22@gmail.com', '2025-12-27', '08:00:00', 'HALF_DAY', '12:00:00', NULL, 4, NULL, 1, NULL, 2),
 (33, 'pogbay', 'antonprio22@gmail.com', '2026-01-01', '14:40:00', 'CUSTOM', '16:00:00', NULL, 2, NULL, 1, NULL, 2),
 (34, 'pogbay', 'antonprio22@gmail.com', '2025-12-27', '15:00:00', 'CUSTOM', '17:00:00', NULL, 2, NULL, 1, NULL, 2),
-(35, 'awkarin', 'awakarin_gendut@gmail.com', '2026-02-02', '08:00:00', 'HALF_DAY', '12:00:00', NULL, 1, NULL, 1, NULL, 2);
+(35, 'awkarin', 'awakarin_gendut@gmail.com', '2026-02-02', '08:00:00', 'HALF_DAY', '12:00:00', NULL, 1, NULL, 1, NULL, 2),
+(36, 'Wahyu', 'WAHYU@GMAIL.COM', '2026-02-17', '13:00:00', '', '16:00:00', NULL, 3, NULL, 1, NULL, 2),
+(37, 'Wahyu', 'WAHYU@GMAIL.COM', '2026-01-22', '13:00:00', '', '16:00:00', NULL, 1, NULL, 1, NULL, 2),
+(38, 'Wahyu', 'WAHYU@GMAIL.COM', '2026-06-30', '08:00:00', 'FULL_DAY', '17:00:00', NULL, 1, NULL, 0, NULL, 2),
+(39, 'Wahyu', 'WAHYU@GMAIL.COM', '2026-06-30', '08:00:00', 'FULL_DAY', '17:00:00', NULL, 1, NULL, 1, NULL, 2),
+(40, 'Wahyu', 'WAHYU@GMAIL.COM', '2026-04-09', '10:00:00', 'CUSTOM', '15:00:00', NULL, 3, NULL, 0, NULL, 2),
+(41, 'Wahyu', 'WAHYU@GMAIL.COM', '2026-09-30', '08:00:00', 'FULL_DAY', '17:00:00', NULL, 3, NULL, 0, NULL, 2),
+(42, 'Wahyu', 'WAHYU@GMAIL.COM', '2026-09-30', '08:00:00', 'FULL_DAY', '17:00:00', NULL, 3, NULL, 0, NULL, 0),
+(43, 'Wahyu', 'WAHYU@GMAIL.COM', '2026-06-26', '08:00:00', '', '12:00:00', 1, 3, 10, 1, NULL, 2);
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `pemesanan_details`
+-- Table structure for table `pemesanan_details`
 --
 
 CREATE TABLE `pemesanan_details` (
@@ -205,7 +213,7 @@ CREATE TABLE `pemesanan_details` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data untuk tabel `pemesanan_details`
+-- Dumping data for table `pemesanan_details`
 --
 
 INSERT INTO `pemesanan_details` (`ID_DETAILS`, `ID_PEMESANAN`, `PATH`, `FILE_NAME`, `DESKRIPSI_ACARA`) VALUES
@@ -213,12 +221,16 @@ INSERT INTO `pemesanan_details` (`ID_DETAILS`, `ID_PEMESANAN`, `PATH`, `FILE_NAM
 (14, 32, 'http://localhost/Warsito/assets/user-proposal/', 'pogbay_16122025_043945.pdf', 'mancing'),
 (15, 33, 'http://localhost/Warsito/assets/user-proposal/', 'pogbay_16122025_073739.pdf', 'SOK SIBUK AJA SIH'),
 (16, 34, 'http://localhost/Warsito/assets/user-proposal/', 'pogbay_16122025_074235.pdf', 'BELAJAR AJA SI'),
-(17, 35, 'http://localhost/Warsito/assets/user-proposal/', 'awkarin_16122025_082619.pdf', 'bagi bagi sembakoo');
+(17, 35, 'http://localhost/Warsito/assets/user-proposal/', 'awkarin_16122025_082619.pdf', 'bagi bagi sembakoo'),
+(18, 36, 'http://localhost/Warsito/assets/user-proposal/', 'Wahyu_17122025_075737.pdf', 'TESTING TERBARU'),
+(19, 39, 'http://localhost/Warsito/assets/user-proposal/', 'Wahyu_18122025_032453.pdf', 'memandu untuk paymen'),
+(20, 42, 'http://localhost/BookingSmartOffice/assets/user-proposal/', 'Wahyu_19122025_031230.pdf', 'TESTING DB BARU'),
+(21, 43, 'http://localhost/BookingSmartOffice/assets/user-proposal/', 'Wahyu_22122025_025107.pdf', '');
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `pemesanan_fix_detail`
+-- Table structure for table `pemesanan_fix_detail`
 --
 
 CREATE TABLE `pemesanan_fix_detail` (
@@ -232,7 +244,7 @@ CREATE TABLE `pemesanan_fix_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data untuk tabel `pemesanan_fix_detail`
+-- Dumping data for table `pemesanan_fix_detail`
 --
 
 INSERT INTO `pemesanan_fix_detail` (`ID_FIX_DETAIL`, `ID_PEMESANAN`, `USERNAME`, `TANGGAL_APPROVAL`, `TANGGAL_FINAL_PEMESANAN`, `TANGGAL_DEADLINE`, `FINAL_STATUS`) VALUES
@@ -246,12 +258,16 @@ INSERT INTO `pemesanan_fix_detail` (`ID_FIX_DETAIL`, `ID_PEMESANAN`, `USERNAME`,
 (50, 33, 'pogbay', '2025-12-16', '2026-01-01', '2025-12-18', 1),
 (51, 34, 'pogbay', '2025-12-16', '2025-12-27', '2025-12-18', 1),
 (52, 35, 'awkarin', '2025-12-16', '2026-02-02', '2025-12-18', 1),
-(53, 25, 'awkarin', '2025-12-17', '2025-12-30', '2025-12-19', 1);
+(53, 25, 'awkarin', '2025-12-17', '2025-12-30', '2025-12-19', 1),
+(54, 36, 'Wahyu', '2025-12-17', '2026-02-17', '2025-12-19', 1),
+(55, 37, 'Wahyu', '2025-12-18', '2026-01-22', '2025-12-20', 1),
+(56, 39, 'Wahyu', '2025-12-18', '2026-06-30', '2025-12-20', 1),
+(57, 43, 'Wahyu', '2025-12-22', '2026-06-26', '2025-12-24', 1);
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `perawatan`
+-- Table structure for table `perawatan`
 --
 
 CREATE TABLE `perawatan` (
@@ -266,7 +282,7 @@ CREATE TABLE `perawatan` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data untuk tabel `perawatan`
+-- Dumping data for table `perawatan`
 --
 
 INSERT INTO `perawatan` (`ID_PERAWATAN`, `NO_ID`, `NAMA_PERAWATAN`, `NAMA_GEDUNG`, `TANGGAL_PEMBAYARAN`, `BIAYA`, `PATH`, `IMG_NAME`) VALUES
@@ -278,7 +294,7 @@ INSERT INTO `perawatan` (`ID_PERAWATAN`, `NO_ID`, `NAMA_PERAWATAN`, `NAMA_GEDUNG
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `user`
+-- Table structure for table `user`
 --
 
 CREATE TABLE `user` (
@@ -292,32 +308,35 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data untuk tabel `user`
+-- Dumping data for table `user`
 --
 
 INSERT INTO `user` (`USERNAME`, `NAMA_LENGKAP`, `PASSWORD`, `EMAIL`, `NO_TELEPON`, `ALAMAT`, `TANGGAL_LAHIR`) VALUES
 ('antonprio', 'Anton Prio Hutomo', '123321', 'antonpriohutomo@gmail.com', '087877878215', 'Jl. Bintaro Raya 6 No 18 RT 011 RW 12 Tangerang Selatan Banten Indonesia 11232', '1995-01-22'),
 ('awkarin', 'Karin Novilda', 'awkarin', 'awakarin_gendut@gmail.com', '08562443213', 'Jl. Pembangunan Jaya no 11 Bintaro Tangerang Selatan', '1997-06-04'),
 ('pogbay', 'Paul Pogbay Anapi', 'qwerty', 'antonprio22@gmail.com', '0217810626', 'Jl. Tegalrotan 3 No 11 RT 03 RW 01 Kelurahan Pondok Aren Kecamatan Jurangmangu Tangerang Selatan', '1992-01-03'),
+('Wahyu', 'WAHYUUUUU', 'Wahyu', 'WAHYU@GMAIL.COM', '2899999999999', 'CENTER AFRIKA', '2009-02-12'),
 ('warsiwan', 'Muhammad Warsito Dzakwan Valdiansyah Rakhman', 'password123', 'antonprio22@gmail.com', '08134457833', 'Jl. Sepatan Utara No 11 Sepatan Barat Kabupaten Tangerang, Provinsi Banten ', '1992-06-14');
 
 -- --------------------------------------------------------
 
 --
 -- Stand-in structure for view `v_pemesanan`
--- (Lihat di bawah untuk tampilan aktual)
+-- (See below for the actual view)
 --
 CREATE TABLE `v_pemesanan` (
 `ID_PEMESANAN` varchar(18)
 ,`USERNAME` varchar(255)
 ,`TANGGAL_PEMESANAN` date
+,`JAM_PEMESANAN` time
+,`JAM_SELESAI` time
 ,`EMAIL` varchar(100)
 ,`JUMLAH_CATERING` varchar(11)
 ,`NAMA_PAKET` varchar(225)
 ,`NAMA_GEDUNG` varchar(255)
 ,`HARGA_SATUAN` bigint(15)
 ,`TOTAL_HARGA` bigint(30)
-,`STATUS` varchar(23)
+,`STATUS` varchar(16)
 ,`HARGA_SEWA` bigint(11)
 ,`TOTAL_KESELURUHAN` bigint(31)
 ,`DESKRIPSI_ACARA` varchar(225)
@@ -327,7 +346,7 @@ CREATE TABLE `v_pemesanan` (
 -- --------------------------------------------------------
 
 --
--- Struktur untuk view `home_data`
+-- Structure for view `home_data`
 --
 DROP TABLE IF EXISTS `home_data`;
 
@@ -336,11 +355,11 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 -- --------------------------------------------------------
 
 --
--- Struktur untuk view `v_pemesanan`
+-- Structure for view `v_pemesanan`
 --
 DROP TABLE IF EXISTS `v_pemesanan`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_pemesanan`  AS  select concat('PMSN000',`p`.`ID_PEMESANAN`) AS `ID_PEMESANAN`,`p`.`USERNAME` AS `USERNAME`,`p`.`TANGGAL_PEMESANAN` AS `TANGGAL_PEMESANAN`,`p`.`EMAIL` AS `EMAIL`,coalesce(`p`.`JUMLAH_CATERING`,'Tidak Ada') AS `JUMLAH_CATERING`,coalesce(`c`.`NAMA_PAKET`,'Tidak Ada') AS `NAMA_PAKET`,`g`.`NAMA_GEDUNG` AS `NAMA_GEDUNG`,`c`.`HARGA` AS `HARGA_SATUAN`,coalesce((`c`.`HARGA` * `p`.`JUMLAH_CATERING`),0) AS `TOTAL_HARGA`,(case `p`.`STATUS` when 0 then 'PENDING' when 1 then 'DISETUJUI' when 2 then 'DITOLAK' when 3 then 'CANCELED WITH REFUND' when 4 then 'CANCELED WITHOUT REFUND' end) AS `STATUS`,`g`.`HARGA_SEWA` AS `HARGA_SEWA`,(`g`.`HARGA_SEWA` + coalesce((`c`.`HARGA` * `p`.`JUMLAH_CATERING`),0)) AS `TOTAL_KESELURUHAN`,`pemesanan_details`.`DESKRIPSI_ACARA` AS `DESKRIPSI_ACARA`,`p`.`REMARKS` AS `REMARKS` from (((`pemesanan` `p` left join `catering` `c` on((`c`.`ID_CATERING` = `p`.`ID_CATERING`))) left join `gedung` `g` on((`g`.`ID_GEDUNG` = `p`.`ID_GEDUNG`))) left join `pemesanan_details` on((`pemesanan_details`.`ID_PEMESANAN` = `p`.`ID_PEMESANAN`))) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_pemesanan`  AS  select concat('PMSN000',`p`.`ID_PEMESANAN`) AS `ID_PEMESANAN`,`p`.`USERNAME` AS `USERNAME`,`p`.`TANGGAL_PEMESANAN` AS `TANGGAL_PEMESANAN`,`p`.`JAM_PEMESANAN` AS `JAM_PEMESANAN`,`p`.`JAM_SELESAI` AS `JAM_SELESAI`,`p`.`EMAIL` AS `EMAIL`,coalesce(`p`.`JUMLAH_CATERING`,'Tidak Ada') AS `JUMLAH_CATERING`,coalesce(`c`.`NAMA_PAKET`,'Tidak Ada') AS `NAMA_PAKET`,`g`.`NAMA_GEDUNG` AS `NAMA_GEDUNG`,`c`.`HARGA` AS `HARGA_SATUAN`,coalesce((`c`.`HARGA` * `p`.`JUMLAH_CATERING`),0) AS `TOTAL_HARGA`,(case `p`.`STATUS` when 0 then 'PROCESS' when 1 then 'PROPOSAL APPROVE' when 2 then 'APPROVE & PAID' when 3 then 'SUBMITED' when 4 then 'REJECTED' else 'UNKNOWN' end) AS `STATUS`,`g`.`HARGA_SEWA` AS `HARGA_SEWA`,(`g`.`HARGA_SEWA` + coalesce((`c`.`HARGA` * `p`.`JUMLAH_CATERING`),0)) AS `TOTAL_KESELURUHAN`,`pemesanan_details`.`DESKRIPSI_ACARA` AS `DESKRIPSI_ACARA`,`p`.`REMARKS` AS `REMARKS` from (((`pemesanan` `p` left join `catering` `c` on((`c`.`ID_CATERING` = `p`.`ID_CATERING`))) left join `gedung` `g` on((`g`.`ID_GEDUNG` = `p`.`ID_GEDUNG`))) left join `pemesanan_details` on((`pemesanan_details`.`ID_PEMESANAN` = `p`.`ID_PEMESANAN`))) ;
 
 --
 -- Indexes for dumped tables
@@ -434,34 +453,34 @@ ALTER TABLE `pembayaran`
 -- AUTO_INCREMENT for table `pemesanan`
 --
 ALTER TABLE `pemesanan`
-  MODIFY `ID_PEMESANAN` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `ID_PEMESANAN` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 --
 -- AUTO_INCREMENT for table `pemesanan_details`
 --
 ALTER TABLE `pemesanan_details`
-  MODIFY `ID_DETAILS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `ID_DETAILS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 --
 -- AUTO_INCREMENT for table `pemesanan_fix_detail`
 --
 ALTER TABLE `pemesanan_fix_detail`
-  MODIFY `ID_FIX_DETAIL` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
+  MODIFY `ID_FIX_DETAIL` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
 --
 -- AUTO_INCREMENT for table `perawatan`
 --
 ALTER TABLE `perawatan`
   MODIFY `ID_PERAWATAN` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 --
--- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
+-- Constraints for dumped tables
 --
 
 --
--- Ketidakleluasaan untuk tabel `gedung_img`
+-- Constraints for table `gedung_img`
 --
 ALTER TABLE `gedung_img`
   ADD CONSTRAINT `gedung_img_ibfk_1` FOREIGN KEY (`ID_GEDUNG`) REFERENCES `gedung` (`ID_GEDUNG`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Ketidakleluasaan untuk tabel `pemesanan`
+-- Constraints for table `pemesanan`
 --
 ALTER TABLE `pemesanan`
   ADD CONSTRAINT `pemesanan_ibfk_1` FOREIGN KEY (`USERNAME`) REFERENCES `user` (`USERNAME`),
@@ -469,13 +488,13 @@ ALTER TABLE `pemesanan`
   ADD CONSTRAINT `pemesanan_ibfk_3` FOREIGN KEY (`ID_CATERING`) REFERENCES `catering` (`ID_CATERING`);
 
 --
--- Ketidakleluasaan untuk tabel `pemesanan_details`
+-- Constraints for table `pemesanan_details`
 --
 ALTER TABLE `pemesanan_details`
   ADD CONSTRAINT `pemesanan_details_ibfk_1` FOREIGN KEY (`ID_PEMESANAN`) REFERENCES `pemesanan` (`ID_PEMESANAN`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Ketidakleluasaan untuk tabel `pemesanan_fix_detail`
+-- Constraints for table `pemesanan_fix_detail`
 --
 ALTER TABLE `pemesanan_fix_detail`
   ADD CONSTRAINT `pemesanan_fix_detail_ibfk_1` FOREIGN KEY (`ID_PEMESANAN`) REFERENCES `pemesanan` (`ID_PEMESANAN`) ON DELETE CASCADE ON UPDATE CASCADE;

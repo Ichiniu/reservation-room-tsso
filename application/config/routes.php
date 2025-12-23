@@ -16,7 +16,13 @@ $route['home/order-gedung/(:any)'] = 'home/home/order_gedung/$1';
 $route['home/cancel-order/(:any)'] = 'home/home/cancel_order/$1';
 $route['home/(:any)/sort-by-capacity'] = 'home/home/sort_by_capacity';
 $route['home/jadwal'] = 'home/home/jadwal_gedung';
+$route['home/upload_bukti'] = 'home/home/upload_bukti'; 
+$route['home/upload_bukti'] = 'pembayaran/pembayaran/index';
 $route['home/(:any)'] = 'home/home';
+
+
+
+
 
 $route['pembayaran/frm_pembayaran'] = 'pembayaran/pembayaran/index';
 $route['registration/status'] = 'registration/registration/add_user';

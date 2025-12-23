@@ -19,5 +19,6 @@ class User_Model extends CI_Model {
 		$hasil = $sql->result_array();
 		return $hasil;
 	}
+	
 
 }
