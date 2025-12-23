@@ -48,18 +48,40 @@ $second_date_period = date_create($last_period);
                                 <th>Nama Gedung</th>
                                 <th>Tanggal Pemesanan</th>
                                 <th>Tanggal Approval</th>
-                                <th>Acara</th>
+                                <th>Kegiatan</th>
+                                <th>Jam Kegiatan</th>
                                 <th>Nama Pemesan</th>
                             </tr>
                             <?php foreach($hasil as $row): ?>
                             <?php $date = date_create($row['TANGGAL_FINAL_PEMESANAN']) ?>
                             <?php $date_approval = date_create($row['TANGGAL_APPROVAL']) ?>
+                            <?php
+                                $jamMulai = null;
+                                if (isset($row['JAM_MULAI']) && $row['JAM_MULAI'] != '') {
+                                    $jamMulai = $row['JAM_MULAI'];
+                                } elseif (isset($row['JAM_PEMESANAN']) && $row['JAM_PEMESANAN'] != '') {
+                                    $jamMulai = $row['JAM_PEMESANAN'];
+                                }
+
+                                $jamSelesai = null;
+                                if (isset($row['JAM_SELESAI']) && $row['JAM_SELESAI'] != '') {
+                                    $jamSelesai = $row['JAM_SELESAI'];
+                                }
+
+                                $jamText = '-';
+                                if (!empty($jamMulai) && !empty($jamSelesai)) {
+                                    $jamText = date('H:i', strtotime($jamMulai)) . ' - ' . date('H:i', strtotime($jamSelesai));
+                                } elseif (!empty($jamMulai)) {
+                                    $jamText = date('H:i', strtotime($jamMulai));
+                                }
+                                ?>
                             <tr>
                                 <td><?php echo $no++?></td>
                                 <td><?php echo $row['NAMA_GEDUNG']?></td>
                                 <td><?php echo date_format($date, 'd M Y')?></td>
                                 <td><?php echo date_format($date_approval, 'd M Y')?></td>
-                                <td><?php echo $row['DESKRIPSI_ACARA']?></td>
+                                <td><?php echo $row['DESKRIPSI_ACARA']?></td>                                
+                                <td><?php echo $jamText; ?></td>
                                 <td><?php echo $row['NAMA_LENGKAP']?></td>
                             </tr>
                             <?php endforeach;?>

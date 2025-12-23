@@ -254,7 +254,7 @@ public function index() {
         'ID_CATERING' => $this->input->post('catering', TRUE),
         'ID_GEDUNG' => $id_gedung,
         'JUMLAH_CATERING' => $this->input->post('jumlah-porsi', TRUE),
-        'STATUS' => 0
+        'STATUS' => 1
     );
 
     if ($tanggal_pesan < $min_pesan) {

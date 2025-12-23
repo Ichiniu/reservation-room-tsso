@@ -148,121 +148,6 @@ class Admin_Controls extends CI_Controller {
 		$filename = "Report Transaksi.pdf";
 		generate_pdf($object, $filename, true);
 	}
-
-	function pembayaran_listrik() {
-		$this->load->model('gedung/gedung_model');
-		$data['result'] = $this->gedung_model->get_pending_transaction();
-		$data['gedung'] = $this->gedung_model->get_gedung();		
-		
-		$upload_path = "./assets/images/bukti-pembayaran/";
-		$img_name = "Listrik_".date('dmY_his');
-		$config['upload_path'] = $upload_path;
-		$config['allowed_types'] = 'jpg|png';
-		$config['max_size'] = '800';
-		$config['max_width'] = '1000';
-		$config['max_height'] = '1000';
-		$config['file_name'] = $img_name;
-		$this->load->library('upload', $config);
-		$path = base_url().'assets/images/bukti-pembayaran/';
-		$submit = $this->input->post('submit');
-
-		if(!empty($submit)) {
-			if(!$this->upload->do_upload('bukti_pembayaran')) {
-				echo $this->upload->display_errors();
-		    } else {
-		    	$perawatan = array(
-		    		'NO_ID' => $this->input->post('no_id'),
-		    		'NAMA_PERAWATAN' => $this->input->post('nama_perawatan'),
-		    		'NAMA_GEDUNG' => $this->input->post('nama_gedung'),
-		    		'TANGGAL_PEMBAYARAN' => $this->input->post('tanggal_pembayaran'),
-		    		'NO_ID' => $this->input->post('no_id'),
-		    		'BIAYA' => $this->input->post('biaya'), 
-		    		'PATH' => $path,
-		    		'IMG_NAME' => $img_name
-		    		);
-		    	$this->gedung_model->insert_perawatan($perawatan);
-		    	redirect('admin/dashboard');
-		    }
-		}
-		$this->load->view('admin/pembayaran_listrik', $data);
-	}
-
-	function pembayaran_air() {
-		$this->load->model('gedung/gedung_model');
-		$data['result'] = $this->gedung_model->get_pending_transaction();
-		$data['gedung'] = $this->gedung_model->get_gedung();
-		
-		$upload_path = "./assets/images/bukti-pembayaran/";
-		$img_name = "Air_".date('dmY_his');
-		$config['upload_path'] = $upload_path;
-		$config['allowed_types'] = 'jpg|png';
-		$config['max_size'] = '800';
-		$config['max_width'] = '1000';
-		$config['max_height'] = '1000';
-		$config['file_name'] = $img_name;
-		$this->load->library('upload', $config);
-		$path = base_url().'assets/images/bukti-pembayaran/';
-		$submit = $this->input->post('submit');
-
-		if(!empty($submit)) {
-			if(!$this->upload->do_upload('bukti_pembayaran')) {
-				echo $this->upload->display_errors();
-		    } else {
-		    	$perawatan = array(
-		    		'NO_ID' => $this->input->post('no_id'),
-		    		'NAMA_PERAWATAN' => $this->input->post('nama_perawatan'),
-		    		'NAMA_GEDUNG' => $this->input->post('nama_gedung'),
-		    		'TANGGAL_PEMBAYARAN' => $this->input->post('tanggal_pembayaran'),
-		    		'NO_ID' => $this->input->post('no_id'),
-		    		'BIAYA' => $this->input->post('biaya'), 
-		    		'PATH' => $path,
-		    		'IMG_NAME' => $img_name
-		    		);
-		    	$this->gedung_model->insert_perawatan($perawatan);
-		    	redirect('admin/dashboard');
-		    }
-		}
-		$this->load->view('admin/pembayaran_air', $data);
-	}
-
-	function pembayaran_kebersihan() {
-		$this->load->model('gedung/gedung_model');
-		$data['result'] = $this->gedung_model->get_pending_transaction();
-		$data['gedung'] = $this->gedung_model->get_gedung();
-		
-		$upload_path = "./assets/images/bukti-pembayaran/";
-		$img_name = "Kebersihan_".date('dmY_his');
-		$config['upload_path'] = $upload_path;
-		$config['allowed_types'] = 'jpg|png';
-		$config['max_size'] = '800';
-		$config['max_width'] = '1000';
-		$config['max_height'] = '1000';
-		$config['file_name'] = $img_name;
-		$this->load->library('upload', $config);
-		$path = base_url().'assets/images/bukti-pembayaran/';
-		$submit = $this->input->post('submit');
-
-		if(!empty($submit)) {
-			if(!$this->upload->do_upload('bukti_pembayaran')) {
-				echo $this->upload->display_errors();
-		    } else {
-		    	$perawatan = array(
-		    		'NO_ID' => $this->input->post('no_id'),
-		    		'NAMA_PERAWATAN' => $this->input->post('nama_perawatan'),
-		    		'TANGGAL_PEMBAYARAN' => $this->input->post('tanggal_pembayaran'),
-		    		'NAMA_GEDUNG' => $this->input->post('nama_gedung'),
-		    		'NO_ID' => $this->input->post('no_id'),
-		    		'BIAYA' => $this->input->post('biaya'), 
-		    		'PATH' => $path,
-		    		'IMG_NAME' => $img_name
-		    		);
-		    	$this->gedung_model->insert_perawatan($perawatan);
-		    	redirect('admin/dashboard');
-		    }
-		}
-		$this->load->view('admin/pembayaran_kebersihan', $data);
-	}
-
 	function detail_pemesanan($id_pemesanan) {
 		$this->load->model('gedung/gedung_model');
 		$hasil['hasil'] = $this->gedung_model->get_detail_pesanan($id_pemesanan);
@@ -348,26 +233,27 @@ class Admin_Controls extends CI_Controller {
 			);
 
 		if(!empty($submit)) {
-			$status = $this->input->post('status-proposal');
-			$remarks =  $this->input->post('remarks');
+    $status  = (int)$this->input->post('status-proposal');
+    $remarks = $this->input->post('remarks');
 
-		    if($this->input->post('status-proposal') == 1) {
-		    	$this->gedung_model->insert_pemesanan_fix_detail($pemesanan_fix_detail);
-		    	$this->gedung_model->update_transaksi($temp_id, $status, $remarks);
-		    	$pesan = $this->load->view('admin/mail_body', $mail, true);
-		    	$this->send_mail($email, $pesan);
-		    	//$this->load->view('admin/mail_body', $mail);
-		    	redirect('admin/transaksi');
-		    } else if($this->input->post('status-proposal') == 2) {
-		    	$this->gedung_model->update_transaksi($temp_id, $status, $remarks);
-		    	$reject = $this->load->view('admin/reject_pesanan', $mail, true);
-		    	$this->gedung_model->update_transaksi($temp_id, $status, $remarks);
-		    	$this->send_mail($email, $reject);
-		    	redirect('admin/transaksi');
-		    	//$this->load->view('admin/reject_pesanan', $mail);
-		    }
-		}
+    // TERIMA PROPOSAL -> status 2 (Proposal Approved / Pending Payment)
+    if($status == 2) {
+        // JANGAN insert ke pemesanan_fix_detail di sini (biar tidak langsung final/submited)
+        $this->gedung_model->update_transaksi($temp_id, 2, '');
+        $pesan = $this->load->view('admin/mail_body', $mail, true);
+        $this->send_mail($email, $pesan);
+        redirect('admin/transaksi');
+
+    // TOLAK PROPOSAL -> status 5 (Rejected)
+    } else if($status == 5) {
+        $this->gedung_model->update_transaksi($temp_id, 5, $remarks);
+        $reject = $this->load->view('admin/reject_pesanan', $mail, true);
+        $this->send_mail($email, $reject);
+        redirect('admin/transaksi');
+		
+    		}
 	}
+}
 
 	function send_mail($to_email, $pesan) {
 		$from_email = "Admin Pembayaran";
