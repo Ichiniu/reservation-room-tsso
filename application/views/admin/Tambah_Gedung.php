@@ -1,109 +1,201 @@
 <?php
 $session_id = $this->session->userdata('username');
-$this->load->helper(['text', 'form']);
+$this->load->helper('text');
+$this->load->helper('form');
 ?>
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Favicons-->
+    <link rel="apple-touch-icon-precomposed"
+        href="<?php echo base_url(); ?>assets/home/assets/img/favicon/apple-touch-icon-152x152.png">
+    <meta name="msapplication-TileColor" content="#FFFFFF">
+    <meta name="msapplication-TileImage"
+        content="<?php echo base_url(); ?>assets/home/assets/img/favicon/mstile-144x144.png">
+    <link rel="icon" href="<?php echo base_url(); ?>assets/home/assets/img/favicon/favicon-32x32.png" sizes="32x32">
     <title>Tambah Gedung</title>
-
-    <!-- Favicons -->
-    <link rel="icon" href="<?= base_url('assets/home/assets/img/favicon/favicon-32x32.png') ?>">
-
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Materialize (JS & upload only) -->
-    <link href="<?= base_url('assets/home/materialize/css/materialize.css') ?>" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Materialize core CSS -->
+    <link href="<?php echo base_url(); ?>assets/home/materialize/css/materialize.css" rel="stylesheet" type="text/css">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+            <script src="assets/js/html5shiv.js"></script>
+            <script src="assets/js/respond.min.js"></script>
+        <![endif]-->
+    <link href="<?php echo base_url(); ?>assets/home/template.css" rel="stylesheet" type="text/css">
 </head>
 
-<body class="bg-slate-200 min-h-screen">
-
-    <!-- ================= SIDEBAR ================= -->
-    <?php $this->load->view('admin/components/sidebar'); ?>
-    <!-- =========================================== -->
-
-    <!-- ================= MAIN CONTENT ================= -->
-    <main class="pt-24 pl-0 md:pl-64 px-4 md:px-6 pb-10">
-
-        <!-- HEADER -->
-        <div class="max-w-5xl mx-auto mb-6">
-            <h1 class="text-2xl font-bold text-slate-800">Tambah Gedung</h1>
-            <p class="text-sm text-slate-500">Lengkapi data gedung dengan benar</p>
+<body>
+    <header>
+        <nav class="top-nav">
+            <div class="container">
+                <div class="nav-wrapper">
+                    <a class="page-title">Tambah Gedung</a>
+                </div>
+            </div>
+        </nav>
+        <div class="container">
+            <a href="#" data-activates="nav-mobile" class="button-collapse top-nav full"><i
+                    class="mdi-navigation-menu"></i></a>
         </div>
-
-        <!-- CARD -->
-        <div class="max-w-5xl mx-auto bg-white rounded-xl shadow-md p-6">
-
-            <?= form_open_multipart('admin/add_gedung'); ?>
-
-            <!-- ROW -->
-            <div class="grid grid-cols-12 gap-4 items-center mb-4">
-                <label class="col-span-4 text-slate-700 font-medium">Nama Gedung</label>
-                <input type="text" name="nama_gedung" placeholder="The Ritz Carlton"
-                    class="col-span-8 border rounded-lg px-3 py-2 focus:ring focus:ring-slate-200 outline-none">
+        <ul id="nav-mobile" class="side-nav fixed" style="width: 240px;">
+            <li class="logo">
+            </li>
+            <li class="bold">
+                <a href="<?php echo site_url('admin/dashboard') ?>" class="waves-effect waves-teal">Home</a>
+            </li>
+            <li class="bold">
+                <a href="<?php echo site_url('admin/list') ?>" class="waves-effect waves-teal">List User</a>
+            </li>
+            <li class="bold">
+                <a href="<?php echo site_url('admin/gedung') ?>" class="waves-effect waves-teal">List Gedung</a>
+            </li>
+            <li class="bold">
+                <a href="<?php echo site_url('admin/catering') ?>" class="waves-effect waves-teal">Catering</a>
+            </li>
+            <li class="bold">
+                <a href="<?php echo site_url('admin/pemesanan2') ?>" class="waves-effect waves-teal">List Pemesanan</a>
+            </li>
+            <li class="bold">
+                <?php if($result > 0): ?>
+                <a href="<?php echo site_url('admin/transaksi') ?>" class="waves-effect waves-teal">Inbox Pemesanan<span
+                        class="new badge"><?php echo $result ?></span></a>
+                <?php endif;?>
+                <?php if($result <= 0): ?>
+            <li class="bold">
+                <a href="<?php echo site_url('admin/transaksi') ?>" class="waves-effect waves-teal">Inbox Pemesanan</a>
+            </li>
+            <?php endif; ?>
+            </li>
+            </li>
+            <li class="bold">
+                <a href="<?php echo site_url('admin/pembayaran') ?>" class="waves-effect waves-teal">Transaksi</a>
+            </li>
+            <li class="no-padding">
+                <ul class="collapsible collapsible-accordion">
+                    <li class="bold">
+                        <a class="collapsible-header waves-effect waves-teal">Perawatan</a>
+                        <div class="collapsible-body">
+                            <ul>
+                                <li>
+                                    <a class="waves-effect waves-teal"
+                                        href="<?php echo site_url('admin/pembayaran-listrik') ?>">Pembayaran Listrik</a>
+                                </li>
+                                <li>
+                                    <a class="waves-effect waves-teal"
+                                        href="<?php echo site_url('admin/pembayaran-air') ?>">Pembayaran Air</a>
+                                </li>
+                                <li>
+                                    <a class="waves-effect waves-teal"
+                                        href="<?php echo site_url('admin/pembayaran-kebersihan') ?>">Pembayaran
+                                        Kebersihan</a>
+                                </li>
+                                <li>
+                                    <a class="waves-effect waves-teal"
+                                        href="<?php echo site_url('admin/rekap_pembayaran') ?>">Rekap Pembayaran</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+            <li class="no-padding">
+                <ul class="collapsible collapsible-accordion">
+                    <li class="bold">
+                        <a class="collapsible-header waves-effect waves-teal">Rekapitulasi</a>
+                        <div class="collapsible-body">
+                            <ul>
+                                <li>
+                                    <a class="waves-effect waves-teal"
+                                        href="<?php echo site_url('admin/rekap_aktivitas') ?>">Rekap Aktivitas</a>
+                                </li>
+                                <li>
+                                    <a class="waves-effect waves-teal"
+                                        href="<?php echo site_url('admin/rekap_transaksi') ?>">Rekap Transaksi</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+            <li class="bold">
+                <a href="<?php echo site_url('admin/log_out') ?>" class="waves-effect waves-teal">Sign Out</a>
+            </li>
+        </ul>
+        <div class="container">
+            <div class="row">
+                <?php echo form_open_multipart('admin/add_gedung'); ?>
+                <div class="row">
+                    <div class="input-field col s4">Nama Gedung
+                        <input placeholder="The Ritz Calrton" id="nama" name="nama_gedung" type="text" class="validate">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s2">Kapasitas Gedung
+                        <input placeholder="150" id="kapasitas" name="kapasitas_gedung" type="text" class="validate">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s6">Alamat Gedung
+                        <textarea class="materialize-textarea" name="alamat_gedung"></textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s6">Deskripsi Gedung
+                        <textarea class="materialize-textarea" name="deskripsi_gedung"></textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s2">Harga Sewa
+                        <input placeholder="650,000,000" id="kapasitas" name="harga_sewa" type="text" class="validate">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="file-field input-field">Gallery Gedung
+                        <input type="file" name="img_gedung1">
+                        <div class="file-path-wrapper">
+                            <input class="file-path validate" type="text" placeholder="Upload file here">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="file-field input-field">
+                        <input type="file" name="img_gedung2">
+                        <div class="file-path-wrapper">
+                            <input class="file-path validate" type="text" placeholder="Upload file here">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="file-field input-field">
+                        <input type="file" name="img_gedung3">
+                        <div class="file-path-wrapper">
+                            <input class="file-path validate" type="text" placeholder="Upload file here">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12 m5 l6">
+                        <input class="waves-effect waves-light btn" name="submit" id="submit" tabindex="10" value="Next"
+                            type="submit">
+                    </div>
+                </div>
+                </form>
             </div>
-
-            <div class="grid grid-cols-12 gap-4 items-center mb-4">
-                <label class="col-span-4 text-slate-700 font-medium">Kapasitas Gedung</label>
-                <input type="text" name="kapasitas_gedung" placeholder="150"
-                    class="col-span-4 border rounded-lg px-3 py-2 focus:ring focus:ring-slate-200 outline-none">
-            </div>
-
-            <div class="grid grid-cols-12 gap-4 items-start mb-4">
-                <label class="col-span-4 text-slate-700 font-medium mt-2">Alamat Gedung</label>
-                <textarea name="alamat_gedung" rows="3"
-                    class="col-span-8 border rounded-lg px-3 py-2 focus:ring focus:ring-slate-200 outline-none"></textarea>
-            </div>
-
-            <div class="grid grid-cols-12 gap-4 items-start mb-4">
-                <label class="col-span-4 text-slate-700 font-medium mt-2">Deskripsi Gedung</label>
-                <textarea name="deskripsi_gedung" rows="3"
-                    class="col-span-8 border rounded-lg px-3 py-2 focus:ring focus:ring-slate-200 outline-none"></textarea>
-            </div>
-
-            <div class="grid grid-cols-12 gap-4 items-center mb-6">
-                <label class="col-span-4 text-slate-700 font-medium">Harga Sewa</label>
-                <input type="text" name="harga_sewa" placeholder="650000000"
-                    class="col-span-4 border rounded-lg px-3 py-2 focus:ring focus:ring-slate-200 outline-none">
-            </div>
-
-            <!-- UPLOAD -->
-            <div class="grid grid-cols-12 gap-4 items-center mb-4">
-                <label class="col-span-4 text-slate-700 font-medium">Gallery Gedung</label>
-                <input type="file" name="img_gedung1" class="col-span-8">
-            </div>
-
-            <div class="grid grid-cols-12 gap-4 items-center mb-4">
-                <label class="col-span-4"></label>
-                <input type="file" name="img_gedung2" class="col-span-8">
-            </div>
-
-            <div class="grid grid-cols-12 gap-4 items-center mb-6">
-                <label class="col-span-4"></label>
-                <input type="file" name="img_gedung3" class="col-span-8">
-            </div>
-
-            <!-- BUTTON -->
-            <div class="flex justify-end">
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow">
-                    Simpan Gedung
-                </button>
-            </div>
-
-            </form>
         </div>
-
-    </main>
-    <!-- ================= END MAIN CONTENT ================= -->
-
-    <!-- JS -->
-    <script src="<?= base_url('assets/home/assets/js/jquery.min.js') ?>"></script>
-    <script src="<?= base_url('assets/home/materialize/js/materialize.js') ?>"></script>
-
+        </div>
+        <main class="">
+        </main>
+        <!-- Materialize core JavaScript -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="<?php echo base_url(); ?>assets/home/assets/js/jquery.min.js"></script>
+        <script src="<?php echo base_url(); ?>assets/home/materialize/js/materialize.js"></script>
+        <script src="<?php echo base_url(); ?>assets/home/index.js"></script>
 </body>
 
 </html>
