@@ -1,264 +1,139 @@
 <?php
 $session_id = $this->session->userdata('username');
-$this->load->helper('text');
-$this->load->helper('form');
+$this->load->helper(['text', 'form']);
+
 $tax = 0.1 * $hasil->HARGA_SEWA;
 $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
 ?>
+
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="">
-        <meta name="author" content="">
-        <!-- Favicons-->
-        <link rel="apple-touch-icon-precomposed" href="<?php echo base_url(); ?>assets/home/assets/img/favicon/apple-touch-icon-152x152.png">
-        <meta name="msapplication-TileColor" content="#FFFFFF">
-        <meta name="msapplication-TileImage" content="<?php echo base_url(); ?>assets/home/assets/img/favicon/mstile-144x144.png">
-        <link rel="icon" href="<?php echo base_url(); ?>assets/home/assets/img/favicon/favicon-32x32.png" sizes="32x32">
-        <title>Detail Transaksi</title>
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <!-- Materialize core CSS -->
-        <link href="<?php echo base_url(); ?>assets/home/materialize/css/materialize.css" rel="stylesheet" type="text/css">
-        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
-            <script src="assets/js/html5shiv.js"></script>
-            <script src="assets/js/respond.min.js"></script>
-        <![endif]-->
-        <link href="<?php echo base_url(); ?>assets/home/template.css" rel="stylesheet" type="text/css">
-    </head>
-    <body>
-        <header>
-         <nav class="top-nav">
-    <!-- HAMBURGER BUTTON -->
-    <a href="#" data-activates="nav-mobile" class="button-collapse menu-btn show-on-large">
-        <i class="material-icons">menu</i>
-    </a>
-    <div class="nav-wrapper center-title">
-    <span class="page-title">Administrator</span>
-</div>
-</nav>
-<ul id="nav-mobile" class="side-nav" style="width: 240px;">
-    <li class="logo"></li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/dashboard') ?>" class="waves-effect waves-teal">Home</a>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/list') ?>" class="waves-effect waves-teal">List User</a>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/gedung') ?>" class="waves-effect waves-teal">List Gedung</a>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/catering') ?>" class="waves-effect waves-teal">Catering</a>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/pemesanan2') ?>" class="waves-effect waves-teal">List Pemesanan</a>
-                </li>
-                <li class="bold">
-                <?php if($result > 0): ?>
-                    <a href="<?php echo site_url('admin/transaksi') ?>" class="waves-effect waves-teal">Inbox Pemesanan<span class="new badge"><?php echo $result ?></span></a>
-                <?php endif;?>
-                <?php if($result <= 0): ?>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/transaksi') ?>" class="waves-effect waves-teal">Inbox Pemesanan</a>
-                </li>
-                <?php endif; ?>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/pembayaran') ?>" class="waves-effect waves-teal">Transaksi</a>
-                </li>
-                <li class="no-padding">
-                <ul class="collapsible collapsible-accordion">
-                    <li class="bold">
-                            <a class="collapsible-header waves-effect waves-teal">Perawatan</a>
-                            <div class="collapsible-body">
-                                <ul>
-                                    <li> 
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/pembayaran-listrik') ?>">Pembayaran Listrik</a>
-                                    </li>
-                                    <li>
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/pembayaran-air') ?>">Pembayaran Air</a>
-                                    </li>
-                                    <li>
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/pembayaran-kebersihan') ?>">Pembayaran Kebersihan</a>
-                                    </li>
-                                    <li>
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/rekap_pembayaran') ?>">Rekap Pembayaran</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                </ul>
-                </li>
-                <li class="no-padding">
-                <ul class="collapsible collapsible-accordion">
-                    <li class="bold">
-                            <a class="collapsible-header waves-effect waves-teal">Rekapitulasi</a>
-                            <div class="collapsible-body">
-                                <ul>
-                                    <li> 
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/rekap_aktivitas') ?>">Rekap Aktivitas</a>
-                                    </li>
-                                    <li>
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/rekap_transaksi') ?>">Rekap Transaksi</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                </ul>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/log_out') ?>" class="waves-effect waves-teal">Sign Out</a>
-                </li>
-            </ul>
-            <div class="container">
-                <div class="row">
-                    <table style="display: inline-block;" class="bordered">
-                        <tr>
-                            <td><b>ID PEMESANAN</b></td>
-                            <td>:</td>
-                            <td><b><?php echo $hasil->ID_PEMESANAN; ?></b></td>
-                        </tr>
-                        <tr>
-                            <td><b>USERNAME</b></td>
-                            <td>:</td>
-                            <td><?php echo $hasil->USERNAME; ?></td>
-                        </tr>
-                        <tr>
-                            <td><b>TANGGAL PEMESANAN</b></td>
-                            <td>:</td>
-                            <td><?php $date = date_create($hasil->TANGGAL_PEMESANAN); echo date_format($date, 'd F Y') ?></td>
-                        </tr>
-                        <tr>
-                            <td><b>EMAIL</b></td>
-                            <td>:</td>
-                            <td><?php echo $hasil->EMAIL; ?></td>
-                        </tr>
-                        <tr>
-                            <td><b>GEDUNG</b></td>
-                            <td>:</td>
-                            <td><?php echo $hasil->NAMA_GEDUNG; ?></td>
-                        </tr>
-                        <tr>
-                            <td><b>PAJAK 10%</b></td>
-                            <td><b>:</b></td>
-                            <td>Rp. <?php echo number_format($tax) ?></td>
-                        </tr>
-                        <tr>
-                            <td><b>CATERING</b></td>
-                            <td>:</td>
-                            <td><?php echo $hasil->NAMA_PAKET; ?></td>
-                        </tr>
-                        <tr>
-                            <td><b>JUMLAH PORSI CATERING</b></td>
-                            <td>:</td>
-                            <td><?php echo $hasil->JUMLAH_CATERING; ?> Porsi</td>
-                        </tr>
-                        <tr>
-                            <td><b>TOTAL HARGA CATERING</b></td>
-                            <td>:</td>
-                            <td>Rp. <?php echo number_format($hasil->TOTAL_HARGA); ?></td>
-                        </tr>
-                        <tr>
-                            <td><b>HARGA GEDUNG</b></td>
-                            <td>:</td>
-                            <td>Rp. <?php echo number_format($hasil->HARGA_SEWA); ?></td>
-                        </tr>
-                        <tr>
-                            <td><b>TOTAL HARGA GEDUNG +CATERING</b></td>
-                            <td>:</td>
-                            <td>Rp. <?php echo number_format($hasil->TOTAL_KESELURUHAN); ?></td>
-                        </tr>
-                        <tr>
-                            <td><b>TOTAL KESELURUHAN (CATERING + GEDUNG + PAJAK)</b></td>
-                            <td><b>:</b></td>
-                            <td>Rp. <?php echo number_format($total_stl_pajak) ?></td>
-                        </tr>
-                        <!--
-                        <tr>
-                            <td><b>MINIMUM DP</b></td>
-                            <td><b>:</b></td>
-                            <td>Rp. <?php //echo number_format(0.1 * $total_stl_pajak) ?></td>
-                        </tr>
-                        -->
-                        <tr>
-                            <td><b>DESKRIPSI PEMESANAN</b></td>
-                            <td>:</td>
-                            <td><?php echo $details->DESKRIPSI_ACARA; ?></td>
-                        </tr>
-                        <tr>
-                            <td><b>PROPOSAL ACARA</b></td>
-                            <td>:</td>
-                            <td>
-                                <a href="<?php echo site_url('admin/admin_controls/download_proposal/'.$hasil->ID_PEMESANAN.'')?>"><?php echo $details->FILE_NAME; ?></a>
-                            </td>
-                        </tr>
-                        <tr>
-                        <?php echo form_open('admin/detail_transaksi/'.$hasil->ID_PEMESANAN.''); ?>
-                            <td><b>AKSI</b></td>
-                            <td>:</td>
-                            <td>
-                                <input class="with-gap" name="status-proposal" type="radio" id="ya" value="1" onclick="return showInput();" />
-                                    <label for="ya">TERIMA PROPOSAL</label> <br> <br>
-                                <input class="with-gap" name="status-proposal" type="radio" id="tidak" value="5" onclick="return showInput();" />
-                                    <label for="tidak">TOLAK PROPOSAL</label>
-                            </td>
-                        </tr>
-                        </table>
-                        <table style="display: inline-block;">
-                        <tr>
-                            <td id="title" hidden>
-                                <b>Remarks</b>
-                            </td>
-                            <td>&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp;&nbsp;</td>
-                            <td>&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp;&nbsp;</td>
-                            <td>&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp;&nbsp;</td>
-                            <td>&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp;&nbsp;</td>
-                            <td id="colon" hidden>:</td>
-                            <td>
-                                <input type="text" name="remarks" id="remarks" hidden width="200">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                 <input class="btn waves-light" name="submit" id="submit" tabindex="10" value="submit" onclick="return dialog();" type="submit">
-                            </td>
-                        </tr>
-                        <?php echo form_close(); ?>
-                    </table>
-                </div>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Transaksi</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-200 min-h-screen">
+
+    <!-- ================= SIDEBAR ================= -->
+    <?php $this->load->view('admin/components/sidebar'); ?>
+    <!-- =========================================== -->
+
+    <!-- ================= MAIN ================= -->
+    <main class="pt-24 md:pl-64 px-4 md:px-6 pb-10">
+
+        <!-- HEADER -->
+        <div class="max-w-6xl mx-auto mb-6">
+            <h1 class="text-2xl font-bold text-slate-800">Detail Transaksi</h1>
+            <p class="text-sm text-slate-500">Informasi lengkap pemesanan</p>
+        </div>
+
+        <!-- CARD -->
+        <div class="max-w-6xl mx-auto bg-white rounded-xl shadow p-6">
+
+            <!-- DETAIL DATA -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-3 text-sm">
+
+                <?php
+            function item($label, $value, $bold = false) {
+                $font = $bold ? 'font-semibold text-slate-900' : 'text-slate-700';
+                echo "
+                <div class='flex'>
+                    <div class='w-56 text-slate-600 font-medium'>$label</div>
+                    <div class='$font'>$value</div>
+                </div>";
+            }
+
+            item('ID Pemesanan', $hasil->ID_PEMESANAN, true);
+            item('Username', $hasil->USERNAME);
+            item('Tanggal Pemesanan', date('d F Y', strtotime($hasil->TANGGAL_PEMESANAN)));
+            item('Email', $hasil->EMAIL);
+            item('Gedung', $hasil->NAMA_GEDUNG);
+            item('Catering', $hasil->NAMA_PAKET);
+            item('Jumlah Porsi', $hasil->JUMLAH_CATERING.' Porsi');
+            item('Total Harga Catering', 'Rp '.number_format($hasil->TOTAL_HARGA));
+            item('Harga Gedung', 'Rp '.number_format($hasil->HARGA_SEWA));
+            item('Pajak 10%', 'Rp '.number_format($tax));
+            item('Total Gedung + Catering', 'Rp '.number_format($hasil->TOTAL_KESELURUHAN));
+            item(
+                'Total Keseluruhan',
+                'Rp '.number_format($total_stl_pajak),
+                true
+            );
+            ?>
+
             </div>
-            </header>
-            <main class="">
-</main>
-        <!-- Materialize core JavaScript -->
-        <!-- Placed at the end of the document so the pages load faster -->
-        <script src="<?php echo base_url(); ?>assets/home/assets/js/jquery.min.js"></script>
-        <script src="<?php echo base_url(); ?>assets/home/materialize/js/materialize.js"></script>
-        <script src="<?php echo base_url(); ?>assets/home/index.js"></script>
-        <script type="text/javascript">
-            function dialog() {
-                if(confirm("Lanjutkan? ")) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-            function showInput() {
-                var tolak = document.getElementById("tidak").checked;
-                var terima = document.getElementById("ya").checked;
-                if(tolak == true) {
-                    document.getElementById("title").hidden = false;
-                    document.getElementById("colon").hidden = false;
-                    document.getElementById("remarks").hidden = false;
-                } else if(terima == true) {
-                    document.getElementById("title").hidden = true;
-                    document.getElementById("colon").hidden = true;
-                    document.getElementById("remarks").hidden = true;
-                }
-            }
-        </script>
-    </body>
+
+            <!-- DESKRIPSI -->
+            <div class="mt-6">
+                <p class="text-sm font-medium text-slate-600 mb-1">Deskripsi Acara</p>
+                <p class="text-sm text-slate-700 bg-slate-100 p-3 rounded-lg">
+                    <?= nl2br($details->DESKRIPSI_ACARA); ?>
+                </p>
+            </div>
+
+            <!-- PROPOSAL -->
+            <div class="mt-4">
+                <p class="text-sm font-medium text-slate-600 mb-1">Proposal Acara</p>
+                <a href="<?= site_url('admin/admin_controls/download_proposal/'.$hasil->ID_PEMESANAN) ?>"
+                    class="text-blue-600 hover:underline text-sm">
+                    <?= $details->FILE_NAME; ?>
+                </a>
+            </div>
+
+            <!-- FORM AKSI -->
+            <?= form_open('admin/detail_transaksi/'.$hasil->ID_PEMESANAN); ?>
+            <div class="mt-8 border-t pt-6">
+
+                <p class="text-sm font-medium text-slate-700 mb-3">Aksi Proposal</p>
+
+                <div class="flex gap-8">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="status-proposal" value="1" onclick="toggleRemarks(false)"
+                            class="accent-teal-600">
+                        <span>Terima Proposal</span>
+                    </label>
+
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="status-proposal" value="5" onclick="toggleRemarks(true)"
+                            class="accent-red-600">
+                        <span>Tolak Proposal</span>
+                    </label>
+                </div>
+
+                <!-- REMARKS -->
+                <div id="remarksBox" class="mt-4 hidden">
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Remarks</label>
+                    <input type="text" name="remarks"
+                        class="w-full border rounded-lg px-4 py-2 text-sm focus:ring focus:ring-teal-200">
+                </div>
+
+                <!-- BUTTON -->
+                <div class="flex justify-end mt-8">
+                    <button type="submit" onclick="return confirm('Lanjutkan proses ini?')"
+                        class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2 rounded-lg shadow">
+                        Submit
+                    </button>
+                </div>
+
+            </div>
+            <?= form_close(); ?>
+
+        </div>
+    </main>
+
+    <!-- SCRIPT -->
+    <script>
+    function toggleRemarks(show) {
+        document.getElementById('remarksBox').classList.toggle('hidden', !show);
+    }
+    </script>
+
+</body>
+
 </html>

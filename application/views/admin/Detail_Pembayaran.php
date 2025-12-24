@@ -1,222 +1,125 @@
-w<?php
+<?php
 $session_id = $this->session->userdata('username');
-$this->load->helper('text');
-$no = 1;
+$this->load->helper(['text','form']);
 ?>
+
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="">
-        <meta name="author" content="">
-        <!-- Favicons-->
-        <link rel="apple-touch-icon-precomposed" href="<?php echo base_url(); ?>assets/home/assets/img/favicon/apple-touch-icon-152x152.png">
-        <meta name="msapplication-TileColor" content="#FFFFFF">
-        <meta name="msapplication-TileImage" content="<?php echo base_url(); ?>assets/home/assets/img/favicon/mstile-144x144.png">
-        <link rel="icon" href="<?php echo base_url(); ?>assets/home/assets/img/favicon/favicon-32x32.png" sizes="32x32">
-        <title>DETAIL KONTOLL Pembayaran</title>
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <!-- Materialize core CSS -->
-        <link href="<?php echo base_url(); ?>assets/home/materialize/css/materialize.css" rel="stylesheet" type="text/css">
-        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
-            <script src="assets/js/html5shiv.js"></script>
-            <script src="assets/js/respond.min.js"></script>
-        <![endif]-->
-        <link href="<?php echo base_url(); ?>assets/home/template.css" rel="stylesheet" type="text/css">
-    </head>
-    <body>
-        <header>
-            <nav class="top-nav">
-                <div class="container">
-                    <div class="nav-wrapper">
-                        <a class="page-title">Transaksi</a>
-                    </div>
-                </div>
-            </nav>
-            <div class="container">
-                <a href="#" data-activates="nav-mobile" class="button-collapse top-nav full"><i class="mdi-navigation-menu"></i></a>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <title>Detail Pembayaran</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-100 min-h-screen">
+
+    <!-- ================= SIDEBAR ================= -->
+    <?php $this->load->view('admin/components/sidebar'); ?>
+    <!-- =========================================== -->
+
+    <!-- ================= MAIN ================= -->
+    <main class="pt-24 md:pl-64 px-4 md:px-6 pb-10">
+
+        <!-- HEADER -->
+        <div class="max-w-5xl mx-auto mb-6">
+            <h1 class="text-2xl font-bold text-slate-800">Detail Pembayaran</h1>
+            <p class="text-sm text-slate-500">Informasi transaksi pembayaran</p>
+        </div>
+
+        <!-- CARD -->
+        <div class="max-w-5xl mx-auto bg-white rounded-xl shadow p-6">
+
+            <!-- DETAIL DATA -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+
+                <?php
+            function row($label, $value, $bold=false){
+                $font = $bold ? 'font-semibold text-slate-900' : 'text-slate-700';
+                echo "
+                <div class='flex'>
+                    <div class='w-48 text-slate-600'>$label</div>
+                    <div class='$font'>$value</div>
+                </div>";
+            }
+
+            row('ID Transaksi', $details->KODE_PEMBAYARAN.$details->ID_PEMBAYARAN, true);
+            row('ID Pemesanan', $details->KODE_PEMESANAN.$details->ID_PEMESANAN);
+            row('Atas Nama', $details->ATAS_NAMA);
+            row('Tanggal Pembayaran', date('d F Y', strtotime($details->TANGGAL_TRANSFER)));
+            row('Nominal Transfer', 'Rp '.number_format($details->NOMINAL_TRANSFER), true);
+            row('Total Keseluruhan', 'Rp '.number_format($details->TOTAL));
+            row(
+                'Sisa Tagihan',
+                'Rp '.number_format($details->TOTAL - $details->NOMINAL_TRANSFER),
+                true
+            );
+            row('Bank Pengirim', $details->BANK_PENGIRIM);
+            ?>
+
             </div>
-            <ul id="nav-mobile" class="side-nav fixed" style="width: 240px;">
-                <li class="logo">
-</li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/dashboard') ?>" class="waves-effect waves-teal">Home</a>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/list') ?>" class="waves-effect waves-teal">List User</a>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/gedung') ?>" class="waves-effect waves-teal">List Gedung</a>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/catering') ?>" class="waves-effect waves-teal">Catering</a>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/pemesanan2') ?>" class="waves-effect waves-teal">List Pemesanan</a>
-                </li>
-                <li class="bold">
-                <?php if($result > 0): ?>
-                    <a href="<?php echo site_url('admin/transaksi') ?>" class="waves-effect waves-teal">Inbox Pemesanan<span class="new badge"><?php echo $result ?></span></a>
-                <?php endif;?>
-                <?php if($result <= 0): ?>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/transaksi') ?>" class="waves-effect waves-teal">Inbox Pemesanan</a>
-                </li>
-                <?php endif; ?>
-                </li>
-                <li class="bold">
-                <?php if($get_transaction > 0): ?>
-                    <a href="<?php echo site_url('admin/pembayaran') ?>" class="waves-effect waves-teal">Transaksi<span class="new badge"><?php echo $get_transaction ?></span></a>
-                <?php endif;?>
-                <?php if($get_transaction <= 0): ?>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/pembayaran') ?>" class="waves-effect waves-teal">Transaksi</a>
-                </li>
-                <?php endif; ?>
-                </li>
-                <li class="no-padding">
-                <ul class="collapsible collapsible-accordion">
-                    <li class="bold">
-                            <a class="collapsible-header waves-effect waves-teal">Perawatan</a>
-                            <div class="collapsible-body">
-                                <ul>
-                                    <li> 
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/pembayaran-listrik') ?>">Pembayaran Listrik</a>
-                                    </li>
-                                    <li>
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/pembayaran-air') ?>">Pembayaran Air</a>
-                                    </li>
-                                    <li>
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/pembayaran-kebersihan') ?>">Pembayaran Kebersihan</a>
-                                    </li>
-                                    <li>
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/rekap_pembayaran') ?>">Rekap Pembayaran</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                </ul>
-                </li>
-                <li class="no-padding">
-                <ul class="collapsible collapsible-accordion">
-                    <li class="bold">
-                            <a class="collapsible-header waves-effect waves-teal">Rekapitulasi</a>
-                            <div class="collapsible-body">
-                                <ul>
-                                    <li> 
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/rekap_aktivitas') ?>">Rekap Aktivitas</a>
-                                    </li> 
-                                    <li>
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/rekap_transaksi') ?>">Rekap Transaksi</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                </ul>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/log_out') ?>" class="waves-effect waves-teal">Sign Out</a>
-                </li>
-            </ul>
-            <div class="container">
-                <div class="row">
-                    <div class="col s12 m12">
-                        <table style="display: inline-block;">
-                            <!--<?php //foreach($details as $details): ?>-->
-                            <tr>
-                                <td>
-                                    <b>ID Transaksi</b>
-                                </td>
-                                <td>:</td>
-                                <td>
-                                    <?php echo $details->KODE_PEMBAYARAN.$details->ID_PEMBAYARAN; ?>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <b>ID Pemesanan</b>
-                                </td>
-                                <td>:</td>
-                                <td>
-                                    <?php echo $details->KODE_PEMESANAN.$details->ID_PEMESANAN; ?>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <b>Atas Nama</b>
-                                </td>
-                                <td>:</td>
-                                <td>
-                                    <?php echo $details->ATAS_NAMA; ?>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <b>Tanggal Pembayaran</b>
-                                </td>
-                                <td>:</td>
-                                <td>
-                                    <?php echo $details->TANGGAL_TRANSFER; ?>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <b>Nominal Pembayaran</b>
-                                </td>
-                                <td>:</td>
-                                <td>
-                                    <?php echo "Rp.".number_format($details->NOMINAL_TRANSFER); ?>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <b>Total Keseluruhan</b>
-                                </td>
-                                <td>:</td>
-                                <td>
-                                    <?php echo "Rp.".number_format($details->TOTAL); ?>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <b>Total Terhutang</b>
-                                </td>
-                                <td>:</td>
-                                <td>
-                                    <?php echo "Rp.".number_format($details->TOTAL-$details->NOMINAL_TRANSFER); ?>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <b>Bank Pengirim</b>
-                                </td>
-                                <td>:</td>
-                                <td>
-                                    <?php echo $details->BANK_PENGIRIM; ?>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <b>Bukti Transfer</b>
-                                </td>
-                                <td>:</td>
-                                <td>
-                                    <img src="<?php echo $details->PATH.$details->IMG_NAME; ?>">
-                                </td>
-                            </tr>
-                        <!--<?php //endforeach; ?>-->
-                        </table>
-                    </div>
+
+            <!-- BUKTI TRANSFER -->
+            <div class="mt-6">
+                <p class="text-sm font-medium text-slate-600 mb-2">Bukti Transfer</p>
+                <div class="flex justify-center">
+                    <img src="<?= $details->PATH.$details->IMG_NAME ?>" class="max-h-96 rounded-lg shadow border"
+                        alt="Bukti Transfer">
                 </div>
             </div>
-            <main class="">
-</main>
-        <!-- Materialize core JavaScript -->
-        <!-- Placed at the end of the document so the pages load faster -->
-        <script src="<?php echo base_url(); ?>assets/home/assets/js/jquery.min.js"></script>
-        <script src="<?php echo base_url(); ?>assets/home/materialize/js/materialize.js"></script>
-        <script src="<?php echo base_url(); ?>assets/home/index.js"></script>
-    </body>
+
+            <!-- FORM STATUS -->
+            <?= form_open('admin/update_status_pembayaran/'.$details->ID_PEMBAYARAN); ?>
+            <div class="mt-8 border-t pt-6">
+
+                <p class="text-sm font-medium text-slate-700 mb-3">Status Pembayaran</p>
+
+                <div class="flex gap-8">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="status" value="1" onclick="toggleRemark(false)"
+                            class="accent-teal-600">
+                        <span>Terima Pembayaran</span>
+                    </label>
+
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="status" value="2" onclick="toggleRemark(true)" class="accent-red-600">
+                        <span>Tolak Pembayaran</span>
+                    </label>
+                </div>
+
+                <!-- REMARK -->
+                <div id="remarkBox" class="mt-4 hidden">
+                    <label class="block text-sm font-medium text-slate-600 mb-1">
+                        Alasan Penolakan
+                    </label>
+                    <textarea name="remark" class="w-full border rounded-lg px-4 py-2 text-sm" rows="3"></textarea>
+                </div>
+
+                <!-- BUTTON -->
+                <div class="flex justify-end mt-8">
+                    <button type="submit" onclick="return confirm('Yakin menyimpan perubahan?')"
+                        class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2 rounded-lg shadow">
+                        Simpan Status
+                    </button>
+                </div>
+
+            </div>
+            <?= form_close(); ?>
+
+        </div>
+    </main>
+
+    <!-- SCRIPT -->
+    <script>
+    function toggleRemark(show) {
+        document.getElementById('remarkBox')
+            .classList.toggle('hidden', !show);
+    }
+    </script>
+
+</body>
+
 </html>

@@ -22,6 +22,7 @@ $catering_data = isset($result) && is_array($result) ? $result : [];
     <meta charset="UTF-8">
     <title>Admin Smart Office</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
@@ -129,6 +130,27 @@ $catering_data = isset($result) && is_array($result) ? $result : [];
                 </span>
                 <?php endif; ?>
             </a>
+
+            <a href="<?= site_url('admin/pembayaran') ?>" class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white
+   <?= strpos($current_uri,'pembayaran')!==false?'menu-active':'' ?>">
+                <span class="material-icons">payments</span>
+                <span class="menu-text">Transaksi</span>
+            </a>
+
+
+            <a href="<?= site_url('admin/rekap_aktivitas') ?>" class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white
+   <?= strpos($current_uri,'rekap_aktivitas')!==false?'menu-active':'' ?>">
+                <span class="material-icons">history</span>
+                <span class="menu-text">Rekap Aktivitas</span>
+            </a>
+
+
+            <a href="<?= site_url('admin/rekap_transaksi') ?>" class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white
+   <?= strpos($current_uri,'rekap_transaksi')!==false?'menu-active':'' ?>">
+                <span class="material-icons">summarize</span>
+                <span class="menu-text">Rekap Transaksi</span>
+            </a>
+
 
             <hr class="my-5">
 

@@ -3,117 +3,120 @@ $session_id = $this->session->userdata('username');
 $this->load->helper('text');
 ?>
 <!DOCTYPE html>
-<html lang="en">
-    <head>
+<html lang="id">
+
+<head>
     <meta charset="utf-8">
+    <title>Rekapitulasi Aktivitas</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Admin Smart Office</title>
-
-    <!-- Favicons -->
-    <link rel="apple-touch-icon-precomposed" href="<?= base_url('assets/home/assets/img/favicon/apple-touch-icon-152x152.png') ?>">
-    <meta name="msapplication-TileColor" content="#FFFFFF">
-    <meta name="msapplication-TileImage" content="<?= base_url('assets/home/assets/img/favicon/mstile-144x144.png') ?>">
-    <link rel="icon" href="<?= base_url('assets/home/assets/img/favicon/favicon-32x32.png') ?>" sizes="32x32">
-
-    <!-- Tailwind CSS -->
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Materialize (UNTUK TABLE & GRID SAJA) -->
+    <!-- Materialize (table & grid only) -->
     <link href="<?= base_url('assets/home/materialize/css/materialize.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('assets/home/style.css') ?>" rel="stylesheet">
 </head>
 
-<body class="bg-gray-50">
+<body class="bg-gray-100">
 
-<!-- ================= SIDEBAR COMPONENT ================= -->
-<?php $this->load->view('admin/components/sidebar'); ?>
-<!-- ===================================================== -->
+    <!-- ================= SIDEBAR ================= -->
+    <?php $this->load->view('admin/components/sidebar'); ?>
+    <!-- =========================================== -->
 
-<!-- ================= MAIN CONTENT ================= -->
-<main class="pt-24 pl-0 md:pl-64 px-6">
-            <center><h5>Rekapitulasi Aktivitas</h5>
-            <input type="button" value="Filter Tanggal" name="btnFilter" id="btnFilter" onclick="unhideElement();"></center>
-            <div class="container">
-                <div class="row">
-                    <div class="col s4 offset-s5">
-                        <form action="<?php echo site_url('admin/rekap_aktivitas/details') ?>">
-                        <label id="labelDari" hidden><b>Dari</b></label>
-                        <input type="date" name="start_date" id="start_date" hidden size="2">
-                        <label id="labelSampai" hidden><b>Sampai</b></label>
-                        <input type="date" name="end_date" id="end_date" hidden>
-                        <center><input type="submit" value="Proses" name="btnProses" id="btnProses" hidden onclick="return btnProsesAlert();"></center>
-                        </form>
-                    </div>
-                </div>
+    <!-- ================= MAIN ================= -->
+    <main class="pt-24 md:pl-64 px-6 pb-10">
+
+        <!-- HEADER -->
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">Rekapitulasi Aktivitas</h1>
+            <p class="text-sm text-gray-500">Filter berdasarkan tanggal, bulan, atau tahun</p>
+        </div>
+
+        <!-- CARD FILTER -->
+        <div class="max-w-3xl mx-auto bg-white rounded-xl shadow p-6">
+
+            <div class="text-center mb-4">
+                <button id="btnFilter" onclick="unhideElement()"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow">
+                    Filter Data
+                </button>
             </div>
-            <main class="">
-</main>
-        <!-- Materialize core JavaScript -->
-        <!-- Placed at the end of the document so the pages load faster -->
-        <script src="<?php echo base_url(); ?>assets/home/assets/js/jquery.min.js"></script>
-        <script src="<?php echo base_url(); ?>assets/home/materialize/js/materialize.js"></script>
-        <script src="<?php echo base_url(); ?>assets/home/index.js"></script>
-        <script type="text/javascript">
-            var startDate = document.getElementById("start_date");
-            var label = document.getElementById("labelDari");
-            var labelsampai = document.getElementById("labelSampai");
-            var endDate = document.getElementById("end_date");
-            var btnProses = document.getElementById("btnProses");
-            var btnFilter = document.getElementById("btnFilter");
-            function unhideElement() {
-                if(startDate.hidden = true) {
-                    startDate.hidden = false;
-                    label.hidden = false;
-                    labelsampai.hidden = false;
-                    endDate.hidden = false;
-                    btnProses.hidden = false
-                    btnFilter.disabled = true;
 
-                } else {
-                    hideElement();
-                }
-            }
-            function hideElement() {
-                startDate.hidden = true;
-                label.hidden = true;
-                endDate.hidden = true;
-                btnProses.hidden = true;
-            } 
-            function btnProsesAlert() {
-                if(startDate.value == "") {
-                    alert("Harap Isi Form Tanggal!");
-                    return false;
-                } else if(endDate.value == "") {
-                    alert("Harap Isi Form Tanggal!");
-                    return false;
-                }
-            }
-        </script>
-         <script>
-$(document).ready(function(){
+            <form action="<?= site_url('admin/rekap_aktivitas/details') ?>" method="get">
 
-    $(".button-collapse").sideNav({
-        menuWidth: 260,
-        edge: 'left',
-        closeOnClick: false,
-        draggable: true
-    });
+                <!-- FILTER -->
+                <div id="filterBox" class="grid grid-cols-1 md:grid-cols-2 gap-4 hidden">
 
-    // OPEN / CLOSE SIDEBAR + SHIFT CONTENT
-    $(".button-collapse").on("click", function () {
-        $("body").toggleClass("nav-open");
-    });
+                    <!-- DARI -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Dari Tanggal</label>
+                        <input type="date" name="start_date" class="w-full border rounded-lg px-3 py-2">
+                    </div>
 
-    // CLOSE JIKA KLIK LUAR SIDEBAR
-    $(document).mouseup(function(e){
-        let sb = $(".side-nav");
-        if (!sb.is(e.target) && sb.has(e.target).length === 0) {
-            $("body").removeClass("nav-open");
+                    <!-- SAMPAI -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Sampai Tanggal</label>
+                        <input type="date" name="end_date" class="w-full border rounded-lg px-3 py-2">
+                    </div>
+
+                    <!-- BULAN -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Bulan</label>
+                        <select name="bulan" class="w-full border rounded-lg px-3 py-2">
+                            <option value="">-- Semua Bulan --</option>
+                            <?php for($i=1;$i<=12;$i++): ?>
+                            <option value="<?= $i ?>"><?= date('F', mktime(0,0,0,$i,1)) ?></option>
+                            <?php endfor; ?>
+                        </select>
+                    </div>
+
+                    <!-- TAHUN -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Tahun</label>
+                        <select name="tahun" class="w-full border rounded-lg px-3 py-2">
+                            <option value="">-- Semua Tahun --</option>
+                            <?php for($y=date('Y');$y>=2020;$y--): ?>
+                            <option value="<?= $y ?>"><?= $y ?></option>
+                            <?php endfor; ?>
+                        </select>
+                    </div>
+
+                </div>
+
+                <!-- BUTTON -->
+                <div id="btnProsesBox" class="text-center mt-6 hidden">
+                    <button type="submit" onclick="return validasi()"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2 rounded-lg shadow">
+                        Proses
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+    </main>
+
+    <!-- SCRIPT -->
+    <script>
+    function unhideElement() {
+        document.getElementById('filterBox').classList.remove('hidden');
+        document.getElementById('btnProsesBox').classList.remove('hidden');
+        document.getElementById('btnFilter').disabled = true;
+    }
+
+    function validasi() {
+        const start = document.querySelector('input[name="start_date"]').value;
+        const end = document.querySelector('input[name="end_date"]').value;
+        const bulan = document.querySelector('select[name="bulan"]').value;
+        const tahun = document.querySelector('select[name="tahun"]').value;
+
+        if (!start && !end && !bulan && !tahun) {
+            alert('Silakan pilih minimal satu filter!');
+            return false;
         }
-    });
+    }
+    </script>
 
-});
-</script>
-    </body>
+</body>
+
 </html>

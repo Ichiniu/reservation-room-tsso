@@ -3,159 +3,110 @@ $session_id = $this->session->userdata('username');
 $this->load->helper('text');
 ?>
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="">
-        <meta name="author" content="">
-        <!-- Favicons-->
-        <link rel="apple-touch-icon-precomposed" href="<?php echo base_url(); ?>assets/home/assets/img/favicon/apple-touch-icon-152x152.png">
-        <meta name="msapplication-TileColor" content="#FFFFFF">
-        <meta name="msapplication-TileImage" content="<?php echo base_url(); ?>assets/home/assets/img/favicon/mstile-144x144.png">
-        <link rel="icon" href="<?php echo base_url(); ?>assets/home/assets/img/favicon/favicon-32x32.png" sizes="32x32">
-        <title>Tambah Catering</title>
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <!-- Materialize core CSS -->
-        <link href="<?php echo base_url(); ?>assets/home/materialize/css/materialize.css" rel="stylesheet" type="text/css">
-        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
-            <script src="assets/js/html5shiv.js"></script>
-            <script src="assets/js/respond.min.js"></script>
-        <![endif]-->
-        <link href="<?php echo base_url(); ?>assets/home/template.css" rel="stylesheet" type="text/css">
-    </head>
-    <body>
-        <header>
-            <nav class="top-nav">
-                <div class="container">
-                    <div class="nav-wrapper">
-                        <a class="page-title">Tambah Catering</a>
-                    </div>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Tambah Catering</title>
+
+    <!-- Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Materialize (icon only) -->
+    <link href="<?= base_url('assets/home/materialize/css/materialize.css') ?>" rel="stylesheet">
+
+</head>
+
+<body class="bg-slate-200 min-h-screen">
+
+    <!-- ================= SIDEBAR ================= -->
+    <?php $this->load->view('admin/components/sidebar'); ?>
+    <!-- =========================================== -->
+
+    <!-- ================= MAIN ================= -->
+    <main class="pt-24 pl-0 md:pl-64 px-4 md:px-6 pb-10">
+
+        <!-- HEADER -->
+        <div class="max-w-4xl mx-auto mb-6">
+            <h1 class="text-2xl font-bold text-slate-800">Tambah Catering</h1>
+            <p class="text-sm text-slate-500">Tambahkan paket catering baru</p>
+        </div>
+
+        <!-- CARD -->
+        <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md p-8">
+
+            <form method="post" action="<?= site_url('admin/admin_controls/tambah_catering'); ?>">
+
+                <!-- NAMA PAKET -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center mb-5">
+                    <label class="text-sm font-medium text-slate-700">
+                        Nama Paket
+                    </label>
+                    <input type="text" name="nama_paket" placeholder="e.g Paket Hemat 1" class="md:col-span-2 w-full border rounded-lg px-4 py-2
+                  focus:outline-none focus:ring-2 focus:ring-slate-200">
                 </div>
-            </nav>
-            <div class="container">
-                <a href="#" data-activates="nav-mobile" class="button-collapse top-nav full"><i class="mdi-navigation-menu"></i></a>
-            </div>
-            <ul id="nav-mobile" class="side-nav fixed" style="width: 240px;">
-                <li class="logo">
-</li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/dashboard') ?>" class="waves-effect waves-teal">Home</a>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/list') ?>" class="waves-effect waves-teal">List User</a>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/gedung') ?>" class="waves-effect waves-teal">List Gedung</a>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/catering') ?>" class="waves-effect waves-teal">Catering</a>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/pemesanan2') ?>" class="waves-effect waves-teal">List Pemesanan</a>
-                </li>
-                <li class="bold">
-                <?php if($result > 0): ?>
-                    <a href="<?php echo site_url('admin/transaksi') ?>" class="waves-effect waves-teal">Inbox Pemesanan<span class="new badge"><?php echo $result ?></span></a>
-                <?php endif;?>
-                <?php if($result <= 0): ?>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/transaksi') ?>" class="waves-effect waves-teal">Inbox Pemesanan</a>
-                </li>
-                <?php endif; ?>
-                </li>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/pembayaran') ?>" class="waves-effect waves-teal">Transaksi</a>
-                </li>
-                <li class="no-padding">
-                <ul class="collapsible collapsible-accordion">
-                    <li class="bold">
-                            <a class="collapsible-header waves-effect waves-teal">Perawatan</a>
-                            <div class="collapsible-body">
-                                <ul>
-                                    <li> 
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/pembayaran-listrik') ?>">Pembayaran Listrik</a>
-                                    </li>
-                                    <li>
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/pembayaran-air') ?>">Pembayaran Air</a>
-                                    </li>
-                                    <li>
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/pembayaran-kebersihan') ?>">Pembayaran Kebersihan</a>
-                                    </li>
-                                    <li>
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/rekap_pembayaran') ?>">Rekap Pembayaran</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                </ul>
-                </li>
-                <li class="no-padding">
-                <ul class="collapsible collapsible-accordion">
-                    <li class="bold">
-                            <a class="collapsible-header waves-effect waves-teal">Rekapitulasi</a>
-                            <div class="collapsible-body">
-                                <ul>
-                                    <li> 
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/rekap_aktivitas') ?>">Rekap Aktivitas</a>
-                                    </li>
-                                    <li>
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/rekap_transaksi') ?>">Rekap Transaksi</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                </ul>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/log_out') ?>" class="waves-effect waves-teal">Sign Out</a>
-                </li>                
-            </ul>
-            <div class="container">
-               <div class="row">
-                  <form class="col s11" method="post" action="<?php echo site_url('admin/admin_controls/tambah_catering');?>">
-                  	<div class="row">
-                  	   <div class="input-field col s4">Nama Paket
-                  	   	<input placeholder="e.g Paket Hemat 1" name="nama_paket" type="text" class="validate">
-                  	   </div>
-                  	</div>
-                  	<div class="row">
-                  		<div class="input-field col s4">Manu Pembuka
-                  	     <input placeholder="e.g Dimsum" name="menu_pembuka" type="text" class="validate">
-                  	   </div>
-                  	</div>
-                  	<div class="row">
-                  	   <div class="input-field col s4">Menu Utama
-                  	     <input placeholder="e.g Nasi Lemak" name="menu_utama" type="text" class="validate">
-                  	   </div>
-                  	</div>
-                  	<div class="row">
-                  	   <div class="input-field col s4">Menu Penutup
-                  	     <input placeholder="e.g Dessert" name="menu_penutup" type="text" class="validate">
-                  	   </div>
-                  	</div>
-                  	<div class="row">
-                  		<div class="input-field col s2">Harga Per Porsi
-                  	     <input placeholder="e.g 125,000" name="harga" type="text" class="validate">
-                  	   </div>
-                  	</div>
-                  	<div class="row">
-                  	   <div class="col s12 m5 l6">
-                  	   <input class="waves-effect waves-light btn" name="submit" id="submit" tabindex="10" value="Tambah Menu" type="submit">
-                  	    </div>
-                  	</div>
-                  </form>
-                  </div>
-               </div>
-            </div>
-            <main class="">
-</main>
-        <!-- Materialize core JavaScript -->
-        <!-- Placed at the end of the document so the pages load faster -->
-        <script src="<?php echo base_url(); ?>assets/home/assets/js/jquery.min.js"></script>
-        <script src="<?php echo base_url(); ?>assets/home/materialize/js/materialize.js"></script>
-        <script src="<?php echo base_url(); ?>assets/home/index.js"></script>
-    </body>
+
+                <!-- MENU PEMBUKA -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center mb-5">
+                    <label class="text-sm font-medium text-slate-700">
+                        Menu Pembuka
+                    </label>
+                    <input type="text" name="menu_pembuka" placeholder="e.g Dimsum" class="md:col-span-2 w-full border rounded-lg px-4 py-2
+                  focus:outline-none focus:ring-2 focus:ring-slate-200">
+                </div>
+
+                <!-- MENU UTAMA -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center mb-5">
+                    <label class="text-sm font-medium text-slate-700">
+                        Menu Utama
+                    </label>
+                    <input type="text" name="menu_utama" placeholder="e.g Nasi Lemak" class="md:col-span-2 w-full border rounded-lg px-4 py-2
+                  focus:outline-none focus:ring-2 focus:ring-slate-200">
+                </div>
+
+                <!-- MENU PENUTUP -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center mb-5">
+                    <label class="text-sm font-medium text-slate-700">
+                        Menu Penutup
+                    </label>
+                    <input type="text" name="menu_penutup" placeholder="e.g Dessert" class="md:col-span-2 w-full border rounded-lg px-4 py-2
+                  focus:outline-none focus:ring-2 focus:ring-slate-200">
+                </div>
+
+                <!-- HARGA -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center mb-8">
+                    <label class="text-sm font-medium text-slate-700">
+                        Harga / Porsi
+                    </label>
+                    <input type="text" name="harga" placeholder="e.g 125000" class="md:col-span-1 w-full border rounded-lg px-4 py-2
+                  focus:outline-none focus:ring-2 focus:ring-slate-200">
+                </div>
+
+                <!-- BUTTON -->
+                <div class="flex justify-end">
+                    <button type="submit" class="inline-flex items-center gap-2
+                   px-6 py-2.5 rounded-lg
+                   bg-blue-600 text-white text-sm font-medium
+                   hover:bg-blue-700 transition">
+                        <!-- <span class="material-icons text-sm">add</span> -->
+                        Tambah Menu
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </main>
+
+    <!-- JS -->
+    <script src="<?= base_url('assets/home/assets/js/jquery.min.js') ?>"></script>
+    <script src="<?= base_url('assets/home/materialize/js/materialize.js') ?>"></script>
+
+</body>
+
 </html>

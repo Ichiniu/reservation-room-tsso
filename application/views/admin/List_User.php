@@ -44,7 +44,7 @@ $this->load->helper('text');
                             <th class="px-4 py-3 text-center">Email</th>
                             <th class="px-4 py-3 text-center">No Telepon</th>
                             <th class="px-4 py-3 text-center">Alamat</th>
-                            <th class="px-4 py-3 text-center">Tanggal Lahir</th>
+                            <th class="px-10 py-3 text-center">Tanggal Lahir</th>
                         </tr>
                     </thead>
 

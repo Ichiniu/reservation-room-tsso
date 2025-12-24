@@ -1,207 +1,89 @@
 <?php
 $session_id = $this->session->userdata('username');
-$this->load->helper('text');
-$this->load->helper('form');
+$this->load->helper(['text', 'form']);
+
 $id_pemesanan = substr($hasil->ID_PEMESANAN, 7);
 $tax = 0.1 * $hasil->HARGA_SEWA;
 $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
 ?>
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="">
-        <meta name="author" content="">
-        <!-- Favicons-->
-        <link rel="apple-touch-icon-precomposed" href="<?php echo base_url(); ?>assets/home/assets/img/favicon/apple-touch-icon-152x152.png">
-        <meta name="msapplication-TileColor" content="#FFFFFF">
-       <title>Detail Transaksi</title>
-    </head>
-    <body>
-        <header>
-            <nav class="top-nav">
-                <div class="container">
-                    <div class="nav-wrapper">
-                        <a class="page-title">Detail Transaksi</a>
-                    </div>
-                </div>
-            </nav>
-            <div class="container">
-                <a href="#" data-activates="nav-mobile" class="button-collapse top-nav full"><i class="mdi-navigation-menu"></i></a>
-            </div>
-            <ul id="nav-mobile" class="side-nav fixed" style="width: 240px;">
-                <li class="logo">
-</li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/dashboard') ?>" class="waves-effect waves-teal">Home</a>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/list') ?>" class="waves-effect waves-teal">List User</a>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/gedung') ?>" class="waves-effect waves-teal">List Gedung</a>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/catering') ?>" class="waves-effect waves-teal">Catering</a>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/pemesanan2') ?>" class="waves-effect waves-teal">List Pemesanan</a>
-                </li>
-                <li class="bold">
-                <?php if($result > 0): ?>
-                    <a href="<?php echo site_url('admin/transaksi') ?>" class="waves-effect waves-teal">Inbox Pemesanan<span class="new badge"><?php echo $result ?></span></a>
-                <?php endif;?>
-                <?php if($result <= 0): ?>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/transaksi') ?>" class="waves-effect waves-teal">Inbox Pemesanan</a>
-                </li>
-                <?php endif; ?>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/pembayaran') ?>" class="waves-effect waves-teal">Transaksi</a>
-                </li>
-                <li class="no-padding">
-                <ul class="collapsible collapsible-accordion">
-                    <li class="bold">
-                            <a class="collapsible-header waves-effect waves-teal">Perawatan</a>
-                            <div class="collapsible-body">
-                                <ul>
-                                    <li> 
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/pembayaran-listrik') ?>">Pembayaran Listrik</a>
-                                    </li>
-                                    <li>
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/pembayaran-air') ?>">Pembayaran Air</a>
-                                    </li>
-                                    <li>
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/pembayaran-kebersihan') ?>">Pembayaran Kebersihan</a>
-                                    </li>
-                                    <li>
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/rekap_pembayaran') ?>">Rekap Pembayaran</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                </ul>
-                </li>
-                <li class="no-padding">
-                <ul class="collapsible collapsible-accordion">
-                    <li class="bold">
-                            <a class="collapsible-header waves-effect waves-teal">Rekapitulasi</a>
-                            <div class="collapsible-body">
-                                <ul>
-                                    <li> 
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/rekap_aktivitas') ?>">Rekap Aktivitas</a>
-                                    </li>
-                                    <li>
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/rekap_transaksi') ?>">Rekap Transaksi</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                </ul>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/log_out') ?>" class="waves-effect waves-teal">Sign Out</a>
-                </li>
-            </ul>
-            <div class="container">
-                <div class="row">
-                    <table style="display: inline-block;" class="bordered">
-                        <tr>
-                            <td><b>ID PEMESANAN</b></td>
-                            <td>:</td>
-                            <td><b><?php echo $hasil->ID_PEMESANAN; ?></b></td>
-                        </tr>
-                        <tr>
-                            <td><b>USERNAME</b></td>
-                            <td>:</td>
-                            <td><?php echo $hasil->USERNAME; ?></td>
-                        </tr>
-                        <tr>
-                            <td><b>TANGGAL PEMESANAN</b></td>
-                            <td>:</td>
-                            <td><?php $date = date_create($hasil->TANGGAL_PEMESANAN); echo date_format($date, 'd F Y') ?></td>
-                        </tr>
-                        <tr>
-                        <td><b>JAM PEMESANAN</b></td>
-                        <td>:</td>
-                        <td><?php echo $hasil->JAM_PEMESANAN.' - '.$hasil->JAM_SELESAI; ?></td>
-                        </tr>
-                        <tr>
-                            <td><b>EMAIL</b></td>
-                            <td>:</td>
-                            <td><?php echo $hasil->EMAIL; ?></td>
-                        </tr>
-                        <tr>
-                            <td><b>GEDUNG</b></td>
-                            <td>:</td>
-                            <td><?php echo $hasil->NAMA_GEDUNG; ?></td>
-                        </tr>
-                        <tr>
-                            <td><b>CATERING</b></td>
-                            <td>:</td>
-                            <td><?php echo $hasil->NAMA_PAKET; ?></td>
-                        </tr>
-                        <tr>
-                            <td><b>JUMLAH PORSI CATERING</b></td>
-                            <td>:</td>
-                            <td><?php echo $hasil->JUMLAH_CATERING; ?> Porsi</td>
-                        </tr>
-                        <tr>
-                            <td><b>TOTAL HARGA CATERING</b></td>
-                            <td>:</td>
-                            <td>Rp. <?php echo number_format($hasil->TOTAL_HARGA); ?></td>
-                        </tr>
-                        <tr>
-                            <td><b>HARGA GEDUNG</b></td>
-                            <td>:</td>
-                            <td>Rp. <?php echo number_format($hasil->HARGA_SEWA); ?></td>
-                        </tr>
-                        <tr>
-                            <td><b>PAJAK 10%</b></td>
-                            <td><b>:</b></td>
-                            <td>Rp. <?php echo number_format($tax) ?></td>
-                        </tr>
-                        <tr>
-                            <td><b>TOTAL HARGA GEDUNG +CATERING</b></td>
-                            <td>:</td>
-                            <td>Rp. <?php echo number_format($hasil->TOTAL_KESELURUHAN); ?></td>
-                        </tr>
-                        <tr>
-                            <td><b>TOTAL KESELURUHAN (CATERING + GEDUNG + PAJAK)</b></td>
-                            <td><b>:</b></td>
-                            <td>Rp. <?php echo number_format($total_stl_pajak) ?></td>
-                        </tr>
-                        <tr>
-                            <td><b>DESKRIPSI PEMESANAN</b></td>
-                            <td>:</td>
-                            <td><?php echo $hasil->DESKRIPSI_ACARA; ?></td>
-                        </tr>
-                        <tr>
-                            <td><b>Aksi</b></td>
-                            <td>:</td>
-                            <td><a href="<?php echo site_url('admin/admin_controls/delete_jadwal/'.$id_pemesanan.'')?>" onclick="return dialog();">Hapus Acara</a></td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            </header>
-            <main class="">
-</main>
-        <!-- Materialize core JavaScript -->
-        <!-- Placed at the end of the document so the pages load faster -->
-        <script src="<?php echo base_url(); ?>assets/home/assets/js/jquery.min.js"></script>
-        <script src="<?php echo base_url(); ?>assets/home/materialize/js/materialize.js"></script>
-        <script src="<?php echo base_url(); ?>assets/home/index.js"></script>
-        <script type="text/javascript">
-            function dialog() {
-                if(confirm("Yakin Hapus Jadwal?")) {
-                    return true;
-                } else {
-                    return false;
-                }
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Transaksi</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-200 min-h-screen">
+
+    <!-- ================= SIDEBAR ================= -->
+    <?php $this->load->view('admin/components/sidebar'); ?>
+    <!-- =========================================== -->
+
+    <!-- ================= MAIN ================= -->
+    <main class="pt-24 pl-0 md:pl-64 px-4 md:px-6 pb-10">
+
+        <!-- HEADER -->
+        <div class="max-w-5xl mx-auto mb-6">
+            <h1 class="text-2xl font-bold text-slate-800">Detail Transaksi</h1>
+            <p class="text-sm text-slate-500">Informasi lengkap pemesanan</p>
+        </div>
+
+        <!-- CARD -->
+        <div class="max-w-5xl mx-auto bg-white rounded-xl shadow-md p-6">
+
+            <!-- DATA LIST -->
+            <div class="space-y-3 text-sm">
+
+                <?php
+            function row($label, $value, $bold = false) {
+                $font = $bold ? 'font-semibold' : '';
+                echo "
+                <div class='grid grid-cols-12 gap-4'>
+                    <div class='col-span-4 text-slate-600 font-medium'>$label</div>
+                    <div class='col-span-8 $font'>$value</div>
+                </div>";
             }
-        </script>
-    </body>
+
+            row('ID Pemesanan', $hasil->ID_PEMESANAN, true);
+            row('Username', $hasil->USERNAME);
+            row('Tanggal Pemesanan', date_format(date_create($hasil->TANGGAL_PEMESANAN), 'd F Y'));
+            row('Jam Pemesanan', $hasil->JAM_PEMESANAN.' - '.$hasil->JAM_SELESAI);
+            row('Email', $hasil->EMAIL);
+            row('Gedung', $hasil->NAMA_GEDUNG);
+            row('Catering', $hasil->NAMA_PAKET);
+            row('Jumlah Porsi', $hasil->JUMLAH_CATERING.' Porsi');
+            row('Total Harga Catering', 'Rp '.number_format($hasil->TOTAL_HARGA));
+            row('Harga Gedung', 'Rp '.number_format($hasil->HARGA_SEWA));
+            row('Pajak 10%', 'Rp '.number_format($tax));
+            row('Total Gedung + Catering', 'Rp '.number_format($hasil->TOTAL_KESELURUHAN));
+            row(
+                'Total Keseluruhan',
+                'Rp '.number_format($total_stl_pajak),
+                true
+            );
+            row('Deskripsi Acara', nl2br($hasil->DESKRIPSI_ACARA));
+            ?>
+
+            </div>
+
+            <!-- ACTION -->
+            <div class="flex justify-end mt-8">
+                <a href="<?= site_url('admin/admin_controls/delete_jadwal/'.$id_pemesanan) ?>"
+                    onclick="return confirm('Yakin hapus jadwal ini?')"
+                    class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg shadow">
+                    Hapus Acara
+                </a>
+            </div>
+
+        </div>
+    </main>
+    <!-- ================= END MAIN ================= -->
+
+</body>
+
 </html>

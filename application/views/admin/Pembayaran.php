@@ -5,198 +5,189 @@ $no = 1;
 $total_keseluruhan = 0;
 ?>
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="">
-        <meta name="author" content="">
-        <!-- Favicons-->
-        <link rel="apple-touch-icon-precomposed" href="<?php echo base_url(); ?>assets/home/assets/img/favicon/apple-touch-icon-152x152.png">
-        <meta name="msapplication-TileColor" content="#FFFFFF">
-        <meta name="msapplication-TileImage" content="<?php echo base_url(); ?>assets/home/assets/img/favicon/mstile-144x144.png">
-        <link rel="icon" href="<?php echo base_url(); ?>assets/home/assets/img/favicon/favicon-32x32.png" sizes="32x32">
-        <title>Pembayaran</title>
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <!-- Materialize core CSS -->
-        <link href="<?php echo base_url(); ?>assets/home/materialize/css/materialize.css" rel="stylesheet" type="text/css">
-        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
-            <script src="assets/js/html5shiv.js"></script>
-            <script src="assets/js/respond.min.js"></script>
-        <![endif]-->
-        <link href="<?php echo base_url(); ?>assets/home/template.css" rel="stylesheet" type="text/css">
-    </head>
-    <body>
-        <header>
-           <nav class="top-nav">
-    <!-- HAMBURGER BUTTON -->
-    <a href="#" data-activates="nav-mobile" class="button-collapse menu-btn show-on-large">
-        <i class="material-icons">menu</i>
-    </a>
-    <div class="nav-wrapper center-title">
-    <span class="page-title">Administrator</span>
-</div>
-</nav>
-<ul id="nav-mobile" class="side-nav" style="width: 240px;">
-    <li class="logo"></li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/dashboard') ?>" class="waves-effect waves-teal">Home</a>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/list') ?>" class="waves-effect waves-teal">List User</a>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/gedung') ?>" class="waves-effect waves-teal">List Gedung</a>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/catering') ?>" class="waves-effect waves-teal">Catering</a>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/pemesanan2') ?>" class="waves-effect waves-teal">List Pemesanan</a>
-                </li>
-                <li class="bold">
-                <?php if($result > 0): ?>
-                    <a href="<?php echo site_url('admin/transaksi') ?>" class="waves-effect waves-teal">Inbox Pemesanan<span class="new badge"><?php echo $result ?></span></a>
-                <?php endif;?>
-                <?php if($result <= 0): ?>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/transaksi') ?>" class="waves-effect waves-teal">Inbox Pemesanan</a>
-                </li>
-                <?php endif; ?>
-                </li>
-                <li class="bold">
-                <?php if($get_transaction > 0): ?>
-                    <a href="<?php echo site_url('admin/pembayaran') ?>" class="waves-effect waves-teal">Transaksi<span class="new badge"><?php echo $get_transaction ?></span></a>
-                <?php endif;?>
-                <?php if($get_transaction <= 0): ?>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/pembayaran') ?>" class="waves-effect waves-teal">Transaksi</a>
-                </li>
-                <?php endif; ?>
-                </li>
-                <li class="no-padding">
-                <ul class="collapsible collapsible-accordion">
-                    <li class="bold">
-                            <a class="collapsible-header waves-effect waves-teal">Perawatan</a>
-                            <div class="collapsible-body">
-                                <ul>
-                                    <li> 
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/pembayaran-listrik') ?>">Pembayaran Listrik</a>
-                                    </li>
-                                    <li>
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/pembayaran-air') ?>">Pembayaran Air</a>
-                                    </li>
-                                    <li>
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/pembayaran-kebersihan') ?>">Pembayaran Kebersihan</a>
-                                    </li>
-                                    <li>
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/rekap_pembayaran') ?>">Rekap Pembayaran</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                </ul>
-                </li>
-                <li class="no-padding">
-                <ul class="collapsible collapsible-accordion">
-                    <li class="bold">
-                            <a class="collapsible-header waves-effect waves-teal">Rekapitulasi</a>
-                            <div class="collapsible-body">
-                                <ul>
-                                    <li> 
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/rekap_aktivitas') ?>">Rekap Aktivitas</a>
-                                    </li>
-                                    <li>
-                                    <a class="waves-effect waves-teal" href="<?php echo site_url('admin/rekap_transaksi') ?>">Rekap Transaksi</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                </ul>
-                </li>
-                <li class="bold">
-                    <a href="<?php echo site_url('admin/log_out') ?>" class="waves-effect waves-teal">Sign Out</a>
-                </li>
-            </ul>
-            <div class="container">
-                <div class="row">
-                    <div class="col s12 m12">
-                        <table class="bordered">
-                            <th><b>No</b></th>
-                            <th><b>Kode Transaksi</b></th>
-                            <th><b>Kode Pemesanan</b></th>
-                            <th><b>Atas Nama</b></th>
-                            <th><b>Jumlah Pembayaran</b></th>
-                            <th><b>Details</b></th>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>List Pembayaran</title>
+
+    <!-- Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Materialize -->
+    <link href="<?= base_url('assets/home/materialize/css/materialize.css') ?>" rel="stylesheet">
+
+</head>
+
+<body class="bg-slate-200 min-h-screen">
+
+    <!-- ================= SIDEBAR ================= -->
+    <?php $this->load->view('admin/components/sidebar'); ?>
+    <!-- =========================================== -->
+
+    <!-- ================= MAIN ================= -->
+    <main class="pt-24 pl-0 md:pl-64 px-4 md:px-6 pb-10">
+
+        <!-- HEADER -->
+        <div class="max-w-6xl mx-auto mb-6">
+            <h1 class="text-2xl font-bold text-slate-800">List Pembayaran</h1>
+        </div>
+
+        <!-- CARD -->
+        <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-md p-6">
+
+            <div class="overflow-x-auto max-h-[420px] overflow-y-auto relative">
+                <table class="w-full text-sm border border-slate-200 rounded-lg overflow-hidden">
+
+                    <thead class="bg-slate-100 sticky top-0 z-10">
+                        <tr class="text-center font-semibold text-slate-700">
+                            <th class="px-4 py-3">No</th>
+                            <th class="px-4 py-3">Kode Transaksi</th>
+                            <th class="px-4 py-3">Kode Pemesanan</th>
+                            <th class="px-4 py-3">Atas Nama</th>
+                            <th class="px-4 py-3">Jumlah</th>
+                            <th class="px-4 py-3">Detail</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="divide-y">
+                        <?php if(!empty($pembayaran)): ?>
                         <?php foreach($pembayaran as $row): ?>
-                            <tr>
-                                <td>
-                                    <?php echo $no++ ?>
-                                </td>
-                                <td>
-                                    <?php echo $row['KODE_PEMBAYARAN'].$row['ID_PEMBAYARAN']; ?>
-                                </td>
-                                <td>
-                                    <?php echo $row['KODE_PEMESANAN'].$row['ID_PEMESANAN']; ?>
-                                </td>
-                                <td>
-                                    <?php echo $row['ATAS_NAMA']; ?>
-                                </td>
-                                <td>
-                                    <?php echo "Rp.".number_format($row['NOMINAL_TRANSFER']); ?>
-                                </td>
-                                <td>
-                                    <a href="<?php echo site_url('admin/pembayaran/details/'.$row['ID_PEMBAYARAN'].'') ?>"><i class="material-icons">open_in_new</i></a>
-                                </td>
-                            </tr>
-                            <?php $total_keseluruhan = $total_keseluruhan + $row['NOMINAL_TRANSFER'] ?>
+                        <tr class="table-row hover:bg-slate-50 text-center">
+                            <td class="px-4 py-3"><?= $no++ ?></td>
+
+                            <td class="px-4 py-3 font-medium">
+                                <?= $row['KODE_PEMBAYARAN'].$row['ID_PEMBAYARAN']; ?>
+                            </td>
+
+                            <td class="px-4 py-3">
+                                <?= $row['KODE_PEMESANAN'].$row['ID_PEMESANAN']; ?>
+                            </td>
+
+                            <td class="px-4 py-3"><?= $row['ATAS_NAMA']; ?></td>
+
+                            <td class="px-4 py-3 font-semibold text-green-600">
+                                Rp <?= number_format($row['NOMINAL_TRANSFER'],0,',','.'); ?>
+                            </td>
+
+                            <td class="px-4 py-3">
+                                <a href="<?= site_url('admin/pembayaran/details/'.$row['ID_PEMBAYARAN']) ?>"
+                                    class="inline-flex items-center justify-center text-blue-600 hover:text-blue-800">
+                                    <i class="material-icons text-base">open_in_new</i>
+                                </a>
+                            </td>
+                        </tr>
+
+                        <?php $total_keseluruhan += $row['NOMINAL_TRANSFER']; ?>
                         <?php endforeach; ?>
-                        </table>
-                        <table>
-                            <tr>
-                                <td><b>Total Jumlah Transfer:</b><td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td><b><?php echo "Rp. ".number_format($total_keseluruhan); ?></b></td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
+                        <?php else: ?>
+                        <tr>
+                            <td colspan="6" class="px-4 py-6 text-center text-slate-500">
+                                Data pembayaran belum tersedia
+                            </td>
+                        </tr>
+                        <?php endif; ?>
+                    </tbody>
+
+                    <tfoot class="bg-slate-50 font-semibold">
+                        <tr class="text-center">
+                            <td colspan="4" class="px-4 py-3 text-right">
+                                Total Jumlah Transfer :
+                            </td>
+                            <td colspan="2" class="px-4 py-3 text-green-700">
+                                Rp <?= number_format($total_keseluruhan,0,',','.'); ?>
+                            </td>
+                        </tr>
+                    </tfoot>
+
+                </table>
             </div>
-            <main class="">
-</main>
-        <!-- Materialize core JavaScript -->
-        <!-- Placed at the end of the document so the pages load faster -->
-        <script src="<?php echo base_url(); ?>assets/home/assets/js/jquery.min.js"></script>
-        <script src="<?php echo base_url(); ?>assets/home/materialize/js/materialize.js"></script>
-        <script src="<?php echo base_url(); ?>assets/home/index.js"></script>
-         <script>
-$(document).ready(function(){
 
-    $(".button-collapse").sideNav({
-        menuWidth: 260,
-        edge: 'left',
-        closeOnClick: false,
-        draggable: true
+            <!-- PAGINATION -->
+            <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+                <button id="prevBtn" class="px-4 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 disabled:opacity-40">
+                    Prev
+                </button>
+
+                <span id="pageInfo" class="text-sm text-slate-600 text-center"></span>
+
+                <div class="flex items-center gap-3">
+                    <select id="rowsPerPage" class="rounded-lg border px-3 py-2 text-sm">
+                        <option value="5">5 rows</option>
+                        <option value="10" selected>10 rows</option>
+                        <option value="25">25 rows</option>
+                    </select>
+
+                    <button id="nextBtn"
+                        class="px-4 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 disabled:opacity-40">
+                        Next
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- JS -->
+    <script src="<?= base_url('assets/home/assets/js/jquery.min.js') ?>"></script>
+    <script src="<?= base_url('assets/home/materialize/js/materialize.js') ?>"></script>
+
+    <script>
+    const rows = document.querySelectorAll(".table-row");
+    const rowsPerPageSelect = document.getElementById("rowsPerPage");
+    const pageInfo = document.getElementById("pageInfo");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+
+    let currentPage = 1;
+    let rowsPerPage = parseInt(rowsPerPageSelect.value);
+
+    function renderTable() {
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+
+        rows.forEach((row, index) => {
+            row.style.display = (index >= start && index < end) ? "" : "none";
+        });
+
+        const totalPages = Math.ceil(rows.length / rowsPerPage) || 1;
+        pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
+
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = currentPage === totalPages;
+    }
+
+    rowsPerPageSelect.addEventListener("change", () => {
+        rowsPerPage = parseInt(rowsPerPageSelect.value);
+        currentPage = 1;
+        renderTable();
     });
 
-    // OPEN / CLOSE SIDEBAR + SHIFT CONTENT
-    $(".button-collapse").on("click", function () {
-        $("body").toggleClass("nav-open");
-    });
-
-    // CLOSE JIKA KLIK LUAR SIDEBAR
-    $(document).mouseup(function(e){
-        let sb = $(".side-nav");
-        if (!sb.is(e.target) && sb.has(e.target).length === 0) {
-            $("body").removeClass("nav-open");
+    prevBtn.onclick = () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderTable();
         }
-    });
+    };
 
-});
-</script>
-    </body>
+    nextBtn.onclick = () => {
+        const totalPages = Math.ceil(rows.length / rowsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderTable();
+        }
+    };
+
+    renderTable();
+    </script>
+
+</body>
+
 </html>

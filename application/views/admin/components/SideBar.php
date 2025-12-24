@@ -133,6 +133,12 @@ function is_active($uri, $current_uri)
                 <span class="menu-text">List Pemesanan</span>
             </a>
 
+            <a href="<?= site_url('admin/list') ?>" class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white
+<?= is_active('admin/list', $current_uri) ? 'menu-active' : '' ?>">
+                <span class="material-icons">people</span>
+                <span class="menu-text">List User</span>
+            </a>
+
             <!-- INBOX / TRANSAKSI -->
             <?php $jumlah_inbox = isset($result) ? $result : 0; ?>
             <a href="<?= site_url('admin/transaksi') ?>" class="relative flex items-center gap-3 px-4 py-3 rounded hover:bg-white
@@ -148,22 +154,38 @@ function is_active($uri, $current_uri)
                 <?php } ?>
             </a>
 
+            <a href="<?= site_url('admin/pembayaran') ?>" class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white
+<?= is_active('admin/pembayaran', $current_uri) ? 'menu-active' : '' ?>">
+                <span class="material-icons">payments</span>
+                <span class="menu-text">Transaksi</span>
+            </a>
 
+            <a href="<?= site_url('admin/rekap_aktivitas') ?>" class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white
+<?= is_active('admin/rekap_aktivitas', $current_uri) ? 'menu-active' : '' ?>">
+                <span class="material-icons">history</span>
+                <span class="menu-text">Rekap Aktivitas</span>
+            </a>
+
+            <a href="<?= site_url('admin/rekap_transaksi') ?>" class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white
+<?= is_active('admin/rekap_transaksi', $current_uri) ? 'menu-active' : '' ?>">
+                <span class="material-icons">summarize</span>
+                <span class="menu-text">Rekap Transaksi</span>
+            </a>
 
             <!-- TRANSAKSI -->
-            <details class="group" <?= is_active('admin/rekap', $current_uri) ? 'open' : '' ?>>
+            <!-- <details class="group" <?= is_active('admin/rekap', $current_uri) ? 'open' : '' ?>>
                 <summary class="flex items-center justify-between px-4 py-3 cursor-pointer rounded hover:bg-white list-none
 <?= is_active('admin/rekap', $current_uri) ? 'menu-active' : '' ?>">
                     <div class="flex items-center gap-3">
                         <span class="material-icons">payment</span>
                         <span class="menu-text">Transaksi</span>
-                    </div>
-                    <span class="material-icons arrow-icon transition-transform group-open:rotate-180">
+                    </div> -->
+            <!-- <span class="material-icons arrow-icon transition-transform group-open:rotate-180">
                         expand_more
-                    </span>
-                </summary>
+                    </span> -->
+            <!-- </summary> -->
 
-                <div class="ml-10 mt-1 space-y-1">
+            <!-- <div class="ml-10 mt-1 space-y-1">
                     <a href="<?= site_url('admin/rekap_aktivitas') ?>" class="block px-3 py-2 rounded hover:bg-white
 <?= is_active('admin/rekap_aktivitas', $current_uri) ? 'menu-active' : '' ?>">
                         Rekap Aktivitas
@@ -174,7 +196,7 @@ function is_active($uri, $current_uri)
                         Rekap Transaksi
                     </a>
                 </div>
-            </details>
+            </details> -->
 
             <hr class="my-4">
 

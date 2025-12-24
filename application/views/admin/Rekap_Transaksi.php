@@ -3,92 +3,100 @@ $session_id = $this->session->userdata('username');
 $this->load->helper('text');
 ?>
 <!DOCTYPE html>
-<html lang="en">
-    <head>
+<html lang="id">
+
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekapitulasi Transaksi</title>
 
-    <title>Admin Smart Office</title>
-
-    <!-- Favicons -->
-    <link rel="apple-touch-icon-precomposed" href="<?= base_url('assets/home/assets/img/favicon/apple-touch-icon-152x152.png') ?>">
-    <meta name="msapplication-TileColor" content="#FFFFFF">
-    <meta name="msapplication-TileImage" content="<?= base_url('assets/home/assets/img/favicon/mstile-144x144.png') ?>">
-    <link rel="icon" href="<?= base_url('assets/home/assets/img/favicon/favicon-32x32.png') ?>" sizes="32x32">
-
-    <!-- Tailwind CSS -->
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Materialize (UNTUK TABLE & GRID SAJA) -->
-    <link href="<?= base_url('assets/home/materialize/css/materialize.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('assets/home/style.css') ?>" rel="stylesheet">
 </head>
 
-<body class="bg-gray-50">
+<body class="bg-gray-100">
 
-<!-- ================= SIDEBAR COMPONENT ================= -->
-<?php $this->load->view('admin/components/sidebar'); ?>
-<!-- ===================================================== -->
+    <!-- SIDEBAR -->
+    <?php $this->load->view('admin/components/sidebar'); ?>
 
-<!-- ================= MAIN CONTENT ================= -->
-<main class="pt-24 pl-0 md:pl-64 px-6">
-            <center><h5>Rekapitulasi Transaksi</h5>
-            <input type="button" value="Filter Tanggal" name="btnFilter" id="btnFilter" onclick="unhideElement();"></center>
-            <div class="container">
-                <div class="row">
-                    <div class="col s4 offset-s5">
-                        <form action="<?php echo site_url('admin/rekap_transaksi/details') ?>">
-                        <label id="labelDari" hidden><b>Dari</b></label>
-                        <input type="date" name="start_date" id="start_date" hidden size="2">
-                        <label id="labelSampai" hidden><b>Sampai</b></label>
-                        <input type="date" name="end_date" id="end_date" hidden>
-                        <center><input type="submit" value="Proses" name="btnProses" id="btnProses" hidden onclick="return btnProsesAlert();"></center>
-                        </form>
-                    </div>
-                </div>
+    <!-- MAIN -->
+    <main class="pt-24 md:pl-64 px-6 pb-10">
+
+        <!-- TITLE -->
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-semibold text-gray-800">
+                Rekapitulasi Transaksi
+            </h1>
+            <p class="text-sm text-gray-500">
+                Filter data transaksi berdasarkan tanggal
+            </p>
+        </div>
+
+        <!-- CARD -->
+        <div class="max-w-xl mx-auto bg-white rounded-xl shadow p-6">
+
+            <!-- FILTER BUTTON -->
+            <div class="text-center mb-6">
+                <button id="btnFilter" onclick="showFilter()"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow">
+                    Filter Tanggal
+                </button>
             </div>
-            <main class="">
-</main>
-        <!-- Materialize core JavaScript -->
-        <!-- Placed at the end of the document so the pages load faster -->
-        <script src="<?php echo base_url(); ?>assets/home/assets/js/jquery.min.js"></script>
-        <script src="<?php echo base_url(); ?>assets/home/materialize/js/materialize.js"></script>
-        <script src="<?php echo base_url(); ?>assets/home/index.js"></script>
-        <script type="text/javascript">
-            var startDate = document.getElementById("start_date");
-            var label = document.getElementById("labelDari");
-            var labelsampai = document.getElementById("labelSampai");
-            var endDate = document.getElementById("end_date");
-            var btnProses = document.getElementById("btnProses");
-            var btnFilter = document.getElementById("btnFilter");
-            function unhideElement() {
-                if(startDate.hidden = true) {
-                    startDate.hidden = false;
-                    label.hidden = false;
-                    labelsampai.hidden = false;
-                    endDate.hidden = false;
-                    btnProses.hidden = false
-                    btnFilter.disabled = true;
 
-                } else {
-                    hideElement();
-                }
-            }
-            function hideElement() {
-                startDate.hidden = true;
-                label.hidden = true;
-                endDate.hidden = true;
-                btnProses.hidden = true;
-            } 
-            function btnProsesAlert() {
-                if(startDate.value == "") {
-                    alert("Harap Isi Form Tanggal!");
-                    return false;
-                } else if(endDate.value == "") {
-                    alert("Harap Isi Form Tanggal!");
-                    return false;
-                }
-            }
-        </script>
-    </body>
+            <!-- FORM -->
+            <form action="<?= site_url('admin/rekap_transaksi/details') ?>" method="get">
+
+                <div id="filterBox" class="grid grid-cols-1 md:grid-cols-2 gap-4 hidden">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Dari Tanggal
+                        </label>
+                        <input type="date" name="start_date" id="start_date" class="w-full border rounded-lg px-3 py-2">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Sampai Tanggal
+                        </label>
+                        <input type="date" name="end_date" id="end_date" class="w-full border rounded-lg px-3 py-2">
+                    </div>
+
+                </div>
+
+                <!-- SUBMIT -->
+                <div id="btnProsesBox" class="text-center mt-6 hidden">
+                    <button type="submit" onclick="return validasi()"
+                        class="bg-green-600 hover:bg-green-700 text-white px-10 py-2 rounded-lg shadow">
+                        Proses
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+    </main>
+
+    <!-- SCRIPT -->
+    <script>
+    function showFilter() {
+        document.getElementById('filterBox').classList.remove('hidden');
+        document.getElementById('btnProsesBox').classList.remove('hidden');
+        document.getElementById('btnFilter').disabled = true;
+    }
+
+    function validasi() {
+        const start = document.getElementById('start_date').value;
+        const end = document.getElementById('end_date').value;
+
+        if (!start || !end) {
+            alert('Harap isi tanggal awal dan akhir!');
+            return false;
+        }
+        return true;
+    }
+    </script>
+
+</body>
+
 </html>
