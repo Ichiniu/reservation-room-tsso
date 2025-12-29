@@ -1,137 +1,407 @@
 <?php
 $session_id = $this->session->userdata('username');
-$this->load->helper(['text', 'form']);
-
+$this->load->helper('text');
+$this->load->helper('form');
 $tax = 0.1 * $hasil->HARGA_SEWA;
 $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
 ?>
-
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Favicons-->
+    <link rel="apple-touch-icon-precomposed"
+        href="<?php echo base_url(); ?>assets/home/assets/img/favicon/apple-touch-icon-152x152.png">
+    <meta name="msapplication-TileColor" content="#FFFFFF">
+    <meta name="msapplication-TileImage"
+        content="<?php echo base_url(); ?>assets/home/assets/img/favicon/mstile-144x144.png">
+    <link rel="icon" href="<?php echo base_url(); ?>assets/home/assets/img/favicon/favicon-32x32.png" sizes="32x32">
+
     <title>Detail Transaksi</title>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Materialize -->
+    <link href="<?php echo base_url(); ?>assets/home/materialize/css/materialize.css" rel="stylesheet" type="text/css">
+    <link href="<?php echo base_url(); ?>assets/home/template.css" rel="stylesheet" type="text/css">
+
+    <style>
+    .hint {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 6px;
+    }
+
+    input.validate,
+    input[type="text"] {
+        border-bottom: 1px solid #e5e7eb !important;
+        box-shadow: none !important;
+    }
+
+    input.validate:focus,
+    input[type="text"]:focus {
+        border-bottom: 2px solid #1d4ed8 !important;
+        box-shadow: 0 1px 0 0 #1d4ed8 !important;
+    }
+
+    table.bordered td,
+    table.bordered th {
+        padding: 10px 12px;
+    }
+
+    table.bordered tr {
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    table.bordered {
+        margin: 0;
+    }
+
+    .btn-blue700 {
+        background: #1d4ed8 !important;
+        border-radius: 12px !important;
+    }
+
+    .btn-blue700:hover {
+        filter: brightness(0.95);
+    }
+
+    .link-file {
+        color: #111827;
+        text-decoration: underline;
+    }
+
+    .link-file:hover {
+        color: #1d4ed8;
+    }
+
+    .cardbox {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
+    }
+
+    .cardhead {
+        padding: 16px 18px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .cardbody {
+        padding: 16px 18px;
+    }
+    </style>
 </head>
 
-<body class="bg-slate-200 min-h-screen">
+<body class="bg-gray-50 text-gray-900">
 
-    <!-- ================= SIDEBAR ================= -->
+    <!-- ================= SIDEBAR COMPONENT ================= -->
     <?php $this->load->view('admin/components/sidebar'); ?>
     <!-- =========================================== -->
 
-    <!-- ================= MAIN ================= -->
-    <main class="pt-24 md:pl-64 px-4 md:px-6 pb-10">
+    <!-- Overlay mobile -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/40 z-30 hidden md:hidden"></div>
 
-        <!-- HEADER -->
-        <div class="max-w-6xl mx-auto mb-6">
-            <h1 class="text-2xl font-bold text-slate-800">Detail Transaksi</h1>
-            <p class="text-sm text-slate-500">Informasi lengkap pemesanan</p>
+    <!-- Topbar -->
+    <header class="fixed top-0 left-0 right-0 z-20 bg-white border-b border-gray-200">
+        <div class="h-16 px-4 md:px-6 flex items-center gap-3">
+            <button id="sidebarToggle"
+                class="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 hover:bg-gray-50"
+                type="button" aria-label="Toggle sidebar">
+                <i class="material-icons text-gray-800">menu</i>
+            </button>
+
+            <div class="flex items-center gap-2">
+                <span
+                    class="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-gray-200 bg-white">
+                    <i class="material-icons text-gray-800">receipt_long</i>
+                </span>
+                <div class="leading-tight">
+                    <div class="font-semibold">Detail Transaksi</div>
+                    <div class="text-xs text-gray-500">Administrator</div>
+                </div>
+            </div>
+
+            <div class="ml-auto text-sm text-gray-600">
+                <?php echo htmlspecialchars(isset($session_id) && $session_id !== '' ? $session_id : '-', ENT_QUOTES, 'UTF-8'); ?>
+            </div>
         </div>
+    </header>
 
-        <!-- CARD -->
-        <div class="max-w-6xl mx-auto bg-white rounded-xl shadow p-6">
+    <!-- Main -->
+    <main class="pt-20 md:pl-64 px-4 md:px-6 pb-10">
+        <div class="max-w-4xl mx-auto">
 
-            <!-- DETAIL DATA -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-3 text-sm">
+            <!-- Header -->
+            <div class="mb-5">
+                <h5 class="text-xl font-semibold text-gray-900 m-0">Ringkasan Pesanan</h5>
+                <p class="text-sm text-gray-500 mt-1">Detail transaksi dan aksi approval proposal.</p>
 
-                <?php
-            function item($label, $value, $bold = false) {
-                $font = $bold ? 'font-semibold text-slate-900' : 'text-slate-700';
-                echo "
-                <div class='flex'>
-                    <div class='w-56 text-slate-600 font-medium'>$label</div>
-                    <div class='$font'>$value</div>
-                </div>";
-            }
-
-            item('ID Pemesanan', $hasil->ID_PEMESANAN, true);
-            item('Username', $hasil->USERNAME);
-            item('Tanggal Pemesanan', date('d F Y', strtotime($hasil->TANGGAL_PEMESANAN)));
-            item('Email', $hasil->EMAIL);
-            item('Gedung', $hasil->NAMA_GEDUNG);
-            item('Catering', $hasil->NAMA_PAKET);
-            item('Jumlah Porsi', $hasil->JUMLAH_CATERING.' Porsi');
-            item('Total Harga Catering', 'Rp '.number_format($hasil->TOTAL_HARGA));
-            item('Harga Gedung', 'Rp '.number_format($hasil->HARGA_SEWA));
-            item('Pajak 10%', 'Rp '.number_format($tax));
-            item('Total Gedung + Catering', 'Rp '.number_format($hasil->TOTAL_KESELURUHAN));
-            item(
-                'Total Keseluruhan',
-                'Rp '.number_format($total_stl_pajak),
-                true
-            );
-            ?>
-
+                <div class="mt-3">
+                    <a href="<?php echo site_url('admin/transaksi'); ?>"
+                        class="inline-flex items-center justify-center px-4 py-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-sm text-gray-800">
+                        <i class="material-icons text-base mr-2">arrow_back</i>
+                        Kembali
+                    </a>
+                </div>
             </div>
 
-            <!-- DESKRIPSI -->
-            <div class="mt-6">
-                <p class="text-sm font-medium text-slate-600 mb-1">Deskripsi Acara</p>
-                <p class="text-sm text-slate-700 bg-slate-100 p-3 rounded-lg">
-                    <?= nl2br($details->DESKRIPSI_ACARA); ?>
-                </p>
-            </div>
-
-            <!-- PROPOSAL -->
-            <div class="mt-4">
-                <p class="text-sm font-medium text-slate-600 mb-1">Proposal Acara</p>
-                <a href="<?= site_url('admin/admin_controls/download_proposal/'.$hasil->ID_PEMESANAN) ?>"
-                    class="text-blue-600 hover:underline text-sm">
-                    <?= $details->FILE_NAME; ?>
-                </a>
-            </div>
-
-            <!-- FORM AKSI -->
-            <?= form_open('admin/detail_transaksi/'.$hasil->ID_PEMESANAN); ?>
-            <div class="mt-8 border-t pt-6">
-
-                <p class="text-sm font-medium text-slate-700 mb-3">Aksi Proposal</p>
-
-                <div class="flex gap-8">
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" name="status-proposal" value="1" onclick="toggleRemarks(false)"
-                            class="accent-teal-600">
-                        <span>Terima Proposal</span>
-                    </label>
-
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" name="status-proposal" value="5" onclick="toggleRemarks(true)"
-                            class="accent-red-600">
-                        <span>Tolak Proposal</span>
-                    </label>
+            <!-- Card utama -->
+            <div class="cardbox">
+                <div class="cardhead">
+                    <div class="font-semibold text-gray-900">ID Pemesanan: <?php echo $hasil->ID_PEMESANAN; ?></div>
+                    <div class="text-sm text-gray-500 mt-1">
+                        <?php $date = date_create($hasil->TANGGAL_PEMESANAN); echo date_format($date, 'd F Y'); ?>
+                    </div>
+                    <div class="text-sm text-gray-600 mt-2">
+                        Total (incl. pajak): <b>Rp. <?php echo number_format($total_stl_pajak); ?></b>
+                    </div>
                 </div>
 
-                <!-- REMARKS -->
-                <div id="remarksBox" class="mt-4 hidden">
-                    <label class="block text-sm font-medium text-slate-600 mb-1">Remarks</label>
-                    <input type="text" name="remarks"
-                        class="w-full border rounded-lg px-4 py-2 text-sm focus:ring focus:ring-teal-200">
-                </div>
+                <div class="cardbody">
+                    <?php echo form_open('admin/detail_transaksi/'.$hasil->ID_PEMESANAN.''); ?>
 
-                <!-- BUTTON -->
-                <div class="flex justify-end mt-8">
-                    <button type="submit" onclick="return confirm('Lanjutkan proses ini?')"
-                        class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2 rounded-lg shadow">
-                        Submit
-                    </button>
-                </div>
+                    <!-- Detail transaksi (tabel) -->
+                    <div class="cardbox" style="border-radius:12px;">
+                        <div class="cardhead">
+                            <div class="font-semibold text-gray-900 flex items-center gap-2">
+                                <i class="material-icons text-gray-700 text-base">info</i>
+                                Detail Transaksi
+                            </div>
+                            <div class="hint">Data pemesanan, catering, dan total biaya.</div>
+                        </div>
 
+                        <div class="cardbody" style="padding:0;">
+                            <div class="overflow-x-auto">
+                                <table class="bordered">
+                                    <tbody>
+                                        <tr>
+                                            <td><b>ID PEMESANAN</b></td>
+                                            <td>:</td>
+                                            <td><b><?php echo $hasil->ID_PEMESANAN; ?></b></td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>USERNAME</b></td>
+                                            <td>:</td>
+                                            <td><?php echo $hasil->USERNAME; ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>TANGGAL PEMESANAN</b></td>
+                                            <td>:</td>
+                                            <td><?php $date = date_create($hasil->TANGGAL_PEMESANAN); echo date_format($date, 'd F Y'); ?>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>EMAIL</b></td>
+                                            <td>:</td>
+                                            <td><?php echo $hasil->EMAIL; ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>GEDUNG</b></td>
+                                            <td>:</td>
+                                            <td><?php echo $hasil->NAMA_GEDUNG; ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>CATERING</b></td>
+                                            <td>:</td>
+                                            <td><?php echo $hasil->NAMA_PAKET; ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>JUMLAH PORSI CATERING</b></td>
+                                            <td>:</td>
+                                            <td><?php echo $hasil->JUMLAH_CATERING; ?> Porsi</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>TOTAL HARGA CATERING</b></td>
+                                            <td>:</td>
+                                            <td>Rp. <?php echo number_format($hasil->TOTAL_HARGA); ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>HARGA GEDUNG</b></td>
+                                            <td>:</td>
+                                            <td>Rp. <?php echo number_format($hasil->HARGA_SEWA); ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>TOTAL HARGA GEDUNG + CATERING</b></td>
+                                            <td>:</td>
+                                            <td>Rp. <?php echo number_format($hasil->TOTAL_KESELURUHAN); ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>PAJAK 10%</b></td>
+                                            <td><b>:</b></td>
+                                            <td>Rp. <?php echo number_format($tax); ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>TOTAL KESELURUHAN (CATERING + GEDUNG + PAJAK)</b></td>
+                                            <td><b>:</b></td>
+                                            <td><b>Rp. <?php echo number_format($total_stl_pajak); ?></b></td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>DESKRIPSI PEMESANAN</b></td>
+                                            <td>:</td>
+                                            <td><?php echo $details->DESKRIPSI_ACARA; ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>PROPOSAL ACARA</b></td>
+                                            <td>:</td>
+                                            <td>
+                                                <a class="link-file"
+                                                    href="<?php echo site_url('admin/admin_controls/download_proposal/'.$hasil->ID_PEMESANAN.''); ?>">
+                                                    <?php echo $details->FILE_NAME; ?>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Aksi proposal (dibawah tabel, 1 kolom) -->
+                    <div class="cardbox" style="margin-top:14px;">
+                        <div class="cardhead">
+                            <div class="font-semibold text-gray-900 flex items-center gap-2">
+                                <i class="material-icons text-gray-700 text-base">gavel</i>
+                                Aksi Proposal
+                            </div>
+                            <div class="hint">Remarks muncul hanya jika menolak.</div>
+                        </div>
+
+                        <div class="cardbody">
+                            <p style="margin:0;">
+                                <input class="with-gap" name="status-proposal" type="radio" id="ya" value="1"
+                                    onclick="return showInput();" />
+                                <label for="ya">TERIMA PROPOSAL</label>
+                            </p>
+
+                            <div style="height:10px;"></div>
+
+                            <p style="margin:0;">
+                                <input class="with-gap" name="status-proposal" type="radio" id="tidak" value="5"
+                                    onclick="return showInput();" />
+                                <label for="tidak">TOLAK PROPOSAL</label>
+                            </p>
+
+                            <div style="height:14px;"></div>
+
+                            <div id="title" hidden class="text-sm font-semibold text-gray-900">Remarks</div>
+                            <div id="colon" hidden class="text-xs text-gray-500">:</div>
+                            <input type="text" name="remarks" id="remarks" hidden class="validate"
+                                placeholder="Masukkan alasan penolakan...">
+
+                            <div class="hint mt-2">Pastikan pilihan sudah benar sebelum submit.</div>
+                        </div>
+                    </div>
+
+                    <!-- Footer tombol (HANYA DI BAWAH) -->
+                    <div class="mt-6 pt-4 border-t border-gray-200">
+                        <div class="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-end">
+                            <a class="btn-large waves-effect"
+                                style="border-radius:12px;background:#ffffff;color:#111827;border:1px solid #e5e7eb;"
+                                href="<?php echo site_url('admin/transaksi'); ?>">
+                                <i class="material-icons left">close</i>
+                                Batal
+                            </a>
+
+                            <input class="btn-large waves-light btn-blue700" name="submit" id="submit" tabindex="10"
+                                value="submit" onclick="return dialog();" type="submit">
+                        </div>
+                    </div>
+
+                    <?php echo form_close(); ?>
+                </div>
             </div>
-            <?= form_close(); ?>
+
+            <!-- <div class="text-xs text-gray-500 text-center mt-6">
+                © <?php echo date('Y'); ?> Smart Office • Admin Panel
+            </div> -->
 
         </div>
     </main>
 
-    <!-- SCRIPT -->
-    <script>
-    function toggleRemarks(show) {
-        document.getElementById('remarksBox').classList.toggle('hidden', !show);
+    <!-- JS -->
+    <script src="<?php echo base_url(); ?>assets/home/assets/js/jquery.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/home/materialize/js/materialize.js"></script>
+    <script src="<?php echo base_url(); ?>assets/home/index.js"></script>
+
+    <script type="text/javascript">
+    function dialog() {
+        if (confirm("Lanjutkan? ")) {
+            return true;
+        } else {
+            return false;
+        }
     }
+
+    function showInput() {
+        var tolak = document.getElementById("tidak").checked;
+        var terima = document.getElementById("ya").checked;
+        if (tolak == true) {
+            document.getElementById("title").hidden = false;
+            document.getElementById("colon").hidden = false;
+            document.getElementById("remarks").hidden = false;
+        } else if (terima == true) {
+            document.getElementById("title").hidden = true;
+            document.getElementById("colon").hidden = true;
+            document.getElementById("remarks").hidden = true;
+        }
+    }
+    </script>
+
+    <!-- Sidebar toggle -->
+    <script>
+    (function() {
+        var sidebar = document.getElementById('sidebar');
+        var overlay = document.getElementById('sidebarOverlay');
+        var btn = document.getElementById('sidebarToggle');
+        if (!sidebar) return;
+
+        function openSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            if (overlay) overlay.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeSidebar() {
+            sidebar.classList.add('-translate-x-full');
+            if (overlay) overlay.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        if (btn) {
+            btn.addEventListener('click', function() {
+                var isClosed = sidebar.classList.contains('-translate-x-full');
+                if (isClosed) openSidebar();
+                else closeSidebar();
+            });
+        }
+
+        if (overlay) overlay.addEventListener('click', closeSidebar);
+
+        window.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeSidebar();
+        });
+
+        var mq = window.matchMedia('(min-width: 768px)');
+        mq.addEventListener('change', function(e) {
+            if (e.matches) {
+                if (overlay) overlay.classList.add('hidden');
+                sidebar.classList.remove('-translate-x-full');
+                document.body.classList.remove('overflow-hidden');
+            } else {
+                closeSidebar();
+            }
+        });
+    })();
     </script>
 
 </body>
