@@ -11,11 +11,11 @@ $statusText = isset($result->STATUS)
   ? strtoupper(trim(preg_replace('/\s+/', ' ', $result->STATUS)))
   : 'UNKNOWN';
 $map = [
-  'PROCESS' => 1,
-  'PROPOSAL APPROVE' => 2,
-  'APPROVE & PAID' => 3,
-  'SUBMITED' => 4,
-  'REJECTED' => 5,
+  'PROCESS' => 0,
+  'PROPOSAL APPROVE' => 1,
+  'APPROVE & PAID' => 2,
+  'SUBMITED' => 3,
+  'REJECTED' => 4,
 ];
 $statusCode = isset($map[$statusText]) ? $map[$statusText] : 0;
 ?>
@@ -76,7 +76,7 @@ $statusCode = isset($map[$statusText]) ? $map[$statusText] : 0;
 </div>
 <!-- MODAL PEMBAYARAN (lebih kecil + ada jarak + scroll hanya isi modal) -->
 <div id="modalBayar" 
-class="fixed inset-0 z-[999] hidden bg-black/50 flex items-center justify-center p-9">
+class="fixed inset-0 z-[999] bg-black/50 flex items-center justify-center p-9">
   <!-- wrapper: kasih jarak atas/bawah dan center -->
   <div class="flex min-h-screen items-start justify-center p-4 sm:p-6">
     <!-- modal box: tidak full, max height + rounded -->
@@ -126,7 +126,7 @@ class="fixed inset-0 z-[999] hidden bg-black/50 flex items-center justify-center
           <p>Atas Nama: <b>Tiga Serangkai Smart Office</b></p>
         </div>
 
-        <form action="<?= site_url('pembayaran') ?>" method="post" enctype="multipart/form-data">
+        <form action="<?= site_url('pembayaran/upload_bukti') ?>" method="post" enctype="multipart/form-data">
           <input type="hidden" name="id_pemesanan" value="<?= $result->ID_PEMESANAN ?>">
           <input type="hidden" name="id_pemesanan_raw" value="<?= (int)$temp_id ?>">
 
@@ -150,7 +150,7 @@ class="fixed inset-0 z-[999] hidden bg-black/50 flex items-center justify-center
 <input type="text" id="nominal_transfer_display"
        class="w-full border rounded-lg p-2 mb-3"
        inputmode="numeric"
-       placeholder="Rp 0"
+       placeholder="Rp 0" 
        value="Rp <?= number_format((int)($result->TOTAL_KESELURUHAN + $tax), 0, ',', '.') ?>">
 
 <!-- yang dikirim ke server (angka murni) -->
@@ -181,24 +181,20 @@ class="fixed inset-0 z-[999] hidden bg-black/50 flex items-center justify-center
 
 <!-- SCRIPT -->
 <script>
-function openModal() {
-    document.getElementById('modalBayar').classList.remove('hidden');
-    document.getElementById('modalBayar').classList.add('flex');
-}
- function dialog() {
+function dialog() {
   var statusCode = <?= (int)$statusCode ?>;
 
-  // PROCESS -> hapus langsung (boleh pakai confirm atau langsung true)
-  if (statusCode === 1) {
+  // PROCESS (0)
+  if (statusCode === 0) {
     return confirm("YAKIN HAPUS RESERVASI INI?");
   }
 
-  // APPROVE & PAID -> dana tidak kembali
-  if (statusCode === 2,3) {
+  // APPROVE & PAID (2) atau SUBMITED (3) -> dana tidak kembali
+  if (statusCode === 2 || statusCode === 3) {
     return confirm("Pesanan sudah dibayar. Jika dibatalkan, dana tidak dapat dikembalikan. Lanjutkan?");
   }
 
-  // status lain (mis. proposal approve / submited)
+  // status lain (PROPOSAL APPROVE / REJECTED)
   return confirm("Yakin batalkan pesanan ini?");
 }
 </script>
@@ -221,31 +217,21 @@ function closeModal() {
 
 
 <script>
-  const display = document.getElementById('nominal_transfer_display');
-  const hidden  = document.getElementById('nominal_transfer');
+function openModal() {
+  const m = document.getElementById('modalBayar');
+  m.classList.remove('hidden');
+  m.classList.add('flex');
+  document.body.classList.add('overflow-hidden');
+}
 
-  function formatRupiahFromNumber(num) {
-    return 'Rp ' + (num || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  }
-
-  function extractNumber(str) {
-    return parseInt((str || '').replace(/[^\d]/g, ''), 10) || 0;
-  }
-
-  // saat user ngetik
-  display.addEventListener('input', () => {
-    const n = extractNumber(display.value);
-    hidden.value = n;                  // angka murni untuk server
-    display.value = formatRupiahFromNumber(n); // tampilan rupiah
-  });
-
-  // rapikan saat pertama kali load
-  (function init() {
-    const n = extractNumber(display.value) || parseInt(hidden.value, 10) || 0;
-    hidden.value = n;
-    display.value = formatRupiahFromNumber(n);
-  })();
+function closeModal() {
+  const m = document.getElementById('modalBayar');
+  m.classList.add('hidden');
+  m.classList.remove('flex');
+  document.body.classList.remove('overflow-hidden');
+}
 </script>
+
 
 </body>
 </html>

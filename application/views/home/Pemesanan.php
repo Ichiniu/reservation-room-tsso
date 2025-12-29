@@ -74,17 +74,23 @@ $id_gedung = $this->uri->segment(3);
                      </td>
                      <td class="px-4 py-3">
                      <?php
-                         $status = $row['STATUS'];
-                         if($status == "DITOLAK") {
-                             echo '<font color="red">'.$status.'</font>';
-                         } else if($status == "DISETUJUI") {
-                             echo '<font color="blue">'.$status.'</font>';
-                         } else if($status == "PROSES") {
-                             echo '<font color="black">'.$status.'</font>';
-                         } else {
-                             echo $status;
-                         }
-                     ?>
+                        $status = strtoupper(trim($row['STATUS']));
+
+                        if ($status === "REJECTED") {
+                            echo '<font color="red">'.$row['STATUS'].'</font>';
+                        } else if ($status === "PROPOSAL APPROVE") {
+                            echo '<font color="blue">'.$row['STATUS'].'</font>';
+                        } else if ($status === "APPROVE & PAID") {
+                            echo '<font color="green">'.$row['STATUS'].'</font>';
+                        } else if ($status === "SUBMITED") {
+                            echo '<font color="purple">'.$row['STATUS'].'</font>';
+                        } else if ($status === "PROCESS") {
+                            echo '<font color="black">'.$row['STATUS'].'</font>';
+                        } else {
+                            echo $row['STATUS'];
+                        }
+                        ?>
+
                      </td>
                      <td class="px-4 py-3">
                          <a href="<?php echo site_url('home/pemesanan/details/'.$id_pemesanan.''); ?>"><i class="material-icons">open_in_new</i></a>

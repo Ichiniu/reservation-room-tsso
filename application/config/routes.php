@@ -17,13 +17,13 @@ $route['home/cancel-order/(:any)'] = 'home/home/cancel_order/$1';
 $route['home/(:any)/sort-by-capacity'] = 'home/home/sort_by_capacity';
 $route['home/jadwal'] = 'home/home/jadwal_gedung';
 $route['home/upload_bukti'] = 'home/home/upload_bukti'; 
-$route['home/upload_bukti'] = 'pembayaran/pembayaran/index';
 $route['home/(:any)'] = 'home/home';
 
 
 
 
-
+$route['pembayaran/upload_bukti'] = 'pembayaran/pembayaran/upload_bukti';
+$route['pembayaran'] = 'pembayaran/pembayaran';
 $route['pembayaran/frm_pembayaran'] = 'pembayaran/pembayaran/index';
 $route['registration/status'] = 'registration/registration/add_user';
 $route['edit_data/(:any)'] = 'home/home/edit_data/$1';
@@ -57,6 +57,9 @@ $route['admin/perawatan_download_pdf/(:any)/(:any)'] = 'admin/admin_controls/per
 $route['admin/rekap_transaksi'] = 'admin/admin_controls/rekap_transaksi';
 $route['admin/rekap_transaksi/details'] = 'admin/admin_controls/rekap_transaksi_det/$1/$2';
 $route['admin/transaksi_download_pdf/(:any)/(:any)'] = 'admin/admin_controls/transaksi_export_pdf/$1/$2';
+$route['admin/pembayaran/verify/(:num)/(:any)'] = 'admin/admin_controls/verify_pembayaran/$1/$2';
+
+
 
 $route['manage'] = 'manage/manage/index';
 $route['manage/dashboard'] = 'manage/manage/dashboard';

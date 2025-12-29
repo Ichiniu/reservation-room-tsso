@@ -185,7 +185,7 @@ class Admin_Controls extends CI_Controller {
 		$data['result'] = $this->gedung_model->get_pending_transaction();
 		$data['get_transaction'] = $this->gedung_model->get_unread_transaction();
 		$data['details'] = $this->gedung_model->get_detail_pembayaran($id_pembayaran);
-		$this->gedung_model->set_finish_transaction($id_pembayaran);
+		//$this->gedung_model->set_finish_transaction($id_pembayaran);
 		$this->load->view('admin/detail_pembayaran', $data);
 	}
 
@@ -198,62 +198,43 @@ class Admin_Controls extends CI_Controller {
 	}
 
 	function detail_transaksi($id_pemesanan) {
-		$this->load->helper('date');
-		$tanggal_approval = '%Y-%m-%d';
-		$this->load->model('gedung/gedung_model');
-		
-		$temp_id = substr($id_pemesanan, 7);
-		$data['details'] = $this->gedung_model->get_proposal_by_id($temp_id);
-		$data['hasil'] = $this->gedung_model->get_detail_pesanan($id_pemesanan);
-		$data['result'] = $this->gedung_model->get_pending_transaction();
-		
-		$email = $this->gedung_model->get_detail_pesanan($id_pemesanan)->EMAIL;
-		
-		$mail['username'] = $this->gedung_model->get_detail_pesanan($id_pemesanan)->USERNAME;
-		$mail['nama_gedung'] = $this->gedung_model->get_detail_pesanan($id_pemesanan)->NAMA_GEDUNG;
-		$mail['tgl_pemesanan'] = $this->gedung_model->get_detail_pesanan($id_pemesanan)->TANGGAL_PEMESANAN;
-		$mail['tgl_deadline'] = date("Y-m-d", strtotime("+2 day"));
-		$mail['jumlah_pembayaran'] = $this->gedung_model->get_detail_pesanan($id_pemesanan)->TOTAL_KESELURUHAN;
-		$mail['harga_gedung'] = $this->gedung_model->get_detail_pesanan($id_pemesanan)->HARGA_SEWA;
-		$mail['tgl_approval'] = mdate($tanggal_approval);
-		$mail['id_pesanan'] = $this->gedung_model->get_detail_pesanan($id_pemesanan)->ID_PEMESANAN;
-		$mail['acara'] = $this->gedung_model->get_detail_pesanan($id_pemesanan)->DESKRIPSI_ACARA;
-		$mail['tolak'] = $this->gedung_model->get_detail_pesanan($id_pemesanan)->REMARKS;
-			
-		$this->load->view('admin/detail_transaksi', $data);
-		$submit = $this->input->post('submit');
-		
-		$pemesanan_fix_detail = array(
-			'ID_PEMESANAN' => substr($this->uri->segment(3), 7),
-			'USERNAME' => $this->gedung_model->get_detail_pesanan($id_pemesanan)->USERNAME,
-			'TANGGAL_APPROVAL' => mdate($tanggal_approval),
-			'TANGGAL_FINAL_PEMESANAN' => $this->gedung_model->get_detail_pesanan($id_pemesanan)->TANGGAL_PEMESANAN,
-			'TANGGAL_DEADLINE' => date("Y-m-d", strtotime("+2 day")),
-			'FINAL_STATUS' => 1
-			);
+    $this->load->helper('date');
+    $tanggal_approval = '%Y-%m-%d';
+    $this->load->model('gedung/gedung_model');
 
-		if(!empty($submit)) {
-    $status  = (int)$this->input->post('status-proposal');
-    $remarks = $this->input->post('remarks');
+    $temp_id = (int)substr($id_pemesanan, 7);
 
-    // TERIMA PROPOSAL -> status 2 (Proposal Approved / Pending Payment)
-    if($status == 2) {
-        // JANGAN insert ke pemesanan_fix_detail di sini (biar tidak langsung final/submited)
-        $this->gedung_model->update_transaksi($temp_id, 2, '');
-        $pesan = $this->load->view('admin/mail_body', $mail, true);
-        $this->send_mail($email, $pesan);
-        redirect('admin/transaksi');
+    // === PROSES POST DULU ===
+    if ($this->input->method(TRUE) === 'POST') {
+        $status  = (int)$this->input->post('status-proposal');
+        $remarks = $this->input->post('remarks', TRUE);
 
-    // TOLAK PROPOSAL -> status 5 (Rejected)
-    } else if($status == 5) {
-        $this->gedung_model->update_transaksi($temp_id, 5, $remarks);
-        $reject = $this->load->view('admin/reject_pesanan', $mail, true);
-        $this->send_mail($email, $reject);
-        redirect('admin/transaksi');
-		
-    		}
-	}
+        if ($status === 1) {
+            // TERIMA PROPOSAL -> PROPOSAL APPROVE (1)
+            $this->gedung_model->update_transaksi($temp_id, 1, '');
+            redirect('admin/transaksi');
+            return;
+        }
+
+        if ($status === 4) {
+            // TOLAK PROPOSAL -> REJECTED (4)
+            $this->gedung_model->update_transaksi($temp_id, 4, $remarks);
+            redirect('admin/transaksi');
+            return;
+        }
+
+        show_error('Status tidak valid.');
+        return;
+    }
+
+    // === BARU LOAD DATA UNTUK VIEW ===
+    $data['details'] = $this->gedung_model->get_proposal_by_id($temp_id);
+    $data['hasil']   = $this->gedung_model->get_detail_pesanan($id_pemesanan);
+    $data['result']  = $this->gedung_model->get_pending_transaction();
+
+    $this->load->view('admin/detail_transaksi', $data);
 }
+
 
 	function send_mail($to_email, $pesan) {
 		$from_email = "Admin Pembayaran";
@@ -388,5 +369,82 @@ class Admin_Controls extends CI_Controller {
 		$data['result'] = $this->catering_model->get_all();
 		$this->load->view('admin/list_catering', $data);
 	}
+
+public function verify_pembayaran($id_pembayaran, $action)
+{
+    $id_pembayaran = (int)$id_pembayaran;
+    $action = strtolower(trim($action));
+
+    if ($id_pembayaran <= 0) {
+        show_error('ID pembayaran tidak valid');
+        return;
+    }
+
+    // ambil record pembayaran
+    $p = $this->db->get_where('pembayaran', ['ID_PEMBAYARAN' => $id_pembayaran])->row_array();
+    if (!$p) {
+        show_error('Data pembayaran tidak ditemukan');
+        return;
+    }
+
+    $id_pemesanan = (int)$p['ID_PEMESANAN_RAW'];
+
+    $this->db->trans_begin();
+
+    if ($action === 'confirm') {
+
+        // update pembayaran -> CONFIRMED
+        $this->db->where('ID_PEMBAYARAN', $id_pembayaran);
+        $this->db->update('pembayaran', [
+            'STATUS_VERIF'  => 'CONFIRMED',
+            'CATATAN_ADMIN' => null,
+            'CONFIRMED_AT'  => date('Y-m-d H:i:s'),
+        ]);
+
+        // update pemesanan -> SUBMITED (3)
+        $this->db->where('ID_PEMESANAN', $id_pemesanan);
+        $this->db->update('pemesanan', ['STATUS' => 3]);
+
+		} elseif ($action === 'reject') {
+
+			$catatan = $this->input->post('catatan_admin', TRUE);
+
+			// update pembayaran -> REJECTED
+			$this->db->where('ID_PEMBAYARAN', $id_pembayaran);
+			$this->db->update('pembayaran', [
+				'STATUS_VERIF'  => 'REJECTED',
+				'CATATAN_ADMIN' => $catatan,
+				'CONFIRMED_AT'  => null,
+			]);
+
+			// update pemesanan -> REJECTED FINAL (4)
+			$this->db->where('ID_PEMESANAN', $id_pemesanan);
+			$this->db->update('pemesanan', ['STATUS' => 4]);
+
+		}
+ else {
+        $this->db->trans_rollback();
+        show_error('Aksi tidak dikenali. Gunakan confirm atau reject.');
+        return;
+    }
+	if ($action === 'reject' && empty(trim($catatan))) {
+    $this->db->trans_rollback();
+    show_error('Catatan admin wajib diisi saat menolak pembayaran.');
+    return;
+}
+
+
+    if ($this->db->trans_status() === FALSE) {
+        $this->db->trans_rollback();
+        $err = $this->db->error();
+        $msg = isset($err['message']) ? $err['message'] : 'unknown';
+        show_error('Gagal verifikasi pembayaran: ' . $msg);
+        return;
+    }
+
+    $this->db->trans_commit();
+    redirect('admin/pembayaran');
+}
+
 
 }

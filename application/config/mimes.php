@@ -74,8 +74,8 @@ return array(
 	'wav'	=>	array('audio/x-wav', 'audio/wave', 'audio/wav'),
 	'bmp'	=>	array('image/bmp', 'image/x-bmp', 'image/x-bitmap', 'image/x-xbitmap', 'image/x-win-bitmap', 'image/x-windows-bmp', 'image/ms-bmp', 'image/x-ms-bmp', 'application/bmp', 'application/x-bmp', 'application/x-win-bitmap'),
 	'gif'	=>	'image/gif',
-	'jpeg'	=>	array('image/jpeg', 'image/pjpeg'),
-	'jpg'	=>	array('image/jpeg', 'image/pjpeg'),
+	'jpeg' => array('image/jpeg', 'image/pjpeg', 'image/jfif'),
+	'jpg'  => array('image/jpeg', 'image/pjpeg', 'image/jfif'),
 	'jpe'	=>	array('image/jpeg', 'image/pjpeg'),
 	'png'	=>	array('image/png',  'image/x-png'),
 	'tiff'	=>	'image/tiff',
@@ -154,5 +154,7 @@ return array(
 	'vcf'	=>	'text/x-vcard',
 	'srt'	=>	array('text/srt', 'text/plain'),
 	'vtt'	=>	array('text/vtt', 'text/plain'),
-	'ico'	=>	array('image/x-icon', 'image/x-ico', 'image/vnd.microsoft.icon')
+	'ico'	=>	array('image/x-icon', 'image/x-ico', 'image/vnd.microsoft.icon'),
+	'webp' => array('image/webp'),
+	'jfif' => array('image/jfif', 'image/jpeg', 'image/pjpeg'),
 );

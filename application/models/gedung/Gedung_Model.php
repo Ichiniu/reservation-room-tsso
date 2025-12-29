@@ -9,13 +9,16 @@ class Gedung_Model extends CI_Model {
 	}
 
 	public function get_unread_transaction() {
-		$sql = "SELECT * FROM PEMBAYARAN WHERE FLAG = 0";
-		$query = $this->db->query($sql);
-		return $query->num_rows();
-	}
+    $sql = "SELECT * FROM PEMBAYARAN WHERE STATUS_VERIF = 'PENDING'";
+    $query = $this->db->query($sql);
+    return $query->num_rows();
+}
+
 
 	public function laporan_pembayaran_periodic($start_date, $end_date) {
-		$sql = "SELECT * FROM PEMBAYARAN WHERE TANGGAL_TRANSFER BETWEEN '$start_date' AND '$end_date' ORDER BY ATAS_NAMA ASC";
+		$sql = "SELECT * FROM PEMBAYARAN 
+        WHERE TANGGAL_TRANSFER BETWEEN '$start_date' AND '$end_date' 
+        ORDER BY ATAS_NAMA_PENGIRIM ASC";
 		$query = $this->db->query($sql);
 		return $query->result_array();
 	}
@@ -27,9 +30,13 @@ class Gedung_Model extends CI_Model {
 	}
 
 	public function set_finish_transaction($id_pembayaran) {
-		$sql = "UPDATE pembayaran SET FLAG = 1 WHERE ID_PEMBAYARAN = $id_pembayaran";
-		$query = $this->db->query($sql);
-	}
+    $id_pembayaran = (int)$id_pembayaran;
+    $sql = "UPDATE pembayaran 
+            SET STATUS_VERIF = 'CONFIRMED', CONFIRMED_AT = NOW()
+            WHERE ID_PEMBAYARAN = $id_pembayaran";
+    return $this->db->query($sql);
+}
+
 
 	public function get_details_transaction($id_pembayaran) {
 		$sql = "SELECT * FROM PEMBAYARAN WHERE ID_PEMBAYARAN = $id_pembayaran";
@@ -45,10 +52,16 @@ class Gedung_Model extends CI_Model {
 	}
 
 	public function get_all_pembayaran() {
-		$sql = "SELECT * FROM PEMBAYARAN";
-		$query = $this->db->query($sql);
-		return $query->result_array();
-	}
+    $sql = "SELECT * FROM PEMBAYARAN ORDER BY CREATED_AT DESC";
+    return $this->db->query($sql)->result_array();
+}
+
+// atau pending saja:
+public function get_all_pembayaran_pending() {
+    $sql = "SELECT * FROM PEMBAYARAN WHERE STATUS_VERIF='PENDING' ORDER BY CREATED_AT DESC";
+    return $this->db->query($sql)->result_array();
+}
+
 
 	public function get_pemesanan_flag($username) {
 		$query = "SELECT * FROM PEMESANAN WHERE USERNAME = '$username' AND FLAG = 1";
@@ -199,64 +212,55 @@ public function jadwal_gedung_upcoming() {
 	}
 
 	public function get_all_pending_transaction() {
-		$sql = "SELECT * FROM V_PEMESANAN WHERE STATUS = 'PROCESS'";
-		$query = $this->db->query($sql);
-		$hasil = $query->result_array();
-		return $hasil;
-	}
-
-	public function get_detail_pembayaran($id_pembayaran)	 {
-		$sql = "
-		SELECT 
-		PEMBAYARAN.KODE_PEMESANAN,
-		PEMBAYARAN.ID_PEMESANAN,
-		PEMBAYARAN.ATAS_NAMA,
-		PEMBAYARAN.TANGGAL_TRANSFER,
-		PEMBAYARAN.KODE_PEMBAYARAN,
-		PEMBAYARAN.ID_PEMBAYARAN,
-		PEMBAYARAN.BANK_PENGIRIM,
-		PEMBAYARAN.NOMINAL_TRANSFER,
-		PEMBAYARAN.PATH,
-		PEMBAYARAN.IMG_NAME,
-		PEMESANAN.USERNAME,
-		GEDUNG.HARGA_SEWA,
-		COALESCE(CATERING.HARGA * PEMESANAN.JUMLAH_CATERING, 0) AS HARGA_CATERING,
-		GEDUNG.HARGA_SEWA + (COALESCE(CATERING.HARGA * PEMESANAN.JUMLAH_CATERING, 0)) AS TOTAL
-		FROM PEMBAYARAN
-		LEFT JOIN PEMESANAN ON PEMBAYARAN.ID_PEMESANAN = PEMESANAN.ID_PEMESANAN
-		LEFT JOIN CATERING ON CATERING.ID_CATERING = PEMESANAN.ID_CATERING
-		LEFT JOIN GEDUNG ON GEDUNG.ID_GEDUNG = PEMESANAN.ID_GEDUNG
-		WHERE PEMBAYARAN.ID_PEMBAYARAN = $id_pembayaran";
-		$query = $this->db->query($sql);
-		return $query->row();
-	}
+    $sql = "SELECT * 
+            FROM V_PEMESANAN 
+            WHERE STATUS IN ('PROCESS','PROPOSAL APPROVE')
+            ORDER BY TANGGAL_PEMESANAN DESC";
+    $query = $this->db->query($sql);
+    return $query->result_array();
+}
 
 
-	public function user_detail_pembayaran($username) {
-		$sql = "
-		SELECT 
-		PEMBAYARAN.KODE_PEMESANAN,
-		PEMBAYARAN.ID_PEMESANAN,
-		PEMBAYARAN.ATAS_NAMA,
-		PEMBAYARAN.TANGGAL_TRANSFER,
-		PEMBAYARAN.KODE_PEMBAYARAN,
-		PEMBAYARAN.ID_PEMBAYARAN,
-		PEMBAYARAN.BANK_PENGIRIM,
-		PEMBAYARAN.NOMINAL_TRANSFER,
-		PEMBAYARAN.PATH,
-		PEMBAYARAN.IMG_NAME,
-		PEMESANAN.USERNAME,
-		GEDUNG.HARGA_SEWA,
-		COALESCE(CATERING.HARGA * PEMESANAN.JUMLAH_CATERING, 0) AS HARGA_CATERING,
-		GEDUNG.HARGA_SEWA + (COALESCE(CATERING.HARGA * PEMESANAN.JUMLAH_CATERING, 0)) AS TOTAL
-		FROM PEMBAYARAN
-		LEFT JOIN PEMESANAN ON PEMBAYARAN.ID_PEMESANAN = PEMESANAN.ID_PEMESANAN
-		LEFT JOIN CATERING ON CATERING.ID_CATERING = PEMESANAN.ID_CATERING
-		LEFT JOIN GEDUNG ON GEDUNG.ID_GEDUNG = PEMESANAN.ID_GEDUNG
-		WHERE PEMESANAN.USERNAME = '$username'";
-		$query = $this->db->query($sql);
-		return $query->result_array();
-	}
+	public function get_detail_pembayaran($id_pembayaran)
+{
+    $id_pembayaran = (int)$id_pembayaran;
+
+    $sql = "
+      SELECT 
+        p.*,
+        ps.USERNAME,
+        g.HARGA_SEWA,
+        COALESCE(c.HARGA * ps.JUMLAH_CATERING, 0) AS HARGA_CATERING,
+        g.HARGA_SEWA + COALESCE(c.HARGA * ps.JUMLAH_CATERING, 0) AS TOTAL
+      FROM PEMBAYARAN p
+      LEFT JOIN PEMESANAN ps ON p.ID_PEMESANAN_RAW = ps.ID_PEMESANAN
+      LEFT JOIN CATERING c ON c.ID_CATERING = ps.ID_CATERING
+      LEFT JOIN GEDUNG g ON g.ID_GEDUNG = ps.ID_GEDUNG
+      WHERE p.ID_PEMBAYARAN = $id_pembayaran
+    ";
+
+    return $this->db->query($sql)->row();
+}
+
+
+public function user_detail_pembayaran($username) {
+    $sql = "
+      SELECT 
+        p.*,
+        ps.USERNAME,
+        g.HARGA_SEWA,
+        COALESCE(c.HARGA * ps.JUMLAH_CATERING, 0) AS HARGA_CATERING,
+        g.HARGA_SEWA + COALESCE(c.HARGA * ps.JUMLAH_CATERING, 0) AS TOTAL
+      FROM PEMBAYARAN p
+      LEFT JOIN PEMESANAN ps ON p.ID_PEMESANAN_RAW = ps.ID_PEMESANAN
+      LEFT JOIN CATERING c ON c.ID_CATERING = ps.ID_CATERING
+      LEFT JOIN GEDUNG g ON g.ID_GEDUNG = ps.ID_GEDUNG
+      WHERE ps.USERNAME = '$username'
+      ORDER BY p.CREATED_AT DESC
+    ";
+    return $this->db->query($sql)->result_array();
+}
+
 
 	public function get_pemesanan($username) {
 		$sql = "SELECT * FROM V_PEMESANAN WHERE USERNAME = '$username'";

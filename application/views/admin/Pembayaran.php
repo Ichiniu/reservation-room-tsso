@@ -55,44 +55,54 @@ $total_keseluruhan = 0;
                         </tr>
                     </thead>
 
-                    <tbody class="divide-y">
-                        <?php if(!empty($pembayaran)): ?>
-                        <?php foreach($pembayaran as $row): ?>
-                        <tr class="table-row hover:bg-slate-50 text-center">
-                            <td class="px-4 py-3"><?= $no++ ?></td>
+                <tbody class="divide-y">
+                <?php if(!empty($pembayaran)): ?>
+                    <?php foreach($pembayaran as $row): ?>
+                    <tr class="table-row hover:bg-slate-50 text-center">
+                        <td class="px-4 py-3"><?= $no++ ?></td>
 
-                            <td class="px-4 py-3 font-medium">
-                                <?= $row['KODE_PEMBAYARAN'].$row['ID_PEMBAYARAN']; ?>
-                            </td>
+                        <!-- Kode Transaksi: karena tidak ada KODE_PEMBAYARAN di tabel baru -->
+                        <td class="px-4 py-3 font-medium">
+                        <?= 'PB' . str_pad($row['ID_PEMBAYARAN'], 6, '0', STR_PAD_LEFT); ?>
+                        </td>
 
-                            <td class="px-4 py-3">
-                                <?= $row['KODE_PEMESANAN'].$row['ID_PEMESANAN']; ?>
-                            </td>
+                        <!-- Kode Pemesanan: KODE_PEMESANAN + ID_PEMESANAN_RAW -->
+                        <td class="px-4 py-3">
+                        <?= $row['KODE_PEMESANAN'] . $row['ID_PEMESANAN_RAW']; ?>
+                        </td>
 
-                            <td class="px-4 py-3"><?= $row['ATAS_NAMA']; ?></td>
+                        <!-- Atas Nama (pengirim) -->
+                        <td class="px-4 py-3">
+                        <?= $row['ATAS_NAMA_PENGIRIM']; ?>
+                        </td>
 
-                            <td class="px-4 py-3 font-semibold text-green-600">
-                                Rp <?= number_format($row['NOMINAL_TRANSFER'],0,',','.'); ?>
-                            </td>
+                        <td class="px-4 py-3 font-semibold text-green-600">
+                        Rp <?= number_format($row['NOMINAL_TRANSFER'],0,',','.'); ?>
+                        </td>
 
-                            <td class="px-4 py-3">
-                                <a href="<?= site_url('admin/pembayaran/details/'.$row['ID_PEMBAYARAN']) ?>"
-                                    class="inline-flex items-center justify-center text-blue-600 hover:text-blue-800">
-                                    <i class="material-icons text-base">open_in_new</i>
-                                </a>
-                            </td>
-                        </tr>
+                        <td class="px-4 py-3">
+                        <a href="<?= site_url('admin/pembayaran/details/'.$row['ID_PEMBAYARAN']) ?>"
+                            class="inline-flex items-center justify-center text-blue-600 hover:text-blue-800">
+                            <i class="material-icons text-base">open_in_new</i>
+                        </a>
+                        </td>
+                        <td class="px-4 py-3">
+                        <?= $row['STATUS_VERIF']; ?>
+                        </td>
 
-                        <?php $total_keseluruhan += $row['NOMINAL_TRANSFER']; ?>
-                        <?php endforeach; ?>
-                        <?php else: ?>
-                        <tr>
-                            <td colspan="6" class="px-4 py-6 text-center text-slate-500">
-                                Data pembayaran belum tersedia
-                            </td>
-                        </tr>
-                        <?php endif; ?>
-                    </tbody>
+                    </tr>
+
+                    <?php $total_keseluruhan += $row['NOMINAL_TRANSFER']; ?>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                    <td colspan="6" class="px-4 py-6 text-center text-slate-500">
+                        Data pembayaran belum tersedia
+                    </td>
+                    </tr>
+                <?php endif; ?>
+                </tbody>
+
 
                     <tfoot class="bg-slate-50 font-semibold">
                         <tr class="text-center">
@@ -136,7 +146,7 @@ $total_keseluruhan = 0;
     </main>
 
     <!-- JS -->
-    <script src="<?= base_url('assets/home/assets/js/jquery.min.js') ?>"></script>
+    <script src="<?= base_url(' assets/home/assets/js/jquery.min.js') ?>"></script>
     <script src="<?= base_url('assets/home/materialize/js/materialize.js') ?>"></script>
 
     <script>
