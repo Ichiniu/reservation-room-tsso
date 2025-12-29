@@ -187,7 +187,7 @@ $catering_data = isset($result) && is_array($result) ? $result : [];
                             <th class="px-4 py-3">Menu Utama</th>
                             <th class="px-4 py-3">Menu Penutup</th>
                             <th class="px-10 py-3">Harga</th>
-                            <th class="px-4 py-3 text-center">Aksi</th>
+                            <!-- <th class="px-4 py-3 text-center">Aksi</th> -->
                         </tr>
                     </thead>
 
@@ -202,9 +202,9 @@ $catering_data = isset($result) && is_array($result) ? $result : [];
                             <td class="px-4 py-3 font-semibold">
                                 Rp <?= number_format($row['HARGA'],0,',','.') ?>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <!-- <td class="px-4 py-3 text-center">
                                 <a href="#" class="text-blue-600 hover:underline text-sm">Detail</a>
-                            </td>
+                            </td> -->
                         </tr>
                         <?php endforeach; ?>
 
@@ -241,6 +241,10 @@ $catering_data = isset($result) && is_array($result) ? $result : [];
             </div>
 
         </div>
+        <footer class="text-xs text-gray-500 text-center mt-6">
+            © <?php echo date('Y'); ?> Smart Office • Admin Panel
+
+        </footer>
     </main>
 
     <!-- ================= SCRIPT ================= -->

@@ -226,13 +226,15 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
                         </table>
                     </div>
 
-                    <div class="cardbody" style="border-top:1px solid #e5e7eb;">
+                    <div class="cardbody border-t border-blue-900 flex items-center">
                         <a href="<?php echo site_url('admin/transaksi'); ?>"
-                            class="inline-flex items-center justify-center px-4 py-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-sm text-gray-800">
-                            <i class="material-icons text-base mr-2">arrow_back</i>
+                            class="inline-flex items-center gap-2 rounded-lg bg-blue-700 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-800 active:bg-blue-900">
+                            <i class="material-icons text-base">arrow_back</i>
                             Kembali
                         </a>
                     </div>
+
+
                 </div>
             </div>
 

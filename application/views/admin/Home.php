@@ -18,13 +18,13 @@ $this->load->helper('text');
     <link href="<?= base_url('assets/home/style.css') ?>" rel="stylesheet">
 </head>
 
-<body class="bg-slate-200 min-h-screen">
+<body class="bg-slate-200 min-h-screen flex flex-col">
 
     <!-- SIDEBAR -->
     <?php $this->load->view('admin/components/sidebar'); ?>
 
     <!-- MAIN -->
-    <main class="pt-24 pl-0 md:pl-64 px-4 md:px-6 pb-10">
+    <main class="flex-1 pt-24 pl-0 md:pl-64 px-4 md:px-6 pb-10">
 
         <div class="max-w-6xl mx-auto mb-6">
             <h1 class="text-2xl font-bold text-slate-800">Jadwal Gedung Terbooking</h1>
@@ -125,6 +125,10 @@ if ($status == 'Disetujui') {
         <!-- ================= END CARD ================= -->
 
     </main>
+    <footer class="mt-auto text-xs text-gray-500 text-center py-4">
+        © <?php echo date('Y'); ?> Smart Office • Admin Panel
+
+    </footer>
 
     <!-- ================= PAGINATION SCRIPT ================= -->
     <script>
