@@ -204,22 +204,22 @@ $this->load->helper('text');
                         </div>
 
                         <!-- Actions -->
-                        <div class="mt-6 flex flex-col sm:flex-row gap-3">
+                        <div class="mt-6 flex items-center gap-3 justify-start">
                             <!-- Button utama: blue-700 -->
-                            <button class="waves-effect waves-light btn-large"
-                                style="border-radius:12px;background:#1d4ed8;" name="submit" id="submit"
-                                value="Tambah Menu" type="submit">
-                                <i class="material-icons left">add</i>
+                            <button type="submit" name="submit" id="submit" value="Tambah Menu"
+                                class="inline-flex h-10 items-center gap-2 rounded-lg bg-blue-700 px-4 text-sm font-semibold text-white hover:bg-blue-800 active:bg-blue-900">
+                                <i class="material-icons text-[18px]">add</i>
                                 Tambah Menu
                             </button>
 
-                            <a class="btn-large waves-effect"
-                                style="border-radius:12px;background:#ffffff;color:#111827;border:1px solid #e5e7eb;"
-                                href="<?php echo site_url('admin/catering'); ?>">
-                                <i class="material-icons left">close</i>
+                            <!-- Button secondary -->
+                            <a href="<?php echo site_url('admin/catering'); ?>"
+                                class="inline-flex h-10 items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 text-sm font-semibold text-gray-900 hover:bg-gray-50 active:bg-gray-100">
+                                <i class="material-icons text-[18px]">close</i>
                                 Batal
                             </a>
                         </div>
+
 
                     </form>
                 </div>

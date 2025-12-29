@@ -117,6 +117,10 @@ $this->load->helper('text');
             </div>
 
         </div>
+        <footer class="text-xs text-gray-500 text-center mt-6 stacked">
+            © <?php echo date('Y'); ?> Smart Office • Admin Panel
+
+        </footer>
     </main>
 
     <!-- PAGINATION SCRIPT -->

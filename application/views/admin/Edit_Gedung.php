@@ -211,32 +211,30 @@ $this->load->helper('text');
                         </div>
 
                         <!-- Actions -->
-                        <div class="mt-6 flex flex-col sm:flex-row gap-3">
-                            <button class="waves-effect waves-light btn-large"
-                                style="border-radius:12px;background:#1d4ed8;" name="submit" id="submit" tabindex="10"
-                                value="Simpan" type="submit">
-                                <i class="material-icons left">save</i>
+                        <div class="mt-6 flex items-center gap-3 justify-start">
+                            <button type="submit" name="submit" id="submit" tabindex="10" value="Simpan"
+                                class="inline-flex h-10 items-center gap-2 rounded-lg bg-blue-700 px-4 text-sm font-semibold text-white hover:bg-blue-800 active:bg-blue-900">
+                                <i class="material-icons text-[18px]">save</i>
                                 Simpan
                             </button>
 
-                            <a class="btn-large waves-effect"
-                                style="border-radius:12px;background:#ffffff;color:#111827;border:1px solid #e5e7eb;"
-                                href="<?php echo site_url('admin/gedung'); ?>">
-                                <i class="material-icons left">close</i>
+                            <a href="<?php echo site_url('admin/gedung'); ?>"
+                                class="inline-flex h-10 items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 text-sm font-semibold text-gray-900 hover:bg-gray-50 active:bg-gray-100">
+                                <i class="material-icons text-[18px]">close</i>
                                 Batal
                             </a>
                         </div>
+
 
                     </form>
 
                     <?php endforeach; ?>
                 </div>
             </div>
-
-            <div class="text-xs text-gray-500 text-center mt-6">
+            <footer class="text-xs text-gray-500 text-center mt-6">
                 © <?php echo date('Y'); ?> Smart Office • Admin Panel
-            </div>
 
+            </footer>
         </div>
     </main>
 
