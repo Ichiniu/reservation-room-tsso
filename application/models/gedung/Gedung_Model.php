@@ -63,11 +63,20 @@ public function get_all_pembayaran_pending() {
 }
 
 
-	public function get_pemesanan_flag($username) {
-		$query = "SELECT * FROM PEMESANAN WHERE USERNAME = '$username' AND FLAG = 1";
-		$sql = $this->db->query($query);
-		return $sql->num_rows();
-	}
+	public function get_pemesanan_flag($username)
+{
+    $sql = "
+      SELECT COUNT(*) AS total
+      FROM pembayaran pb
+      JOIN pemesanan p ON p.ID_PEMESANAN = pb.ID_PEMESANAN_RAW
+      WHERE p.USERNAME = ?
+        AND pb.STATUS_VERIF = 'PENDING'
+    ";
+
+    $row = $this->db->query($sql, array($username))->row_array();
+    return isset($row['total']) ? (int)$row['total'] : 0;
+}
+
 
 	public function insert_pemesanan_fix_detail($data) {
 		$this->db->insert('pemesanan_fix_detail', $data);
@@ -243,23 +252,34 @@ public function jadwal_gedung_upcoming() {
 }
 
 
-public function user_detail_pembayaran($username) {
+public function user_detail_pembayaran($username)
+{
     $sql = "
-      SELECT 
-        p.*,
-        ps.USERNAME,
-        g.HARGA_SEWA,
-        COALESCE(c.HARGA * ps.JUMLAH_CATERING, 0) AS HARGA_CATERING,
-        g.HARGA_SEWA + COALESCE(c.HARGA * ps.JUMLAH_CATERING, 0) AS TOTAL
-      FROM PEMBAYARAN p
-      LEFT JOIN PEMESANAN ps ON p.ID_PEMESANAN_RAW = ps.ID_PEMESANAN
-      LEFT JOIN CATERING c ON c.ID_CATERING = ps.ID_CATERING
-      LEFT JOIN GEDUNG g ON g.ID_GEDUNG = ps.ID_GEDUNG
-      WHERE ps.USERNAME = '$username'
-      ORDER BY p.CREATED_AT DESC
+      SELECT
+        p.ID_PEMBAYARAN,
+        p.ID_PEMESANAN_RAW,
+        p.KODE_PEMESANAN,
+        p.TANGGAL_PEMESANAN,
+        p.NAMA_GEDUNG,
+        p.NAMA_PAKET,
+        p.TOTAL_TAGIHAN,
+        p.ATAS_NAMA_PENGIRIM,
+        p.TANGGAL_TRANSFER,
+        p.BANK_PENGIRIM,
+        p.NOMINAL_TRANSFER,
+        p.STATUS_VERIF,
+        p.CREATED_AT,
+        p.CONFIRMED_AT
+      FROM pembayaran p
+      JOIN pemesanan ps ON ps.ID_PEMESANAN = p.ID_PEMESANAN_RAW
+      WHERE ps.USERNAME = ?
+        AND p.STATUS_VERIF = 'CONFIRMED'
+      ORDER BY p.CONFIRMED_AT DESC, p.CREATED_AT DESC
     ";
-    return $this->db->query($sql)->result_array();
+
+    return $this->db->query($sql, array($username))->result_array();
 }
+
 
 
 	public function get_pemesanan($username) {
