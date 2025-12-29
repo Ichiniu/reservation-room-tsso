@@ -64,7 +64,54 @@ if (!$pesanan) {
     $bukti_rel_path = 'assets/images/client-bukti-pembayaran/' . $upload_data['file_name'];
 
     // Total tagihan dari form (sudah kamu set dari TOTAL + pajak)
-    $total = (int)$this->input->post('nominal_transfer', TRUE);
+ // Ambil detail pemesanan + harga untuk hitung total
+$pesanan = $this->db->select('p.ID_PEMESANAN, p.TANGGAL_PEMESANAN, p.JUMLAH_CATERING,
+                              g.NAMA_GEDUNG, g.HARGA_SEWA,
+                              c.NAMA_PAKET, c.HARGA AS HARGA_CATERING_SATUAN')
+    ->from('pemesanan p')
+    ->join('gedung g', 'g.ID_GEDUNG = p.ID_GEDUNG', 'left')
+    ->join('catering c', 'c.ID_CATERING = p.ID_CATERING', 'left')
+    ->where('p.ID_PEMESANAN', $id_pemesanan_raw)
+    ->get()
+    ->row();
+
+if (!$pesanan) {
+    show_error('Data pemesanan tidak ditemukan.');
+    return;
+}
+
+$harga_sewa = (int)$pesanan->HARGA_SEWA;
+$harga_catering_satuan = !empty($pesanan->HARGA_CATERING_SATUAN) ? (int)$pesanan->HARGA_CATERING_SATUAN : 0;
+$jumlah_catering = !empty($pesanan->JUMLAH_CATERING) ? (int)$pesanan->JUMLAH_CATERING : 0;
+
+$harga_catering_total = $harga_catering_satuan * $jumlah_catering;
+$total_tagihan = $harga_sewa + $harga_catering_total;
+
+// nominal transfer dari input user
+$nominal_transfer = (int)$this->input->post('nominal_transfer', TRUE);
+
+$data = array(
+    'ID_PEMESANAN_RAW'   => $id_pemesanan_raw,
+    'KODE_PEMESANAN'     => 'PMSN000',
+    'TANGGAL_PEMESANAN'  => $pesanan->TANGGAL_PEMESANAN,
+    'NAMA_GEDUNG'        => $pesanan->NAMA_GEDUNG,
+    'NAMA_PAKET'         => !empty($pesanan->NAMA_PAKET) ? $pesanan->NAMA_PAKET : '-',
+
+    // INI yang benar:
+    'TOTAL_TAGIHAN'      => $total_tagihan,
+    'NOMINAL_TRANSFER'   => $nominal_transfer,
+
+    'ATAS_NAMA_PENGIRIM' => $this->input->post('atas_nama', TRUE),
+    'TANGGAL_TRANSFER'   => $this->input->post('tanggal_transfer', TRUE),
+    'BANK_PENGIRIM'      => $this->input->post('bank_pengirim', TRUE),
+
+    'BUKTI_PATH'         => $bukti_rel_path,
+    'BUKTI_NAME'         => $upload_data['file_name'],
+    'BUKTI_MIME'         => $upload_data['file_type'],
+
+    'STATUS_VERIF'       => 'PENDING',
+);
+
 
     // KODE_PEMESANAN: kalau view/DB kamu pakai prefix "PMSN000", isi itu
     // (kalau di V_PEMESANAN ada kolom KODE_PEMESANAN, pakai dari sana)

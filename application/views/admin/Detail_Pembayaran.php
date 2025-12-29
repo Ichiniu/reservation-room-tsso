@@ -1,15 +1,20 @@
 <?php
 $session_id = $this->session->userdata('username');
-$this->load->helper(['text','form']);
+$this->load->helper(array('text','form'));
 
 function row_item($label, $value, $bold=false){
   $font = $bold ? 'font-semibold text-slate-900' : 'text-slate-700';
   echo "
   <div class='flex'>
-    <div class='w-48 text-slate-600'>$label</div>
-    <div class='$font'>$value</div>
+    <div class='w-48 text-slate-600'>".$label."</div>
+    <div class='".$font."'>".$value."</div>
   </div>";
 }
+
+/* ===== LOCK BUTTON JIKA SUDAH FINAL ===== */
+$status_raw = isset($details->STATUS_VERIF) ? $details->STATUS_VERIF : '';
+$status = strtoupper(trim($status_raw));
+$is_locked = in_array($status, array('CONFIRMED', 'REJECTED'));
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -37,41 +42,60 @@ function row_item($label, $value, $bold=false){
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
         <?php
           // kode transaksi buatan
-          row_item('ID Transaksi', 'PB' . str_pad($details->ID_PEMBAYARAN, 6, '0', STR_PAD_LEFT), true);
+          $id_pembayaran = isset($details->ID_PEMBAYARAN) ? $details->ID_PEMBAYARAN : 0;
+          row_item('ID Transaksi', 'PB' . str_pad($id_pembayaran, 6, '0', STR_PAD_LEFT), true);
 
           // pemesanan
-          row_item('ID Pemesanan', $details->KODE_PEMESANAN . $details->ID_PEMESANAN_RAW);
+          $kode_pemesanan = isset($details->KODE_PEMESANAN) ? $details->KODE_PEMESANAN : '';
+          $id_pemesanan_raw = isset($details->ID_PEMESANAN_RAW) ? $details->ID_PEMESANAN_RAW : '';
+          row_item('ID Pemesanan', $kode_pemesanan . $id_pemesanan_raw);
 
           // pengirim
-          row_item('Atas Nama Pengirim', $details->ATAS_NAMA_PENGIRIM);
+          $atas_nama = isset($details->ATAS_NAMA_PENGIRIM) ? $details->ATAS_NAMA_PENGIRIM : '-';
+          row_item('Atas Nama Pengirim', $atas_nama);
 
           // tanggal & nominal
-          row_item('Tanggal Pembayaran', date('d F Y', strtotime($details->TANGGAL_TRANSFER)));
-          row_item('Nominal Transfer', 'Rp '.number_format($details->NOMINAL_TRANSFER,0,',','.'), true);
+          $tgl_transfer_raw = isset($details->TANGGAL_TRANSFER) ? $details->TANGGAL_TRANSFER : '';
+          $tgl_transfer = $tgl_transfer_raw ? date('d F Y', strtotime($tgl_transfer_raw)) : '-';
+          row_item('Tanggal Pembayaran', $tgl_transfer);
+
+          $nominal_transfer = isset($details->NOMINAL_TRANSFER) ? (int)$details->NOMINAL_TRANSFER : 0;
+          row_item('Nominal Transfer', 'Rp '.number_format($nominal_transfer,0,',','.'), true);
 
           // total tagihan
-          row_item('Total Tagihan', 'Rp '.number_format($details->TOTAL_TAGIHAN,0,',','.'), true);
+          $total_tagihan = isset($details->TOTAL_TAGIHAN) ? (int)$details->TOTAL_TAGIHAN : 0;
+          row_item('Total Tagihan', 'Rp '.number_format($total_tagihan,0,',','.'), true);
 
           // sisa
-          $sisa = (int)$details->TOTAL_TAGIHAN - (int)$details->NOMINAL_TRANSFER;
+          $sisa = $total_tagihan - $nominal_transfer;
+          if ($sisa < 0) { $sisa = 0; }
           row_item('Sisa Tagihan', 'Rp '.number_format($sisa,0,',','.'), true);
 
           // bank
-          row_item('Bank Pengirim', $details->BANK_PENGIRIM);
+          $bank_pengirim = isset($details->BANK_PENGIRIM) ? $details->BANK_PENGIRIM : '-';
+          row_item('Bank Pengirim', $bank_pengirim);
 
           // status verif
-          row_item('Status Verifikasi', $details->STATUS_VERIF, true);
+          row_item('Status Verifikasi', htmlspecialchars($status_raw), true);
         ?>
       </div>
 
       <!-- BUKTI TRANSFER -->
       <?php
         // BUKTI_PATH disarankan menyimpan relative file, mis: assets/images/client-bukti-pembayaran/xxx.jpg
-        $bukti_path = $details->BUKTI_PATH;
+        $bukti_path = isset($details->BUKTI_PATH) ? $details->BUKTI_PATH : '';
 
         // kalau BUKTI_PATH hanya folder, gabungkan dengan BUKTI_NAME
-        if (!empty($details->BUKTI_NAME) && substr($bukti_path, -strlen($details->BUKTI_NAME)) !== $details->BUKTI_NAME) {
-          $bukti_path = rtrim($bukti_path, '/') . '/' . $details->BUKTI_NAME;
+        $bukti_name = isset($details->BUKTI_NAME) ? $details->BUKTI_NAME : '';
+        if (!empty($bukti_name)) {
+          // cek apakah $bukti_path sudah mengandung nama file
+          $len = strlen($bukti_name);
+          if ($len > 0) {
+            $tail = substr($bukti_path, -$len);
+            if ($tail !== $bukti_name) {
+              $bukti_path = rtrim($bukti_path, '/') . '/' . $bukti_name;
+            }
+          }
         }
 
         $bukti_url = base_url($bukti_path);
@@ -83,14 +107,14 @@ function row_item($label, $value, $bold=false){
 
         <?php if($is_pdf): ?>
           <div class="flex justify-center">
-            <a href="<?= $bukti_url ?>" target="_blank"
+            <a href="<?php echo $bukti_url; ?>" target="_blank"
                class="px-4 py-2 rounded-lg bg-slate-800 text-white hover:bg-slate-900">
               Lihat Bukti (PDF)
             </a>
           </div>
         <?php else: ?>
           <div class="flex justify-center">
-            <img src="<?= $bukti_url ?>" class="max-h-96 rounded-lg shadow border" alt="Bukti Transfer">
+            <img src="<?php echo $bukti_url; ?>" class="max-h-96 rounded-lg shadow border" alt="Bukti Transfer">
           </div>
         <?php endif; ?>
       </div>
@@ -99,38 +123,55 @@ function row_item($label, $value, $bold=false){
       <div class="mt-8 border-t pt-6">
         <p class="text-sm font-medium text-slate-700 mb-3">Verifikasi Pembayaran</p>
 
-        <!-- REJECT (POST, wajib catatan) -->
-        <form method="post"
-              action="<?= site_url('admin/pembayaran/verify/'.$details->ID_PEMBAYARAN.'/reject') ?>"
-              class="mt-4">
+        <?php if ($is_locked): ?>
+          <div class="rounded-lg bg-slate-50 border px-4 py-3 text-sm text-slate-700">
+            Pembayaran sudah diproses dengan status:
+            <span class="font-semibold"><?php echo htmlspecialchars($status_raw); ?></span>.
+            Tombol verifikasi dinonaktifkan.
+          </div>
 
-          <label class="block text-sm font-medium text-slate-600 mb-1">
-            Catatan Admin (wajib jika ditolak)
-          </label>
-          <textarea name="catatan_admin" required
-                    class="w-full border rounded-lg px-4 py-2 text-sm" rows="3"
-                    placeholder="Contoh: bukti transfer tidak jelas / nominal tidak sesuai / rekening salah"></textarea>
-
-          <div class="flex justify-end gap-3 mt-6">
-
-            <a href="<?= site_url('admin/pembayaran') ?>"
+          <div class="flex justify-end mt-6">
+            <a href="<?php echo site_url('admin/pembayaran'); ?>"
                class="px-5 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800">
               Kembali
             </a>
-
-            <button type="submit"
-                    onclick="return confirm('Yakin menolak pembayaran ini? Status pemesanan akan menjadi REJECTED (final).')"
-                    class="px-5 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white shadow">
-              Tolak Pembayaran
-            </button>
-
-            <a href="<?= site_url('admin/pembayaran/verify/'.$details->ID_PEMBAYARAN.'/confirm') ?>"
-               onclick="return confirm('Yakin menerima pembayaran ini? Status pemesanan akan menjadi SUBMITED.')"
-               class="px-5 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white shadow">
-              Terima Pembayaran
-            </a>
           </div>
-        </form>
+
+        <?php else: ?>
+          <!-- REJECT (POST, wajib catatan) -->
+          <form method="post"
+                action="<?php echo site_url('admin/pembayaran/verify/'.$id_pembayaran.'/reject'); ?>"
+                class="mt-4">
+
+            <label class="block text-sm font-medium text-slate-600 mb-1">
+              Catatan Admin (wajib jika ditolak)
+            </label>
+            <textarea name="catatan_admin" required
+                      class="w-full border rounded-lg px-4 py-2 text-sm" rows="3"
+                      placeholder="Contoh: bukti transfer tidak jelas / nominal tidak sesuai / rekening salah"></textarea>
+
+            <div class="flex justify-end gap-3 mt-6">
+
+              <a href="<?php echo site_url('admin/pembayaran'); ?>"
+                 class="px-5 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800">
+                Kembali
+              </a>
+
+              <button type="submit"
+                      onclick="return confirm('Yakin menolak pembayaran ini? Status pemesanan akan menjadi REJECTED (final).')"
+                      class="px-5 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white shadow">
+                Tolak Pembayaran
+              </button>
+
+              <a href="<?php echo site_url('admin/pembayaran/verify/'.$id_pembayaran.'/confirm'); ?>"
+                 onclick="return confirm('Yakin menerima pembayaran ini? Status pemesanan akan menjadi SUBMITED.')"
+                 class="px-5 py-2 rounded-lg bg-teal-600 hover:bg-teal-700 text-white shadow">
+                Terima Pembayaran
+              </a>
+
+            </div>
+          </form>
+        <?php endif; ?>
       </div>
 
     </div>
