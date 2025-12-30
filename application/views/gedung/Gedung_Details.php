@@ -253,7 +253,8 @@ $id_gedung = $this->uri->segment(3);
                 e.stopPropagation();
             });
         }
-    });
+    }
+    );
     </script>
 
 </body>

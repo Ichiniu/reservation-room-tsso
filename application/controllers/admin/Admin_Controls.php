@@ -373,78 +373,75 @@ class Admin_Controls extends CI_Controller {
 public function verify_pembayaran($id_pembayaran, $action)
 {
     $id_pembayaran = (int)$id_pembayaran;
-    $action = strtolower(trim($action));
+    $action = strtolower($action);
 
     if ($id_pembayaran <= 0) {
         show_error('ID pembayaran tidak valid');
         return;
     }
 
-    // ambil record pembayaran
-    $p = $this->db->get_where('pembayaran', ['ID_PEMBAYARAN' => $id_pembayaran])->row_array();
+    // Ambil data pembayaran
+    $p = $this->db->get_where('pembayaran', [
+        'ID_PEMBAYARAN' => $id_pembayaran
+    ])->row_array();
+
     if (!$p) {
         show_error('Data pembayaran tidak ditemukan');
         return;
     }
 
     $id_pemesanan = (int)$p['ID_PEMESANAN_RAW'];
+    $catatan = trim($this->input->post('catatan_admin', TRUE));
 
     $this->db->trans_begin();
 
     if ($action === 'confirm') {
 
-        // update pembayaran -> CONFIRMED
+        // CONFIRM → CATATAN TETAP DISIMPAN
         $this->db->where('ID_PEMBAYARAN', $id_pembayaran);
         $this->db->update('pembayaran', [
             'STATUS_VERIF'  => 'CONFIRMED',
-            'CATATAN_ADMIN' => null,
-            'CONFIRMED_AT'  => date('Y-m-d H:i:s'),
+            'CATATAN_ADMIN' => $catatan,
+            'CONFIRMED_AT'  => date('Y-m-d H:i:s')
         ]);
 
-        // update pemesanan -> SUBMITED (3)
         $this->db->where('ID_PEMESANAN', $id_pemesanan);
         $this->db->update('pemesanan', ['STATUS' => 3]);
 
-		} elseif ($action === 'reject') {
+    } elseif ($action === 'reject') {
 
-			$catatan = $this->input->post('catatan_admin', TRUE);
+        if ($catatan === '') {
+            $this->db->trans_rollback();
+            show_error('Catatan admin wajib diisi saat menolak pembayaran.');
+            return;
+        }
 
-			// update pembayaran -> REJECTED
-			$this->db->where('ID_PEMBAYARAN', $id_pembayaran);
-			$this->db->update('pembayaran', [
-				'STATUS_VERIF'  => 'REJECTED',
-				'CATATAN_ADMIN' => $catatan,
-				'CONFIRMED_AT'  => null,
-			]);
+        $this->db->where('ID_PEMBAYARAN', $id_pembayaran);
+        $this->db->update('pembayaran', [
+            'STATUS_VERIF'  => 'REJECTED',
+            'CATATAN_ADMIN' => $catatan,
+            'CONFIRMED_AT'  => null
+        ]);
 
-			// update pemesanan -> REJECTED FINAL (4)
-			$this->db->where('ID_PEMESANAN', $id_pemesanan);
-			$this->db->update('pemesanan', ['STATUS' => 4]);
+        $this->db->where('ID_PEMESANAN', $id_pemesanan);
+        $this->db->update('pemesanan', ['STATUS' => 4]);
 
-		}
- else {
+    } else {
         $this->db->trans_rollback();
-        show_error('Aksi tidak dikenali. Gunakan confirm atau reject.');
+        show_error('Aksi tidak dikenali');
         return;
     }
-	if ($action === 'reject' && empty(trim($catatan))) {
-    $this->db->trans_rollback();
-    show_error('Catatan admin wajib diisi saat menolak pembayaran.');
-    return;
-}
-
 
     if ($this->db->trans_status() === FALSE) {
         $this->db->trans_rollback();
-        $err = $this->db->error();
-        $msg = isset($err['message']) ? $err['message'] : 'unknown';
-        show_error('Gagal verifikasi pembayaran: ' . $msg);
+        show_error('Gagal menyimpan data');
         return;
     }
 
     $this->db->trans_commit();
     redirect('admin/pembayaran');
 }
+
 
 
 }
