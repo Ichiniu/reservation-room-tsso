@@ -75,8 +75,8 @@ $statusCode = isset($map[$statusText]) ? $map[$statusText] : 0;
     </div>
 </div>
 <!-- MODAL PEMBAYARAN (lebih kecil + ada jarak + scroll hanya isi modal) -->
-<div id="modalBayar" 
-class="fixed inset-0 z-[999] bg-black/50 flex items-center justify-center p-9">
+<div id="modalBayar"
+class="fixed inset-0 z-[999] hidden bg-black/50 items-center justify-center p-9">
   <!-- wrapper: kasih jarak atas/bawah dan center -->
   <div class="flex min-h-screen items-start justify-center p-4 sm:p-6">
     <!-- modal box: tidak full, max height + rounded -->
@@ -131,8 +131,9 @@ class="fixed inset-0 z-[999] bg-black/50 flex items-center justify-center p-9">
           <input type="hidden" name="id_pemesanan_raw" value="<?= (int)$temp_id ?>">
 
           <label class="block mb-1 text-sm font-medium">Nama Lengkap</label>
-          <input type="text" name="atas_nama" required
-                 class="w-full border rounded-lg p-2 mb-3">
+          <input type="text" name="atas_nama" required readonly
+       value="<?= htmlspecialchars($nama_lengkap_user, ENT_QUOTES, 'UTF-8') ?>"
+       class="w-full border rounded-lg p-2 mb-3 bg-slate-100">
 
           <label class="block mb-1 text-sm font-medium">Tanggal Pembayaran</label>
           <input type="date" name="tanggal_transfer" required
@@ -213,25 +214,5 @@ function closeModal() {
   document.body.classList.remove('overflow-hidden');
 }
 </script>
-
-
-
-<script>
-function openModal() {
-  const m = document.getElementById('modalBayar');
-  m.classList.remove('hidden');
-  m.classList.add('flex');
-  document.body.classList.add('overflow-hidden');
-}
-
-function closeModal() {
-  const m = document.getElementById('modalBayar');
-  m.classList.add('hidden');
-  m.classList.remove('flex');
-  document.body.classList.remove('overflow-hidden');
-}
-</script>
-
-
 </body>
 </html>

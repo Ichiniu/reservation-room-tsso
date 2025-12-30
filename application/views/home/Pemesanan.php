@@ -77,13 +77,11 @@ $id_gedung = $this->uri->segment(3);
                         ?>
                         <tr class="table-row">
                             <td class="px-4 py-3">
-                                <?php echo $id_pemesanan; ?>
-                            </td>
-
-                            <td class="px-4 py-3">
                                 <?php $date = date_create($row['TANGGAL_PEMESANAN']); echo date_format($date, 'd F Y') ?>
                             </td>
-
+                            <td class="px-4 py-3">
+                                <?php echo $id_pemesanan; ?>
+                            </td>
                             <td class="px-4 py-3">
                                 <?php if (!empty($row['JAM_PEMESANAN']) && !empty($row['JAM_SELESAI'])): ?>
                                 <?= date('H:i', strtotime($row['JAM_PEMESANAN'])); ?> -
