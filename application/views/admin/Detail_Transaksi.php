@@ -21,84 +21,77 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
     <meta name="msapplication-TileImage"
         content="<?php echo base_url(); ?>assets/home/assets/img/favicon/mstile-144x144.png">
     <link rel="icon" href="<?php echo base_url(); ?>assets/home/assets/img/favicon/favicon-32x32.png" sizes="32x32">
-
     <title>Detail Transaksi</title>
-
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Materialize -->
-    <link href="<?php echo base_url(); ?>assets/home/materialize/css/materialize.css" rel="stylesheet" type="text/css">
-    <link href="<?php echo base_url(); ?>assets/home/template.css" rel="stylesheet" type="text/css">
-
     <style>
-    .hint {
-        font-size: 12px;
-        color: #6b7280;
-        margin-top: 6px;
-    }
+        .hint {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 6px;
+        }
 
-    input.validate,
-    input[type="text"] {
-        border-bottom: 1px solid #e5e7eb !important;
-        box-shadow: none !important;
-    }
+        input.validate,
+        input[type="text"] {
+            border-bottom: 1px solid #e5e7eb !important;
+            box-shadow: none !important;
+        }
 
-    input.validate:focus,
-    input[type="text"]:focus {
-        border-bottom: 2px solid #1d4ed8 !important;
-        box-shadow: 0 1px 0 0 #1d4ed8 !important;
-    }
+        input.validate:focus,
+        input[type="text"]:focus {
+            border-bottom: 2px solid #1d4ed8 !important;
+            box-shadow: 0 1px 0 0 #1d4ed8 !important;
+        }
 
-    table.bordered td,
-    table.bordered th {
-        padding: 10px 12px;
-    }
+        table.bordered td,
+        table.bordered th {
+            padding: 10px 12px;
+        }
 
-    table.bordered tr {
-        border-bottom: 1px solid #e5e7eb;
-    }
+        table.bordered tr {
+            border-bottom: 1px solid #e5e7eb;
+        }
 
-    table.bordered {
-        margin: 0;
-    }
+        table.bordered {
+            margin: 0;
+        }
 
-    .btn-blue700 {
-        background: #1d4ed8 !important;
-        border-radius: 12px !important;
-    }
+        .btn-blue700 {
+            background: #1d4ed8 !important;
+            border-radius: 12px !important;
+        }
 
-    .btn-blue700:hover {
-        filter: brightness(0.95);
-    }
+        .btn-blue700:hover {
+            filter: brightness(0.95);
+        }
 
-    .link-file {
-        color: #111827;
-        text-decoration: underline;
-    }
+        .link-file {
+            color: #111827;
+            text-decoration: underline;
+        }
 
-    .link-file:hover {
-        color: #1d4ed8;
-    }
+        .link-file:hover {
+            color: #1d4ed8;
+        }
 
-    .cardbox {
-        background: #fff;
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
-    }
+        .cardbox {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
+        }
 
-    .cardhead {
-        padding: 16px 18px;
-        border-bottom: 1px solid #e5e7eb;
-    }
+        .cardhead {
+            padding: 16px 18px;
+            border-bottom: 1px solid #e5e7eb;
+        }
 
-    .cardbody {
-        padding: 16px 18px;
-    }
+        .cardbody {
+            padding: 16px 18px;
+        }
     </style>
 </head>
 
@@ -160,7 +153,8 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
                 <div class="cardhead">
                     <div class="font-semibold text-gray-900">ID Pemesanan: <?php echo $hasil->ID_PEMESANAN; ?></div>
                     <div class="text-sm text-gray-500 mt-1">
-                        <?php $date = date_create($hasil->TANGGAL_PEMESANAN); echo date_format($date, 'd F Y'); ?>
+                        <?php $date = date_create($hasil->TANGGAL_PEMESANAN);
+                        echo date_format($date, 'd F Y'); ?>
                     </div>
                     <div class="text-sm text-gray-600 mt-2">
                         Total (incl. pajak): <b>Rp. <?php echo number_format($total_stl_pajak); ?></b>
@@ -168,7 +162,7 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
                 </div>
 
                 <div class="cardbody">
-                    <?php echo form_open('admin/detail_transaksi/'.$hasil->ID_PEMESANAN.''); ?>
+                    <?php echo form_open('admin/detail_transaksi/' . $hasil->ID_PEMESANAN . ''); ?>
 
                     <!-- Detail transaksi (tabel) -->
                     <div class="cardbox" style="border-radius:12px;">
@@ -197,7 +191,29 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
                                         <tr>
                                             <td><b>TANGGAL PEMESANAN</b></td>
                                             <td>:</td>
-                                            <td><?php $date = date_create($hasil->TANGGAL_PEMESANAN); echo date_format($date, 'd F Y'); ?>
+                                            <td><?php $date = date_create($hasil->TANGGAL_PEMESANAN);
+                                                echo date_format($date, 'd F Y'); ?>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>JAM PEMESANAN</b></td>
+                                            <td>:</td>
+                                            <td class="px-4 py-3">
+                                                <?php
+                                                $mulai   = isset($row['JAM_PEMESANAN']) ? $row['JAM_PEMESANAN'] : '';
+                                                $selesai = isset($row['JAM_SELESAI']) ? $row['JAM_SELESAI'] : '';
+                                                $tipe    = isset($row['TIPE_JAM']) ? $row['TIPE_JAM'] : '';
+
+                                                if ($mulai !== '' && $selesai !== '') {
+                                                    echo date('H:i', strtotime($mulai)) . ' - ' . date('H:i', strtotime($selesai)) . ' WIB';
+                                                } else {
+                                                    echo '-';
+                                                }
+
+                                                if ($tipe !== '') {
+                                                    echo '<div class="text-xs text-gray-500 mt-1">' . htmlspecialchars($tipe, ENT_QUOTES, 'UTF-8') . '</div>';
+                                                }
+                                                ?>
                                             </td>
                                         </tr>
                                         <tr>
@@ -255,7 +271,7 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
                                             <td>:</td>
                                             <td>
                                                 <a class="link-file"
-                                                    href="<?php echo site_url('admin/admin_controls/download_proposal/'.$hasil->ID_PEMESANAN.''); ?>">
+                                                    href="<?php echo site_url('admin/admin_controls/download_proposal/' . $hasil->ID_PEMESANAN . ''); ?>">
                                                     <?php echo $details->FILE_NAME; ?>
                                                 </a>
                                             </td>
@@ -334,74 +350,74 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
     <script src="<?php echo base_url(); ?>assets/home/index.js"></script>
 
     <script type="text/javascript">
-    function dialog() {
-        if (confirm("Lanjutkan? ")) {
-            return true;
-        } else {
-            return false;
+        function dialog() {
+            if (confirm("Lanjutkan? ")) {
+                return true;
+            } else {
+                return false;
+            }
         }
-    }
 
-    function showInput() {
-        var tolak = document.getElementById("tidak").checked;
-        var terima = document.getElementById("ya").checked;
-        if (tolak == true) {
-            document.getElementById("title").hidden = false;
-            document.getElementById("colon").hidden = false;
-            document.getElementById("remarks").hidden = false;
-        } else if (terima == true) {
-            document.getElementById("title").hidden = true;
-            document.getElementById("colon").hidden = true;
-            document.getElementById("remarks").hidden = true;
+        function showInput() {
+            var tolak = document.getElementById("tidak").checked;
+            var terima = document.getElementById("ya").checked;
+            if (tolak == true) {
+                document.getElementById("title").hidden = false;
+                document.getElementById("colon").hidden = false;
+                document.getElementById("remarks").hidden = false;
+            } else if (terima == true) {
+                document.getElementById("title").hidden = true;
+                document.getElementById("colon").hidden = true;
+                document.getElementById("remarks").hidden = true;
+            }
         }
-    }
     </script>
 
     <!-- Sidebar toggle -->
     <script>
-    (function() {
-        var sidebar = document.getElementById('sidebar');
-        var overlay = document.getElementById('sidebarOverlay');
-        var btn = document.getElementById('sidebarToggle');
-        if (!sidebar) return;
+        (function() {
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            var btn = document.getElementById('sidebarToggle');
+            if (!sidebar) return;
 
-        function openSidebar() {
-            sidebar.classList.remove('-translate-x-full');
-            if (overlay) overlay.classList.remove('hidden');
-            document.body.classList.add('overflow-hidden');
-        }
-
-        function closeSidebar() {
-            sidebar.classList.add('-translate-x-full');
-            if (overlay) overlay.classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
-        }
-
-        if (btn) {
-            btn.addEventListener('click', function() {
-                var isClosed = sidebar.classList.contains('-translate-x-full');
-                if (isClosed) openSidebar();
-                else closeSidebar();
-            });
-        }
-
-        if (overlay) overlay.addEventListener('click', closeSidebar);
-
-        window.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeSidebar();
-        });
-
-        var mq = window.matchMedia('(min-width: 768px)');
-        mq.addEventListener('change', function(e) {
-            if (e.matches) {
-                if (overlay) overlay.classList.add('hidden');
+            function openSidebar() {
                 sidebar.classList.remove('-translate-x-full');
-                document.body.classList.remove('overflow-hidden');
-            } else {
-                closeSidebar();
+                if (overlay) overlay.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
             }
-        });
-    })();
+
+            function closeSidebar() {
+                sidebar.classList.add('-translate-x-full');
+                if (overlay) overlay.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+
+            if (btn) {
+                btn.addEventListener('click', function() {
+                    var isClosed = sidebar.classList.contains('-translate-x-full');
+                    if (isClosed) openSidebar();
+                    else closeSidebar();
+                });
+            }
+
+            if (overlay) overlay.addEventListener('click', closeSidebar);
+
+            window.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeSidebar();
+            });
+
+            var mq = window.matchMedia('(min-width: 768px)');
+            mq.addEventListener('change', function(e) {
+                if (e.matches) {
+                    if (overlay) overlay.classList.add('hidden');
+                    sidebar.classList.remove('-translate-x-full');
+                    document.body.classList.remove('overflow-hidden');
+                } else {
+                    closeSidebar();
+                }
+            });
+        })();
     </script>
 
 </body>
