@@ -31,7 +31,6 @@ $no = 1;
               <th class="px-4 py-3 text-left">Tanggal Transfer</th>
               <th class="px-4 py-3 text-left">Jumlah Transfer</th>
               <th class="px-4 py-3 text-left">Total Tagihan</th>
-              <th class="px-4 py-3 text-left">Terhutang</th>
               <th class="px-4 py-3 text-left">Status</th>
             </tr>
           </thead>
@@ -53,12 +52,11 @@ $no = 1;
     <tr>
       <td class="px-4 py-3"><?php echo $no++; ?></td>
       <td class="px-4 py-3"><?php echo htmlspecialchars($kode.$idraw); ?></td>
-      <td class="px-4 py-3"><?php echo 'BYR'.htmlspecialchars($idbyr); ?></td>
+      <td class="px-4 py-3"><?php echo 'PYMT000'.htmlspecialchars($idbyr); ?></td>
       <td class="px-4 py-3"><?php echo htmlspecialchars($atas); ?></td>
       <td class="px-4 py-3"><?php echo htmlspecialchars($tgl); ?></td>
       <td class="px-4 py-3"><?php echo 'Rp.'.number_format($nom); ?></td>
       <td class="px-4 py-3"><?php echo 'Rp.'.number_format($total); ?></td>
-      <td class="px-4 py-3"><?php echo 'Rp.'.number_format($hutang); ?></td>
       <td class="px-4 py-3"><?php echo htmlspecialchars($status); ?></td>
     </tr>
   <?php endforeach; ?>

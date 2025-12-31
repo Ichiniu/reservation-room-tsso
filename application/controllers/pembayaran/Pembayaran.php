@@ -10,7 +10,7 @@ class Pembayaran extends CI_Controller {
         $this->load->library('upload');
     }
 
-    public function upload_bukti()
+public function upload_bukti()
 {
     $id_pemesanan_raw = (int)$this->input->post('id_pemesanan_raw', TRUE);
     if ($id_pemesanan_raw <= 0) {
@@ -18,21 +18,57 @@ class Pembayaran extends CI_Controller {
         return;
     }
 
-    // Ambil detail pemesanan (buat isi kolom pembayaran yg wajib)
-   // Ambil detail pemesanan berdasarkan ID numeric
-$pesanan = $this->db->select('p.ID_PEMESANAN, p.TANGGAL_PEMESANAN, p.ID_GEDUNG, p.ID_CATERING,
-                              g.NAMA_GEDUNG, c.NAMA_PAKET')
-    ->from('pemesanan p')
-    ->join('gedung g', 'g.ID_GEDUNG = p.ID_GEDUNG', 'left')
-    ->join('catering c', 'c.ID_CATERING = p.ID_CATERING', 'left')
-    ->where('p.ID_PEMESANAN', $id_pemesanan_raw)
-    ->get()
-    ->row();
+    // Ambil input user
+    $atas_nama        = $this->input->post('atas_nama', TRUE);
+    $tanggal_transfer = $this->input->post('tanggal_transfer', TRUE);
+    $bank_pengirim    = $this->input->post('bank_pengirim', TRUE);
 
-if (!$pesanan) {
-    show_error('Data pemesanan tidak ditemukan.');
-    return;
-}
+    $nominal_transfer = $this->input->post('nominal_transfer', TRUE);
+    $nominal_transfer = preg_replace('/[^0-9]/', '', (string)$nominal_transfer);
+    $nominal_transfer = (int)$nominal_transfer;
+
+    if (empty($atas_nama) || empty($tanggal_transfer) || empty($bank_pengirim)) {
+        show_error('Atas nama, tanggal transfer, dan bank pengirim wajib diisi.');
+        return;
+    }
+    if ($nominal_transfer <= 0) {
+        show_error('Nominal transfer tidak valid.');
+        return;
+    }
+
+    // Ambil detail pemesanan + harga untuk hitung total (sekali query aja)
+    $pesanan = $this->db->select("
+            p.ID_PEMESANAN,
+            p.TANGGAL_PEMESANAN,
+            p.JUMLAH_CATERING,
+            g.NAMA_GEDUNG,
+            g.HARGA_SEWA,
+            c.NAMA_PAKET,
+            c.HARGA AS HARGA_CATERING_SATUAN
+        ")
+        ->from('pemesanan p')
+        ->join('gedung g', 'g.ID_GEDUNG = p.ID_GEDUNG', 'left')
+        ->join('catering c', 'c.ID_CATERING = p.ID_CATERING', 'left')
+        ->where('p.ID_PEMESANAN', $id_pemesanan_raw)
+        ->get()
+        ->row();
+
+    if (!$pesanan) {
+        show_error('Data pemesanan tidak ditemukan.');
+        return;
+    }
+
+    // Hitung TOTAL TAGIHAN
+    $harga_sewa = !empty($pesanan->HARGA_SEWA) ? (int)$pesanan->HARGA_SEWA : 0;
+    $harga_catering_satuan = !empty($pesanan->HARGA_CATERING_SATUAN) ? (int)$pesanan->HARGA_CATERING_SATUAN : 0;
+    $jumlah_catering = !empty($pesanan->JUMLAH_CATERING) ? (int)$pesanan->JUMLAH_CATERING : 0;
+
+    $total_tagihan = $harga_sewa + ($harga_catering_satuan * $jumlah_catering);
+
+    if ($total_tagihan <= 0) {
+        show_error('Total tagihan tidak valid (0). Cek HARGA_SEWA / HARGA catering di DB.');
+        return;
+    }
 
     // Upload bukti
     $upload_dir = FCPATH . 'assets/images/client-bukti-pembayaran/';
@@ -58,98 +94,50 @@ if (!$pesanan) {
         return;
     }
 
-    $upload_data = $this->upload->data();
-
-    // Path yang disimpan ke DB (disarankan RELATIVE path)
+    $upload_data   = $this->upload->data();
     $bukti_rel_path = 'assets/images/client-bukti-pembayaran/' . $upload_data['file_name'];
 
-    // Total tagihan dari form (sudah kamu set dari TOTAL + pajak)
- // Ambil detail pemesanan + harga untuk hitung total
-$pesanan = $this->db->select('p.ID_PEMESANAN, p.TANGGAL_PEMESANAN, p.JUMLAH_CATERING,
-                              g.NAMA_GEDUNG, g.HARGA_SEWA,
-                              c.NAMA_PAKET, c.HARGA AS HARGA_CATERING_SATUAN')
-    ->from('pemesanan p')
-    ->join('gedung g', 'g.ID_GEDUNG = p.ID_GEDUNG', 'left')
-    ->join('catering c', 'c.ID_CATERING = p.ID_CATERING', 'left')
-    ->where('p.ID_PEMESANAN', $id_pemesanan_raw)
-    ->get()
-    ->row();
+    // Kode pemesanan (kalau belum ada di sistem kamu, pakai default)
+    $kode_pemesanan = 'PMSN000';
 
-if (!$pesanan) {
-    show_error('Data pemesanan tidak ditemukan.');
-    return;
-}
-
-$harga_sewa = (int)$pesanan->HARGA_SEWA;
-$harga_catering_satuan = !empty($pesanan->HARGA_CATERING_SATUAN) ? (int)$pesanan->HARGA_CATERING_SATUAN : 0;
-$jumlah_catering = !empty($pesanan->JUMLAH_CATERING) ? (int)$pesanan->JUMLAH_CATERING : 0;
-
-$harga_catering_total = $harga_catering_satuan * $jumlah_catering;
-$total_tagihan = $harga_sewa + $harga_catering_total;
-
-// nominal transfer dari input user
-$nominal_transfer = (int)$this->input->post('nominal_transfer', TRUE);
-
-$data = array(
-    'ID_PEMESANAN_RAW'   => $id_pemesanan_raw,
-    'KODE_PEMESANAN'     => 'PMSN000',
-    'TANGGAL_PEMESANAN'  => $pesanan->TANGGAL_PEMESANAN,
-    'NAMA_GEDUNG'        => $pesanan->NAMA_GEDUNG,
-    'NAMA_PAKET'         => !empty($pesanan->NAMA_PAKET) ? $pesanan->NAMA_PAKET : '-',
-
-    // INI yang benar:
-    'TOTAL_TAGIHAN'      => $total_tagihan,
-    'NOMINAL_TRANSFER'   => $nominal_transfer,
-
-    'ATAS_NAMA_PENGIRIM' => $this->input->post('atas_nama', TRUE),
-    'TANGGAL_TRANSFER'   => $this->input->post('tanggal_transfer', TRUE),
-    'BANK_PENGIRIM'      => $this->input->post('bank_pengirim', TRUE),
-
-    'BUKTI_PATH'         => $bukti_rel_path,
-    'BUKTI_NAME'         => $upload_data['file_name'],
-    'BUKTI_MIME'         => $upload_data['file_type'],
-
-    'STATUS_VERIF'       => 'PENDING',
-);
-
-
-    // KODE_PEMESANAN: kalau view/DB kamu pakai prefix "PMSN000", isi itu
-    // (kalau di V_PEMESANAN ada kolom KODE_PEMESANAN, pakai dari sana)
-    $kode_pemesanan = !empty($pesanan->KODE_PEMESANAN) ? $pesanan->KODE_PEMESANAN : 'PMSN000';
-
+    // Data insert pembayaran (INI SATU-SATUNYA $data)
     $data = array(
         'ID_PEMESANAN_RAW'   => $id_pemesanan_raw,
         'KODE_PEMESANAN'     => $kode_pemesanan,
         'TANGGAL_PEMESANAN'  => $pesanan->TANGGAL_PEMESANAN,
         'NAMA_GEDUNG'        => $pesanan->NAMA_GEDUNG,
         'NAMA_PAKET'         => !empty($pesanan->NAMA_PAKET) ? $pesanan->NAMA_PAKET : '-',
-        'TOTAL_TAGIHAN'      => $total,
+        'TOTAL_TAGIHAN'      => $total_tagihan,
 
-        'ATAS_NAMA_PENGIRIM' => $this->input->post('atas_nama', TRUE),
-        'TANGGAL_TRANSFER'   => $this->input->post('tanggal_transfer', TRUE),
-        'BANK_PENGIRIM'      => $this->input->post('bank_pengirim', TRUE),
-        'NOMINAL_TRANSFER'   => $total,
+        'ATAS_NAMA_PENGIRIM' => $atas_nama,
+        'TANGGAL_TRANSFER'   => $tanggal_transfer,
+        'BANK_PENGIRIM'      => $bank_pengirim,
+        'NOMINAL_TRANSFER'   => $nominal_transfer,
 
         'BUKTI_PATH'         => $bukti_rel_path,
         'BUKTI_NAME'         => $upload_data['file_name'],
         'BUKTI_MIME'         => $upload_data['file_type'],
 
         'STATUS_VERIF'       => 'PENDING',
-        // kolom tujuan punya default, tapi kalau mau isi juga boleh:
-        // 'BANK_TUJUAN' => 'BCA', 'NO_REKENING_TUJUAN' => '1234567890', 'ATAS_NAMA_TUJUAN' => 'Tiga Serangkai Smart Office'
     );
 
+    // Simpan ke DB (transaksi)
     $this->db->trans_begin();
 
-    // insert ke tabel pembayaran
     $this->pembayaran_model->insert_pembayaran($data);
+    $status_approve_paid = 2;
 
-    // update status pemesanan -> 2 (APPROVE & PAID)
-    $this->db->where('ID_PEMESANAN', $id_pemesanan_raw);
-    $this->db->update('pemesanan', array('STATUS' => 2));
+            $this->db->where('ID_PEMESANAN', $id_pemesanan_raw);
+            $this->db->update('pemesanan', array('STATUS' => $status_approve_paid));
+
+
 
     if ($this->db->trans_status() === FALSE) {
         $this->db->trans_rollback();
+
+        // hapus file kalau DB gagal
+        @unlink(FCPATH . $bukti_rel_path);
+
         $err = $this->db->error();
         $msg = isset($err['message']) ? $err['message'] : 'unknown';
         show_error('Gagal proses pembayaran: ' . $msg);
@@ -159,5 +147,4 @@ $data = array(
     $this->db->trans_commit();
     redirect('home/pemesanan');
 }
-
 }

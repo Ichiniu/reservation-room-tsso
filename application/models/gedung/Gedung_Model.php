@@ -63,19 +63,18 @@ public function get_all_pembayaran_pending() {
 }
 
 
-	public function get_pemesanan_flag($username)
+public function get_pemesanan_flag($username)
 {
     $sql = "
-      SELECT COUNT(*) AS total
-      FROM pembayaran pb
-      JOIN pemesanan p ON p.ID_PEMESANAN = pb.ID_PEMESANAN_RAW
-      WHERE p.USERNAME = ?
-        AND pb.STATUS_VERIF = 'PENDING'
+        SELECT COUNT(*) AS jml
+        FROM v_pemesanan
+        WHERE USERNAME = ?
+          AND STATUS = 'PROPOSAL APPROVE'
     ";
-
-    $row = $this->db->query($sql, array($username))->row_array();
-    return isset($row['total']) ? (int)$row['total'] : 0;
+    $row = $this->db->query($sql, array($username))->row();
+    return $row ? (int)$row->jml : 0;
 }
+
 
 
 	public function insert_pemesanan_fix_detail($data) {
@@ -273,12 +272,16 @@ public function user_detail_pembayaran($username)
       FROM pembayaran p
       JOIN pemesanan ps ON ps.ID_PEMESANAN = p.ID_PEMESANAN_RAW
       WHERE ps.USERNAME = ?
-        AND p.STATUS_VERIF = 'CONFIRMED'
-      ORDER BY p.CONFIRMED_AT DESC, p.CREATED_AT DESC
+        AND p.STATUS_VERIF IN ('PENDING','CONFIRMED', 'REJECTED')
+      ORDER BY 
+        (p.CONFIRMED_AT IS NULL) ASC,  /* yang confirmed dulu */
+        p.CONFIRMED_AT DESC,
+        p.CREATED_AT DESC
     ";
 
     return $this->db->query($sql, array($username))->result_array();
 }
+
 
 
 

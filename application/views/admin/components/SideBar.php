@@ -1,5 +1,5 @@
 <?php
-$username = $this->session->userdata('username');
+$username = $this->session->userdata('admin_username') ?: $this->session->userdata('username');
 
 // inbox
 if (isset($result)) {
@@ -38,48 +38,48 @@ function is_active($uri, $current_uri)
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-    /* ===== SIDEBAR ===== */
-    .sidebar-mini {
-        width: 72px !important;
-    }
+        /* ===== SIDEBAR ===== */
+        .sidebar-mini {
+            width: 72px !important;
+        }
 
-    .sidebar-mini .menu-text {
-        display: none;
-    }
+        .sidebar-mini .menu-text {
+            display: none;
+        }
 
-    .sidebar-mini nav a {
-        justify-content: center;
-    }
+        .sidebar-mini nav a {
+            justify-content: center;
+        }
 
-    .sidebar-mini .material-icons-outlined {
-        margin-right: 0 !important;
-    }
+        .sidebar-mini .material-icons-outlined {
+            margin-right: 0 !important;
+        }
 
-    /* ===== CONTENT ===== */
-    .content-mini {
-        margin-left: 72px !important;
-    }
+        /* ===== CONTENT ===== */
+        .content-mini {
+            margin-left: 72px !important;
+        }
 
-    /* ===== ACTIVE MENU ===== */
-    .menu-active {
-        background-color: #ffffff;
-        font-weight: 600;
-    }
+        /* ===== ACTIVE MENU ===== */
+        .menu-active {
+            background-color: #ffffff;
+            font-weight: 600;
+        }
 
-    /* ===== BADGE INBOX ===== */
-    .inbox-badge {
-        margin-left: auto;
-    }
+        /* ===== BADGE INBOX ===== */
+        .inbox-badge {
+            margin-left: auto;
+        }
 
-    .sidebar-mini .inbox-badge {
-        position: absolute;
-        top: 8px;
-        right: 12px;
-        width: 18px;
-        height: 18px;
-        font-size: 10px;
-        margin-left: 0;
-    }
+        .sidebar-mini .inbox-badge {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            margin-left: 0;
+        }
     </style>
 </head>
 
@@ -142,15 +142,17 @@ function is_active($uri, $current_uri)
             <!-- INBOX / TRANSAKSI -->
             <?php $jumlah_inbox = isset($result) ? $result : 0; ?>
             <a href="<?= site_url('admin/transaksi') ?>" class="relative flex items-center gap-3 px-4 py-3 rounded hover:bg-white
-<?php if($current_uri == 'admin/transaksi'){ echo 'menu-active'; } ?>">
+<?php if ($current_uri == 'admin/transaksi') {
+    echo 'menu-active';
+} ?>">
                 <span class="material-icons-outlined">inbox</span>
                 <span class="menu-text">Inbox</span>
 
-                <?php if($jumlah_inbox > 0){ ?>
-                <span class="inbox-badge bg-red-500 text-white rounded-full
+                <?php if ($jumlah_inbox > 0) { ?>
+                    <span class="inbox-badge bg-red-500 text-white rounded-full
                  w-5 h-5 flex items-center justify-center text-xs">
-                    <?= $jumlah_inbox ?>
-                </span>
+                        <?= $jumlah_inbox ?>
+                    </span>
                 <?php } ?>
             </a>
 
@@ -214,14 +216,14 @@ function is_active($uri, $current_uri)
 
     <!-- ===== SCRIPT TOGGLE ===== -->
     <script>
-    const toggleBtn = document.getElementById('toggleSidebar');
-    const sidebar = document.getElementById('sidebar');
-    const content = document.getElementById('content');
+        const toggleBtn = document.getElementById('toggleSidebar');
+        const sidebar = document.getElementById('sidebar');
+        const content = document.getElementById('content');
 
-    toggleBtn.addEventListener('click', function() {
-        sidebar.classList.toggle('sidebar-mini');
-        content.classList.toggle('content-mini');
-    });
+        toggleBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('sidebar-mini');
+            content.classList.toggle('content-mini');
+        });
     </script>
 
 </body>

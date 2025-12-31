@@ -8,7 +8,7 @@ $this->load->helper('text');
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Smart Office</title>
+    <title>Inbox</title>
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,11 +17,11 @@ $this->load->helper('text');
     <link href="<?= base_url('assets/home/materialize/css/materialize.css') ?>" rel="stylesheet">
 
     <style>
-    table th,
-    table td {
-        text-align: center;
-        vertical-align: middle;
-    }
+        table th,
+        table td {
+            text-align: center;
+            vertical-align: middle;
+        }
     </style>
 </head>
 
@@ -50,6 +50,7 @@ $this->load->helper('text');
                             <th>ID Pemesanan</th>
                             <th>Nama User</th>
                             <th>Tanggal Pemesanan</th>
+                            <th>Jam Pemesanan</th>
                             <th>Gedung</th>
                             <th>Status</th>
                             <th>Detail</th>
@@ -58,34 +59,52 @@ $this->load->helper('text');
 
                     <tbody>
                         <?php foreach ($pemesanan as $row): ?>
-                        <tr class="table-row hover:bg-gray-50">
-                            <td class="px-4 py-3"><?= $row['ID_PEMESANAN']; ?></td>
-                            <td class="px-4 py-3"><?= $row['USERNAME']; ?></td>
-                            <td class="px-4 py-3">
-                                <?= date('d F Y', strtotime($row['TANGGAL_PEMESANAN'])); ?>
-                            </td>
-                            <td class="px-4 py-3"><?= $row['NAMA_GEDUNG']; ?></td>
+                            <tr class="table-row hover:bg-gray-50">
+                                <td class="px-4 py-3"><?= $row['ID_PEMESANAN']; ?></td>
+                                <td class="px-4 py-3"><?= $row['USERNAME']; ?></td>
+                                <td class="px-4 py-3">
+                                    <?= date('d F Y', strtotime($row['TANGGAL_PEMESANAN'])); ?>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <?php
+                                    $mulai   = isset($row['JAM_PEMESANAN']) ? $row['JAM_PEMESANAN'] : '';
+                                    $selesai = isset($row['JAM_SELESAI']) ? $row['JAM_SELESAI'] : '';
+                                    $tipe    = isset($row['TIPE_JAM']) ? $row['TIPE_JAM'] : '';
 
-                            <!-- STATUS -->
-                            <td class="px-4 py-3">
-                                <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold
+                                    if ($mulai !== '' && $selesai !== '') {
+                                        echo date('H:i', strtotime($mulai)) . ' - ' . date('H:i', strtotime($selesai)) . ' WIB';
+                                    } else {
+                                        echo '-';
+                                    }
+
+                                    if ($tipe !== '') {
+                                        echo '<div class="text-xs text-gray-500 mt-1">' . htmlspecialchars($tipe, ENT_QUOTES, 'UTF-8') . '</div>';
+                                    }
+                                    ?>
+                                </td>
+
+                                <td class="px-4 py-3"><?= $row['NAMA_GEDUNG']; ?></td>
+
+                                <!-- STATUS -->
+                                <td class="px-4 py-3">
+                                    <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold
                         <?= $row['STATUS'] === 'Disetujui'
-                            ? 'bg-green-100 text-green-700'
-                            : ($row['STATUS'] === 'Ditolak'
-                                ? 'bg-red-100 text-red-700'
-                                : 'bg-yellow-100 text-yellow-700'); ?>">
-                                    <?= $row['STATUS']; ?>
-                                </span>
-                            </td>
+                                ? 'bg-green-100 text-green-700'
+                                : ($row['STATUS'] === 'Ditolak'
+                                    ? 'bg-red-100 text-red-700'
+                                    : 'bg-yellow-100 text-yellow-700'); ?>">
+                                        <?= $row['STATUS']; ?>
+                                    </span>
+                                </td>
 
-                            <!-- DETAIL -->
-                            <td class="px-4 py-3">
-                                <a href="<?= site_url('admin/detail_transaksi/'.$row['ID_PEMESANAN']); ?>"
-                                    class="inline-flex items-center justify-center text-blue-600 hover:text-blue-800">
-                                    <i class="material-icons">open_in_new</i>
-                                </a>
-                            </td>
-                        </tr>
+                                <!-- DETAIL -->
+                                <td class="px-4 py-3">
+                                    <a href="<?= site_url('admin/detail_transaksi/' . $row['ID_PEMESANAN']); ?>"
+                                        class="inline-flex items-center justify-center text-blue-600 hover:text-blue-800">
+                                        <i class="material-icons">open_in_new</i>
+                                    </a>
+                                </td>
+                            </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
@@ -118,51 +137,51 @@ $this->load->helper('text');
 
     <!-- PAGINATION SCRIPT -->
     <script>
-    const rows = document.querySelectorAll(".table-row");
-    const rowsPerPageSelect = document.getElementById("rowsPerPage");
-    const pageInfo = document.getElementById("pageInfo");
-    const prevBtn = document.getElementById("prevBtn");
-    const nextBtn = document.getElementById("nextBtn");
+        const rows = document.querySelectorAll(".table-row");
+        const rowsPerPageSelect = document.getElementById("rowsPerPage");
+        const pageInfo = document.getElementById("pageInfo");
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
 
-    let currentPage = 1;
-    let rowsPerPage = parseInt(rowsPerPageSelect.value);
+        let currentPage = 1;
+        let rowsPerPage = parseInt(rowsPerPageSelect.value);
 
-    function renderTable() {
-        const start = (currentPage - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
+        function renderTable() {
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
 
-        rows.forEach((row, index) => {
-            row.style.display = index >= start && index < end ? "" : "none";
+            rows.forEach((row, index) => {
+                row.style.display = index >= start && index < end ? "" : "none";
+            });
+
+            const totalPages = Math.ceil(rows.length / rowsPerPage);
+            pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
+
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+        }
+
+        rowsPerPageSelect.addEventListener("change", () => {
+            rowsPerPage = parseInt(rowsPerPageSelect.value);
+            currentPage = 1;
+            renderTable();
         });
 
-        const totalPages = Math.ceil(rows.length / rowsPerPage);
-        pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
+        prevBtn.onclick = () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTable();
+            }
+        };
 
-        prevBtn.disabled = currentPage === 1;
-        nextBtn.disabled = currentPage === totalPages;
-    }
+        nextBtn.onclick = () => {
+            if (currentPage < Math.ceil(rows.length / rowsPerPage)) {
+                currentPage++;
+                renderTable();
+            }
+        };
 
-    rowsPerPageSelect.addEventListener("change", () => {
-        rowsPerPage = parseInt(rowsPerPageSelect.value);
-        currentPage = 1;
         renderTable();
-    });
-
-    prevBtn.onclick = () => {
-        if (currentPage > 1) {
-            currentPage--;
-            renderTable();
-        }
-    };
-
-    nextBtn.onclick = () => {
-        if (currentPage < Math.ceil(rows.length / rowsPerPage)) {
-            currentPage++;
-            renderTable();
-        }
-    };
-
-    renderTable();
     </script>
 
 </body>

@@ -4,45 +4,28 @@ $this->load->helper('text');
 ?>
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Admin Smart Office</title>
-
     <link rel="icon" href="<?= base_url('assets/home/assets/img/favicon/favicon-32x32.png') ?>" sizes="32x32">
-
-    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Materialize (table only) -->
     <link href="<?= base_url('assets/home/materialize/css/materialize.css') ?>" rel="stylesheet">
 </head>
 
 <body class="bg-gray-100 text-gray-800">
-
-    <!-- SIDEBAR -->
     <?php $this->load->view('admin/components/sidebar'); ?>
 
-    <!-- MAIN -->
     <main class="pt-24 pl-0 md:pl-64 px-6 pb-10">
 
-        <!-- HEADER -->
         <div class="max-w-6xl mx-auto mb-6">
             <h1 class="text-2xl font-bold">Data Pemesanan Gedung</h1>
             <p class="text-sm text-gray-500">Daftar seluruh pemesanan gedung</p>
         </div>
 
-        <!-- CARD -->
         <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-md p-6">
-
-            <!-- TABLE SCROLL AREA -->
             <div class="overflow-x-auto max-h-[420px] overflow-y-auto relative">
-
                 <table id="dataTable" class="w-full text-sm border border-slate-200 rounded-lg bg-white">
-
-                    <!-- HEADER -->
                     <thead class="sticky top-0 z-20 bg-gray-100 shadow-sm">
                         <tr>
                             <th class="px-4 py-3 text-center">ID Pemesanan</th>
@@ -53,36 +36,51 @@ $this->load->helper('text');
                         </tr>
                     </thead>
 
-                    <!-- BODY -->
                     <tbody class="divide-y text-center">
-                        <?php foreach ($pemesanan as $row): ?>
-                        <tr class="table-row hover:bg-gray-50">
-                            <td class="px-4 py-3"><?= $row['ID_PEMESANAN']; ?></td>
-                            <td class="px-4 py-3"><?= $row['USERNAME']; ?></td>
-                            <td class="px-4 py-3">
-                                <?= date('d F Y', strtotime($row['TANGGAL_PEMESANAN'])); ?>
-                            </td>
-                            <td class="px-4 py-3"><?= $row['NAMA_GEDUNG']; ?></td>
-                            <td class="px-4 py-3">
-                                <span class="px-3 py-1 rounded-full text-xs font-semibold
-                            <?= $row['STATUS'] == 'Disetujui'
-                                ? 'bg-green-100 text-green-700'
-                                : ($row['STATUS'] == 'Ditolak'
-                                    ? 'bg-red-100 text-red-700'
-                                    : 'bg-yellow-100 text-yellow-700'); ?>">
-                                    <?= $row['STATUS']; ?>
-                                </span>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
+                        <?php if (!empty($pemesanan)) : ?>
+                            <?php foreach ($pemesanan as $row): ?>
+                                <?php
+                                    $status = isset($row['STATUS']) ? strtoupper(trim($row['STATUS'])) : '';
 
+                                    // default
+                                    $badge = 'bg-gray-100 text-gray-700';
+
+                                    if ($status === 'REJECTED') {
+                                        $badge = 'bg-red-100 text-red-700';
+                                    } else if ($status === 'APPROVE & PAID') {
+                                        $badge = 'bg-green-100 text-green-700';
+                                    } else if ($status === 'PROPOSAL APPROVE') {
+                                        $badge = 'bg-lime-100 text-lime-700';
+                                    } else if ($status === 'SUBMITED') {
+                                        $badge = 'bg-blue-100 text-blue-700';
+                                    } else if ($status === 'PROCESS') {
+                                        $badge = 'bg-yellow-100 text-yellow-700';
+                                    }
+                                ?>
+                                <tr class="table-row hover:bg-gray-50">
+                                    <td class="px-4 py-3"><?= htmlspecialchars($row['ID_PEMESANAN']); ?></td>
+                                    <td class="px-4 py-3"><?= htmlspecialchars($row['USERNAME']); ?></td>
+                                    <td class="px-4 py-3">
+                                        <?= date('d F Y', strtotime($row['TANGGAL_PEMESANAN'])); ?>
+                                    </td>
+                                    <td class="px-4 py-3"><?= htmlspecialchars($row['NAMA_GEDUNG']); ?></td>
+                                    <td class="px-4 py-3">
+                                        <span class="px-3 py-1 rounded-full text-xs font-semibold <?= $badge; ?>">
+                                            <?= htmlspecialchars($row['STATUS']); ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="5" class="px-4 py-6 text-gray-500">Data pemesanan tidak ditemukan.</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
                 </table>
             </div>
 
-            <!-- PAGINATION (TIDAK IKUT SCROLL) -->
             <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-
                 <button id="prevBtn" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-40">
                     Prev
                 </button>
@@ -105,7 +103,6 @@ $this->load->helper('text');
         </div>
     </main>
 
-    <!-- PAGINATION SCRIPT -->
     <script>
     const rows = document.querySelectorAll(".table-row");
     const rowsPerPageSelect = document.getElementById("rowsPerPage");
@@ -124,7 +121,7 @@ $this->load->helper('text');
             row.style.display = index >= start && index < end ? "" : "none";
         });
 
-        const totalPages = Math.ceil(rows.length / rowsPerPage);
+        const totalPages = Math.ceil(rows.length / rowsPerPage) || 1;
         pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
 
         prevBtn.disabled = currentPage === 1;
@@ -155,5 +152,4 @@ $this->load->helper('text');
     </script>
 
 </body>
-
 </html>

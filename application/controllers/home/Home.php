@@ -151,6 +151,13 @@ public function index() {
 		$this->gedung_model->update_user_flag($temp_id);
 		$data['result'] = $this->gedung_model->get_detail_pesanan($id_pemesanan);
 		$data['flag'] = $this->gedung_model->get_pemesanan_flag($username);
+		  $u = $this->db->select('NAMA_LENGKAP')
+                  ->from('user')
+                  ->where('USERNAME', $username)
+                  ->get()
+                  ->row();
+
+    $data['nama_lengkap_user'] = $u ? $u->NAMA_LENGKAP : $username;
 		$this->load->view('home/detail_pemesanan', $data);
 	}
 
