@@ -9,7 +9,7 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
 <!DOCTYPE html>
 <html lang="en">
 
-<head>  
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
@@ -32,52 +32,52 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
     <link href="<?php echo base_url(); ?>assets/home/template.css" rel="stylesheet" type="text/css">
 
     <style>
-    table.bordered td,
-    table.bordered th {
-        padding: 10px 12px;
-    }
+        table.bordered td,
+        table.bordered th {
+            padding: 10px 12px;
+        }
 
-    table.bordered tr {
-        border-bottom: 1px solid #e5e7eb;
-    }
+        table.bordered tr {
+            border-bottom: 1px solid #e5e7eb;
+        }
 
-    table.bordered {
-        margin: 0;
-    }
+        table.bordered {
+            margin: 0;
+        }
 
-    .cardbox {
-        background: #fff;
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
-    }
+        .cardbox {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
+        }
 
-    .cardhead {
-        padding: 16px 18px;
-        border-bottom: 1px solid #e5e7eb;
-    }
+        .cardhead {
+            padding: 16px 18px;
+            border-bottom: 1px solid #e5e7eb;
+        }
 
-    .cardbody {
-        padding: 16px 18px;
-    }
+        .cardbody {
+            padding: 16px 18px;
+        }
 
-    .hint {
-        font-size: 12px;
-        color: #6b7280;
-        margin-top: 6px;
-    }
+        .hint {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 6px;
+        }
 
-    .link-action {
-        color: #1d4ed8;
-        /* blue-700 */
-        text-decoration: underline;
-        font-weight: 600;
-    }
+        .link-action {
+            color: #1d4ed8;
+            /* blue-700 */
+            text-decoration: underline;
+            font-weight: 600;
+        }
 
-    .link-action:hover {
-        filter: brightness(.9);
-    }
+        .link-action:hover {
+            filter: brightness(.9);
+        }
     </style>
 </head>
 
@@ -153,13 +153,14 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
                                 <tr>
                                     <td><b>TANGGAL PEMESANAN</b></td>
                                     <td>:</td>
-                                    <td><?php $date = date_create($hasil->TANGGAL_PEMESANAN); echo date_format($date, 'd F Y') ?>
+                                    <td><?php $date = date_create($hasil->TANGGAL_PEMESANAN);
+                                        echo date_format($date, 'd F Y') ?>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td><b>JAM PEMESANAN</b></td>
                                     <td>:</td>
-                                    <td><?php echo $hasil->JAM_PEMESANAN.' - '.$hasil->JAM_SELESAI; ?></td>
+                                    <td><?php echo $hasil->JAM_PEMESANAN . ' - ' . $hasil->JAM_SELESAI; ?></td>
                                 </tr>
                                 <tr>
                                     <td><b>EMAIL</b></td>
@@ -216,7 +217,7 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
                                     <td>:</td>
                                     <td>
                                         <a class="link-action"
-                                            href="<?php echo site_url('admin/admin_controls/delete_jadwal/'.$id_pemesanan.'')?>"
+                                            href="<?php echo site_url('admin/admin_controls/delete_jadwal/' . $id_pemesanan . '') ?>"
                                             onclick="return dialog();">
                                             Hapus Acara
                                         </a>
@@ -251,48 +252,48 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
     <script src="<?php echo base_url(); ?>assets/home/index.js"></script>
 
     <script type="text/javascript">
-    function dialog() {
-        if (confirm("Yakin Hapus Jadwal?")) {
-            return true;
-        } else {
-            return false;
+        function dialog() {
+            if (confirm("Yakin Hapus Jadwal?")) {
+                return true;
+            } else {
+                return false;
+            }
         }
-    }
     </script>
 
     <!-- Sidebar toggle (optional) -->
     <script>
-    (function() {
-        var sidebar = document.getElementById('sidebar');
-        var overlay = document.getElementById('sidebarOverlay');
-        var btn = document.getElementById('sidebarToggle');
-        if (!sidebar) return;
+        (function() {
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            var btn = document.getElementById('sidebarToggle');
+            if (!sidebar) return;
 
-        function openSidebar() {
-            sidebar.classList.remove('-translate-x-full');
-            if (overlay) overlay.classList.remove('hidden');
-            document.body.classList.add('overflow-hidden');
-        }
+            function openSidebar() {
+                sidebar.classList.remove('-translate-x-full');
+                if (overlay) overlay.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+            }
 
-        function closeSidebar() {
-            sidebar.classList.add('-translate-x-full');
-            if (overlay) overlay.classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
-        }
+            function closeSidebar() {
+                sidebar.classList.add('-translate-x-full');
+                if (overlay) overlay.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
 
-        if (btn) {
-            btn.addEventListener('click', function() {
-                var isClosed = sidebar.classList.contains('-translate-x-full');
-                if (isClosed) openSidebar();
-                else closeSidebar();
+            if (btn) {
+                btn.addEventListener('click', function() {
+                    var isClosed = sidebar.classList.contains('-translate-x-full');
+                    if (isClosed) openSidebar();
+                    else closeSidebar();
+                });
+            }
+            if (overlay) overlay.addEventListener('click', closeSidebar);
+
+            window.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeSidebar();
             });
-        }
-        if (overlay) overlay.addEventListener('click', closeSidebar);
-
-        window.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeSidebar();
-        });
-    })();
+        })();
     </script>
 
 </body>

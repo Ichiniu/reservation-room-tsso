@@ -77,78 +77,79 @@ $id_gedung = $this->uri->segment(4);
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm border border-slate-300 rounded-xl overflow-hidden">
                             <tbody class="divide-y divide-slate-200">
-                                <?php foreach($res as $res): ?>
-                                <tr class="bg-white">
-                                    <td class="w-48 px-4 py-3 font-semibold text-slate-700">Username</td>
-                                    <td class="px-2 py-3 text-slate-400">:</td>
-                                    <td class="px-4 py-3 text-slate-900"><?php echo $res['USERNAME'] ?></td>
-                                </tr>
+                                <?php foreach ($res as $res): ?>
+                                    <tr class="bg-white">
+                                        <td class="w-48 px-4 py-3 font-semibold text-slate-700">Username</td>
+                                        <td class="px-2 py-3 text-slate-400">:</td>
+                                        <td class="px-4 py-3 text-slate-900"><?php echo $res['USERNAME'] ?></td>
+                                    </tr>
 
-                                <tr class="bg-white">
-                                    <td class="w-48 px-4 py-3 font-semibold text-slate-700">Tanggal Pemesanan</td>
-                                    <td class="px-2 py-3 text-slate-400">:</td>
-                                    <td class="px-4 py-3 text-slate-900">
-                                        <?php $date = date_create($res['TANGGAL_PEMESANAN']); echo date_format($date, 'd F Y') ?>
-                                    </td>
-                                </tr>
+                                    <tr class="bg-white">
+                                        <td class="w-48 px-4 py-3 font-semibold text-slate-700">Tanggal Pemesanan</td>
+                                        <td class="px-2 py-3 text-slate-400">:</td>
+                                        <td class="px-4 py-3 text-slate-900">
+                                            <?php $date = date_create($res['TANGGAL_PEMESANAN']);
+                                            echo date_format($date, 'd F Y') ?>
+                                        </td>
+                                    </tr>
 
-                                <?php
-                                  $mulai   = isset($res['JAM_PEMESANAN']) ? $res['JAM_PEMESANAN'] : '';
-                                  $selesai = isset($res['JAM_SELESAI']) ? $res['JAM_SELESAI'] : '';
-                                  $tipe    = isset($res['TIPE_JAM']) ? $res['TIPE_JAM'] : 'CUSTOM';
+                                    <?php
+                                    $mulai   = isset($res['JAM_PEMESANAN']) ? $res['JAM_PEMESANAN'] : '';
+                                    $selesai = isset($res['JAM_SELESAI']) ? $res['JAM_SELESAI'] : '';
+                                    $tipe    = isset($res['TIPE_JAM']) ? $res['TIPE_JAM'] : 'CUSTOM';
 
-                                  if ($tipe === 'HALF_DAY') {
-                                    $jam_tampil = "HALF DAY ($mulai - $selesai)";
-                                  } elseif ($tipe === 'FULL_DAY') {
-                                    $jam_tampil = "FULL DAY ($mulai - $selesai)";
-                                  } else {
-                                    $jam_tampil = "$mulai - $selesai";
-                                  }
-                                ?>
+                                    if ($tipe === 'HALF_DAY') {
+                                        $jam_tampil = "HALF DAY ($mulai - $selesai)";
+                                    } elseif ($tipe === 'FULL_DAY') {
+                                        $jam_tampil = "FULL DAY ($mulai - $selesai)";
+                                    } else {
+                                        $jam_tampil = "$mulai - $selesai";
+                                    }
+                                    ?>
 
-                                <tr class="bg-white">
-                                    <td class="w-48 px-4 py-3 font-semibold text-slate-700">Jam Pemesanan</td>
-                                    <td class="px-2 py-3 text-slate-400">:</td>
-                                    <td class="px-4 py-3 text-slate-900"><?php echo $jam_tampil; ?></td>
-                                </tr>
+                                    <tr class="bg-white">
+                                        <td class="w-48 px-4 py-3 font-semibold text-slate-700">Jam Pemesanan</td>
+                                        <td class="px-2 py-3 text-slate-400">:</td>
+                                        <td class="px-4 py-3 text-slate-900"><?php echo $jam_tampil; ?></td>
+                                    </tr>
 
-                                <tr class="bg-white">
-                                    <td class="w-48 px-4 py-3 font-semibold text-slate-700">Email</td>
-                                    <td class="px-2 py-3 text-slate-400">:</td>
-                                    <td class="px-4 py-3 text-slate-900"><?php echo $res['EMAIL']; ?></td>
-                                </tr>
+                                    <tr class="bg-white">
+                                        <td class="w-48 px-4 py-3 font-semibold text-slate-700">Email</td>
+                                        <td class="px-2 py-3 text-slate-400">:</td>
+                                        <td class="px-4 py-3 text-slate-900"><?php echo $res['EMAIL']; ?></td>
+                                    </tr>
 
-                                <tr class="bg-white">
-                                    <td class="w-48 px-4 py-3 font-semibold text-slate-700">Nama Gedung</td>
-                                    <td class="px-2 py-3 text-slate-400">:</td>
-                                    <td class="px-4 py-3 text-slate-900"><?php echo $res['NAMA_GEDUNG']; ?></td>
-                                </tr>
+                                    <tr class="bg-white">
+                                        <td class="w-48 px-4 py-3 font-semibold text-slate-700">Nama Gedung</td>
+                                        <td class="px-2 py-3 text-slate-400">:</td>
+                                        <td class="px-4 py-3 text-slate-900"><?php echo $res['NAMA_GEDUNG']; ?></td>
+                                    </tr>
 
-                                <tr class="bg-white">
-                                    <td class="w-48 px-4 py-3 font-semibold text-slate-700">Nama Catering</td>
-                                    <td class="px-2 py-3 text-slate-400">:</td>
-                                    <td class="px-4 py-3 text-slate-900"><?php echo $res['NAMA_PAKET']; ?></td>
-                                </tr>
+                                    <tr class="bg-white">
+                                        <td class="w-48 px-4 py-3 font-semibold text-slate-700">Nama Catering</td>
+                                        <td class="px-2 py-3 text-slate-400">:</td>
+                                        <td class="px-4 py-3 text-slate-900"><?php echo $res['NAMA_PAKET']; ?></td>
+                                    </tr>
 
-                                <tr class="bg-white">
-                                    <td class="w-48 px-4 py-3 font-semibold text-slate-700">Jumlah Catering</td>
-                                    <td class="px-2 py-3 text-slate-400">:</td>
-                                    <td class="px-4 py-3 text-slate-900"><?php echo $res['JUMLAH_CATERING'] ?></td>
-                                </tr>
+                                    <tr class="bg-white">
+                                        <td class="w-48 px-4 py-3 font-semibold text-slate-700">Jumlah Catering</td>
+                                        <td class="px-2 py-3 text-slate-400">:</td>
+                                        <td class="px-4 py-3 text-slate-900"><?php echo $res['JUMLAH_CATERING'] ?></td>
+                                    </tr>
 
-                                <tr class="bg-white">
-                                    <td class="w-48 px-4 py-3 font-semibold text-slate-700">Harga Satuan</td>
-                                    <td class="px-2 py-3 text-slate-400">:</td>
-                                    <td class="px-4 py-3 text-slate-900">Rp.
-                                        <?php echo number_format($res['HARGA_SATUAN']) ?></td>
-                                </tr>
+                                    <tr class="bg-white">
+                                        <td class="w-48 px-4 py-3 font-semibold text-slate-700">Harga Satuan</td>
+                                        <td class="px-2 py-3 text-slate-400">:</td>
+                                        <td class="px-4 py-3 text-slate-900">Rp.
+                                            <?php echo number_format($res['HARGA_SATUAN']) ?></td>
+                                    </tr>
 
-                                <tr class="bg-white">
-                                    <td class="w-48 px-4 py-3 font-semibold text-slate-700">Total Harga Catering</td>
-                                    <td class="px-2 py-3 text-slate-400">:</td>
-                                    <td class="px-4 py-3 text-slate-900">Rp.
-                                        <?php echo number_format($res['TOTAL_HARGA']) ?></td>
-                                </tr>
+                                    <tr class="bg-white">
+                                        <td class="w-48 px-4 py-3 font-semibold text-slate-700">Total Harga Catering</td>
+                                        <td class="px-2 py-3 text-slate-400">:</td>
+                                        <td class="px-4 py-3 text-slate-900">Rp.
+                                            <?php echo number_format($res['TOTAL_HARGA']) ?></td>
+                                    </tr>
 
                                 <?php endforeach; ?>
                             </tbody>
