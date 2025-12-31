@@ -75,7 +75,7 @@ $id_gedung = $this->uri->segment(3);
 
                         <div x-show="profileOpen" @click.outside="profileOpen=false" x-transition
                             class="absolute right-0 mt-2 w-52 rounded-xl border border-slate-300 bg-white shadow-lg overflow-hidden text-sm z-20">
-                            <a href="<?php echo site_url('edit_data/'.$session_id.'/'); ?>"
+                            <a href="<?php echo site_url('edit_data/' . $session_id . '/'); ?>"
                                 class="flex items-center gap-2 px-4 py-3 hover:bg-slate-50 text-slate-800">
                                 <span class="inline-flex items-center justify-center">
                                     <i class="material-icons text-[18px] text-blue-700">edit</i>
@@ -95,7 +95,7 @@ $id_gedung = $this->uri->segment(3);
                 </div>
 
                 <div class="p-5 sm:p-6">
-                    <form action="<?php echo site_url('home/order-gedung/validate/'.$id_gedung.'')?>" method="post"
+                    <form action="<?php echo site_url('home/order-gedung/validate/' . $id_gedung . '') ?>" method="post"
                         class="mt-2">
 
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -112,8 +112,8 @@ $id_gedung = $this->uri->segment(3);
                                 <label class="block text-xs font-semibold tracking-widest text-slate-500">NAMA
                                     GEDUNG</label>
                                 <div class="mt-2 text-sm font-semibold text-slate-900">
-                                    <?php foreach($hasil as $gedung): ?>
-                                    <?php echo $gedung['NAMA_GEDUNG']; ?>
+                                    <?php foreach ($hasil as $gedung): ?>
+                                        <?php echo $gedung['NAMA_GEDUNG']; ?>
                                     <?php endforeach; ?>
                                 </div>
                             </div>
@@ -176,7 +176,7 @@ $id_gedung = $this->uri->segment(3);
                             <div
                                 class="rounded-xl border border-slate-300 bg-white p-5 ring-1 ring-slate-200 lg:col-span-2">
                                 <label class="block text-xs font-semibold tracking-widest text-slate-500">EMAIL</label>
-                                <input type="email" name="email" value="<?php echo $email->EMAIL;?>" required class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
+                                <input type="email" name="email" value="<?php echo $email->EMAIL; ?>" required class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
                                     focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40" />
                             </div>
 
@@ -222,10 +222,10 @@ $id_gedung = $this->uri->segment(3);
                                     focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40
                                     disabled:opacity-50 disabled:cursor-not-allowed">
                                     <option value="" disabled selected>Pilih Paket</option>
-                                    <?php foreach($res as $catering): ?>
-                                    <option value="<?php echo $catering['ID_CATERING']; ?>">
-                                        <?php echo $catering['NAMA_PAKET']; ?>
-                                    </option>
+                                    <?php foreach ($res as $catering): ?>
+                                        <option value="<?php echo $catering['ID_CATERING']; ?>">
+                                            <?php echo $catering['NAMA_PAKET']; ?>
+                                        </option>
                                     <?php endforeach; ?>
                                 </select>
 
@@ -261,6 +261,20 @@ $id_gedung = $this->uri->segment(3);
         </div>
     </main>
     <?php $this->load->view('components/footer'); ?>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.querySelector('form');
+            const btn = document.querySelector('button[type="submit"], input[type="submit"]');
+            if (!form || !btn) return;
+
+            form.addEventListener('submit', () => {
+                btn.disabled = true;
+                btn.style.opacity = "0.7";
+            });
+        });
+    </script>
+
 </body>
 
 </html>

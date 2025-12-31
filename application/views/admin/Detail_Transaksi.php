@@ -200,20 +200,19 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
                                             <td>:</td>
                                             <td class="px-4 py-3">
                                                 <?php
-                                                $mulai   = isset($row['JAM_PEMESANAN']) ? $row['JAM_PEMESANAN'] : '';
-                                                $selesai = isset($row['JAM_SELESAI']) ? $row['JAM_SELESAI'] : '';
-                                                $tipe    = isset($row['TIPE_JAM']) ? $row['TIPE_JAM'] : '';
+                                                // $hasil kemungkinan object dari $this->db->row()
+                                                $mulai   = isset($hasil->JAM_PEMESANAN) ? $hasil->JAM_PEMESANAN : '';
+                                                $selesai = isset($hasil->JAM_SELESAI) ? $hasil->JAM_SELESAI : '';
 
-                                                if ($mulai !== '' && $selesai !== '') {
+                                                if ($mulai != '' && $selesai != '') {
                                                     echo date('H:i', strtotime($mulai)) . ' - ' . date('H:i', strtotime($selesai)) . ' WIB';
+                                                } elseif ($mulai != '') {
+                                                    echo date('H:i', strtotime($mulai)) . ' WIB';
                                                 } else {
                                                     echo '-';
                                                 }
-
-                                                if ($tipe !== '') {
-                                                    echo '<div class="text-xs text-gray-500 mt-1">' . htmlspecialchars($tipe, ENT_QUOTES, 'UTF-8') . '</div>';
-                                                }
                                                 ?>
+
                                             </td>
                                         </tr>
                                         <tr>

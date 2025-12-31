@@ -158,7 +158,9 @@ $id_gedung = $this->uri->segment(4);
 
                     <!-- FORM UPLOAD -->
                     <div class="mt-6 rounded-xl border border-slate-300 bg-slate-50 p-5 ring-1 ring-slate-200">
-                        <?php echo form_open_multipart('home/home/upload_proposal'); ?>
+                        <?php $id = (int)$res[0]['ID_PEMESANAN']; ?>
+                        <?php echo form_open_multipart('home/home/upload_proposal/' . $id); ?>
+
 
                         <div class="grid grid-cols-1 gap-4">
                             <div>

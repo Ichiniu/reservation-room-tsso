@@ -1,21 +1,26 @@
 <?php
+
 /**
-* 
-*/
-class Gedung_Model extends CI_Model {
-	
-	function __construct() {
+ * 
+ */
+class Gedung_Model extends CI_Model
+{
+
+	function __construct()
+	{
 		parent::__construct();
 	}
 
-	public function get_unread_transaction() {
-    $sql = "SELECT * FROM PEMBAYARAN WHERE STATUS_VERIF = 'PENDING'";
-    $query = $this->db->query($sql);
-    return $query->num_rows();
-}
+	public function get_unread_transaction()
+	{
+		$sql = "SELECT * FROM PEMBAYARAN WHERE STATUS_VERIF = 'PENDING'";
+		$query = $this->db->query($sql);
+		return $query->num_rows();
+	}
 
 
-	public function laporan_pembayaran_periodic($start_date, $end_date) {
+	public function laporan_pembayaran_periodic($start_date, $end_date)
+	{
 		$sql = "SELECT * FROM PEMBAYARAN 
         WHERE TANGGAL_TRANSFER BETWEEN '$start_date' AND '$end_date' 
         ORDER BY ATAS_NAMA_PENGIRIM ASC";
@@ -24,66 +29,73 @@ class Gedung_Model extends CI_Model {
 	}
 
 
-	public function delete_jadwal($id_pemesanan, $data) {
+	public function delete_jadwal($id_pemesanan, $data)
+	{
 		$this->db->where('ID_PEMESANAN', $id_pemesanan);
 		$this->db->update('pemesanan_fix_detail', $data);
 	}
 
-	public function set_finish_transaction($id_pembayaran) {
-    $id_pembayaran = (int)$id_pembayaran;
-    $sql = "UPDATE pembayaran 
+	public function set_finish_transaction($id_pembayaran)
+	{
+		$id_pembayaran = (int)$id_pembayaran;
+		$sql = "UPDATE pembayaran 
             SET STATUS_VERIF = 'CONFIRMED', CONFIRMED_AT = NOW()
             WHERE ID_PEMBAYARAN = $id_pembayaran";
-    return $this->db->query($sql);
-}
+		return $this->db->query($sql);
+	}
 
 
-	public function get_details_transaction($id_pembayaran) {
+	public function get_details_transaction($id_pembayaran)
+	{
 		$sql = "SELECT * FROM PEMBAYARAN WHERE ID_PEMBAYARAN = $id_pembayaran";
 		$query = $this->db->query($sql);
 		return $query->row();
 	}
 
-	public function get_all() {
+	public function get_all()
+	{
 		$sql = "SELECT * FROM HOME_DATA";
 		$query = $this->db->query($sql);
 		$hasil = $query->result_array();
 		return $hasil;
 	}
 
-	public function get_all_pembayaran() {
-    $sql = "SELECT * FROM PEMBAYARAN ORDER BY CREATED_AT DESC";
-    return $this->db->query($sql)->result_array();
-}
+	public function get_all_pembayaran()
+	{
+		$sql = "SELECT * FROM PEMBAYARAN ORDER BY CREATED_AT DESC";
+		return $this->db->query($sql)->result_array();
+	}
 
-// atau pending saja:
-public function get_all_pembayaran_pending() {
-    $sql = "SELECT * FROM PEMBAYARAN WHERE STATUS_VERIF='PENDING' ORDER BY CREATED_AT DESC";
-    return $this->db->query($sql)->result_array();
-}
+	// atau pending saja:
+	public function get_all_pembayaran_pending()
+	{
+		$sql = "SELECT * FROM PEMBAYARAN WHERE STATUS_VERIF='PENDING' ORDER BY CREATED_AT DESC";
+		return $this->db->query($sql)->result_array();
+	}
 
 
-public function get_pemesanan_flag($username)
-{
-    $sql = "
+	public function get_pemesanan_flag($username)
+	{
+		$sql = "
         SELECT COUNT(*) AS jml
         FROM v_pemesanan
         WHERE USERNAME = ?
           AND STATUS = 'PROPOSAL APPROVE'
     ";
-    $row = $this->db->query($sql, array($username))->row();
-    return $row ? (int)$row->jml : 0;
-}
-
-
-
-	public function insert_pemesanan_fix_detail($data) {
-		$this->db->insert('pemesanan_fix_detail', $data);
-		
+		$row = $this->db->query($sql, array($username))->row();
+		return $row ? (int)$row->jml : 0;
 	}
 
-public function jadwal_gedung($first_date, $second_date) {
-    $sql = "
+
+
+	public function insert_pemesanan_fix_detail($data)
+	{
+		$this->db->insert('pemesanan_fix_detail', $data);
+	}
+
+	public function jadwal_gedung($first_date, $second_date)
+	{
+		$sql = "
         SELECT 
             PEMESANAN_FIX_DETAIL.ID_PEMESANAN,
             PEMESANAN_FIX_DETAIL.TANGGAL_FINAL_PEMESANAN,
@@ -107,13 +119,14 @@ public function jadwal_gedung($first_date, $second_date) {
                  PEMESANAN.JAM_PEMESANAN ASC
     ";
 
-    return $this->db->query($sql)->result_array();
-}
+		return $this->db->query($sql)->result_array();
+	}
 
 
 
-public function jadwal_gedung_upcoming() {
-    $sql = "
+	public function jadwal_gedung_upcoming()
+	{
+		$sql = "
         SELECT 
             pfd.ID_PEMESANAN,
             pfd.TANGGAL_FINAL_PEMESANAN,
@@ -135,21 +148,23 @@ public function jadwal_gedung_upcoming() {
           AND pfd.TANGGAL_FINAL_PEMESANAN >= CURDATE()
         ORDER BY pfd.TANGGAL_FINAL_PEMESANAN ASC, p.JAM_PEMESANAN ASC
     ";
-    return $this->db->query($sql)->result_array();
-}
-		public function get_last_jadwal_date_upcoming() {
-			$sql = "
+		return $this->db->query($sql)->result_array();
+	}
+	public function get_last_jadwal_date_upcoming()
+	{
+		$sql = "
 				SELECT MAX(TANGGAL_FINAL_PEMESANAN) AS last_date
 				FROM PEMESANAN_FIX_DETAIL
 				WHERE FINAL_STATUS = 1
 				AND TANGGAL_FINAL_PEMESANAN >= CURDATE()
 			";
-			return $this->db->query($sql)->row();
-}
+		return $this->db->query($sql)->row();
+	}
 
 
-	public function fixed_date() {
-    $sql = "SELECT 
+	public function fixed_date()
+	{
+		$sql = "SELECT 
         PEMESANAN_FIX_DETAIL.ID_PEMESANAN,
         PEMESANAN_FIX_DETAIL.USERNAME,
         PEMESANAN.ID_GEDUNG, 
@@ -165,75 +180,92 @@ public function jadwal_gedung_upcoming() {
         JOIN GEDUNG ON PEMESANAN.ID_GEDUNG = GEDUNG.ID_GEDUNG
         WHERE PEMESANAN_FIX_DETAIL.FINAL_STATUS = 1
         ORDER BY PEMESANAN_FIX_DETAIL.TANGGAL_FINAL_PEMESANAN DESC";
-    $query = $this->db->query($sql);
-    return $query->result_array();
-}
-
-
-	public function check_date($date_order, $id_gedung) {
-		$sql = "SELECT 
-		pemesanan_fix_detail.TANGGAL_FINAL_PEMESANAN,
-		pemesanan.ID_GEDUNG
-		FROM pemesanan_fix_detail 
-		JOIN pemesanan ON pemesanan_fix_detail.ID_PEMESANAN = pemesanan.ID_PEMESANAN
-		WHERE pemesanan_fix_detail.TANGGAL_FINAL_PEMESANAN = '$date_order' AND pemesanan.ID_GEDUNG = $id_gedung";
 		$query = $this->db->query($sql);
-		return $query->num_rows();
+		return $query->result_array();
 	}
 
-	public function get_email_address($username) {
+
+	public function check_date($tanggal, $id_gedung, $jam_mulai, $jam_selesai)
+	{
+		// status yang dianggap "aktif" (silakan sesuaikan mappingmu)
+		// contoh: 0=draft, 1=submitted, 2=process, 3=confirmed
+		$aktif = [0, 1, 2, 3];
+
+		$this->db->from('pemesanan');
+		$this->db->where('ID_GEDUNG', (int)$id_gedung);
+		$this->db->where('TANGGAL_PEMESANAN', $tanggal);
+		$this->db->where_in('STATUS', $aktif);
+
+		// OVERLAP RULE: existing_start < new_end AND existing_end > new_start
+		$this->db->where('JAM_PEMESANAN <', $jam_selesai);
+		$this->db->where('JAM_SELESAI >', $jam_mulai);
+
+		return $this->db->count_all_results(); // >0 berarti bentrok
+	}
+
+
+	public function get_email_address($username)
+	{
 		$sql = "SELECT EMAIL FROM USER WHERE USERNAME = '$username'";
 		$query = $this->db->query($sql);
 		return $query->row();
 	}
 
-	public function get_gedung() {
+	public function get_gedung()
+	{
 		$sql = "SELECT * FROM GEDUNG";
 		$query = $this->db->query($sql);
 		$hasil = $query->result_array();
 		return $hasil;
 	}
 
-	public function insert_pemesanan($data) {
-    $this->db->insert('pemesanan', $data);
-}
+	public function insert_pemesanan($data)
+	{
+		$this->db->insert('pemesanan', $data);
+		return $this->db->insert_id();
+	}
 
 
-	public function get_last_id_pesanan() {
+
+	public function get_last_id_pesanan()
+	{
 		$sql = "SELECT ID_PEMESANAN FROM PEMESANAN ORDER BY ID_PEMESANAN DESC LIMIT 1";
 		$query = $this->db->query($sql);
 		$hasil = $query->row();
 		return $hasil;
 	}
 
-	public function get_pending_transaction() {
-    $sql = "SELECT STATUS FROM V_PEMESANAN WHERE STATUS = 'PROCESS'";
-    $query = $this->db->query($sql);
-    return $query->num_rows();
-}
+	public function get_pending_transaction()
+	{
+		$sql = "SELECT STATUS FROM V_PEMESANAN WHERE STATUS = 'PROCESS'";
+		$query = $this->db->query($sql);
+		return $query->num_rows();
+	}
 
-	public function get_all_pemesanan() {
+	public function get_all_pemesanan()
+	{
 		$sql = "SELECT * FROM V_PEMESANAN";
 		$query = $this->db->query($sql);
 		$hasil = $query->result_array();
 		return $hasil;
 	}
 
-	public function get_all_pending_transaction() {
-    $sql = "SELECT * 
+	public function get_all_pending_transaction()
+	{
+		$sql = "SELECT * 
             FROM V_PEMESANAN 
             WHERE STATUS IN ('PROCESS','PROPOSAL APPROVE')
             ORDER BY TANGGAL_PEMESANAN DESC";
-    $query = $this->db->query($sql);
-    return $query->result_array();
-}
+		$query = $this->db->query($sql);
+		return $query->result_array();
+	}
 
 
 	public function get_detail_pembayaran($id_pembayaran)
-{
-    $id_pembayaran = (int)$id_pembayaran;
+	{
+		$id_pembayaran = (int)$id_pembayaran;
 
-    $sql = "
+		$sql = "
       SELECT 
         p.*,
         ps.USERNAME,
@@ -247,13 +279,13 @@ public function jadwal_gedung_upcoming() {
       WHERE p.ID_PEMBAYARAN = $id_pembayaran
     ";
 
-    return $this->db->query($sql)->row();
-}
+		return $this->db->query($sql)->row();
+	}
 
 
-public function user_detail_pembayaran($username)
-{
-    $sql = "
+	public function user_detail_pembayaran($username)
+	{
+		$sql = "
       SELECT
         p.ID_PEMBAYARAN,
         p.ID_PEMESANAN_RAW,
@@ -279,32 +311,36 @@ public function user_detail_pembayaran($username)
         p.CREATED_AT DESC
     ";
 
-    return $this->db->query($sql, array($username))->result_array();
-}
+		return $this->db->query($sql, array($username))->result_array();
+	}
 
 
 
 
-	public function get_pemesanan($username) {
+	public function get_pemesanan($username)
+	{
 		$sql = "SELECT * FROM V_PEMESANAN WHERE USERNAME = '$username'";
 		$query = $this->db->query($sql);
 		$hasil = $query->result_array();
 		return $hasil;
 	}
 
-	public function count_pemesanan($username) {
+	public function count_pemesanan($username)
+	{
 		$sql = "SELECT * FROM PEMESANAN WHERE USERNAME = '$username'";
 		$query = $this->db->query($sql);
 		return $query->num_rows();
 	}
 
-	public function get_rejected_pemesanan($id_pemesanan) {
+	public function get_rejected_pemesanan($id_pemesanan)
+	{
 		$sql = "select * from pemesanan where id_pemesanan = $id_pemesanan";
 		$query = $this->db->query($sql);
 		return $query->row();
 	}
 
-	public function update_transaksi($id_pemesanan, $data, $remarks) {
+	public function update_transaksi($id_pemesanan, $data, $remarks)
+	{
 		//$sql = "UPDATE pemesanan SET STATUS = $data WHERE ID_PEMESANAN = $id_pemesanan";
 		$sql = "
 		UPDATE PEMESANAN 
@@ -321,37 +357,43 @@ public function user_detail_pembayaran($username)
 		return $query;
 	}
 
-	public function get_detail_pesanan($id_pemesanan) {
+	public function get_detail_pesanan($id_pemesanan)
+	{
 		$sql = "SELECT * FROM V_PEMESANAN WHERE ID_PEMESANAN = '$id_pemesanan'";
 		$query = $this->db->query($sql);
 		$hasil = $query->row();
 		return $hasil;
 	}
 
-	public function cancel_order($id_pemesanan, $data) {
+	public function cancel_order($id_pemesanan, $data)
+	{
 		$this->db->where('ID_PEMESANAN', $id_pemesanan);
 		$this->db->update('PEMESANAN', $data);
 	}
 
-	public function get_proposal_by_id($id_pemesanan) {
+	public function get_proposal_by_id($id_pemesanan)
+	{
 		$sql = "SELECT * FROM pemesanan_details WHERE ID_PEMESANAN = $id_pemesanan";
 		$query = $this->db->query($sql);
 		$hasil = $query->row();
 		return $hasil;
 	}
 
-	public function update_user_flag($id_pemesanan) {
+	public function update_user_flag($id_pemesanan)
+	{
 		$sql = "UPDATE PEMESANAN SET FLAG = 2 WHERE ID_PEMESANAN = $id_pemesanan";
 		$query = $this->db->query($sql);
 		return $query;
 	}
 
-	public function upload_proposal($data) {
+	public function upload_proposal($data)
+	{
 		$this->db->insert('pemesanan_details', $data);
 	}
 
-	public function get_last_order() {
-    $sql = "select 
+	public function get_last_order()
+	{
+		$sql = "select 
         p.ID_PEMESANAN AS ID_PEMESANAN,
         p.USERNAME AS USERNAME,
         p.TANGGAL_PEMESANAN AS TANGGAL_PEMESANAN,
@@ -378,89 +420,151 @@ public function user_detail_pembayaran($username)
     order by p.ID_PEMESANAN desc
     limit 0,1";
 
-    $query = $this->db->query($sql);
-    return $query->result_array();
-}
+		$query = $this->db->query($sql);
+		return $query->result_array();
+	}
 
 
-	public function delete_pemesanan($id_pemesanan) {
+	public function delete_pemesanan($id_pemesanan)
+	{
 		$this->db->where('ID_PEMESANAN', $id_pemesanan);
 		$this->db->delete('gedung');
 	}
 
-	public function get_gedung_name($id_gedung) {
+	public function get_gedung_name($id_gedung)
+	{
 		$sql = "SELECT NAMA_GEDUNG, HARGA_SEWA FROM GEDUNG WHERE ID_GEDUNG = $id_gedung";
 		$query = $this->db->query($sql);
 		$hasil = $query->result_array();
 		return $hasil;
 	}
 
-	public function insert_gedung_img($data) {
+	public function insert_gedung_img($data)
+	{
 		$this->db->insert('gedung_img', $data);
 	}
 
-	public function insert_perawatan($data) {
+	public function insert_perawatan($data)
+	{
 		$this->db->insert('perawatan', $data);
 	}
 
-	public function get_last_id_gedung() {
+	public function get_last_id_gedung()
+	{
 		$sql = "SELECT MAX(ID_GEDUNG) AS ID_GEDUNG FROM GEDUNG";
 		$query = $this->db->query($sql);
 		$hasil = $query->row();
 		return $hasil;
 	}
 
-	public function insert_gedung($data) {
+	public function insert_gedung($data)
+	{
 		$this->db->insert('gedung', $data);
 	}
 
-	public function update_gedung($id_gedung, $data) {
+	public function update_gedung($id_gedung, $data)
+	{
 		$this->db->where('ID_GEDUNG', $id_gedung);
 		$this->db->update('gedung', $data);
 	}
 
-	public function delete_gedung($id_gedung) {
+	public function delete_gedung($id_gedung)
+	{
 		$this->db->where('ID_GEDUNG', $id_gedung);
 		$this->db->delete('gedung');
 	}
 
-	public function get_menu_catering() {
+	public function get_menu_catering()
+	{
 		$sql = "SELECT * FROM CATERING";
 		$query = $this->db->query($sql);
 		$hasil = $query->result_array();
 		return $hasil;
 	}
 
-	public function sort_by_name() {
+	public function sort_by_name()
+	{
 		$sql = "SELECT * FROM HOME_DATA ORDER BY NAMA_GEDUNG ASC";
 		$query = $this->db->query($sql);
 		$hasil = $query->result_array();
 		return $hasil;
 	}
 
-	public function sort_by_capacity() {
+	public function sort_by_capacity()
+	{
 		$sql = "SELECT * FROM HOME_DATA ORDER BY KAPASITAS DESC";
 		$query = $this->db->query($sql);
 		$hasil = $query->result_array();
 		return $hasil;
 	}
 
-	public function gedung_details($id_gedung) {
+	public function gedung_details($id_gedung)
+	{
 		$query = "SELECT ID_GEDUNG, NAMA_GEDUNG, ALAMAT, DESKRIPSI_GEDUNG, KAPASITAS, HARGA_SEWA FROM GEDUNG WHERE ID_GEDUNG = $id_gedung";
 		$sql = $this->db->query($query);
 		return $sql->result_array();
 	}
 
-	public function search_gedung($nama_gedung) {
+	public function search_gedung($nama_gedung)
+	{
 		$query = "SELECT ID_GEDUNG, NAMA_GEDUNG, PATH, IMG_NAME FROM HOME_DATA WHERE NAMA_GEDUNG LIKE '%$nama_gedung%'";
 		$sql = $this->db->query($query);
 		return $sql->result_array();
 	}
 
-	public function get_gedung_img($id_gedung) {
+	public function get_gedung_img($id_gedung)
+	{
 		$query = "SELECT ID_GEDUNG, PATH, IMG_NAME FROM GEDUNG_IMG WHERE ID_GEDUNG = $id_gedung";
 		$sql = $this->db->query($query);
 		return $sql->result_array();
 	}
-	
+	public function get_order_by_id_user($id_pemesanan, $username)
+	{
+		$sql = "select 
+        p.ID_PEMESANAN AS ID_PEMESANAN,
+        p.USERNAME AS USERNAME,
+        p.TANGGAL_PEMESANAN AS TANGGAL_PEMESANAN,
+        p.JAM_PEMESANAN AS JAM_PEMESANAN,
+        p.JAM_SELESAI AS JAM_SELESAI,
+        p.TIPE_JAM AS TIPE_JAM,
+        p.EMAIL AS EMAIL,
+        coalesce(p.JUMLAH_CATERING,'Tidak Ada') AS JUMLAH_CATERING,
+        coalesce(c.NAMA_PAKET,'Tidak Ada') AS NAMA_PAKET,
+        g.NAMA_GEDUNG AS NAMA_GEDUNG,
+        c.HARGA AS HARGA_SATUAN,
+        coalesce((c.HARGA * p.JUMLAH_CATERING),0) AS TOTAL_HARGA,
+        (case p.STATUS when 0 then 'PENDING' when 1 then 'DISETUJUI' when 2 then 'DITOLAK' end) AS STATUS,
+        g.HARGA_SEWA AS HARGA_SEWA,
+        (g.HARGA_SEWA + coalesce((c.HARGA * p.JUMLAH_CATERING),0)) AS TOTAL_KESELURUHAN,
+        pemesanan_details.DESKRIPSI_ACARA AS DESKRIPSI_ACARA 
+    from pemesanan p 
+    left join catering c on c.ID_CATERING = p.ID_CATERING 
+    left join gedung g on g.ID_GEDUNG = p.ID_GEDUNG 
+    left join pemesanan_details on pemesanan_details.ID_PEMESANAN = p.ID_PEMESANAN
+    where p.ID_PEMESANAN = ? and p.USERNAME = ?
+    limit 1";
+
+		return $this->db->query($sql, [$id_pemesanan, $username])->result_array();
+	}
+
+	public function is_order_owner($id_pemesanan, $username)
+	{
+		return $this->db->where('ID_PEMESANAN', $id_pemesanan)
+			->where('USERNAME', $username)
+			->count_all_results('pemesanan') > 0;
+	}
+
+	public function proposal_exists($id_pemesanan)
+	{
+		return $this->db->where('ID_PEMESANAN', $id_pemesanan)
+			->count_all_results('pemesanan_details') > 0;
+	}
+
+	public function update_proposal($id_pemesanan, $data)
+	{
+		// jangan ubah ID_PEMESANAN saat update
+		unset($data['ID_PEMESANAN']);
+		$this->db->where('ID_PEMESANAN', $id_pemesanan)
+			->update('pemesanan_details', $data);
+	}
 }
