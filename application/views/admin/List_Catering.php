@@ -177,22 +177,22 @@ $catering_data = isset($result) && is_array($result) ? $result : [];
 
         <div class="bg-white rounded-xl shadow-sm p-6">
 
-            <div class="overflow-x-auto max-h-[420px] overflow-y-auto relative">
+            <div class="overflow-x-auto max-h-[420px] overflow-y-auto">
                 <table class="w-full text-sm border border-slate-200 rounded-lg bg-white">
-                    <thead class="sticky top-0 z-20 bg-slate-100 shadow-sm">
+                    <thead class="sticky top-0 bg-slate-100">
                         <tr>
                             <th class="px-4 py-3 text-center">No</th>
                             <th class="px-4 py-3">Nama Paket</th>
                             <th class="px-4 py-3">Menu Pembuka</th>
                             <th class="px-4 py-3">Menu Utama</th>
                             <th class="px-4 py-3">Menu Penutup</th>
-                            <th class="px-10 py-3">Harga</th>
-                            <!-- <th class="px-4 py-3 text-center">Aksi</th> -->
+                            <th class="px-4 py-3">Harga</th>
+                            <th class="px-4 py-3 text-center">Aksi</th>
                         </tr>
                     </thead>
 
                     <tbody class="divide-y">
-                        <?php $no=1; foreach($catering_data as $row): ?>
+                        <?php $no = 1; foreach ($catering_data as $row): ?>
                         <tr class="table-row hover:bg-slate-50">
                             <td class="px-4 py-3 text-center"><?= $no++ ?></td>
                             <td class="px-4 py-3 font-medium"><?= $row['NAMA_PAKET'] ?></td>
@@ -200,15 +200,35 @@ $catering_data = isset($result) && is_array($result) ? $result : [];
                             <td class="px-4 py-3"><?= $row['MENU_UTAMA'] ?></td>
                             <td class="px-4 py-3"><?= $row['MENU_PENUTUP'] ?></td>
                             <td class="px-4 py-3 font-semibold">
-                                Rp <?= number_format($row['HARGA'],0,',','.') ?>
+                                Rp <?= number_format($row['HARGA'], 0, ',', '.') ?>
                             </td>
-                            <!-- <td class="px-4 py-3 text-center">
-                                <a href="#" class="text-blue-600 hover:underline text-sm">Detail</a>
-                            </td> -->
+
+                            <!-- AKSI -->
+                            <td class="px-4 py-3 text-center">
+                                <div class="flex justify-center gap-2">
+                                    <!-- EDIT -->
+                                    <a href="<?= site_url('admin/tambah_catering/' . $row['ID_CATERING']) ?>"
+                                        class="inline-flex items-center gap-1 px-3 py-1.5 text-xs bg-yellow-400 text-white rounded hover:bg-yellow-500">
+                                        <span class="material-icons text-sm">edit</span>
+                                        Edit
+                                    </a>
+
+                                    <!-- HAPUS -->
+                                    <form action="<?= site_url('admin/delete_catering') ?>" method="post"
+                                        onsubmit="return confirm('Yakin ingin menghapus data catering ini?')">
+                                        <input type="hidden" name="id_catering" value="<?= $row['ID_CATERING'] ?>">
+                                        <button type="submit"
+                                            class="inline-flex items-center gap-1 px-3 py-1.5 text-xs bg-red-500 text-white rounded hover:bg-red-600">
+                                            <span class="material-icons text-sm">delete</span>
+                                            Hapus
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
                         </tr>
                         <?php endforeach; ?>
 
-                        <?php if(empty($catering_data)): ?>
+                        <?php if (empty($catering_data)): ?>
                         <tr>
                             <td colspan="7" class="px-4 py-6 text-center text-gray-500">
                                 Data catering belum tersedia
@@ -218,6 +238,7 @@ $catering_data = isset($result) && is_array($result) ? $result : [];
                     </tbody>
                 </table>
             </div>
+
 
             <!-- ===== PAGINATION ===== -->
             <div class="mt-6 flex items-center justify-between">

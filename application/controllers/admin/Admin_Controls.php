@@ -289,6 +289,13 @@ class Admin_Controls extends CI_Controller {
 		$this->load->view('admin/tambah_catering', $data);
 	}
 
+	function hapus_catering() {
+		$id_catering = $this->input->post('id_catering');
+		$this->load->model('catering/catering_model');
+		$this->catering_model->delete_catering($id_catering);
+		redirect('admin/catering');
+	}
+
 	function delete_gedung($id_gedung) {
 		$this->load->model('gedung/gedung_model');
 		$this->gedung_model->delete_gedung($id_gedung);

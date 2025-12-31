@@ -133,11 +133,11 @@ function is_active($uri, $current_uri)
                 <span class="menu-text">List Pemesanan</span>
             </a>
 
-            <a href="<?= site_url('admin/list') ?>" class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white
+            <!-- <a href="<?= site_url('admin/list') ?>" class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white
 <?= is_active('admin/list', $current_uri) ? 'menu-active' : '' ?>">
                 <span class="material-icons">people</span>
                 <span class="menu-text">List User</span>
-            </a>
+            </a> -->
 
             <!-- INBOX / TRANSAKSI -->
             <?php $jumlah_inbox = isset($result) ? $result : 0; ?>
