@@ -13,39 +13,39 @@ $this->load->helper('text');
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-    /* Scroll hanya di area tabel */
-    .table-scroll {
-        max-height: 420px;
-        /* ubah sesuai kebutuhan (atau 60vh) */
-        overflow-y: auto;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
+        /* Scroll hanya di area tabel */
+        .table-scroll {
+            max-height: 420px;
+            /* ubah sesuai kebutuhan (atau 60vh) */
+            overflow-y: auto;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
 
-    /* Header sticky */
-    .table-scroll thead th {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-    }
+        /* Header sticky */
+        .table-scroll thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
 
-    /* Scrollbar (opsional, biar lebih rapi) */
-    .table-scroll::-webkit-scrollbar {
-        height: 10px;
-        width: 10px;
-    }
+        /* Scrollbar (opsional, biar lebih rapi) */
+        .table-scroll::-webkit-scrollbar {
+            height: 10px;
+            width: 10px;
+        }
 
-    .table-scroll::-webkit-scrollbar-thumb {
-        background: rgba(100, 116, 139, 0.35);
-        /* slate-500 */
-        border-radius: 999px;
-    }
+        .table-scroll::-webkit-scrollbar-thumb {
+            background: rgba(100, 116, 139, 0.35);
+            /* slate-500 */
+            border-radius: 999px;
+        }
 
-    .table-scroll::-webkit-scrollbar-track {
-        background: rgba(226, 232, 240, 0.7);
-        /* slate-200 */
-        border-radius: 999px;
-    }
+        .table-scroll::-webkit-scrollbar-track {
+            background: rgba(226, 232, 240, 0.7);
+            /* slate-200 */
+            border-radius: 999px;
+        }
     </style>
 </head>
 
@@ -95,7 +95,7 @@ $this->load->helper('text');
                         class="w-full rounded-xl bg-white border border-slate-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-slate-300">
                         <option value="">Semua Tahun</option>
                         <?php for ($y = date('Y') - 3; $y <= date('Y') + 1; $y++): ?>
-                        <option value="<?= $y ?>"><?= $y ?></option>
+                            <option value="<?= $y ?>"><?= $y ?></option>
                         <?php endfor; ?>
                     </select>
                 </div>
@@ -125,30 +125,31 @@ $this->load->helper('text');
 
                     <tbody class="divide-y divide-slate-100">
                         <?php if (!empty($jadwal)): ?>
-                        <?php $no = 1; foreach ($jadwal as $row): ?>
-                        <tr class="hover:bg-slate-50 transition"
-                            data-date="<?= date('Y-m-d', strtotime($row['TANGGAL_FINAL_PEMESANAN'])) ?>">
-                            <td class="px-4 py-3"><?= $no++ ?></td>
-                            <td class="px-4 py-3">
-                                <?= date('d M Y', strtotime($row['TANGGAL_FINAL_PEMESANAN'])) ?>
-                            </td>
-                            <td class="px-4 py-3">
-                                <?= $row['JAM_MULAI'] ?> - <?= $row['JAM_SELESAI'] ?>
-                            </td>
-                            <td class="px-4 py-3 font-semibold text-slate-800">
-                                <?= $row['NAMA_GEDUNG'] ?>
-                            </td>
-                            <td class="px-4 py-3 text-slate-600">
-                                <?= $row['DESKRIPSI_ACARA'] ?>
-                            </td>
-                        </tr>
-                        <?php endforeach ?>
+                            <?php $no = 1;
+                            foreach ($jadwal as $row): ?>
+                                <tr class="hover:bg-slate-50 transition"
+                                    data-date="<?= date('Y-m-d', strtotime($row['TANGGAL_FINAL_PEMESANAN'])) ?>">
+                                    <td class="px-4 py-3"><?= $no++ ?></td>
+                                    <td class="px-4 py-3">
+                                        <?= date('d M Y', strtotime($row['TANGGAL_FINAL_PEMESANAN'])) ?>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <?= $row['JAM_MULAI'] ?> - <?= $row['JAM_SELESAI'] ?>
+                                    </td>
+                                    <td class="px-4 py-3 font-semibold text-slate-800">
+                                        <?= $row['NAMA_GEDUNG'] ?>
+                                    </td>
+                                    <td class="px-4 py-3 text-slate-600">
+                                        <?= $row['DESKRIPSI_ACARA'] ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach ?>
                         <?php else: ?>
-                        <tr>
-                            <td colspan="5" class="px-4 py-6 text-center text-slate-500">
-                                Tidak ada data jadwal.
-                            </td>
-                        </tr>
+                            <tr>
+                                <td colspan="5" class="px-4 py-6 text-center text-slate-500">
+                                    Tidak ada data jadwal.
+                                </td>
+                            </tr>
                         <?php endif ?>
                     </tbody>
                 </table>
@@ -188,92 +189,92 @@ $this->load->helper('text');
 
     <!-- ================= JAVASCRIPT ================= -->
     <script>
-    const rows = Array.from(document.querySelectorAll('tbody tr[data-date]'));
+        const rows = Array.from(document.querySelectorAll('tbody tr[data-date]'));
 
-    const bulanSelect = document.getElementById('filterBulan');
-    const tahunSelect = document.getElementById('filterTahun');
-    const rowsSelect = document.getElementById('rowsPerPage');
+        const bulanSelect = document.getElementById('filterBulan');
+        const tahunSelect = document.getElementById('filterTahun');
+        const rowsSelect = document.getElementById('rowsPerPage');
 
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const pageInfo = document.getElementById('pageInfo');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const pageInfo = document.getElementById('pageInfo');
 
-    let rowsPerPage = parseInt(rowsSelect.value, 10);
-    let currentPage = 1;
-    let filteredRows = [];
+        let rowsPerPage = parseInt(rowsSelect.value, 10);
+        let currentPage = 1;
+        let filteredRows = [];
 
-    // DEFAULT BULAN & TAHUN SEKARANG
-    bulanSelect.value = String(new Date().getMonth() + 1).padStart(2, '0');
-    tahunSelect.value = new Date().getFullYear();
+        // DEFAULT BULAN & TAHUN SEKARANG
+        bulanSelect.value = String(new Date().getMonth() + 1).padStart(2, '0');
+        tahunSelect.value = new Date().getFullYear();
 
-    function applyFilter() {
-        const bulan = bulanSelect.value;
-        const tahun = tahunSelect.value;
+        function applyFilter() {
+            const bulan = bulanSelect.value;
+            const tahun = tahunSelect.value;
 
-        filteredRows = rows.filter(row => {
-            const date = row.dataset.date; // YYYY-MM-DD
-            if (!bulan && !tahun) return true;
-            if (bulan && !date.includes('-' + bulan)) return false;
-            if (tahun && !date.startsWith(String(tahun))) return false;
-            return true;
+            filteredRows = rows.filter(row => {
+                const date = row.dataset.date; // YYYY-MM-DD
+                if (!bulan && !tahun) return true;
+                if (bulan && !date.includes('-' + bulan)) return false;
+                if (tahun && !date.startsWith(String(tahun))) return false;
+                return true;
+            });
+
+            currentPage = 1;
+            render();
+        }
+
+        function resetFilter() {
+            bulanSelect.value = '';
+            tahunSelect.value = '';
+            filteredRows = [...rows];
+            currentPage = 1;
+            render();
+        }
+
+        function render() {
+            // hide all
+            rows.forEach(r => r.style.display = 'none');
+
+            const totalPages = Math.ceil(filteredRows.length / rowsPerPage) || 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+
+            filteredRows.slice(start, end).forEach(r => r.style.display = '');
+
+            pageInfo.textContent = `Halaman ${currentPage} dari ${totalPages}`;
+
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+        }
+
+        prevBtn.onclick = () => {
+            if (currentPage > 1) {
+                currentPage--;
+                render();
+            }
+        };
+
+        nextBtn.onclick = () => {
+            const totalPages = Math.ceil(filteredRows.length / rowsPerPage) || 1;
+            if (currentPage < totalPages) {
+                currentPage++;
+                render();
+            }
+        };
+
+        bulanSelect.addEventListener('change', applyFilter);
+        tahunSelect.addEventListener('change', applyFilter);
+
+        rowsSelect.addEventListener('change', () => {
+            rowsPerPage = parseInt(rowsSelect.value, 10);
+            currentPage = 1;
+            render();
         });
 
-        currentPage = 1;
-        render();
-    }
-
-    function resetFilter() {
-        bulanSelect.value = '';
-        tahunSelect.value = '';
-        filteredRows = [...rows];
-        currentPage = 1;
-        render();
-    }
-
-    function render() {
-        // hide all
-        rows.forEach(r => r.style.display = 'none');
-
-        const totalPages = Math.ceil(filteredRows.length / rowsPerPage) || 1;
-        if (currentPage > totalPages) currentPage = totalPages;
-
-        const start = (currentPage - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
-
-        filteredRows.slice(start, end).forEach(r => r.style.display = '');
-
-        pageInfo.textContent = `Halaman ${currentPage} dari ${totalPages}`;
-
-        prevBtn.disabled = currentPage === 1;
-        nextBtn.disabled = currentPage === totalPages;
-    }
-
-    prevBtn.onclick = () => {
-        if (currentPage > 1) {
-            currentPage--;
-            render();
-        }
-    };
-
-    nextBtn.onclick = () => {
-        const totalPages = Math.ceil(filteredRows.length / rowsPerPage) || 1;
-        if (currentPage < totalPages) {
-            currentPage++;
-            render();
-        }
-    };
-
-    bulanSelect.addEventListener('change', applyFilter);
-    tahunSelect.addEventListener('change', applyFilter);
-
-    rowsSelect.addEventListener('change', () => {
-        rowsPerPage = parseInt(rowsSelect.value, 10);
-        currentPage = 1;
-        render();
-    });
-
-    // INIT
-    applyFilter();
+        // INIT
+        applyFilter();
     </script>
 
 </body>

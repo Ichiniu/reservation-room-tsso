@@ -95,8 +95,29 @@ $id_gedung = $this->uri->segment(3);
                 </div>
 
                 <div class="p-5 sm:p-6">
+                    <?php if ($this->session->flashdata('error')): ?>
+                        <div class="p-3 mb-4 rounded bg-red-100 text-red-700">
+                            <?= $this->session->flashdata('error'); ?>
+                        </div>
+                    <?php endif; ?>
                     <form action="<?php echo site_url('home/order-gedung/validate/' . $id_gedung . '') ?>" method="post"
                         class="mt-2">
+                        <?php
+                        // token stabil per browser (akan tersimpan di cookie)
+                        if (empty($_COOKIE['booking_client_id'])) {
+                            $client_id = sha1(uniqid('client', true) . microtime(true));
+                            setcookie('booking_client_id', $client_id, time() + (86400 * 365), "/"); // 1 tahun
+                            $_COOKIE['booking_client_id'] = $client_id;
+                        } else {
+                            $client_id = $_COOKIE['booking_client_id'];
+                        }
+
+                        // request id spesifik untuk percobaan order saat ini
+                        // kalau user back-forward, value ini tetap di form (browser preserve)
+                        $request_id = sha1($client_id . '|' . uniqid('', true) . '|' . microtime(true));
+                        ?>
+                        <input type="hidden" name="request_id" value="<?php echo htmlspecialchars($request_id); ?>">
+
 
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
@@ -136,7 +157,7 @@ $id_gedung = $this->uri->segment(3);
                                 <select name="tipe_jam" id="tipe_jam" required x-model="tipeJam" @change="applyJam()"
                                     class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
                                     focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40">
-                                    <option value="CUSTOM">HH:MM - HH:MM (Input sendiri)</option>
+                                    <option value="CUSTOM">HH:MM - HH:MM (HANYA UNTUK STUDIO PODCAST)</option>
                                     <option value="HALF_DAY_PAGI">HALF DAY (08-12)</option>
                                     <option value="HALF_DAY_SIANG">HALF DAY (13-16)</option>
                                     <option value="FULL_DAY">FULL DAY</option>

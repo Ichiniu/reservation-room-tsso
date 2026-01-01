@@ -82,16 +82,15 @@ class Home extends CI_Controller
 	public function jadwal_gedung()
 	{
 		$username = $this->session->userdata('username');
-		$this->load->helper('date');
-		$akhir_bulan = strtotime('last day of this month', time());
-		$second_date = date('Y-m-d', $akhir_bulan);
-		$first_date = date('Y-m-d', time());
 		$this->load->model('gedung/gedung_model');
-		$data['jadwal'] = $this->gedung_model->jadwal_gedung($first_date, $second_date);
-		$data['flag'] = $this->gedung_model->get_pemesanan_flag($username);
+
+		// semua jadwal yang CONFIRMED
+		$data['jadwal'] = $this->gedung_model->jadwal_gedung();
+		$data['flag']   = $this->gedung_model->get_pemesanan_flag($username);
+
 		$this->load->view('gedung/jadwal_gedung', $data);
-		$data['jadwal'] = $this->gedung_model->jadwal_gedung_upcoming();
 	}
+
 
 	public function jadwal_per_periode($start_date, $end_date)
 	{
@@ -175,7 +174,7 @@ class Home extends CI_Controller
 
 	public function upload_proposal($id_pemesanan = null)
 	{
-		$this->load->helper('form');
+		$this->load->helper(['form']);
 		$this->load->model('gedung/gedung_model');
 
 		$username = $this->session->userdata('username');
@@ -188,35 +187,50 @@ class Home extends CI_Controller
 		// pastikan order ini milik user yg login
 		if (!$this->gedung_model->is_order_owner($id, $username)) show_404();
 
+		// ✅ WAJIB UPLOAD: kalau kosong, balikin user
+		if (empty($_FILES['proposal']['name'])) {
+			$this->session->set_flashdata('upload_error', 'Proposal wajib diupload (PDF/DOC/DOCX).');
+			redirect('home/home/validasi_upload/' . $id); // <-- GANTI sesuai URL halaman upload kamu
+			return;
+		}
+
+		$upload_path = FCPATH . 'assets/user-proposal/';          // path fisik
+		$public_path = base_url('assets/user-proposal/') . '/';   // url publik
+
+		// ✅ pastikan folder ada
+		if (!is_dir($upload_path)) {
+			@mkdir($upload_path, 0775, true);
+		}
+
 		$file_name = $username . "_" . date('dmY_His');
-		$upload_path = "./assets/user-proposal/";
-		$image_path  = base_url() . "assets/user-proposal/";
 
-		$config['upload_path']   = $upload_path;
-		$config['allowed_types'] = 'pdf|doc|docx';
-		$config['max_size']      = 800;
-		$config['file_name']     = $file_name;
+		$config = [
+			'upload_path'   => $upload_path,
+			'allowed_types' => 'pdf|doc|docx',
+			'max_size'      => 800, // KB
+			'file_name'     => $file_name,
+			'overwrite'     => false,
+		];
 
-		$this->load->library('upload');
-		$this->upload->initialize($config);
+		$this->load->library('upload', $config);
 
 		if (!$this->upload->do_upload('proposal')) {
-			echo $this->upload->display_errors();
+			$this->session->set_flashdata('upload_error', strip_tags($this->upload->display_errors()));
+			redirect('home/home/validasi_upload/' . $id); // <-- GANTI sesuai URL halaman upload kamu
 			return;
 		}
 
 		$upload_data = $this->upload->data();
 		$doc_name    = $upload_data['file_name'];
 
-		$data = array(
+		$data = [
 			'ID_PEMESANAN'    => $id,
-			'PATH'            => $image_path,
+			'PATH'            => $public_path,
 			'FILE_NAME'       => $doc_name,
-			'DESKRIPSI_ACARA' => $this->input->post('deskripsi-acara', TRUE)
-		);
+			'DESKRIPSI_ACARA' => $this->input->post('deskripsi-acara', TRUE),
+		];
 
-		// cegah dobel insert proposal untuk order yang sama
-		// pilih salah satu: update jika sudah ada, atau tolak
+		// update kalau sudah ada, insert kalau belum
 		if ($this->gedung_model->proposal_exists($id)) {
 			$this->gedung_model->update_proposal($id, $data);
 		} else {
@@ -235,16 +249,15 @@ class Home extends CI_Controller
 		$id_gedung     = $this->uri->segment(4);
 		$username      = $this->session->userdata('username');
 
-		// tipe jam
-		$tipe_jam = $this->input->post('tipe_jam', TRUE) ?: 'CUSTOM';
+		$tipe_jam = $this->input->post('tipe_jam', TRUE);
+		if (empty($tipe_jam)) $tipe_jam = 'CUSTOM';
 
-		$paket = [
-			'HALF_DAY_PAGI'  => ['08:00', '12:00'],
-			'HALF_DAY_SIANG' => ['13:00', '16:00'],
-			'FULL_DAY'       => ['08:00', '17:00'],
-		];
+		$paket = array(
+			'HALF_DAY_PAGI'  => array('08:00', '12:00'),
+			'HALF_DAY_SIANG' => array('13:00', '16:00'),
+			'FULL_DAY'       => array('08:00', '17:00'),
+		);
 
-		// tentukan jam mulai & selesai
 		if ($tipe_jam === 'CUSTOM') {
 			$jam_mulai   = $this->input->post('jam_pesan', TRUE);
 			$jam_selesai = $this->input->post('jam_selesai', TRUE);
@@ -270,29 +283,25 @@ class Home extends CI_Controller
 
 		$min_pesan = date('Y-m-d', strtotime("+10 day"));
 
-		$data = [
-			'USERNAME'          => $username,
-			'TANGGAL_PEMESANAN'  => $tanggal_pesan,
-			'JAM_PEMESANAN'      => $jam_mulai,
-			'JAM_SELESAI'        => $jam_selesai,
-			'TIPE_JAM'           => $tipe_jam,
-			'EMAIL'              => $this->input->post('email', TRUE),
-			'ID_CATERING'        => $this->input->post('catering', TRUE),
-			'ID_GEDUNG'          => $id_gedung,
-			'JUMLAH_CATERING'    => $this->input->post('jumlah-porsi', TRUE),
-			'STATUS'             => 0,
-		];
-
 		if ($tanggal_pesan < $min_pesan) {
-			$viewData = [
+			$this->load->view('errors/pemesanan_alert', array(
 				'tgl_pesan' => $tanggal_pesan,
 				'min_pesan' => $min_pesan
-			];
-			$this->load->view('errors/pemesanan_alert', $viewData);
+			));
+			return;
+		}
+		// ✅ cek bentrok untuk jadwal yang sudah "terkunci" (PENDING / CONFIRMED)
+		if ($this->gedung_model->has_locked_conflict($id_gedung, $tanggal_pesan, $jam_mulai, $jam_selesai)) {
+			$this->session->set_flashdata(
+				'error',
+				'Maaf, jadwal tersebut sudah dipesan dan sudah ada pembayaran (menunggu verifikasi / sudah dikonfirmasi). Silakan cek pada halaman Jadwal Gedung.'
+			);
+			redirect('home/order-gedung/' . $id_gedung);
 			return;
 		}
 
-		// cek bentrok (saat ini masih by tanggal saja)
+
+		// ✅ cek bentrok harus pakai JAM
 		$exist = $this->gedung_model->check_date($tanggal_pesan, $id_gedung, $jam_mulai, $jam_selesai);
 		if ($exist > 0) {
 			$this->session->set_flashdata('error', 'Tanggal/gedung sudah terbooking.');
@@ -300,9 +309,44 @@ class Home extends CI_Controller
 			return;
 		}
 
+		// ✅ REQUEST_ID stabil
+		$request_id = $this->input->post('request_id', TRUE);
+		if (empty($request_id)) {
+			$request_id = sha1(
+				session_id() . '|' . $username . '|' . $id_gedung . '|' .
+					$tanggal_pesan . '|' . $jam_mulai . '|' . $jam_selesai . '|' . $tipe_jam
+			);
+		}
+
+		$data = array(
+			'USERNAME'         => $username,
+			'TANGGAL_PEMESANAN' => $tanggal_pesan,
+			'JAM_PEMESANAN'     => $jam_mulai,
+			'JAM_SELESAI'       => $jam_selesai,
+			'TIPE_JAM'          => $tipe_jam,
+			'EMAIL'             => $this->input->post('email', TRUE),
+			'ID_CATERING'       => $this->input->post('catering', TRUE),
+			'ID_GEDUNG'         => $id_gedung,
+			'JUMLAH_CATERING'   => $this->input->post('jumlah-porsi', TRUE),
+			'STATUS'            => 0,
+			'REQUEST_ID'        => $request_id,
+		);
+
 		$id_pemesanan = $this->gedung_model->insert_pemesanan($data);
+
+		if ($id_pemesanan === false) {
+			$row = $this->db->get_where('pemesanan', array('REQUEST_ID' => $request_id))->row_array();
+			if (!empty($row)) {
+				redirect('home/confirm-order/' . (int)$row['ID_PEMESANAN']);
+				return;
+			}
+			show_error('Gagal membuat pemesanan. Silakan coba lagi.');
+			return;
+		}
+
 		redirect('home/confirm-order/' . $id_pemesanan);
 	}
+
 
 
 	public function edit_data($user)

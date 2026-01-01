@@ -55,53 +55,53 @@ $total_keseluruhan = 0;
                         </tr>
                     </thead>
 
-                <tbody class="divide-y">
-                <?php if(!empty($pembayaran)): ?>
-                    <?php foreach($pembayaran as $row): ?>
-                    <tr class="table-row hover:bg-slate-50 text-center">
-                        <td class="px-4 py-3"><?= $no++ ?></td>
+                    <tbody class="divide-y">
+                        <?php if (!empty($pembayaran)): ?>
+                            <?php foreach ($pembayaran as $row): ?>
+                                <tr class="table-row hover:bg-slate-50 text-center">
+                                    <td class="px-4 py-3"><?= $no++ ?></td>
 
-                        <!-- Kode Transaksi: karena tidak ada KODE_PEMBAYARAN di tabel baru -->
-                        <td class="px-4 py-3 font-medium">
-                        <?= 'PB' . str_pad($row['ID_PEMBAYARAN'], 6, '0', STR_PAD_LEFT); ?>
-                        </td>
+                                    <!-- Kode Transaksi: karena tidak ada KODE_PEMBAYARAN di tabel baru -->
+                                    <td class="px-4 py-3 font-medium">
+                                        <?= 'PB' . str_pad($row['ID_PEMBAYARAN'], 6, '0', STR_PAD_LEFT); ?>
+                                    </td>
 
-                        <!-- Kode Pemesanan: KODE_PEMESANAN + ID_PEMESANAN_RAW -->
-                        <td class="px-4 py-3">
-                        <?= $row['KODE_PEMESANAN'] . $row['ID_PEMESANAN_RAW']; ?>
-                        </td>
+                                    <!-- Kode Pemesanan: KODE_PEMESANAN + ID_PEMESANAN_RAW -->
+                                    <td class="px-4 py-3">
+                                        <?= $row['KODE_PEMESANAN'] . $row['ID_PEMESANAN_RAW']; ?>
+                                    </td>
 
-                        <!-- Atas Nama (pengirim) -->
-                        <td class="px-4 py-3">
-                        <?= $row['ATAS_NAMA_PENGIRIM']; ?>
-                        </td>
+                                    <!-- Atas Nama (pengirim) -->
+                                    <td class="px-4 py-3">
+                                        <?= $row['ATAS_NAMA_PENGIRIM']; ?>
+                                    </td>
 
-                        <td class="px-4 py-3 font-semibold text-green-600">
-                        Rp <?= number_format($row['NOMINAL_TRANSFER'],0,',','.'); ?>
-                        </td>
+                                    <td class="px-4 py-3 font-semibold text-green-600">
+                                        Rp <?= number_format($row['NOMINAL_TRANSFER'], 0, ',', '.'); ?>
+                                    </td>
 
-                        <td class="px-4 py-3">
-                        <a href="<?= site_url('admin/pembayaran/details/'.$row['ID_PEMBAYARAN']) ?>"
-                            class="inline-flex items-center justify-center text-blue-600 hover:text-blue-800">
-                            <i class="material-icons text-base">open_in_new</i>
-                        </a>
-                        </td>
-                        <td class="px-4 py-3">
-                        <?= $row['STATUS_VERIF']; ?>
-                        </td>
+                                    <td class="px-4 py-3">
+                                        <a href="<?= site_url('admin/pembayaran/details/' . $row['ID_PEMBAYARAN']) ?>"
+                                            class="inline-flex items-center justify-center text-blue-600 hover:text-blue-800">
+                                            <i class="material-icons text-base">open_in_new</i>
+                                        </a>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <?= $row['STATUS_VERIF']; ?>
+                                    </td>
 
-                    </tr>
+                                </tr>
 
-                    <?php $total_keseluruhan += $row['NOMINAL_TRANSFER']; ?>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr>
-                    <td colspan="6" class="px-4 py-6 text-center text-slate-500">
-                        Data pembayaran belum tersedia
-                    </td>
-                    </tr>
-                <?php endif; ?>
-                </tbody>
+                                <?php $total_keseluruhan += $row['NOMINAL_TRANSFER']; ?>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="6" class="px-4 py-6 text-center text-slate-500">
+                                    Data pembayaran belum tersedia
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
 
 
                     <tfoot class="bg-slate-50 font-semibold">
@@ -110,7 +110,7 @@ $total_keseluruhan = 0;
                                 Total Jumlah Transfer :
                             </td>
                             <td colspan="2" class="px-4 py-3 text-green-700">
-                                Rp <?= number_format($total_keseluruhan,0,',','.'); ?>
+                                Rp <?= number_format($total_keseluruhan, 0, ',', '.'); ?>
                             </td>
                         </tr>
                     </tfoot>
@@ -150,52 +150,52 @@ $total_keseluruhan = 0;
     <script src="<?= base_url('assets/home/materialize/js/materialize.js') ?>"></script>
 
     <script>
-    const rows = document.querySelectorAll(".table-row");
-    const rowsPerPageSelect = document.getElementById("rowsPerPage");
-    const pageInfo = document.getElementById("pageInfo");
-    const prevBtn = document.getElementById("prevBtn");
-    const nextBtn = document.getElementById("nextBtn");
+        const rows = document.querySelectorAll(".table-row");
+        const rowsPerPageSelect = document.getElementById("rowsPerPage");
+        const pageInfo = document.getElementById("pageInfo");
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
 
-    let currentPage = 1;
-    let rowsPerPage = parseInt(rowsPerPageSelect.value);
+        let currentPage = 1;
+        let rowsPerPage = parseInt(rowsPerPageSelect.value);
 
-    function renderTable() {
-        const start = (currentPage - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
+        function renderTable() {
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
 
-        rows.forEach((row, index) => {
-            row.style.display = (index >= start && index < end) ? "" : "none";
+            rows.forEach((row, index) => {
+                row.style.display = (index >= start && index < end) ? "" : "none";
+            });
+
+            const totalPages = Math.ceil(rows.length / rowsPerPage) || 1;
+            pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
+
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+        }
+
+        rowsPerPageSelect.addEventListener("change", () => {
+            rowsPerPage = parseInt(rowsPerPageSelect.value);
+            currentPage = 1;
+            renderTable();
         });
 
-        const totalPages = Math.ceil(rows.length / rowsPerPage) || 1;
-        pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
+        prevBtn.onclick = () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTable();
+            }
+        };
 
-        prevBtn.disabled = currentPage === 1;
-        nextBtn.disabled = currentPage === totalPages;
-    }
+        nextBtn.onclick = () => {
+            const totalPages = Math.ceil(rows.length / rowsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderTable();
+            }
+        };
 
-    rowsPerPageSelect.addEventListener("change", () => {
-        rowsPerPage = parseInt(rowsPerPageSelect.value);
-        currentPage = 1;
         renderTable();
-    });
-
-    prevBtn.onclick = () => {
-        if (currentPage > 1) {
-            currentPage--;
-            renderTable();
-        }
-    };
-
-    nextBtn.onclick = () => {
-        const totalPages = Math.ceil(rows.length / rowsPerPage);
-        if (currentPage < totalPages) {
-            currentPage++;
-            renderTable();
-        }
-    };
-
-    renderTable();
     </script>
 
 </body>
