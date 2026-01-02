@@ -74,38 +74,49 @@ $id_gedung = $this->uri->segment(4);
                 <div class="p-5 sm:p-6">
 
                     <!-- TABLE VALIDASI -->
+                    <!-- TABLE VALIDASI -->
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm border border-slate-300 rounded-xl overflow-hidden">
                             <tbody class="divide-y divide-slate-200">
-                                <?php foreach ($res as $res): ?>
+                                <?php
+                                $order = (isset($res[0]) ? $res[0] : null);
+
+                                if (!$order) {
+                                    echo '<tr><td class="px-4 py-3">Data pemesanan tidak ditemukan.</td></tr>';
+                                } else {
+                                    $id = (int)$order['ID_PEMESANAN'];
+
+                                    $mulai   = (isset($order['JAM_PEMESANAN']) ? $order['JAM_PEMESANAN'] : '');
+                                    $selesai = (isset($order['JAM_SELESAI']) ? $order['JAM_SELESAI'] : '');
+                                    $tipe    = (isset($order['TIPE_JAM']) ? $order['TIPE_JAM'] : 'CUSTOM');
+
+                                    if ($tipe === 'HALF_DAY_PAGI') {
+                                        $jam_tampil = "HALF DAY PAGI ($mulai - $selesai)";
+                                    } elseif ($tipe === 'HALF_DAY_SIANG') {
+                                        $jam_tampil = "HALF DAY SIANG ($mulai - $selesai)";
+                                    } elseif ($tipe === 'FULL_DAY') {
+                                        $jam_tampil = "FULL DAY ($mulai - $selesai)";
+                                    } else {
+                                        $jam_tampil = $mulai . " - " . $selesai;
+                                    }
+                                ?>
+
                                     <tr class="bg-white">
                                         <td class="w-48 px-4 py-3 font-semibold text-slate-700">Username</td>
                                         <td class="px-2 py-3 text-slate-400">:</td>
-                                        <td class="px-4 py-3 text-slate-900"><?php echo $res['USERNAME'] ?></td>
+                                        <td class="px-4 py-3 text-slate-900"><?php echo $order['USERNAME']; ?></td>
                                     </tr>
 
                                     <tr class="bg-white">
                                         <td class="w-48 px-4 py-3 font-semibold text-slate-700">Tanggal Pemesanan</td>
                                         <td class="px-2 py-3 text-slate-400">:</td>
                                         <td class="px-4 py-3 text-slate-900">
-                                            <?php $date = date_create($res['TANGGAL_PEMESANAN']);
-                                            echo date_format($date, 'd F Y') ?>
+                                            <?php
+                                            $date = date_create($order['TANGGAL_PEMESANAN']);
+                                            echo $date ? date_format($date, 'd F Y') : '';
+                                            ?>
                                         </td>
                                     </tr>
-
-                                    <?php
-                                    $mulai   = isset($res['JAM_PEMESANAN']) ? $res['JAM_PEMESANAN'] : '';
-                                    $selesai = isset($res['JAM_SELESAI']) ? $res['JAM_SELESAI'] : '';
-                                    $tipe    = isset($res['TIPE_JAM']) ? $res['TIPE_JAM'] : 'CUSTOM';
-
-                                    if ($tipe === 'HALF_DAY') {
-                                        $jam_tampil = "HALF DAY ($mulai - $selesai)";
-                                    } elseif ($tipe === 'FULL_DAY') {
-                                        $jam_tampil = "FULL DAY ($mulai - $selesai)";
-                                    } else {
-                                        $jam_tampil = "$mulai - $selesai";
-                                    }
-                                    ?>
 
                                     <tr class="bg-white">
                                         <td class="w-48 px-4 py-3 font-semibold text-slate-700">Jam Pemesanan</td>
@@ -116,52 +127,52 @@ $id_gedung = $this->uri->segment(4);
                                     <tr class="bg-white">
                                         <td class="w-48 px-4 py-3 font-semibold text-slate-700">Email</td>
                                         <td class="px-2 py-3 text-slate-400">:</td>
-                                        <td class="px-4 py-3 text-slate-900"><?php echo $res['EMAIL']; ?></td>
+                                        <td class="px-4 py-3 text-slate-900"><?php echo $order['EMAIL']; ?></td>
                                     </tr>
 
                                     <tr class="bg-white">
                                         <td class="w-48 px-4 py-3 font-semibold text-slate-700">Nama Gedung</td>
                                         <td class="px-2 py-3 text-slate-400">:</td>
-                                        <td class="px-4 py-3 text-slate-900"><?php echo $res['NAMA_GEDUNG']; ?></td>
+                                        <td class="px-4 py-3 text-slate-900"><?php echo $order['NAMA_GEDUNG']; ?></td>
                                     </tr>
 
                                     <tr class="bg-white">
                                         <td class="w-48 px-4 py-3 font-semibold text-slate-700">Nama Catering</td>
                                         <td class="px-2 py-3 text-slate-400">:</td>
-                                        <td class="px-4 py-3 text-slate-900"><?php echo $res['NAMA_PAKET']; ?></td>
+                                        <td class="px-4 py-3 text-slate-900"><?php echo $order['NAMA_PAKET']; ?></td>
                                     </tr>
 
                                     <tr class="bg-white">
                                         <td class="w-48 px-4 py-3 font-semibold text-slate-700">Jumlah Catering</td>
                                         <td class="px-2 py-3 text-slate-400">:</td>
-                                        <td class="px-4 py-3 text-slate-900"><?php echo $res['JUMLAH_CATERING'] ?></td>
+                                        <td class="px-4 py-3 text-slate-900"><?php echo $order['JUMLAH_CATERING']; ?></td>
                                     </tr>
 
                                     <tr class="bg-white">
                                         <td class="w-48 px-4 py-3 font-semibold text-slate-700">Harga Satuan</td>
                                         <td class="px-2 py-3 text-slate-400">:</td>
-                                        <td class="px-4 py-3 text-slate-900">Rp.
-                                            <?php echo number_format($res['HARGA_SATUAN']) ?></td>
+                                        <td class="px-4 py-3 text-slate-900">Rp. <?php echo number_format((float)$order['HARGA_SATUAN']); ?></td>
                                     </tr>
 
                                     <tr class="bg-white">
                                         <td class="w-48 px-4 py-3 font-semibold text-slate-700">Total Harga Catering</td>
                                         <td class="px-2 py-3 text-slate-400">:</td>
-                                        <td class="px-4 py-3 text-slate-900">Rp.
-                                            <?php echo number_format($res['TOTAL_HARGA']) ?></td>
+                                        <td class="px-4 py-3 text-slate-900">Rp. <?php echo number_format((float)$order['TOTAL_HARGA']); ?></td>
                                     </tr>
-
-                                <?php endforeach; ?>
+                                <?php } // end else 
+                                ?>
                             </tbody>
                         </table>
                     </div>
-
                     <!-- FORM UPLOAD -->
                     <div class="mt-6 rounded-xl border border-slate-300 bg-slate-50 p-5 ring-1 ring-slate-200">
-                        <?php $id = (int)$res[0]['ID_PEMESANAN']; ?>
                         <?php echo form_open_multipart('home/home/upload_proposal/' . $id); ?>
-
-
+                        <input type="hidden" name="request_id" value="<?php echo isset($order['REQUEST_ID']) ? htmlspecialchars($order['REQUEST_ID']) : ''; ?>">
+                        <?php if ($this->session->flashdata('upload_error')): ?>
+                            <div class="mb-4 p-3 rounded-lg border border-red-200 bg-red-50 text-red-700 text-sm">
+                                <?php echo $this->session->flashdata('upload_error'); ?>
+                            </div>
+                        <?php endif; ?>
                         <div class="grid grid-cols-1 gap-4">
                             <div>
                                 <label class="block text-xs font-semibold tracking-widest text-slate-600">KEPERLUAN
@@ -182,7 +193,8 @@ $id_gedung = $this->uri->segment(4);
                                     <div class="btn"
                                         style="background: #fafafa;border-radius:12px;text-transform:none;">
                                         <span>Pilih File</span>
-                                        <input type="file" name="proposal">
+                                        <input type="file" name="proposal" id="proposal" required accept=".pdf,.doc,.docx">
+
                                     </div>
                                     <div class="file-path-wrapper">
                                         <input class="file-path validate" type="text" placeholder="Upload file PDF/DOCX"
@@ -216,11 +228,21 @@ $id_gedung = $this->uri->segment(4);
             <p class="mt-6 text-center text-xs text-slate-500">© <?php echo date('Y'); ?> Smart Office</p>
         </div>
     </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('formUpload');
+            if (!form) return;
 
-    <!-- JS Materialize -->
-    <script src="<?php echo base_url(); ?>assets/home/assets/js/jquery.min.js"></script>
-    <script src="<?php echo base_url(); ?>assets/home/materialize/js/materialize.js"></script>
-    <script src="<?php echo base_url(); ?>assets/home/index.js"></script>
+            form.addEventListener('submit', function(e) {
+                const f = document.getElementById('proposal');
+                if (!f || !f.files || f.files.length === 0) {
+                    e.preventDefault();
+                    alert('Proposal wajib diupload sebelum submit.');
+                }
+            });
+        });
+    </script>
+
 </body>
 
 </html>

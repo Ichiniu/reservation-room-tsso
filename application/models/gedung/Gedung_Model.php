@@ -19,6 +19,7 @@ class Gedung_Model extends CI_Model
 	}
 
 
+
 	public function laporan_pembayaran_periodic($start_date, $end_date)
 	{
 		$sql = "SELECT * FROM PEMBAYARAN 
@@ -27,6 +28,25 @@ class Gedung_Model extends CI_Model
 		$query = $this->db->query($sql);
 		return $query->result_array();
 	}
+	public function has_locked_conflict($id_gedung, $tanggal, $jam_mulai, $jam_selesai)
+	{
+		$sql = "
+        SELECT 1
+        FROM pembayaran p
+        JOIN pemesanan ps ON ps.ID_PEMESANAN = p.ID_PEMESANAN_RAW
+        WHERE p.STATUS_VERIF IN ('PENDING', 'CONFIRMED')
+          AND ps.ID_GEDUNG = ?
+          AND ps.TANGGAL_PEMESANAN = ?
+          -- overlap: existing_start < new_end AND existing_end > new_start
+          AND ps.JAM_PEMESANAN < ?
+          AND ps.JAM_SELESAI  > ?
+        LIMIT 1
+    ";
+
+		$q = $this->db->query($sql, [$id_gedung, $tanggal, $jam_selesai, $jam_mulai]);
+		return $q->num_rows() > 0;
+	}
+
 
 
 	public function delete_jadwal($id_pemesanan, $data)
@@ -93,33 +113,46 @@ class Gedung_Model extends CI_Model
 		$this->db->insert('pemesanan_fix_detail', $data);
 	}
 
-	public function jadwal_gedung($first_date, $second_date)
+	/**
+	 * Jadwal penggunaan gedung = PEMESANAN yang sudah DIBAYAR & diverifikasi (STATUS_VERIF = CONFIRMED).
+	 */
+	public function jadwal_gedung($first_date = null, $second_date = null)
 	{
 		$sql = "
-        SELECT 
-            PEMESANAN_FIX_DETAIL.ID_PEMESANAN,
-            PEMESANAN_FIX_DETAIL.TANGGAL_FINAL_PEMESANAN,
-            PEMESANAN_FIX_DETAIL.TANGGAL_APPROVAL,
-            GEDUNG.NAMA_GEDUNG,
-            PEMESANAN_DETAILS.DESKRIPSI_ACARA,
-            PEMESANAN_FIX_DETAIL.FINAL_STATUS,
-            PEMESANAN_FIX_DETAIL.USERNAME,
-            USER.NAMA_LENGKAP,
-            TIME_FORMAT(PEMESANAN.JAM_PEMESANAN, '%H:%i') AS JAM_MULAI,
-            TIME_FORMAT(PEMESANAN.JAM_SELESAI,  '%H:%i') AS JAM_SELESAI,
-            PEMESANAN.TIPE_JAM AS TIPE_JAM
-        FROM PEMESANAN_FIX_DETAIL
-        LEFT JOIN USER ON USER.USERNAME = PEMESANAN_FIX_DETAIL.USERNAME
-        LEFT JOIN PEMESANAN ON PEMESANAN_FIX_DETAIL.ID_PEMESANAN = PEMESANAN.ID_PEMESANAN
-        LEFT JOIN GEDUNG ON PEMESANAN.ID_GEDUNG = GEDUNG.ID_GEDUNG
-        LEFT JOIN PEMESANAN_DETAILS ON PEMESANAN_FIX_DETAIL.ID_PEMESANAN = PEMESANAN_DETAILS.ID_PEMESANAN
-        WHERE PEMESANAN_FIX_DETAIL.FINAL_STATUS = 1
-          AND PEMESANAN_FIX_DETAIL.TANGGAL_FINAL_PEMESANAN >= CURDATE()
-        ORDER BY PEMESANAN_FIX_DETAIL.TANGGAL_FINAL_PEMESANAN ASC,
-                 PEMESANAN.JAM_PEMESANAN ASC
+        SELECT
+            ps.ID_PEMESANAN,
+            ps.TANGGAL_PEMESANAN AS TANGGAL_FINAL_PEMESANAN,
+            DATE(p.CONFIRMED_AT) AS TANGGAL_APPROVAL,
+            g.NAMA_GEDUNG,
+            COALESCE(pd.DESKRIPSI_ACARA, '-') AS DESKRIPSI_ACARA,
+            1 AS FINAL_STATUS,
+            ps.USERNAME,
+            u.NAMA_LENGKAP,
+            TIME_FORMAT(ps.JAM_PEMESANAN, '%H:%i') AS JAM_MULAI,
+            TIME_FORMAT(ps.JAM_SELESAI,  '%H:%i') AS JAM_SELESAI,
+            ps.TIPE_JAM AS TIPE_JAM
+        FROM PEMBAYARAN p
+        JOIN PEMESANAN ps ON ps.ID_PEMESANAN = p.ID_PEMESANAN_RAW
+        LEFT JOIN USER u ON u.USERNAME = ps.USERNAME
+        LEFT JOIN GEDUNG g ON g.ID_GEDUNG = ps.ID_GEDUNG
+        LEFT JOIN PEMESANAN_DETAILS pd ON pd.ID_PEMESANAN = ps.ID_PEMESANAN
+        WHERE p.STATUS_VERIF = 'CONFIRMED'
     ";
 
-		return $this->db->query($sql)->result_array();
+		$binds = [];
+		if (!empty($first_date) && !empty($second_date)) {
+			$sql .= " AND ps.TANGGAL_PEMESANAN BETWEEN ? AND ?";
+			$binds[] = $first_date;
+			$binds[] = $second_date;
+		}
+
+		$sql .= "
+        ORDER BY ps.TANGGAL_PEMESANAN ASC,
+                 ps.JAM_PEMESANAN ASC,
+                 ps.ID_PEMESANAN ASC
+    ";
+
+		return $this->db->query($sql, $binds)->result_array();
 	}
 
 
@@ -189,8 +222,7 @@ class Gedung_Model extends CI_Model
 	{
 		// status yang dianggap "aktif" (silakan sesuaikan mappingmu)
 		// contoh: 0=draft, 1=submitted, 2=process, 3=confirmed
-		$aktif = [0, 1, 2, 3];
-
+		$aktif = array(0, 1, 2, 3);
 		$this->db->from('pemesanan');
 		$this->db->where('ID_GEDUNG', (int)$id_gedung);
 		$this->db->where('TANGGAL_PEMESANAN', $tanggal);
@@ -221,9 +253,31 @@ class Gedung_Model extends CI_Model
 
 	public function insert_pemesanan($data)
 	{
-		$this->db->insert('pemesanan', $data);
-		return $this->db->insert_id();
+		// Kalau REQUEST_ID ada, cek dulu apakah sudah pernah dibuat
+		if (isset($data['REQUEST_ID']) && $data['REQUEST_ID'] !== '') {
+			$exist = $this->db->get_where('pemesanan', array('REQUEST_ID' => $data['REQUEST_ID']))->row_array();
+			if (!empty($exist)) {
+				return (int)$exist['ID_PEMESANAN']; // sudah ada -> pakai yang lama
+			}
+		}
+
+		$ok = $this->db->insert('pemesanan', $data);
+		if ($ok) {
+			return $this->db->insert_id();
+		}
+
+		// Jika gagal karena UNIQUE duplicate REQUEST_ID, ambil row yang sudah ada
+		$err = $this->db->error(); // CI3: ['code'=>..., 'message'=>...]
+		if (isset($err['code']) && (int)$err['code'] === 1062 && isset($data['REQUEST_ID'])) {
+			$exist = $this->db->get_where('pemesanan', array('REQUEST_ID' => $data['REQUEST_ID']))->row_array();
+			if (!empty($exist)) {
+				return (int)$exist['ID_PEMESANAN'];
+			}
+		}
+
+		return false;
 	}
+
 
 
 
@@ -566,5 +620,25 @@ class Gedung_Model extends CI_Model
 		unset($data['ID_PEMESANAN']);
 		$this->db->where('ID_PEMESANAN', $id_pemesanan)
 			->update('pemesanan_details', $data);
+	}
+
+	public function has_confirmed_conflict($id_gedung, $tanggal, $jam_mulai, $jam_selesai)
+	{
+		$sql = "
+        SELECT 1
+        FROM pembayaran p
+        JOIN pemesanan ps ON ps.ID_PEMESANAN = p.ID_PEMESANAN_RAW
+        WHERE p.STATUS_VERIF = ('PENDING','CONFIRMED')
+          AND ps.ID_GEDUNG = ?
+          AND ps.TANGGAL_PEMESANAN = ?
+          -- OVERLAP RULE:
+          -- existing_start < new_end AND existing_end > new_start
+          AND ps.JAM_PEMESANAN < ?
+          AND ps.JAM_SELESAI  > ?
+        LIMIT 1
+    ";
+
+		$q = $this->db->query($sql, [$id_gedung, $tanggal, $jam_selesai, $jam_mulai]);
+		return $q->num_rows() > 0;
 	}
 }

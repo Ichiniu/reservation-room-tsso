@@ -260,7 +260,7 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
                                             <td><b>:</b></td>
                                             <td><b>Rp. <?php echo number_format($total_stl_pajak); ?></b></td>
                                         </tr>
-                                        <tr>
+                                           <tr>
                                             <td><b>DESKRIPSI PEMESANAN</b></td>
                                             <td>:</td>
                                             <td><?php echo $details->DESKRIPSI_ACARA; ?></td>

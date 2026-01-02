@@ -57,8 +57,8 @@ $total_keseluruhan = 0;
                     </thead>
 
                     <tbody class="divide-y">
-                        <?php if(!empty($pembayaran)): ?>
-                        <?php foreach($pembayaran as $row): ?>
+                        <?php if (!empty($pembayaran)): ?>
+                        <?php foreach ($pembayaran as $row): ?>
                         <tr class="table-row hover:bg-slate-50 text-center">
                             <td class="px-4 py-3"><?= $no++ ?></td>
 
@@ -78,11 +78,11 @@ $total_keseluruhan = 0;
                             </td>
 
                             <td class="px-4 py-3 font-semibold text-green-600">
-                                Rp <?= number_format($row['NOMINAL_TRANSFER'],0,',','.'); ?>
+                                Rp <?= number_format($row['NOMINAL_TRANSFER'], 0, ',', '.'); ?>
                             </td>
 
                             <td class="px-4 py-3">
-                                <a href="<?= site_url('admin/pembayaran/details/'.$row['ID_PEMBAYARAN']) ?>"
+                                <a href="<?= site_url('admin/pembayaran/details/' . $row['ID_PEMBAYARAN']) ?>"
                                     class="inline-flex items-center justify-center text-blue-600 hover:text-blue-800">
                                     <i class="material-icons text-base">open_in_new</i>
                                 </a>
@@ -111,7 +111,7 @@ $total_keseluruhan = 0;
                                 Total Jumlah Transfer :
                             </td>
                             <td colspan="2" class="px-4 py-3 text-green-700">
-                                Rp <?= number_format($total_keseluruhan,0,',','.'); ?>
+                                Rp <?= number_format($total_keseluruhan, 0, ',', '.'); ?>
                             </td>
                         </tr>
                     </tfoot>
