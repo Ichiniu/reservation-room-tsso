@@ -31,43 +31,43 @@ $catering_data = isset($result) && is_array($result) ? $result : [];
     <link href="<?= base_url(); ?>assets/home/materialize/css/materialize.css" rel="stylesheet">
 
     <style>
-    .sidebar-mini {
-        width: 72px !important
-    }
+        .sidebar-mini {
+            width: 72px !important
+        }
 
-    .sidebar-mini .menu-text {
-        display: none
-    }
+        .sidebar-mini .menu-text {
+            display: none
+        }
 
-    .sidebar-mini nav a {
-        justify-content: center
-    }
+        .sidebar-mini nav a {
+            justify-content: center
+        }
 
-    .sidebar-mini .material-icons-outlined {
-        margin-right: 0 !important
-    }
+        .sidebar-mini .material-icons-outlined {
+            margin-right: 0 !important
+        }
 
-    .content-mini {
-        margin-left: 72px !important
-    }
+        .content-mini {
+            margin-left: 72px !important
+        }
 
-    .menu-active {
-        background: #fff;
-        font-weight: 600
-    }
+        .menu-active {
+            background: #fff;
+            font-weight: 600
+        }
 
-    .inbox-badge {
-        margin-left: auto
-    }
+        .inbox-badge {
+            margin-left: auto
+        }
 
-    .sidebar-mini .inbox-badge {
-        position: absolute;
-        top: 8px;
-        right: 12px;
-        width: 18px;
-        height: 18px;
-        font-size: 10px
-    }
+        .sidebar-mini .inbox-badge {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            width: 18px;
+            height: 18px;
+            font-size: 10px
+        }
     </style>
 </head>
 
@@ -90,25 +90,25 @@ $catering_data = isset($result) && is_array($result) ? $result : [];
         <nav class="px-4 py-6 text-sm space-y-1">
 
             <a href="<?= site_url('admin/dashboard') ?>" class="flex items-center gap-4 px-3 py-3 rounded hover:bg-white
-<?= strpos($current_uri,'dashboard')!==false?'menu-active':'' ?>">
+<?= strpos($current_uri, 'dashboard') !== false ? 'menu-active' : '' ?>">
                 <span class="material-icons">dashboard</span>
                 <span class="menu-text">Home</span>
             </a>
 
             <a href="<?= site_url('admin/list') ?>" class="flex items-center gap-4 px-3 py-3 rounded hover:bg-white
-<?= strpos($current_uri,'list')!==false?'menu-active':'' ?>">
+<?= strpos($current_uri, 'list') !== false ? 'menu-active' : '' ?>">
                 <span class="material-icons">people</span>
                 <span class="menu-text">List User</span>
             </a>
 
             <a href="<?= site_url('admin/gedung') ?>" class="flex items-center gap-4 px-3 py-3 rounded hover:bg-white
-<?= strpos($current_uri,'gedung')!==false?'menu-active':'' ?>">
+<?= strpos($current_uri, 'gedung') !== false ? 'menu-active' : '' ?>">
                 <span class="material-icons">business</span>
                 <span class="menu-text">List Gedung</span>
             </a>
 
             <a href="<?= site_url('admin/catering') ?>" class="flex items-center gap-4 px-3 py-3 rounded hover:bg-white
-<?= strpos($current_uri,'catering')!==false?'menu-active':'' ?>">
+<?= strpos($current_uri, 'catering') !== false ? 'menu-active' : '' ?>">
                 <span class="material-icons">restaurant</span>
                 <span class="menu-text">Catering</span>
             </a>
@@ -120,33 +120,33 @@ $catering_data = isset($result) && is_array($result) ? $result : [];
             </a>
 
             <a href="<?= site_url('admin/transaksi') ?>" class="relative flex items-center gap-3 px-4 py-3 rounded hover:bg-white
-<?= strpos($current_uri,'transaksi')!==false?'menu-active':'' ?>">
+<?= strpos($current_uri, 'transaksi') !== false ? 'menu-active' : '' ?>">
                 <span class="material-icons-outlined">inbox</span>
                 <span class="menu-text">Inbox</span>
                 <?php if ($inbox_count > 0): ?>
-                <span
-                    class="inbox-badge bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                    <?= $inbox_count ?>
-                </span>
+                    <span
+                        class="inbox-badge bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                        <?= $inbox_count ?>
+                    </span>
                 <?php endif; ?>
             </a>
 
             <a href="<?= site_url('admin/pembayaran') ?>" class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white
-   <?= strpos($current_uri,'pembayaran')!==false?'menu-active':'' ?>">
+   <?= strpos($current_uri, 'pembayaran') !== false ? 'menu-active' : '' ?>">
                 <span class="material-icons">payments</span>
                 <span class="menu-text">Transaksi</span>
             </a>
 
 
             <a href="<?= site_url('admin/rekap_aktivitas') ?>" class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white
-   <?= strpos($current_uri,'rekap_aktivitas')!==false?'menu-active':'' ?>">
+   <?= strpos($current_uri, 'rekap_aktivitas') !== false ? 'menu-active' : '' ?>">
                 <span class="material-icons">history</span>
                 <span class="menu-text">Rekap Aktivitas</span>
             </a>
 
 
             <a href="<?= site_url('admin/rekap_transaksi') ?>" class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white
-   <?= strpos($current_uri,'rekap_transaksi')!==false?'menu-active':'' ?>">
+   <?= strpos($current_uri, 'rekap_transaksi') !== false ? 'menu-active' : '' ?>">
                 <span class="material-icons">summarize</span>
                 <span class="menu-text">Rekap Transaksi</span>
             </a>
@@ -183,57 +183,71 @@ $catering_data = isset($result) && is_array($result) ? $result : [];
                         <tr>
                             <th class="px-4 py-3 text-center">No</th>
                             <th class="px-4 py-3">Nama Paket</th>
-                            <th class="px-4 py-3">Menu Pembuka</th>
-                            <th class="px-4 py-3">Menu Utama</th>
-                            <th class="px-4 py-3">Menu Penutup</th>
+                            <th class="px-4 py-3">Jenis</th>
+                            <th class="px-4 py-3">Min Pax</th>
+                            <th class="px-4 py-3">Kategori Menu</th>
                             <th class="px-4 py-3">Harga</th>
                             <th class="px-4 py-3 text-center">Aksi</th>
                         </tr>
                     </thead>
 
                     <tbody class="divide-y">
-                        <?php $no = 1; foreach ($catering_data as $row): ?>
-                        <tr class="table-row hover:bg-slate-50">
-                            <td class="px-4 py-3 text-center"><?= $no++ ?></td>
-                            <td class="px-4 py-3 font-medium"><?= $row['NAMA_PAKET'] ?></td>
-                            <td class="px-4 py-3"><?= $row['MENU_PEMBUKA'] ?></td>
-                            <td class="px-4 py-3"><?= $row['MENU_UTAMA'] ?></td>
-                            <td class="px-4 py-3"><?= $row['MENU_PENUTUP'] ?></td>
-                            <td class="px-4 py-3 font-semibold">
-                                Rp <?= number_format($row['HARGA'], 0, ',', '.') ?>
-                            </td>
+                        <?php $no = 1;
+                        foreach ($catering_data as $row): ?>
+                            <?php
+                            $menu = [];
+                            if (!empty($row['MENU_JSON'])) {
+                                $decoded = json_decode($row['MENU_JSON'], true);
+                                if (is_array($decoded)) $menu = $decoded;
+                            }
+                            $cats = isset($menu['categories']) && is_array($menu['categories']) ? $menu['categories'] : [];
+                            $labels = [];
+                            foreach ($cats as $c) {
+                                if (!empty($c['label'])) $labels[] = $c['label'];
+                            }
+                            $summary = empty($labels) ? '-' : implode(', ', array_slice($labels, 0, 4)) . (count($labels) > 4 ? '…' : '');
+                            ?>
+                            <tr class="table-row hover:bg-slate-50">
+                                <td class="px-4 py-3 text-center"><?= $no++ ?></td>
+                                <td class="px-4 py-3 font-medium"><?= $row['NAMA_PAKET'] ?></td>
+                                <td class="px-4 py-3"><?= isset($row['JENIS']) ? str_replace('_', ' ', $row['JENIS']) : '-' ?></td>
+                                <td class="px-4 py-3"><?= !empty($row['MIN_PAX']) ? (int)$row['MIN_PAX'] : '-' ?></td>
+                                <td class="px-4 py-3 text-slate-700"><?= $summary ?></td>
+                                <td class="px-4 py-3 font-semibold">
+                                    Rp <?= number_format($row['HARGA'], 0, ',', '.') ?>
+                                </td>
 
-                            <!-- AKSI -->
-                            <td class="px-4 py-3 text-center">
-                                <div class="flex justify-center gap-2">
-                                    <!-- EDIT -->
-                                    <a href="<?= site_url('admin/tambah_catering/' . $row['ID_CATERING']) ?>"
-                                        class="inline-flex items-center gap-1 px-3 py-1.5 text-xs bg-yellow-400 text-white rounded hover:bg-yellow-500">
-                                        <span class="material-icons text-sm">edit</span>
-                                        Edit
-                                    </a>
+                                <!-- AKSI -->
+                                <td class="px-4 py-3 text-center">
+                                    <div class="flex justify-center gap-2">
+                                        <!-- EDIT -->
+                                        <a href="<?= site_url('admin/add_catering/' . $row['ID_CATERING']) ?>"
+                                            class="inline-flex items-center gap-1 px-3 py-1.5 text-xs bg-yellow-400 text-white rounded hover:bg-yellow-500">
+                                            <span class="material-icons text-sm">edit</span>
+                                            Edit
+                                        </a>
 
-                                    <!-- HAPUS -->
-                                    <form action="<?= site_url('admin/delete_catering') ?>" method="post"
-                                        onsubmit="return confirm('Yakin ingin menghapus data catering ini?')">
-                                        <input type="hidden" name="id_catering" value="<?= $row['ID_CATERING'] ?>">
-                                        <button type="submit"
-                                            class="inline-flex items-center gap-1 px-3 py-1.5 text-xs bg-red-500 text-white rounded hover:bg-red-600">
-                                            <span class="material-icons text-sm">delete</span>
-                                            Hapus
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
+                                        <!-- HAPUS -->
+                                        <form action="<?= site_url('admin/delete_catering') ?>" method="post"
+                                            onsubmit="return confirm('Yakin ingin menghapus data catering ini?')">
+                                            <input type="hidden" name="id_catering" value="<?= $row['ID_CATERING'] ?>">
+                                            <button type="submit"
+                                                class="inline-flex items-center gap-1 px-3 py-1.5 text-xs bg-red-500 text-white rounded hover:bg-red-600">
+                                                <span class="material-icons text-sm">delete</span>
+                                                Hapus
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
                         <?php endforeach; ?>
 
                         <?php if (empty($catering_data)): ?>
-                        <tr>
-                            <td colspan="7" class="px-4 py-6 text-center text-gray-500">
-                                Data catering belum tersedia
-                            </td>
-                        </tr>
+                            <tr>
+                                <td colspan="7" class="px-4 py-6 text-center text-gray-500">
+                                    Data catering belum tersedia
+                                </td>
+                            </tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
@@ -270,54 +284,54 @@ $catering_data = isset($result) && is_array($result) ? $result : [];
 
     <!-- ================= SCRIPT ================= -->
     <script>
-    const toggleBtn = document.getElementById('toggleSidebar');
-    const sidebar = document.getElementById('sidebar');
-    const content = document.getElementById('content');
-    toggleBtn.onclick = () => {
-        sidebar.classList.toggle('sidebar-mini');
-        content.classList.toggle('content-mini')
-    };
+        const toggleBtn = document.getElementById('toggleSidebar');
+        const sidebar = document.getElementById('sidebar');
+        const content = document.getElementById('content');
+        toggleBtn.onclick = () => {
+            sidebar.classList.toggle('sidebar-mini');
+            content.classList.toggle('content-mini')
+        };
 
-    const rows = document.querySelectorAll('.table-row');
-    const rowsPerPageSelect = document.getElementById('rowsPerPage');
-    const pageInfo = document.getElementById('pageInfo');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
+        const rows = document.querySelectorAll('.table-row');
+        const rowsPerPageSelect = document.getElementById('rowsPerPage');
+        const pageInfo = document.getElementById('pageInfo');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
 
-    let currentPage = 1;
-    let rowsPerPage = parseInt(rowsPerPageSelect.value);
+        let currentPage = 1;
+        let rowsPerPage = parseInt(rowsPerPageSelect.value);
 
-    function renderTable() {
-        const start = (currentPage - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
-        rows.forEach((row, i) => {
-            row.style.display = (i >= start && i < end) ? '' : 'none';
-        });
-        const totalPages = Math.ceil(rows.length / rowsPerPage) || 1;
-        pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
-        prevBtn.disabled = currentPage === 1;
-        nextBtn.disabled = currentPage === totalPages;
-    }
+        function renderTable() {
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            rows.forEach((row, i) => {
+                row.style.display = (i >= start && i < end) ? '' : 'none';
+            });
+            const totalPages = Math.ceil(rows.length / rowsPerPage) || 1;
+            pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+        }
 
-    rowsPerPageSelect.onchange = () => {
-        rowsPerPage = parseInt(rowsPerPageSelect.value);
-        currentPage = 1;
+        rowsPerPageSelect.onchange = () => {
+            rowsPerPage = parseInt(rowsPerPageSelect.value);
+            currentPage = 1;
+            renderTable();
+        }
+        prevBtn.onclick = () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTable();
+            }
+        }
+        nextBtn.onclick = () => {
+            if (currentPage < Math.ceil(rows.length / rowsPerPage)) {
+                currentPage++;
+                renderTable();
+            }
+        }
+
         renderTable();
-    }
-    prevBtn.onclick = () => {
-        if (currentPage > 1) {
-            currentPage--;
-            renderTable();
-        }
-    }
-    nextBtn.onclick = () => {
-        if (currentPage < Math.ceil(rows.length / rowsPerPage)) {
-            currentPage++;
-            renderTable();
-        }
-    }
-
-    renderTable();
     </script>
 
 </body>

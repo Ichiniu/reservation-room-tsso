@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 
  */
@@ -288,28 +289,74 @@ class Admin_Controls extends CI_Controller
 		$temp_id = substr($id_pemesanan, 7);
 	}
 
-	function tambah_catering()
+	function tambah_catering($id_catering = null)
 	{
 		$this->load->helper('form');
 		$this->load->helper('url');
-		$submit = $this->input->post('submit');
 		$this->load->model('catering/catering_model');
+		$this->load->model('gedung/gedung_model');
+
+		// ===== Templates (buat tombol "Template" di form admin) =====
+		$templates = array(
+			'PAKET_RASA_1' => "{\n  \"categories\": [\n    {\n      \"key\": \"nasi_mie\",\n      \"label\": \"Menu Nasi & Mie\",\n      \"choose\": 2,\n      \"note\": \"Bebas memilih 2 macam\",\n      \"items\": [\n        \"Nasi Putih\",\n        \"Nasi Goreng Sosis\",\n        \"Nasi Goreng Bawang\",\n        \"Nasi Goreng Tradisional\",\n        \"Mie Goreng Jawa\",\n        \"Mie Goreng\",\n        \"Bihun Goreng\",\n        \"Oseng Soun\"\n      ]\n    },\n    {\n      \"key\": \"ayam\",\n      \"label\": \"Menu Ayam\",\n      \"choose\": 1,\n      \"note\": \"Pilih 1 macam\",\n      \"items\": [\n        \"Ayam Bakar Mbe\",\n        \"Ayam Bakar Rujak\",\n        \"Ayam Bakar Kacang\",\n        \"Ayam Bakar Balado\",\n        \"Ayam Gor Kalasan\",\n        \"Ayam Gor Renyah\",\n        \"Ayam Kremes\",\n        \"Semur Ayam\"\n      ]\n    },\n    {\n      \"key\": \"lauk_pendamping\",\n      \"label\": \"Lauk Pendamping\",\n      \"choose\": 1,\n      \"note\": \"Pilih 1 macam\",\n      \"items\": [\n        \"Tempe Crispy\",\n        \"Tempe Bacem\",\n        \"Bakwan Jagung\",\n        \"Tahu Crispy\",\n        \"Tahu Bacem\",\n        \"Bakwan Sayur\"\n      ]\n    },\n    {\n      \"key\": \"sayur\",\n      \"label\": \"Aneka Sayur\",\n      \"choose\": 1,\n      \"note\": \"Pilih 1 macam\",\n      \"items\": [\n        \"Gulai Daun Singkong\",\n        \"Sayur Kare\",\n        \"Sambal Goreng Jipan\",\n        \"Sayur Ndeso\",\n        \"Sayur Lodeh\",\n        \"Buncis Asem Pedes\",\n        \"Cah Sayuran\",\n        \"Cap Jay Jawa\",\n        \"Cah Toge Ikan Asin\",\n        \"Orak Arik Sayuran\",\n        \"Tumis Kcg Panjang\",\n        \"Jamur Kembang Kol\",\n        \"Tumis Sawi Sendok\",\n        \"Tumis Buncis Wortel\",\n        \"Tumis Toge Tahu\",\n        \"Daun Pepaya Teri\",\n        \"Tumis Jamur\",\n        \"Pencok Sayur\",\n        \"Tumis Pare\",\n        \"Kembang Pepaya\"\n      ]\n    },\n    {\n      \"key\": \"es\",\n      \"label\": \"Aneka Es\",\n      \"choose\": 1,\n      \"note\": \"Pilih 1 macam\",\n      \"items\": [\n        \"Es Campur\",\n        \"Es Buah\",\n        \"Es Cendol\",\n        \"Es Teler\"\n      ]\n    },\n    {\n      \"key\": \"pudding\",\n      \"label\": \"Aneka Pudding\",\n      \"choose\": 1,\n      \"note\": \"Pilih 1 macam\",\n      \"items\": [\n        \"Puding Buah\",\n        \"Puding Coklat\",\n        \"Puding Yogurt\",\n        \"Rainbow Puding\"\n      ]\n    }\n  ]\n}",
+			'PAKET_RASA_2' => "{\n  \"categories\": [\n    {\n      \"key\": \"nasi_mie\",\n      \"label\": \"Menu Nasi & Mie\",\n      \"choose\": 2,\n      \"note\": \"Bebas memilih 2 macam\",\n      \"items\": [\n        \"Nasi Putih\",\n        \"Nasi Goreng Sosis\",\n        \"Nasi Goreng Bawang\",\n        \"Nasi Goreng Tradisional\",\n        \"Mie Goreng Jawa\",\n        \"Mie Goreng\",\n        \"Bihun Goreng\",\n        \"Oseng Soun\"\n      ]\n    },\n    {\n      \"key\": \"ayam\",\n      \"label\": \"Menu Ayam\",\n      \"choose\": 1,\n      \"note\": \"Pilih 1 macam\",\n      \"items\": [\n        \"Ayam Bakar Mbe\",\n        \"Ayam Bakar Rujak\",\n        \"Ayam Bakar Kacang\",\n        \"Ayam Bakar Balado\",\n        \"Ayam Gor Kalasan\",\n        \"Ayam Gor Renyah\",\n        \"Ayam Kremes\",\n        \"Semur Ayam\"\n      ]\n    },\n    {\n      \"key\": \"lauk_pendamping\",\n      \"label\": \"Lauk Pendamping\",\n      \"choose\": 1,\n      \"note\": \"Pilih 1 macam\",\n      \"items\": [\n        \"Tempe Crispy\",\n        \"Tempe Bacem\",\n        \"Bakwan Jagung\",\n        \"Tahu Crispy\",\n        \"Tahu Bacem\",\n        \"Bakwan Sayur\"\n      ]\n    },\n    {\n      \"key\": \"sayur\",\n      \"label\": \"Aneka Sayur\",\n      \"choose\": 1,\n      \"note\": \"Pilih 1 macam\",\n      \"items\": [\n        \"Gulai Daun Singkong\",\n        \"Sayur Kare\",\n        \"Sambal Goreng Jipan\",\n        \"Sayur Ndeso\",\n        \"Sayur Lodeh\",\n        \"Buncis Asem Pedes\",\n        \"Cah Sayuran\",\n        \"Cap Jay Jawa\",\n        \"Cah Toge Ikan Asin\",\n        \"Orak Arik Sayuran\",\n        \"Tumis Kcg Panjang\",\n        \"Jamur Kembang Kol\",\n        \"Tumis Sawi Sendok\",\n        \"Tumis Buncis Wortel\",\n        \"Tumis Toge Tahu\",\n        \"Daun Pepaya Teri\",\n        \"Tumis Jamur\",\n        \"Pencok Sayur\",\n        \"Tumis Pare\",\n        \"Kembang Pepaya\"\n      ]\n    },\n    {\n      \"key\": \"es\",\n      \"label\": \"Aneka Es\",\n      \"choose\": 1,\n      \"note\": \"Pilih 1 macam\",\n      \"items\": [\n        \"Es Campur\",\n        \"Es Buah\",\n        \"Es Cendol\",\n        \"Es Teler\"\n      ]\n    },\n    {\n      \"key\": \"pudding\",\n      \"label\": \"Aneka Pudding\",\n      \"choose\": 1,\n      \"note\": \"Pilih 1 macam\",\n      \"items\": [\n        \"Puding Buah\",\n        \"Puding Coklat\",\n        \"Puding Yogurt\",\n        \"Rainbow Puding\"\n      ]\n    },\n    {\n      \"key\": \"mini_pastry\",\n      \"label\": \"Mini Pastry\",\n      \"choose\": 2,\n      \"note\": \"Pilih 2 macam\",\n      \"items\": [\n        \"Brownies\",\n        \"Pisang Goreng\",\n        \"Red Velvet\",\n        \"Rainbow Cake\"\n      ]\n    },\n    {\n      \"key\": \"menu_stall\",\n      \"label\": \"Menu Stall\",\n      \"choose\": 1,\n      \"note\": \"Pilih 1 macam\",\n      \"items\": [\n        \"Soup Kimlo Mie Bakso\",\n        \"Soup Sosis Ayam\",\n        \"Mie Godog\",\n        \"Soup Tekwan\",\n        \"Soto Ayam\",\n        \"Soup Pengantin\",\n        \"Soup Sayuran\",\n        \"Mie Bakso\",\n        \"Nasi Brongkos\"\n      ]\n    },\n    {\n      \"key\": \"menu_ikan\",\n      \"label\": \"Menu Ikan\",\n      \"choose\": 1,\n      \"note\": \"Pilih 1 macam\",\n      \"items\": [\n        \"Ikan Goreng Tepung\",\n        \"Ikan Pesmol\",\n        \"Ikan Asam Pedas\",\n        \"Ikan Saus Padang\",\n        \"Ikan Sambal Matah\",\n        \"Ikan Asam Manis\"\n      ]\n    }\n  ],\n  \"addons\": [\n    {\n      \"label\": \"Penambahan Stall\",\n      \"price\": 35000,\n      \"items\": [\n        \"Rawon\",\n        \"Daging Kacang Merah\",\n        \"Nasi Gudeg\",\n        \"Empal Gentong\",\n        \"Lontong Gulai Iga\",\n        \"Nasi Liwet\",\n        \"Soup Timlo\",\n        \"Soup Pengantin\",\n        \"Soto Betawi\",\n        \"Tengkleng\"\n      ]\n    },\n    {\n      \"label\": \"Penambahan Menu Daging\",\n      \"price\": 25000,\n      \"items\": [\n        \"Gulai Daging\",\n        \"Rendang\",\n        \"Kalio Daging\",\n        \"Terik Daging\",\n        \"Sapi Lada Hitam\",\n        \"Daging Cabe Ijo\",\n        \"Opor Daging\",\n        \"Tongseng Daging\"\n      ]\n    }\n  ]\n}",
+			'PAKET_RASA_3' => "{\n  \"categories\": [\n    {\n      \"key\": \"nasi_mie\",\n      \"label\": \"Menu Nasi & Mie\",\n      \"choose\": 2,\n      \"note\": \"Bebas memilih 2 macam\",\n      \"items\": [\n        \"Nasi Putih\",\n        \"Nasi Goreng Sosis\",\n        \"Nasi Goreng Bawang\",\n        \"Nasi Goreng Tradisional\",\n        \"Mie Goreng Jawa\",\n        \"Mie Goreng\",\n        \"Bihun Goreng\",\n        \"Oseng Soun\"\n      ]\n    },\n    {\n      \"key\": \"ayam\",\n      \"label\": \"Menu Ayam\",\n      \"choose\": 1,\n      \"note\": \"Pilih 1 macam\",\n      \"items\": [\n        \"Ayam Bakar Mbe\",\n        \"Ayam Bakar Rujak\",\n        \"Ayam Bakar Kacang\",\n        \"Ayam Bakar Balado\",\n        \"Ayam Gor Kalasan\",\n        \"Ayam Gor Renyah\",\n        \"Ayam Kremes\",\n        \"Semur Ayam\"\n      ]\n    },\n    {\n      \"key\": \"lauk_pendamping\",\n      \"label\": \"Lauk Pendamping\",\n      \"choose\": 1,\n      \"note\": \"Pilih 1 macam\",\n      \"items\": [\n        \"Tempe Crispy\",\n        \"Tempe Bacem\",\n        \"Bakwan Jagung\",\n        \"Tahu Crispy\",\n        \"Tahu Bacem\",\n        \"Bakwan Sayur\"\n      ]\n    },\n    {\n      \"key\": \"sayur\",\n      \"label\": \"Aneka Sayur\",\n      \"choose\": 1,\n      \"note\": \"Pilih 1 macam\",\n      \"items\": [\n        \"Gulai Daun Singkong\",\n        \"Sayur Kare\",\n        \"Sambal Goreng Jipan\",\n        \"Sayur Ndeso\",\n        \"Sayur Lodeh\",\n        \"Buncis Asem Pedes\",\n        \"Cah Sayuran\",\n        \"Cap Jay Jawa\",\n        \"Cah Toge Ikan Asin\",\n        \"Orak Arik Sayuran\",\n        \"Tumis Kcg Panjang\",\n        \"Jamur Kembang Kol\",\n        \"Tumis Sawi Sendok\",\n        \"Tumis Buncis Wortel\",\n        \"Tumis Toge Tahu\",\n        \"Daun Pepaya Teri\",\n        \"Tumis Jamur\",\n        \"Pencok Sayur\",\n        \"Tumis Pare\",\n        \"Kembang Pepaya\"\n      ]\n    },\n    {\n      \"key\": \"es\",\n      \"label\": \"Aneka Es\",\n      \"choose\": 1,\n      \"note\": \"Pilih 1 macam\",\n      \"items\": [\n        \"Es Campur\",\n        \"Es Buah\",\n        \"Es Cendol\",\n        \"Es Teler\"\n      ]\n    },\n    {\n      \"key\": \"pudding\",\n      \"label\": \"Aneka Pudding\",\n      \"choose\": 1,\n      \"note\": \"Pilih 1 macam\",\n      \"items\": [\n        \"Puding Buah\",\n        \"Puding Coklat\",\n        \"Puding Yogurt\",\n        \"Rainbow Puding\"\n      ]\n    },\n    {\n      \"key\": \"mini_pastry\",\n      \"label\": \"Mini Pastry\",\n      \"choose\": 2,\n      \"note\": \"Pilih 2 macam\",\n      \"items\": [\n        \"Brownies\",\n        \"Pisang Goreng\",\n        \"Red Velvet\",\n        \"Rainbow Cake\"\n      ]\n    },\n    {\n      \"key\": \"menu_stall\",\n      \"label\": \"Menu Stall\",\n      \"choose\": 1,\n      \"note\": \"Pilih 1 macam\",\n      \"items\": [\n        \"Soup Kimlo Mie Bakso\",\n        \"Soup Sosis Ayam\",\n        \"Mie Godog\",\n        \"Soup Tekwan\",\n        \"Soto Ayam\",\n        \"Soup Pengantin\",\n        \"Soup Sayuran\",\n        \"Mie Bakso\",\n        \"Nasi Brongkos\",\n        \"Soto Betawi\"\n      ]\n    },\n    {\n      \"key\": \"menu_ikan\",\n      \"label\": \"Menu Ikan\",\n      \"choose\": 1,\n      \"note\": \"Pilih 1 macam\",\n      \"items\": [\n        \"Ikan Goreng Tepung\",\n        \"Ikan Pesmol\",\n        \"Ikan Asam Pedas\",\n        \"Ikan Saus Padang\",\n        \"Ikan Sambal Matah\",\n        \"Ikan Asam Manis\"\n      ]\n    }\n  ],\n  \"addons\": [\n    {\n      \"label\": \"Penambahan Stall\",\n      \"price\": 35000,\n      \"items\": [\n        \"Rawon\",\n        \"Daging Kacang Merah\",\n        \"Nasi Gudeg\",\n        \"Empal Gentong\",\n        \"Lontong Gulai Iga\",\n        \"Nasi Liwet\",\n        \"Soup Timlo\",\n        \"Soup Pengantin\",\n        \"Soto Betawi\",\n        \"Tengkleng\"\n      ]\n    },\n    {\n      \"label\": \"Penambahan Menu Daging\",\n      \"price\": 25000,\n      \"items\": [\n        \"Gulai Daging\",\n        \"Rendang\",\n        \"Kalio Daging\",\n        \"Terik Daging\",\n        \"Sapi Lada Hitam\",\n        \"Daging Cabe Ijo\",\n        \"Opor Daging\",\n        \"Tongseng Daging\"\n      ]\n    }\n  ]\n}",
+			'HALF_DAY_MEETING' => "{\n  \"includes\": [\n    \"Meeting Room for 4 hours\",\n    \"Internet\",\n    \"LCD Projector\",\n    \"Sound System\",\n    \"Paper Notes\",\n    \"Pencil\",\n    \"Mineral water & candies on table\",\n    \"1x Lunch / Dinner\",\n    \"1x Coffee Break\"\n  ],\n  \"coffee_break\": {\n    \"categories\": [\n      {\n        \"key\": \"snack\",\n        \"label\": \"Snack (pilih 4 macam) + Kletikan\",\n        \"choose\": 4,\n        \"note\": \"Pilih 4 macam plus kletikan\",\n        \"items\": [\n          \"Batagor\",\n          \"Lumpia\",\n          \"Sosis Solo\",\n          \"Cireng\",\n          \"Siomay\",\n          \"Risol Mayo\",\n          \"Martabak Mini\",\n          \"Pisang Goreng\",\n          \"Rainbow Cake\",\n          \"Brownies Coklat\",\n          \"Kroket Cake Tape\"\n        ]\n      }\n    ]\n  }\n}",
+			'FULL_DAY_MEETING' => "{\n  \"includes\": [\n    \"Meeting Room for 4 hours\",\n    \"Internet\",\n    \"LCD Projector\",\n    \"Sound System\",\n    \"Paper Notes\",\n    \"Pencil\",\n    \"Candies\",\n    \"2x Mineral water on table\",\n    \"1x Lunch / Dinner\",\n    \"2x Coffee Break\"\n  ],\n  \"coffee_break\": {\n    \"categories\": [\n      {\n        \"key\": \"snack\",\n        \"label\": \"Snack (pilih 4 macam) + Kletikan\",\n        \"choose\": 4,\n        \"note\": \"Pilih 4 macam plus kletikan\",\n        \"items\": [\n          \"Batagor\",\n          \"Lumpia\",\n          \"Sosis Solo\",\n          \"Cireng\",\n          \"Siomay\",\n          \"Risol Mayo\",\n          \"Martabak Mini\",\n          \"Pisang Goreng\",\n          \"Rainbow Cake\",\n          \"Brownies Coklat\",\n          \"Kroket Cake Tape\"\n        ]\n      }\n    ]\n  }\n}",
+			'COFFEE_BREAK_SNACKS' => "{\n  \"categories\": [\n    {\n      \"key\": \"snack\",\n      \"label\": \"Snack (pilih 4 macam) + Kletikan\",\n      \"choose\": 4,\n      \"note\": \"Pilih 4 macam plus kletikan\",\n      \"items\": [\n        \"Batagor\",\n        \"Lumpia\",\n        \"Sosis Solo\",\n        \"Cireng\",\n        \"Siomay\",\n        \"Risol Mayo\",\n        \"Martabak Mini\",\n        \"Pisang Goreng\",\n        \"Rainbow Cake\",\n        \"Brownies Coklat\",\n        \"Kroket Cake Tape\"\n      ]\n    }\n  ]\n}",
+		);
+
+		$data['menu_json_templates'] = $templates;
+		// default template untuk add baru (biar admin tinggal edit)
+		$data['menu_json_template'] = $templates['PAKET_RASA_2'];
+
+		// ===== Load data untuk sidebar badge =====
+		$data['result'] = $this->gedung_model->get_pending_transaction();
+
+		// ===== Mode edit (jika ada ID di URL atau hidden input) =====
+		$id = (int)$id_catering;
+		if ($id <= 0) {
+			$id = (int)$this->input->post('id_catering');
+		}
+		if ($id > 0) {
+			$data['catering'] = $this->catering_model->get_by_id($id);
+		}
+
+		$submit = $this->input->post('submit');
 		if (!empty($submit)) {
-			$data = array(
-				'NAMA_PAKET' => $this->input->post('nama_paket'),
-				'MENU_PEMBUKA' => $this->input->post('menu_pembuka'),
-				'MENU_UTAMA' => $this->input->post('menu_utama'),
-				'MENU_PENUTUP' => $this->input->post('menu_penutup'),
-				'HARGA' => $this->input->post('harga')
+			$min_pax = $this->input->post('min_pax');
+			$min_pax = ($min_pax === '' || $min_pax === null) ? null : (int)$min_pax;
+
+			$payload = array(
+				'NAMA_PAKET' => $this->input->post('nama_paket', true),
+				'MENU_JSON' => $this->input->post('menu_json'),
+				'HARGA' => (int)$this->input->post('harga'),
+				'JENIS' => $this->input->post('jenis', true),
+				'MIN_PAX' => $min_pax
 			);
-			$this->catering_model->add_catering($data);
+
+			if ($id > 0) {
+				$this->catering_model->update_catering($id, $payload);
+			} else {
+				$this->catering_model->add_catering($payload);
+			}
+
 			redirect('admin/catering');
 		}
-		$this->load->model('gedung/gedung_model');
-		$data['result'] = $this->gedung_model->get_pending_transaction();
+
 		$this->load->view('admin/tambah_catering', $data);
 	}
 
+	function delete_catering()
+	{
+		$this->load->helper('url');
+		$this->load->model('catering/catering_model');
+		$id = (int)$this->input->post('id_catering');
+		if ($id > 0) {
+			$this->catering_model->delete_catering($id);
+		}
+		redirect('admin/catering');
+	}
 	function delete_gedung($id_gedung)
 	{
 		$this->load->model('gedung/gedung_model');

@@ -111,7 +111,7 @@ class Home extends CI_Controller
 		$this->load->model('gedung/gedung_model');
 		$data['res'] = $this->gedung_model->get_menu_catering();
 		$data['flag'] = $this->gedung_model->get_pemesanan_flag($username);
-		$this->load->view('gedung/view_catering', $data);
+		$this->load->view('gedung/View_Catering', $data);
 	}
 
 	function check_date($date, $id_gedung)
@@ -126,13 +126,24 @@ class Home extends CI_Controller
 		$username = $this->session->userdata('username');
 		$this->load->model('catering/catering_model');
 		$this->load->model('gedung/gedung_model');
+
 		$gedung['hasil'] = $this->gedung_model->get_gedung_name($id_gedung);
-		$data['res'] = $this->catering_model->get_catering_name();
+
+		// ambil data catering lengkap (bukan cuma nama)
+		if (method_exists($this->catering_model, 'get_all')) {
+			$data['res'] = $this->catering_model->get_all();
+		} else {
+			// fallback kalau belum ada get_all()
+			$data['res'] = $this->catering_model->get_catering_full();
+		}
+
 		$data['email'] = $this->gedung_model->get_email_address($username);
-		$data['flag'] = $this->gedung_model->get_pemesanan_flag($username);
+		$data['flag']  = $this->gedung_model->get_pemesanan_flag($username);
+
 		$hasil = array_merge($gedung, $data);
 		$this->load->view('gedung/order_gedung', $hasil);
 	}
+
 
 	public function pemesanan()
 	{
@@ -317,6 +328,53 @@ class Home extends CI_Controller
 					$tanggal_pesan . '|' . $jam_mulai . '|' . $jam_selesai . '|' . $tipe_jam
 			);
 		}
+		$this->load->model('catering/Catering_Model', 'catering_model');
+
+		$catering_choice = $this->input->post('radios', TRUE); // 'ya' / 'tidak'
+		$id_catering_post = $this->input->post('catering', TRUE);
+		$jumlah_porsi_post = $this->input->post('jumlah-porsi', TRUE);
+
+		$id_catering_final = null;
+		$jumlah_porsi_final = null;
+
+		// kalau catering tidak dipilih / tidak
+		if ($catering_choice !== 'ya') {
+			$id_catering_final = null;
+			$jumlah_porsi_final = null;
+		} else {
+			// wajib pilih paket
+			if (empty($id_catering_post)) {
+				$this->session->set_flashdata('error', 'Jika memilih catering "Ya", paket catering wajib dipilih.');
+				redirect('home/order-gedung/' . $id_gedung);
+				return;
+			}
+
+			$id_catering_final = (int)$id_catering_post;
+			$jumlah_porsi_final = (int)$jumlah_porsi_post;
+
+			if ($jumlah_porsi_final < 1) {
+				$this->session->set_flashdata('error', 'Jumlah porsi wajib diisi (minimal 1).');
+				redirect('home/order-gedung/' . $id_gedung);
+				return;
+			}
+
+			// ambil data catering untuk min pax + validasi id
+			$c_row = $this->catering_model->get_by_id($id_catering_final);
+			if (empty($c_row)) {
+				$this->session->set_flashdata('error', 'Paket catering tidak valid.');
+				redirect('home/order-gedung/' . $id_gedung);
+				return;
+			}
+
+			$min_pax = isset($c_row['MIN_PAX']) ? (int)$c_row['MIN_PAX'] : 1;
+			if ($min_pax < 1) $min_pax = 1;
+
+			if ($jumlah_porsi_final < $min_pax) {
+				$this->session->set_flashdata('error', 'Jumlah porsi minimal untuk paket ini adalah ' . $min_pax . ' pax.');
+				redirect('home/order-gedung/' . $id_gedung);
+				return;
+			}
+		}
 
 		$data = array(
 			'USERNAME'         => $username,
@@ -326,8 +384,9 @@ class Home extends CI_Controller
 			'TIPE_JAM'          => $tipe_jam,
 			'EMAIL'             => $this->input->post('email', TRUE),
 			'ID_CATERING'       => $this->input->post('catering', TRUE),
-			'ID_GEDUNG'         => $id_gedung,
-			'JUMLAH_CATERING'   => $this->input->post('jumlah-porsi', TRUE),
+			'ID_CATERING'       => $id_catering_final,
+			'JUMLAH_CATERING'   => $jumlah_porsi_final,
+
 			'STATUS'            => 0,
 			'REQUEST_ID'        => $request_id,
 		);

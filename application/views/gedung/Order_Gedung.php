@@ -236,27 +236,110 @@ $id_gedung = $this->uri->segment(3);
                             </div>
 
                             <!-- Paket Catering + Porsi -->
-                            <div class="rounded-xl border border-slate-300 bg-white p-5 ring-1 ring-slate-200">
-                                <label class="block text-xs font-semibold tracking-widest text-slate-500">PAKET
-                                    CATERING</label>
-                                <select id="selected_catering" name="catering" :disabled="!cateringEnabled" class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
-                                    focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40
-                                    disabled:opacity-50 disabled:cursor-not-allowed">
-                                    <option value="" disabled selected>Pilih Paket</option>
-                                    <?php foreach ($res as $catering): ?>
-                                        <option value="<?php echo $catering['ID_CATERING']; ?>">
-                                            <?php echo $catering['NAMA_PAKET']; ?>
-                                        </option>
+                            <!-- Paket Catering + Porsi -->
+                            <div class="rounded-xl border border-slate-300 bg-white p-5 ring-1 ring-slate-200"
+                                x-data="{
+        selectedHarga: 0,
+        selectedMinPax: 1,
+        selectedNama: '',
+        jumlahPorsi: '',
+        onCateringChange(e){
+          var opt = e.target.options[e.target.selectedIndex];
+          this.selectedHarga = parseInt(opt.getAttribute('data-harga') || '0', 10);
+          this.selectedMinPax = parseInt(opt.getAttribute('data-minpax') || '1', 10);
+          this.selectedNama = opt.getAttribute('data-nama') || '';
+          // set default jumlah ke min pax kalau kosong / kurang
+          var jp = parseInt(this.jumlahPorsi || '0', 10);
+          if (!jp || jp < this.selectedMinPax) this.jumlahPorsi = this.selectedMinPax;
+        },
+        resetCatering(){
+          this.selectedHarga = 0;
+          this.selectedMinPax = 1;
+          this.selectedNama = '';
+          this.jumlahPorsi = '';
+          var sel = document.getElementById('selected_catering');
+          if (sel) sel.value = '';
+        },
+        get subtotal(){
+          var jp = parseInt(this.jumlahPorsi || '0', 10);
+          if (!jp || !this.selectedHarga) return 0;
+          return jp * this.selectedHarga;
+        }
+     }"
+                                x-init="$watch('catering', v => { if(v !== 'ya') resetCatering(); })">
+
+                                <label class="block text-xs font-semibold tracking-widest text-slate-500">PAKET CATERING</label>
+
+                                <select id="selected_catering" name="catering"
+                                    :disabled="!cateringEnabled"
+                                    :required="cateringEnabled"
+                                    @change="onCateringChange($event)"
+                                    class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
+      focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40
+      disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <option value="">Pilih Paket</option>
+
+                                    <?php
+                                    // optional: grouping by JENIS biar rapi tapi tetap "semua paket"
+                                    $groups = array();
+                                    foreach ($res as $row) {
+                                        $jenis = isset($row['JENIS']) ? $row['JENIS'] : 'LAINNYA';
+                                        if (!isset($groups[$jenis])) $groups[$jenis] = array();
+                                        $groups[$jenis][] = $row;
+                                    }
+                                    ?>
+
+                                    <?php foreach ($groups as $jenis => $items): ?>
+                                        <optgroup label="<?php echo htmlspecialchars($jenis); ?>">
+                                            <?php foreach ($items as $row): ?>
+                                                <?php
+                                                $id   = (int)$row['ID_CATERING'];
+                                                $nama = isset($row['NAMA_PAKET']) ? $row['NAMA_PAKET'] : '';
+                                                $harga = isset($row['HARGA']) ? (int)$row['HARGA'] : 0;
+                                                $minp = isset($row['MIN_PAX']) ? (int)$row['MIN_PAX'] : 1;
+                                                if ($minp < 1) $minp = 1;
+                                                ?>
+                                                <option value="<?php echo $id; ?>"
+                                                    data-harga="<?php echo $harga; ?>"
+                                                    data-minpax="<?php echo $minp; ?>"
+                                                    data-nama="<?php echo htmlspecialchars($nama, ENT_QUOTES, 'UTF-8'); ?>">
+                                                    <?php echo htmlspecialchars($nama); ?> — Rp <?php echo number_format($harga, 0, ',', '.'); ?>/pax (min <?php echo $minp; ?>)
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </optgroup>
                                     <?php endforeach; ?>
                                 </select>
 
-                                <label class="block mt-4 text-xs font-semibold tracking-widest text-slate-500">JUMLAH
-                                    PORSI</label>
-                                <input type="number" min="1" name="jumlah-porsi" id="jumlah-porsi"
-                                    :disabled="!cateringEnabled" placeholder="Masukkan jumlah porsi" class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400
-                                    focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40
-                                    disabled:opacity-50 disabled:cursor-not-allowed" />
+                                <label class="block mt-4 text-xs font-semibold tracking-widest text-slate-500">JUMLAH PORSI</label>
+                                <input type="number"
+                                    name="jumlah-porsi"
+                                    id="jumlah-porsi"
+                                    x-model="jumlahPorsi"
+                                    :min="selectedMinPax"
+                                    :disabled="!cateringEnabled"
+                                    :required="cateringEnabled"
+                                    placeholder="Masukkan jumlah porsi"
+                                    class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400
+      focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40
+      disabled:opacity-50 disabled:cursor-not-allowed" />
+
+                                <!-- Info ringkas -->
+                                <div x-show="cateringEnabled && selectedHarga > 0" class="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm">
+                                    <div class="font-semibold text-slate-900" x-text="selectedNama"></div>
+                                    <div class="mt-1 text-slate-700">
+                                        Harga/pax: <span class="font-semibold">Rp <span x-text="selectedHarga.toLocaleString('id-ID')"></span></span>
+                                        · Min pax: <span class="font-semibold" x-text="selectedMinPax"></span>
+                                    </div>
+                                    <div class="mt-1 text-slate-700">
+                                        Estimasi total: <span class="font-semibold">Rp <span x-text="subtotal.toLocaleString('id-ID')"></span></span>
+                                    </div>
+                                    <div class="mt-1 text-xs text-slate-500">
+                                        *Jumlah porsi minimal mengikuti Min Pax paket yang dipilih.*
+                                    </div>
+                                </div>
+
                             </div>
+
 
                         </div>
 
