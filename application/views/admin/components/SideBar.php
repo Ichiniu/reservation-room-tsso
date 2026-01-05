@@ -192,11 +192,12 @@ function is_active($uri, $current_uri)
 
             <hr class="my-4">
 
-            <a href="<?= site_url('admin/log_out') ?>"
+            <a href="<?= site_url('admin/login/log_out') ?>"
                 class="flex items-center gap-3 px-4 py-3 rounded text-red-600 hover:bg-red-50">
                 <span class="material-icons">logout</span>
                 <span class="menu-text">Sign Out</span>
             </a>
+
 
         </nav>
     </aside>
