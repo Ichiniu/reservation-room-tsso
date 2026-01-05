@@ -1,8 +1,6 @@
 <?php
+defined('BASEPATH') or exit('No direct script access allowed');
 
-/**
- * 
- */
 class Login extends CI_Controller
 {
 	public function __construct()
@@ -11,7 +9,7 @@ class Login extends CI_Controller
 		$this->load->library(['session', 'form_validation']);
 	}
 
-	function index()
+	public function index()
 	{
 		$this->load->view('admin/admin_login');
 	}
@@ -24,20 +22,18 @@ class Login extends CI_Controller
 		$username = $this->input->post('username', TRUE);
 		$password = $this->input->post('password', TRUE);
 
-		if ($this->form_validation->run() == FALSE) {
+		if ($this->form_validation->run() === FALSE) {
 			$data['error'] = "Username dan Password harus diisi!";
 			$this->load->view('admin/admin_login', $data);
 			return;
 		}
 
 		if ($username === 'admin' && $password === 'admin') {
-
 			$this->session->set_userdata([
 				'admin_username'   => $username,
 				'admin_logged_in'  => TRUE,
 				'admin_session_id' => session_id()
 			]);
-
 			redirect('admin/dashboard');
 			return;
 		}
@@ -45,11 +41,10 @@ class Login extends CI_Controller
 		$data['error'] = "USERNAME / PASSWORD YANG ANDA MASUKAN SALAH!";
 		$this->load->view('admin/admin_login', $data);
 	}
-}
 
-function log_out()
-{
-	// Jangan sess_destroy() karena itu akan ngehapus session user juga
-	$this->session->unset_userdata(['admin_username', 'admin_logged_in', 'admin_session_id']);
-	redirect(base_url('admin'));
+	public function log_out()
+	{
+		$this->session->unset_userdata(['admin_username', 'admin_logged_in', 'admin_session_id']);
+		redirect('admin');
+	}
 }

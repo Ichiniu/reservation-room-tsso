@@ -22,12 +22,25 @@ class Gedung_Model extends CI_Model
 
 	public function laporan_pembayaran_periodic($start_date, $end_date)
 	{
-		$sql = "SELECT * FROM PEMBAYARAN 
-        WHERE TANGGAL_TRANSFER BETWEEN '$start_date' AND '$end_date' 
-        ORDER BY ATAS_NAMA_PENGIRIM ASC";
-		$query = $this->db->query($sql);
+		$sql = "
+        SELECT
+            pb.*,
+            u.NAMA_LENGKAP,
+            u.perusahaan,
+            u.nama_perusahaan,
+            u.departemen
+        FROM pembayaran pb
+        LEFT JOIN pemesanan p ON p.ID_PEMESANAN = pb.ID_PEMESANAN_RAW
+        LEFT JOIN user u ON u.USERNAME = p.USERNAME
+        WHERE pb.TANGGAL_TRANSFER BETWEEN ? AND ?
+        ORDER BY pb.TANGGAL_TRANSFER ASC, pb.ID_PEMBAYARAN ASC
+    ";
+
+		$query = $this->db->query($sql, array($start_date, $end_date));
 		return $query->result_array();
 	}
+
+
 	public function has_locked_conflict($id_gedung, $tanggal, $jam_mulai, $jam_selesai)
 	{
 		$sql = "
@@ -409,24 +422,24 @@ class Gedung_Model extends CI_Model
 		return $query;
 	}
 
-		public function get_detail_pesanan($id_pemesanan)
-		{
-			$num = (int) preg_replace('/\D+/', '', (string)$id_pemesanan);
-			if ($num <= 0) return null;
+	public function get_detail_pesanan($id_pemesanan)
+	{
+		$num = (int) preg_replace('/\D+/', '', (string)$id_pemesanan);
+		if ($num <= 0) return null;
 
-			// kemungkinan format di view:
-			// - angka: 94
-			// - kode: PMSN00094
-			$kode = 'PMSN000' . $num;
+		// kemungkinan format di view:
+		// - angka: 94
+		// - kode: PMSN00094
+		$kode = 'PMSN000' . $num;
 
-			$sql = "SELECT *
+		$sql = "SELECT *
 				FROM V_PEMESANAN
 				WHERE ID_PEMESANAN = ?
 				OR ID_PEMESANAN = ?
 				LIMIT 1";
 
-			return $this->db->query($sql, array($num, $kode))->row();
-		}
+		return $this->db->query($sql, array($num, $kode))->row();
+	}
 
 
 

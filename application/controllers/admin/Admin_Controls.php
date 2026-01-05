@@ -6,17 +6,20 @@
 class Admin_Controls extends CI_Controller
 {
 
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
-		$this->load->library('session'); // WAJIB biar gak blank/putih
-		$admin_logged_in = $this->session->userdata('admin_logged_in');
-		$admin_username  = $this->session->userdata('admin_username');
 
-		if (!$admin_logged_in || empty($admin_username)) {
-			redirect(site_url('admin'));
+		// wajib load session kalau belum
+		$this->load->library('session');
+
+		// cek login admin
+		if ($this->session->userdata('admin_logged_in') !== TRUE) {
+			redirect('admin'); // balik ke login admin
+			return;
 		}
 	}
+
 
 
 	function index()
@@ -216,13 +219,24 @@ class Admin_Controls extends CI_Controller
 
 	function read_transaction($id_pembayaran)
 	{
+		$id_pembayaran = (int)$id_pembayaran;
+
 		$this->load->model('gedung/gedung_model');
 		$data['result'] = $this->gedung_model->get_pending_transaction();
 		$data['get_transaction'] = $this->gedung_model->get_unread_transaction();
-		$data['details'] = $this->gedung_model->get_detail_pembayaran($id_pembayaran);
-		//$this->gedung_model->set_finish_transaction($id_pembayaran);
-		$this->load->view('admin/detail_pembayaran', $data);
+
+		// INI YANG BENAR (karena di model kamu adanya get_details_transaction)
+		$data['details'] = $this->gedung_model->get_details_transaction($id_pembayaran);
+
+		if (!$data['details']) {
+			show_error('Data pembayaran tidak ditemukan');
+			return;
+		}
+
+		// pakai nama file view yang ada: Detail_Pembayaran.php
+		$this->load->view('admin/Detail_Pembayaran', $data);
 	}
+
 
 	function transaksi()
 	{
