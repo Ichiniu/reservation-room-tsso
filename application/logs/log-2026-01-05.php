@@ -234,7 +234,8 @@ INFO - 2026-01-05 02:48:27 --> Controller Class Initialized
 DEBUG - 2026-01-05 02:48:27 --> Session class already loaded. Second attempt ignored.
 INFO - 2026-01-05 02:48:27 --> Model Class Initialized
 INFO - 2026-01-05 02:48:27 --> Model Class Initialized
-ERROR - 2026-01-05 02:48:27 --> Severity: Error --> Call to undefined method Gedung_Model::get_detail_pembayaran() C:\xampp\htdocs\bookingsmarts\application\controllers\admin\Admin_Controls.php 222
+ERROR - 2026-01-05 02:48:27 --> Severity: Error --> Call to undefined method Gedung_Model::get_detail_pembayaran()
+C:\xampp\htdocs\bookingsmarts\application\controllers\admin\Admin_Controls.php 222
 INFO - 2026-01-05 02:48:59 --> Config Class Initialized
 INFO - 2026-01-05 02:48:59 --> Hooks Class Initialized
 DEBUG - 2026-01-05 02:48:59 --> UTF-8 Support Enabled
@@ -1633,7 +1634,8 @@ INFO - 2026-01-05 03:12:13 --> Security Class Initialized
 DEBUG - 2026-01-05 03:12:13 --> Global POST, GET and COOKIE data sanitized
 INFO - 2026-01-05 03:12:13 --> Input Class Initialized
 INFO - 2026-01-05 03:12:13 --> Language Class Initialized
-ERROR - 2026-01-05 03:12:13 --> Severity: Parsing Error --> syntax error, unexpected 'public' (T_PUBLIC) C:\xampp\htdocs\bookingsmarts\application\controllers\admin\Login.php 50
+ERROR - 2026-01-05 03:12:13 --> Severity: Parsing Error --> syntax error, unexpected 'public' (T_PUBLIC)
+C:\xampp\htdocs\bookingsmarts\application\controllers\admin\Login.php 50
 INFO - 2026-01-05 03:15:08 --> Config Class Initialized
 INFO - 2026-01-05 03:15:08 --> Hooks Class Initialized
 DEBUG - 2026-01-05 03:15:08 --> UTF-8 Support Enabled
@@ -2031,85 +2033,164 @@ DEBUG - 2026-01-05 03:17:54 --> Session class already loaded. Second attempt ign
 INFO - 2026-01-05 03:17:54 --> Model Class Initialized
 INFO - 2026-01-05 03:17:54 --> Model Class Initialized
 INFO - 2026-01-05 03:17:54 --> Helper loaded: text_helper
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
-ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
-INFO - 2026-01-05 03:17:55 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\admin/rekap_transaksi_det.php
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:54 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 159
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 160
+ERROR - 2026-01-05 03:17:55 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 161
+INFO - 2026-01-05 03:17:55 --> File loaded:
+C:\xampp\htdocs\bookingsmarts\application\views\admin/rekap_transaksi_det.php
 INFO - 2026-01-05 03:17:55 --> Final output sent to browser
 DEBUG - 2026-01-05 03:17:55 --> Total execution time: 0.2275
 INFO - 2026-01-05 03:19:22 --> Config Class Initialized
@@ -2153,7 +2234,8 @@ INFO - 2026-01-05 03:26:55 --> Controller Class Initialized
 DEBUG - 2026-01-05 03:26:55 --> Session class already loaded. Second attempt ignored.
 INFO - 2026-01-05 03:26:55 --> Model Class Initialized
 INFO - 2026-01-05 03:26:55 --> Model Class Initialized
-ERROR - 2026-01-05 03:26:55 --> Severity: Parsing Error --> syntax error, unexpected '?' C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 17
+ERROR - 2026-01-05 03:26:55 --> Severity: Parsing Error --> syntax error, unexpected '?'
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Rekap_Transaksi_Det.php 17
 INFO - 2026-01-05 03:29:21 --> Config Class Initialized
 INFO - 2026-01-05 03:29:21 --> Hooks Class Initialized
 DEBUG - 2026-01-05 03:29:21 --> UTF-8 Support Enabled
@@ -2174,7 +2256,8 @@ DEBUG - 2026-01-05 03:29:21 --> Session class already loaded. Second attempt ign
 INFO - 2026-01-05 03:29:21 --> Model Class Initialized
 INFO - 2026-01-05 03:29:21 --> Model Class Initialized
 INFO - 2026-01-05 03:29:21 --> Helper loaded: text_helper
-INFO - 2026-01-05 03:29:21 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\admin/rekap_transaksi_det.php
+INFO - 2026-01-05 03:29:21 --> File loaded:
+C:\xampp\htdocs\bookingsmarts\application\views\admin/rekap_transaksi_det.php
 INFO - 2026-01-05 03:29:21 --> Final output sent to browser
 DEBUG - 2026-01-05 03:29:21 --> Total execution time: 0.1022
 INFO - 2026-01-05 03:30:03 --> Config Class Initialized
@@ -2264,7 +2347,8 @@ INFO - 2026-01-05 03:30:25 --> Controller Class Initialized
 DEBUG - 2026-01-05 03:30:25 --> Session class already loaded. Second attempt ignored.
 INFO - 2026-01-05 03:30:25 --> Model Class Initialized
 INFO - 2026-01-05 03:30:25 --> Model Class Initialized
-ERROR - 2026-01-05 03:30:25 --> Severity: Error --> Call to undefined method Gedung_Model::get_detail_pembayaran() C:\xampp\htdocs\bookingsmarts\application\controllers\admin\Admin_Controls.php 222
+ERROR - 2026-01-05 03:30:25 --> Severity: Error --> Call to undefined method Gedung_Model::get_detail_pembayaran()
+C:\xampp\htdocs\bookingsmarts\application\controllers\admin\Admin_Controls.php 222
 INFO - 2026-01-05 03:39:23 --> Config Class Initialized
 INFO - 2026-01-05 03:39:23 --> Hooks Class Initialized
 DEBUG - 2026-01-05 03:39:23 --> UTF-8 Support Enabled
@@ -2285,7 +2369,8 @@ DEBUG - 2026-01-05 03:39:23 --> Session class already loaded. Second attempt ign
 INFO - 2026-01-05 03:39:23 --> Model Class Initialized
 INFO - 2026-01-05 03:39:23 --> Model Class Initialized
 INFO - 2026-01-05 03:39:23 --> Helper loaded: text_helper
-INFO - 2026-01-05 03:39:23 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\admin/rekap_transaksi_det.php
+INFO - 2026-01-05 03:39:23 --> File loaded:
+C:\xampp\htdocs\bookingsmarts\application\views\admin/rekap_transaksi_det.php
 INFO - 2026-01-05 03:39:23 --> Final output sent to browser
 DEBUG - 2026-01-05 03:39:23 --> Total execution time: 0.0883
 INFO - 2026-01-05 03:40:26 --> Config Class Initialized
@@ -2978,7 +3063,8 @@ INFO - 2026-01-05 03:57:08 --> Controller Class Initialized
 DEBUG - 2026-01-05 03:57:08 --> Session class already loaded. Second attempt ignored.
 INFO - 2026-01-05 03:57:08 --> Model Class Initialized
 INFO - 2026-01-05 03:57:08 --> Model Class Initialized
-ERROR - 2026-01-05 03:57:08 --> Severity: Error --> Call to undefined method Gedung_Model::get_detail_pembayaran() C:\xampp\htdocs\bookingsmarts\application\controllers\admin\Admin_Controls.php 225
+ERROR - 2026-01-05 03:57:08 --> Severity: Error --> Call to undefined method Gedung_Model::get_detail_pembayaran()
+C:\xampp\htdocs\bookingsmarts\application\controllers\admin\Admin_Controls.php 225
 INFO - 2026-01-05 04:02:27 --> Config Class Initialized
 INFO - 2026-01-05 04:02:27 --> Hooks Class Initialized
 DEBUG - 2026-01-05 04:02:27 --> UTF-8 Support Enabled
@@ -3022,7 +3108,8 @@ INFO - 2026-01-05 04:02:30 --> Controller Class Initialized
 DEBUG - 2026-01-05 04:02:30 --> Session class already loaded. Second attempt ignored.
 INFO - 2026-01-05 04:02:30 --> Model Class Initialized
 INFO - 2026-01-05 04:02:30 --> Model Class Initialized
-ERROR - 2026-01-05 04:02:30 --> Severity: Error --> Call to undefined method Gedung_Model::get_detail_pembayaran() C:\xampp\htdocs\bookingsmarts\application\controllers\admin\Admin_Controls.php 225
+ERROR - 2026-01-05 04:02:30 --> Severity: Error --> Call to undefined method Gedung_Model::get_detail_pembayaran()
+C:\xampp\htdocs\bookingsmarts\application\controllers\admin\Admin_Controls.php 225
 INFO - 2026-01-05 04:04:07 --> Config Class Initialized
 INFO - 2026-01-05 04:04:07 --> Hooks Class Initialized
 DEBUG - 2026-01-05 04:04:07 --> UTF-8 Support Enabled
@@ -4470,7 +4557,8 @@ DEBUG - 2026-01-05 04:24:00 --> Session class already loaded. Second attempt ign
 INFO - 2026-01-05 04:24:00 --> Model Class Initialized
 INFO - 2026-01-05 04:24:00 --> Model Class Initialized
 INFO - 2026-01-05 04:24:00 --> Helper loaded: text_helper
-INFO - 2026-01-05 04:24:00 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\admin/rekap_transaksi_det.php
+INFO - 2026-01-05 04:24:00 --> File loaded:
+C:\xampp\htdocs\bookingsmarts\application\views\admin/rekap_transaksi_det.php
 INFO - 2026-01-05 04:24:00 --> Final output sent to browser
 DEBUG - 2026-01-05 04:24:00 --> Total execution time: 0.1184
 INFO - 2026-01-05 04:24:35 --> Config Class Initialized
@@ -4493,91 +4581,176 @@ DEBUG - 2026-01-05 04:24:35 --> Session class already loaded. Second attempt ign
 INFO - 2026-01-05 04:24:35 --> Model Class Initialized
 INFO - 2026-01-05 04:24:35 --> Model Class Initialized
 INFO - 2026-01-05 04:24:35 --> Helper loaded: warsito_pdf_helper
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
-ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
-INFO - 2026-01-05 04:24:35 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\admin/pdf_report_transaksi.php
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: KODE_PEMBAYARAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 28
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ID_PEMESANAN
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 29
+ERROR - 2026-01-05 04:24:35 --> Severity: Notice --> Undefined index: ATAS_NAMA
+C:\xampp\htdocs\bookingsmarts\application\views\admin\Pdf_Report_Transaksi.php 30
+INFO - 2026-01-05 04:24:35 --> File loaded:
+C:\xampp\htdocs\bookingsmarts\application\views\admin/pdf_report_transaksi.php
 INFO - 2026-01-05 04:24:40 --> Final output sent to browser
 DEBUG - 2026-01-05 04:24:40 --> Total execution time: 4.8941
 INFO - 2026-01-05 04:27:26 --> Config Class Initialized
@@ -4600,7 +4773,8 @@ DEBUG - 2026-01-05 04:27:26 --> Session class already loaded. Second attempt ign
 INFO - 2026-01-05 04:27:26 --> Model Class Initialized
 INFO - 2026-01-05 04:27:26 --> Model Class Initialized
 INFO - 2026-01-05 04:27:26 --> Helper loaded: warsito_pdf_helper
-INFO - 2026-01-05 04:27:26 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\admin/pdf_report_transaksi.php
+INFO - 2026-01-05 04:27:26 --> File loaded:
+C:\xampp\htdocs\bookingsmarts\application\views\admin/pdf_report_transaksi.php
 INFO - 2026-01-05 04:27:27 --> Final output sent to browser
 DEBUG - 2026-01-05 04:27:27 --> Total execution time: 1.4172
 INFO - 2026-01-05 04:29:51 --> Config Class Initialized
