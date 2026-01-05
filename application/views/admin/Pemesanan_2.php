@@ -5,6 +5,7 @@ $this->load->helper('text');
 <!DOCTYPE html>
 <html lang="id">
 
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,8 +26,30 @@ $this->load->helper('text');
         </div>
 
         <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-md p-6">
+
+            <!-- ================= FILTER ================= -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <input type="text" id="filterId" placeholder="Cari ID Pemesanan"
+                    class="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400">
+
+                <select id="filterStatus"
+                    class="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400">
+                    <option value="">Semua Status</option>
+                    <option value="SUBMITED">SUBMITED</option>
+                    <option value="PROCESS">PROCESS</option>
+                    <option value="PROPOSAL APPROVE">PROPOSAL APPROVE</option>
+                    <option value="APPROVE & PAID">APPROVE & PAID</option>
+                    <option value="REJECTED">REJECTED</option>
+                </select>
+
+                <button id="resetFilter" class="bg-gray-200 hover:bg-gray-300 rounded-lg px-4 py-2 text-sm">
+                    Reset
+                </button>
+            </div>
+            <!-- ================= END FILTER ================= -->
+
             <div class="overflow-x-auto max-h-[420px] overflow-y-auto relative">
-                <table id="dataTable" class="w-full text-sm border border-slate-200 rounded-lg bg-white">
+                <table class="w-full text-sm border border-slate-200 rounded-lg bg-white">
                     <thead class="sticky top-0 z-20 bg-gray-100 shadow-sm">
                         <tr>
                             <th class="px-4 py-3">No</th>
@@ -124,23 +147,19 @@ $this->load->helper('text');
                 </table>
             </div>
 
+            <!-- ================= PAGINATION ================= -->
             <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <button id="prevBtn" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-40">
-                    Prev
-                </button>
-
+                <button id="prevBtn"
+                    class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-40">Prev</button>
                 <span id="pageInfo" class="text-sm text-gray-600 text-center"></span>
-
                 <div class="flex items-center gap-3">
                     <select id="rowsPerPage" class="rounded-lg border px-3 py-2 text-sm">
                         <option value="5">5 rows</option>
                         <option value="10" selected>10 rows</option>
                         <option value="25">25 rows</option>
                     </select>
-
-                    <button id="nextBtn" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-40">
-                        Next
-                    </button>
+                    <button id="nextBtn"
+                        class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-40">Next</button>
                 </div>
             </div>
 
@@ -196,5 +215,6 @@ $this->load->helper('text');
     </script>
 
 </body>
+
 
 </html>
