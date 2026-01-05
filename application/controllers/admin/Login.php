@@ -48,9 +48,8 @@ class Login extends CI_Controller
 }
 
 function log_out()
-	{
-		// Jangan sess_destroy() karena itu akan ngehapus session user juga
-		$this->session->unset_userdata(['admin_username', 'admin_logged_in', 'admin_session_id']);
-		redirect(base_url('admin'));
-	}
+{
+	// Jangan sess_destroy() karena itu akan ngehapus session user juga
+	$this->session->unset_userdata(['admin_username', 'admin_logged_in', 'admin_session_id']);
+	redirect(base_url('admin'));
 }
