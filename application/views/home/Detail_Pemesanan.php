@@ -6,6 +6,15 @@ $tax = 0.1 * $result->HARGA_SEWA;
 $tanggal_pesan = $result->TANGGAL_PEMESANAN;
 $min_refund = date('Y-m-d', time());
 $perbedaan = date_diff(new DateTime($tanggal_pesan), new DateTime($min_refund));
+// info user & proposal (untuk ditampilkan)
+$display_username = !empty($user_username) ? $user_username : $session_id;
+$display_email    = !empty($user_email) ? $user_email : (isset($result->EMAIL) ? $result->EMAIL : '-');
+
+$proposal_obj       = isset($proposal_details) ? $proposal_details : null;
+$deskripsi_acara    = ($proposal_obj && !empty($proposal_obj->DESKRIPSI_ACARA)) ? $proposal_obj->DESKRIPSI_ACARA : '-';
+$proposal_file_name = ($proposal_obj && !empty($proposal_obj->FILE_NAME)) ? $proposal_obj->FILE_NAME : '';
+$proposal_file_url  = $proposal_file_name ? base_url('assets/user-proposal/' . $proposal_file_name) : '';
+
 $temp_id = substr($result->ID_PEMESANAN, 7);
 $statusText = isset($result->STATUS)
   ? strtoupper(trim(preg_replace('/\s+/', ' ', $result->STATUS)))
@@ -44,6 +53,14 @@ $statusCode = isset($map[$statusText]) ? $map[$statusText] : 0;
         <tr>
           <td class="font-semibold">ID Pemesanan</td>
           <td>: <?= $result->ID_PEMESANAN ?></td>
+        </tr>
+        <tr>
+          <td class="font-semibold">Username</td>
+          <td>: <?= htmlspecialchars((string)$display_username, ENT_QUOTES, 'UTF-8') ?></td>
+        </tr>
+        <tr>
+          <td class="font-semibold">Email</td>
+          <td>: <?= htmlspecialchars((string)$display_email, ENT_QUOTES, 'UTF-8') ?></td>
         </tr>
         <tr>
           <td class="font-semibold">Tanggal Pemesanan</td>
@@ -91,6 +108,22 @@ $statusCode = isset($map[$statusText]) ? $map[$statusText] : 0;
         <tr>
           <td class="font-semibold">Status</td>
           <td>: <?= $result->STATUS ?></td>
+        </tr>
+        <tr>
+          <td class="font-semibold">Keperluan Acara</td>
+          <td>: <?= nl2br(htmlspecialchars((string)$deskripsi_acara, ENT_QUOTES, 'UTF-8')) ?></td>
+        </tr>
+        <tr>
+          <td class="font-semibold">File Upload (Proposal)</td>
+          <td>:
+            <?php if (!empty($proposal_file_name)): ?>
+              <a class="text-blue-600 hover:underline" href="<?= $proposal_file_url ?>" target="_blank" rel="noopener">
+                <?= htmlspecialchars((string)$proposal_file_name, ENT_QUOTES, 'UTF-8') ?>
+              </a>
+            <?php else: ?>
+              <span class="text-slate-500">Belum ada file</span>
+            <?php endif; ?>
+          </td>
         </tr>
       </tbody>
     </table>

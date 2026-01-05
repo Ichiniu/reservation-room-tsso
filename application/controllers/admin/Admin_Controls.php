@@ -161,13 +161,27 @@ class Admin_Controls extends CI_Controller
 		$filename = "Report Transaksi.pdf";
 		generate_pdf($object, $filename, true);
 	}
-	function detail_pemesanan($id_pemesanan)
+	public function detail_pemesanan($id_pemesanan)
 	{
 		$this->load->model('gedung/gedung_model');
-		$hasil['hasil'] = $this->gedung_model->get_detail_pesanan($id_pemesanan);
-		$hasil['result'] = $this->gedung_model->get_pending_transaction();
-		$this->load->view('admin/detail_pemesanan', $hasil);
+
+		$data['result'] = $this->gedung_model->get_detail_pesanan($id_pemesanan);
+
+		if (!$data['result']) {
+			show_error('Data pemesanan tidak ditemukan');
+			return;
+		}
+
+		// optional biar view aman
+		$data['user_username'] = !empty($data['result']->USERNAME) ? $data['result']->USERNAME : '';
+		$data['user_email']    = !empty($data['result']->EMAIL) ? $data['result']->EMAIL : '';
+		$data['nama_lengkap_user'] = !empty($data['result']->NAMA_LENGKAP) ? $data['result']->NAMA_LENGKAP : $data['user_username'];
+		$data['proposal_details'] = null;
+
+		$this->load->view('admin/Detail_Pemesanan', $data);
 	}
+
+
 
 	function pembayaran()
 	{
@@ -222,7 +236,9 @@ class Admin_Controls extends CI_Controller
 		$tanggal_approval = '%Y-%m-%d';
 		$this->load->model('gedung/gedung_model');
 
-		$temp_id = (int)substr($id_pemesanan, 7);
+		$temp_id = (int) preg_replace('/\D+/', '', (string)$id_pemesanan); // ambil angka saja
+		if ($temp_id <= 0) show_404();
+
 
 		// === PROSES POST DULU ===
 		if ($this->input->method(TRUE) === 'POST') {
@@ -275,18 +291,33 @@ class Admin_Controls extends CI_Controller
 	{
 		$this->load->helper('download');
 		$this->load->model('gedung/gedung_model');
-		$temp_id = substr($id_pemesanan, 7);
+
+		$temp_id = (int) preg_replace('/\D+/', '', (string)$id_pemesanan);
+		if ($temp_id <= 0) show_404();
+
 		$data = $this->gedung_model->get_proposal_by_id($temp_id);
-		$path = file_get_contents($data->PATH . $data->FILE_NAME);
-		$file_name = $data->FILE_NAME;
-		force_download($file_name, $path);
+		if (!$data || empty($data->FILE_NAME)) {
+			show_error('Proposal belum diupload.');
+			return;
+		}
+
+		// Lebih aman ambil dari file system (bukan URL)
+		$fullpath = FCPATH . 'assets/user-proposal/' . $data->FILE_NAME;
+		if (!is_file($fullpath)) {
+			show_error('File proposal tidak ditemukan di server.');
+			return;
+		}
+
+		force_download($data->FILE_NAME, file_get_contents($fullpath));
 	}
+
 
 	function update_transaksi($id_pemesanan)
 	{
 		$this->load->model('gedung/gedung_model');
 		$this->load->helper('form');
-		$temp_id = substr($id_pemesanan, 7);
+		$temp_id = (int) preg_replace('/\D+/', '', (string)$id_pemesanan); // ambil angka saja
+		if ($temp_id <= 0) show_404();
 	}
 
 	function tambah_catering($id_catering = null)
@@ -473,7 +504,7 @@ class Admin_Controls extends CI_Controller
 
 		if ($action === 'confirm') {
 
-			// CONFIRM → CATATAN TETAP DISIMPAN
+			// 1) Update pembayaran
 			$this->db->where('ID_PEMBAYARAN', $id_pembayaran);
 			$this->db->update('pembayaran', [
 				'STATUS_VERIF'  => 'CONFIRMED',
@@ -481,8 +512,63 @@ class Admin_Controls extends CI_Controller
 				'CONFIRMED_AT'  => date('Y-m-d H:i:s')
 			]);
 
+			// 2) Update status pemesanan
 			$this->db->where('ID_PEMESANAN', $id_pemesanan);
 			$this->db->update('pemesanan', ['STATUS' => 3]);
+
+			// 3) Ambil data pemesanan untuk isi fix detail
+			$ps = $this->db->get_where('pemesanan', [
+				'ID_PEMESANAN' => $id_pemesanan
+			])->row_array();
+
+			if (!$ps) {
+				$this->db->trans_rollback();
+				show_error('Data pemesanan tidak ditemukan.');
+				return;
+			}
+
+			// 4) Pastikan jam tidak NULL (karena fix_detail jam wajib NOT NULL)
+			$jam_mulai = !empty($ps['JAM_PEMESANAN']) ? $ps['JAM_PEMESANAN'] : '08:00:00';
+
+			$jam_selesai = !empty($ps['JAM_SELESAI']) ? $ps['JAM_SELESAI'] : null;
+			if (empty($jam_selesai)) {
+				if ($ps['TIPE_JAM'] === 'HALF_DAY') {
+					$jam_selesai = date('H:i:s', strtotime($jam_mulai . ' +4 hours'));
+				} elseif ($ps['TIPE_JAM'] === 'FULL_DAY') {
+					$jam_selesai = date('H:i:s', strtotime($jam_mulai . ' +8 hours'));
+				} else { // CUSTOM default 1 jam
+					$jam_selesai = date('H:i:s', strtotime($jam_mulai . ' +1 hours'));
+				}
+			}
+
+			// 5) Deadline (biar NOT NULL). Silakan ubah rule kalau mau.
+			$tanggal_deadline = date('Y-m-d', strtotime($ps['TANGGAL_PEMESANAN'] . ' -1 day'));
+			if (empty($tanggal_deadline)) $tanggal_deadline = date('Y-m-d');
+
+			// 6) Data lengkap sesuai struktur tabel pemesanan_fix_detail kamu
+			$fix = [
+				'ID_PEMESANAN'            => (int)$ps['ID_PEMESANAN'],
+				'ID_GEDUNG'               => (int)$ps['ID_GEDUNG'],
+				'USERNAME'                => $ps['USERNAME'],
+				'TANGGAL_APPROVAL'        => date('Y-m-d'),
+				'TANGGAL_FINAL_PEMESANAN' => $ps['TANGGAL_PEMESANAN'],
+				'JAM_MULAI'               => $jam_mulai,
+				'JAM_SELESAI'             => $jam_selesai,
+				'TANGGAL_DEADLINE'        => $tanggal_deadline,
+				'FINAL_STATUS'            => 1
+			];
+
+			// 7) UPSERT ke pemesanan_fix_detail
+			$exist = $this->db->get_where('pemesanan_fix_detail', [
+				'ID_PEMESANAN' => $id_pemesanan
+			])->row_array();
+
+			if ($exist) {
+				$this->db->where('ID_PEMESANAN', $id_pemesanan);
+				$this->db->update('pemesanan_fix_detail', $fix);
+			} else {
+				$this->db->insert('pemesanan_fix_detail', $fix);
+			}
 		} elseif ($action === 'reject') {
 
 			if ($catatan === '') {
@@ -500,6 +586,10 @@ class Admin_Controls extends CI_Controller
 
 			$this->db->where('ID_PEMESANAN', $id_pemesanan);
 			$this->db->update('pemesanan', ['STATUS' => 4]);
+
+			// OPTIONAL: kalau sudah pernah masuk fix, matikan
+			$this->db->where('ID_PEMESANAN', $id_pemesanan);
+			$this->db->update('pemesanan_fix_detail', ['FINAL_STATUS' => 0]);
 		} else {
 			$this->db->trans_rollback();
 			show_error('Aksi tidak dikenali');
@@ -508,7 +598,9 @@ class Admin_Controls extends CI_Controller
 
 		if ($this->db->trans_status() === FALSE) {
 			$this->db->trans_rollback();
-			show_error('Gagal menyimpan data');
+			// Biar kelihatan error DB-nya
+			$err = $this->db->error();
+			show_error('Gagal menyimpan data: ' . $err['message']);
 			return;
 		}
 

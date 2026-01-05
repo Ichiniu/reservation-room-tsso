@@ -82,9 +82,21 @@ class Gedung_Model extends CI_Model
 
 	public function get_all_pembayaran()
 	{
-		$sql = "SELECT * FROM PEMBAYARAN ORDER BY CREATED_AT DESC";
+		$sql = "
+        SELECT 
+            pb.*,
+            u.NAMA_LENGKAP,
+            u.perusahaan,
+            u.nama_perusahaan,
+            u.departemen
+        FROM pembayaran pb
+        LEFT JOIN pemesanan p ON p.ID_PEMESANAN = pb.ID_PEMESANAN_RAW
+        LEFT JOIN user u ON u.USERNAME = p.USERNAME
+        ORDER BY pb.CREATED_AT DESC
+    ";
 		return $this->db->query($sql)->result_array();
 	}
+
 
 	// atau pending saja:
 	public function get_all_pembayaran_pending()
@@ -193,29 +205,22 @@ class Gedung_Model extends CI_Model
 			";
 		return $this->db->query($sql)->row();
 	}
-
-
 	public function fixed_date()
 	{
-		$sql = "SELECT 
-        PEMESANAN_FIX_DETAIL.ID_PEMESANAN,
-        PEMESANAN_FIX_DETAIL.USERNAME,
-        PEMESANAN.ID_GEDUNG, 
-        GEDUNG.NAMA_GEDUNG,
-        PEMESANAN_FIX_DETAIL.TANGGAL_FINAL_PEMESANAN,
-        PEMESANAN.JAM_PEMESANAN,
-        PEMESANAN.JAM_SELESAI,
-        CASE PEMESANAN_FIX_DETAIL.FINAL_STATUS 
-            WHEN 1 THEN 'FIXED DATE' 
-        END AS FINAL_STATUS
-        FROM PEMESANAN_FIX_DETAIL
-        JOIN PEMESANAN ON PEMESANAN_FIX_DETAIL.ID_PEMESANAN = PEMESANAN.ID_PEMESANAN
-        JOIN GEDUNG ON PEMESANAN.ID_GEDUNG = GEDUNG.ID_GEDUNG
-        WHERE PEMESANAN_FIX_DETAIL.FINAL_STATUS = 1
-        ORDER BY PEMESANAN_FIX_DETAIL.TANGGAL_FINAL_PEMESANAN DESC";
-		$query = $this->db->query($sql);
-		return $query->result_array();
+		$sql = "SELECT
+                ID_PEMESANAN,
+                USERNAME,
+                NAMA_GEDUNG,
+                TANGGAL_PEMESANAN,
+                TIME_FORMAT(JAM_PEMESANAN, '%H:%i') AS JAM
+            FROM V_PEMESANAN
+            WHERE UPPER(TRIM(STATUS)) = 'SUBMITED'
+            ORDER BY TANGGAL_PEMESANAN DESC, JAM_PEMESANAN DESC";
+
+		return $this->db->query($sql)->result(); // object
 	}
+
+
 
 
 	public function check_date($tanggal, $id_gedung, $jam_mulai, $jam_selesai)
@@ -295,45 +300,32 @@ class Gedung_Model extends CI_Model
 		$query = $this->db->query($sql);
 		return $query->num_rows();
 	}
-
 	public function get_all_pemesanan()
 	{
-		$sql = "SELECT * FROM V_PEMESANAN";
-		$query = $this->db->query($sql);
-		$hasil = $query->result_array();
-		return $hasil;
+		$sql = "
+        SELECT
+            vp.*,
+            u.NAMA_LENGKAP     AS USER_NAMA_LENGKAP,
+            u.nama_perusahaan  AS USER_NAMA_PERUSAHAAN,
+            u.departemen       AS USER_DEPARTEMEN,
+            u.perusahaan       AS USER_JENIS
+        FROM V_PEMESANAN vp
+        LEFT JOIN user u ON u.USERNAME = vp.USERNAME
+        ORDER BY vp.TANGGAL_PEMESANAN DESC
+    ";
+
+		return $this->db->query($sql)->result_array();
 	}
+
 
 	public function get_all_pending_transaction()
 	{
 		$sql = "SELECT * 
             FROM V_PEMESANAN 
-            WHERE STATUS IN ('PROCESS','PROPOSAL APPROVE')
+            WHERE STATUS IN ('PROCESS','PROPOSAL APPROVE','PAID')
             ORDER BY TANGGAL_PEMESANAN DESC";
 		$query = $this->db->query($sql);
 		return $query->result_array();
-	}
-
-
-	public function get_detail_pembayaran($id_pembayaran)
-	{
-		$id_pembayaran = (int)$id_pembayaran;
-
-		$sql = "
-      SELECT 
-        p.*,
-        ps.USERNAME,
-        g.HARGA_SEWA,
-        COALESCE(c.HARGA * ps.JUMLAH_CATERING, 0) AS HARGA_CATERING,
-        g.HARGA_SEWA + COALESCE(c.HARGA * ps.JUMLAH_CATERING, 0) AS TOTAL
-      FROM PEMBAYARAN p
-      LEFT JOIN PEMESANAN ps ON p.ID_PEMESANAN_RAW = ps.ID_PEMESANAN
-      LEFT JOIN CATERING c ON c.ID_CATERING = ps.ID_CATERING
-      LEFT JOIN GEDUNG g ON g.ID_GEDUNG = ps.ID_GEDUNG
-      WHERE p.ID_PEMBAYARAN = $id_pembayaran
-    ";
-
-		return $this->db->query($sql)->row();
 	}
 
 
@@ -349,6 +341,11 @@ class Gedung_Model extends CI_Model
         p.NAMA_PAKET,
         p.TOTAL_TAGIHAN,
         p.ATAS_NAMA_PENGIRIM,
+        CASE
+          WHEN UPPER(TRIM(IFNULL(u.perusahaan,''))) = 'INTERNAL' AND IFNULL(p.TOTAL_TAGIHAN,0) = 0
+            THEN CONCAT(IFNULL(u.NAMA_LENGKAP, ps.USERNAME), ' (AUTO)')
+          ELSE p.ATAS_NAMA_PENGIRIM
+        END AS ATAS_NAMA_TAMPIL,
         p.TANGGAL_TRANSFER,
         p.BANK_PENGIRIM,
         p.NOMINAL_TRANSFER,
@@ -357,10 +354,11 @@ class Gedung_Model extends CI_Model
         p.CONFIRMED_AT
       FROM pembayaran p
       JOIN pemesanan ps ON ps.ID_PEMESANAN = p.ID_PEMESANAN_RAW
+      LEFT JOIN user u ON u.USERNAME = ps.USERNAME
       WHERE ps.USERNAME = ?
-        AND p.STATUS_VERIF IN ('PENDING','CONFIRMED', 'REJECTED')
-      ORDER BY 
-        (p.CONFIRMED_AT IS NULL) ASC,  /* yang confirmed dulu */
+        AND p.STATUS_VERIF IN ('PENDING','CONFIRMED','REJECTED')
+      ORDER BY
+        (p.CONFIRMED_AT IS NULL) ASC,
         p.CONFIRMED_AT DESC,
         p.CREATED_AT DESC
     ";
@@ -411,13 +409,27 @@ class Gedung_Model extends CI_Model
 		return $query;
 	}
 
-	public function get_detail_pesanan($id_pemesanan)
-	{
-		$sql = "SELECT * FROM V_PEMESANAN WHERE ID_PEMESANAN = '$id_pemesanan'";
-		$query = $this->db->query($sql);
-		$hasil = $query->row();
-		return $hasil;
-	}
+		public function get_detail_pesanan($id_pemesanan)
+		{
+			$num = (int) preg_replace('/\D+/', '', (string)$id_pemesanan);
+			if ($num <= 0) return null;
+
+			// kemungkinan format di view:
+			// - angka: 94
+			// - kode: PMSN00094
+			$kode = 'PMSN000' . $num;
+
+			$sql = "SELECT *
+				FROM V_PEMESANAN
+				WHERE ID_PEMESANAN = ?
+				OR ID_PEMESANAN = ?
+				LIMIT 1";
+
+			return $this->db->query($sql, array($num, $kode))->row();
+		}
+
+
+
 
 	public function cancel_order($id_pemesanan, $data)
 	{
@@ -625,18 +637,15 @@ class Gedung_Model extends CI_Model
 	public function has_confirmed_conflict($id_gedung, $tanggal, $jam_mulai, $jam_selesai)
 	{
 		$sql = "
-        SELECT 1
-        FROM pembayaran p
-        JOIN pemesanan ps ON ps.ID_PEMESANAN = p.ID_PEMESANAN_RAW
-        WHERE p.STATUS_VERIF = ('PENDING','CONFIRMED')
-          AND ps.ID_GEDUNG = ?
-          AND ps.TANGGAL_PEMESANAN = ?
-          -- OVERLAP RULE:
-          -- existing_start < new_end AND existing_end > new_start
-          AND ps.JAM_PEMESANAN < ?
-          AND ps.JAM_SELESAI  > ?
-        LIMIT 1
-    ";
+			SELECT 1
+			FROM V_PEMESANAN v
+			WHERE v.STATUS IN ('PROPOSAL APPROVE','APPROVE & PAID','PAID')
+			AND v.ID_GEDUNG = ?
+			AND v.TANGGAL_PEMESANAN = ?
+			AND v.JAM_PEMESANAN < ?
+			AND v.JAM_SELESAI  > ?
+			LIMIT 1
+		";
 
 		$q = $this->db->query($sql, [$id_gedung, $tanggal, $jam_selesai, $jam_mulai]);
 		return $q->num_rows() > 0;

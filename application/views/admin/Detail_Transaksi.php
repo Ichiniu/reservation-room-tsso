@@ -260,21 +260,27 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
                                             <td><b>:</b></td>
                                             <td><b>Rp. <?php echo number_format($total_stl_pajak); ?></b></td>
                                         </tr>
-                                           <tr>
+                                        <<tr>
                                             <td><b>DESKRIPSI PEMESANAN</b></td>
                                             <td>:</td>
-                                            <td><?php echo $details->DESKRIPSI_ACARA; ?></td>
-                                        </tr>
-                                        <tr>
-                                            <td><b>PROPOSAL ACARA</b></td>
-                                            <td>:</td>
-                                            <td>
-                                                <a class="link-file"
-                                                    href="<?php echo site_url('admin/admin_controls/download_proposal/' . $hasil->ID_PEMESANAN . ''); ?>">
-                                                    <?php echo $details->FILE_NAME; ?>
-                                                </a>
-                                            </td>
-                                        </tr>
+                                            <td><?php echo !empty($details) ? $details->DESKRIPSI_ACARA : '-'; ?></td>
+                                            </tr>
+
+                                            <tr>
+                                                <td><b>PROPOSAL ACARA</b></td>
+                                                <td>:</td>
+                                                <td>
+                                                    <?php if (!empty($details) && !empty($details->FILE_NAME)) : ?>
+                                                        <a class="link-file"
+                                                            href="<?php echo site_url('admin/admin_controls/download_proposal/' . $hasil->ID_PEMESANAN); ?>">
+                                                            <?php echo $details->FILE_NAME; ?>
+                                                        </a>
+                                                    <?php else: ?>
+                                                        <em>Belum ada proposal</em>
+                                                    <?php endif; ?>
+                                                </td>
+                                            </tr>
+
                                     </tbody>
                                 </table>
                             </div>

@@ -3,6 +3,7 @@ $no = 1;
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <script src="https://cdn.tailwindcss.com"></script>
   <meta charset="utf-8">
@@ -35,35 +36,37 @@ $no = 1;
             </tr>
           </thead>
 
-<tbody>
-<?php if (!empty($res)) : ?>
-  <?php foreach ($res as $row) : ?>
-    <?php
-      $kode   = isset($row['KODE_PEMESANAN']) ? $row['KODE_PEMESANAN'] : '';
-      $idraw  = isset($row['ID_PEMESANAN_RAW']) ? $row['ID_PEMESANAN_RAW'] : '';
-      $idbyr  = isset($row['ID_PEMBAYARAN']) ? $row['ID_PEMBAYARAN'] : '';
-      $atas   = isset($row['ATAS_NAMA_PENGIRIM']) ? $row['ATAS_NAMA_PENGIRIM'] : '-';
-      $tgl    = isset($row['TANGGAL_TRANSFER']) ? $row['TANGGAL_TRANSFER'] : '-';
-      $nom    = isset($row['NOMINAL_TRANSFER']) ? (int)$row['NOMINAL_TRANSFER'] : 0;
-      $total  = isset($row['TOTAL_TAGIHAN']) ? (int)$row['TOTAL_TAGIHAN'] : 0;
-      $status = isset($row['STATUS_VERIF']) ? $row['STATUS_VERIF'] : '-';
-      $hutang = max(0, $total - $nom);
-    ?>
-    <tr>
-      <td class="px-4 py-3"><?php echo $no++; ?></td>
-      <td class="px-4 py-3"><?php echo htmlspecialchars($kode.$idraw); ?></td>
-      <td class="px-4 py-3"><?php echo 'PYMT000'.htmlspecialchars($idbyr); ?></td>
-      <td class="px-4 py-3"><?php echo htmlspecialchars($atas); ?></td>
-      <td class="px-4 py-3"><?php echo htmlspecialchars($tgl); ?></td>
-      <td class="px-4 py-3"><?php echo 'Rp.'.number_format($nom); ?></td>
-      <td class="px-4 py-3"><?php echo 'Rp.'.number_format($total); ?></td>
-      <td class="px-4 py-3"><?php echo htmlspecialchars($status); ?></td>
-    </tr>
-  <?php endforeach; ?>
-<?php else : ?>
-  <tr><td colspan="9" class="px-4 py-3">Belum ada pembayaran yang dikonfirmasi.</td></tr>
-<?php endif; ?>
-</tbody>
+          <tbody>
+            <?php if (!empty($res)) : ?>
+              <?php foreach ($res as $row) : ?>
+                <?php
+                $kode   = isset($row['KODE_PEMESANAN']) ? $row['KODE_PEMESANAN'] : '';
+                $idraw  = isset($row['ID_PEMESANAN_RAW']) ? $row['ID_PEMESANAN_RAW'] : '';
+                $idbyr  = isset($row['ID_PEMBAYARAN']) ? $row['ID_PEMBAYARAN'] : '';
+                $atas   = isset($row['ATAS_NAMA_PENGIRIM']) ? $row['ATAS_NAMA_PENGIRIM'] : '-';
+                $tgl    = isset($row['TANGGAL_TRANSFER']) ? $row['TANGGAL_TRANSFER'] : '-';
+                $nom    = isset($row['NOMINAL_TRANSFER']) ? (int)$row['NOMINAL_TRANSFER'] : 0;
+                $total  = isset($row['TOTAL_TAGIHAN']) ? (int)$row['TOTAL_TAGIHAN'] : 0;
+                $status = isset($row['STATUS_VERIF']) ? $row['STATUS_VERIF'] : '-';
+                $hutang = max(0, $total - $nom);
+                ?>
+                <tr>
+                  <td class="px-4 py-3"><?php echo $no++; ?></td>
+                  <td class="px-4 py-3"><?php echo htmlspecialchars($kode . $idraw); ?></td>
+                  <td class="px-4 py-3"><?php echo 'PYMT000' . htmlspecialchars($idbyr); ?></td>
+                  <td class="px-4 py-3"><?php echo htmlspecialchars($atas); ?></td>
+                  <td class="px-4 py-3"><?php echo htmlspecialchars($tgl); ?></td>
+                  <td class="px-4 py-3"><?php echo 'Rp.' . number_format($nom); ?></td>
+                  <td class="px-4 py-3"><?php echo 'Rp.' . number_format($total); ?></td>
+                  <td class="px-4 py-3"><?php echo htmlspecialchars($status); ?></td>
+                </tr>
+              <?php endforeach; ?>
+            <?php else : ?>
+              <tr>
+                <td colspan="9" class="px-4 py-3">Belum ada pembayaran yang dikonfirmasi.</td>
+              </tr>
+            <?php endif; ?>
+          </tbody>
 
 
         </table>
@@ -75,4 +78,5 @@ $no = 1;
   <script src="<?php echo base_url(); ?>assets/home/materialize/js/materialize.js"></script>
   <script src="<?php echo base_url(); ?>assets/home/index.js"></script>
 </body>
+
 </html>

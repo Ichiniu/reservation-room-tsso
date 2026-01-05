@@ -1,154 +1,84 @@
 <?php
-$session_id = $this->session->userdata('username');
-$this->load->helper(array('text','form'));
-
-$catatan_admin = isset($details->CATATAN_ADMIN) ? trim($details->CATATAN_ADMIN) : '';
-
-function row_item($label, $value, $bold=false){
-    $font = $bold ? 'font-semibold text-slate-900' : 'text-slate-700';
-    echo "
-    <div class='flex'>
-        <div class='w-48 text-slate-600'>{$label}</div>
-        <div class='{$font}'>{$value}</div>
-    </div>";
-}
-
-/* STATUS */
-$status_raw = isset($details->STATUS_VERIF) ? $details->STATUS_VERIF : '';
-$status = strtoupper(trim($status_raw));
-$is_locked = in_array($status, array('CONFIRMED','REJECTED'));
+$no = 1;
 ?>
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <title>Detail Pembayaran</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembayaran</title>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="<?php echo base_url(); ?>assets/home/materialize/css/materialize.css" rel="stylesheet" type="text/css">
+    <link href="<?php echo base_url(); ?>assets/home/template.css" rel="stylesheet" type="text/css">
 </head>
 
-<body class="bg-gray-50 text-gray-900">
+<body class="min-h-screen text-black bg-slate-200">
+    <?php $this->load->view('components/navbar'); ?>
+    <?php $this->load->view('components/header'); ?>
 
-    <?php $this->load->view('admin/components/sidebar'); ?>
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <section class="rounded-3xl bg-white shadow-xl p-6">
+            <div class="overflow-x-auto rounded-2xl ring-1 ring-black/5">
+                <table class="min-w-full bordered">
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-3 text-left">No</th>
+                            <th class="px-4 py-3 text-left">ID Pemesanan</th>
+                            <th class="px-4 py-3 text-left">ID Transaksi</th>
+                            <th class="px-4 py-3 text-left">Atas Nama</th>
+                            <th class="px-4 py-3 text-left">Tanggal Transfer</th>
+                            <th class="px-4 py-3 text-left">Jumlah Transfer</th>
+                            <th class="px-4 py-3 text-left">Total Tagihan</th>
+                            <th class="px-4 py-3 text-left">Status</th>
+                        </tr>
+                    </thead>
 
-    <main class="pt-24 md:pl-64 px-4 md:px-6 pb-10">
+                    <tbody>
+                        <?php if (!empty($res)) : ?>
+                            <?php foreach ($res as $row) : ?>
+                                <?php
+                                $kode   = isset($row['KODE_PEMESANAN']) ? $row['KODE_PEMESANAN'] : '';
+                                $idraw  = isset($row['ID_PEMESANAN_RAW']) ? $row['ID_PEMESANAN_RAW'] : '';
+                                $idbyr  = isset($row['ID_PEMBAYARAN']) ? $row['ID_PEMBAYARAN'] : '';
+                                $atas = isset($row['ATAS_NAMA_TAMPIL']) && $row['ATAS_NAMA_TAMPIL'] !== ''
+                                    ? $row['ATAS_NAMA_TAMPIL']
+                                    : (isset($row['ATAS_NAMA_PENGIRIM']) ? $row['ATAS_NAMA_PENGIRIM'] : '-');
+                                $tgl    = isset($row['TANGGAL_TRANSFER']) ? $row['TANGGAL_TRANSFER'] : '-';
+                                $nom    = isset($row['NOMINAL_TRANSFER']) ? (int)$row['NOMINAL_TRANSFER'] : 0;
+                                $total  = isset($row['TOTAL_TAGIHAN']) ? (int)$row['TOTAL_TAGIHAN'] : 0;
+                                $status = isset($row['STATUS_VERIF']) ? $row['STATUS_VERIF'] : '-';
+                                $hutang = max(0, $total - $nom);
+                                ?>
+                                <tr>
+                                    <td class="px-4 py-3"><?php echo $no++; ?></td>
+                                    <td class="px-4 py-3"><?php echo htmlspecialchars($kode . $idraw); ?></td>
+                                    <td class="px-4 py-3"><?php echo 'PYMT000' . htmlspecialchars($idbyr); ?></td>
+                                    <td class="px-4 py-3"><?php echo htmlspecialchars($atas); ?></td>
+                                    <td class="px-4 py-3"><?php echo htmlspecialchars($tgl); ?></td>
+                                    <td class="px-4 py-3"><?php echo 'Rp.' . number_format($nom); ?></td>
+                                    <td class="px-4 py-3"><?php echo 'Rp.' . number_format($total); ?></td>
+                                    <td class="px-4 py-3"><?php echo htmlspecialchars($status); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else : ?>
+                            <tr>
+                                <td colspan="9" class="px-4 py-3">Belum ada pembayaran yang dikonfirmasi.</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
 
-        <div class="max-w-5xl mx-auto bg-white rounded-xl shadow p-6">
 
-            <!-- DETAIL -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                <?php
-$id_pembayaran = isset($details->ID_PEMBAYARAN) ? (int)$details->ID_PEMBAYARAN : 0;
-row_item('ID Transaksi', 'PB'.str_pad($id_pembayaran, 6, '0', STR_PAD_LEFT), true);
-
-$kode = isset($details->KODE_PEMESANAN) ? $details->KODE_PEMESANAN : '';
-$id_raw = isset($details->ID_PEMESANAN_RAW) ? $details->ID_PEMESANAN_RAW : '';
-row_item('ID Pemesanan', htmlspecialchars($kode.$id_raw));
-
-$pengirim = isset($details->ATAS_NAMA_PENGIRIM) ? $details->ATAS_NAMA_PENGIRIM : '-';
-row_item('Atas Nama Pengirim', htmlspecialchars($pengirim));
-
-$tgl = isset($details->TANGGAL_TRANSFER) ? date('d F Y', strtotime($details->TANGGAL_TRANSFER)) : '-';
-row_item('Tanggal Pembayaran', $tgl);
-
-$nominal = isset($details->NOMINAL_TRANSFER) ? (int)$details->NOMINAL_TRANSFER : 0;
-row_item('Nominal Transfer', 'Rp '.number_format($nominal,0,',','.'), true);
-
-$total = isset($details->TOTAL_TAGIHAN) ? (int)$details->TOTAL_TAGIHAN : 0;
-row_item('Total Tagihan', 'Rp '.number_format($total,0,',','.'), true);
-
-$sisa = $total - $nominal;
-if ($sisa < 0) $sisa = 0;
-row_item('Sisa Tagihan', 'Rp '.number_format($sisa,0,',','.'), true);
-
-$bank = isset($details->BANK_PENGIRIM) ? $details->BANK_PENGIRIM : '-';
-row_item('Bank Pengirim', htmlspecialchars($bank));
-
-row_item('Status Verifikasi', htmlspecialchars($status), true);
-?>
+                </table>
             </div>
+        </section>
+    </div>
 
-            <!-- BUKTI -->
-            <?php
-$bukti_path = isset($details->BUKTI_PATH) ? $details->BUKTI_PATH : '';
-$bukti_name = isset($details->BUKTI_NAME) ? $details->BUKTI_NAME : '';
-
-if ($bukti_name && strpos($bukti_path, $bukti_name) === false) {
-    $bukti_path = rtrim($bukti_path,'/').'/'.$bukti_name;
-}
-
-$bukti_url = base_url($bukti_path);
-$is_pdf = (strpos(strtolower($bukti_path), '.pdf') !== false);
-?>
-
-            <div class="mt-6 text-center">
-                <?php if ($is_pdf): ?>
-                <a href="<?php echo $bukti_url; ?>" target="_blank" class="px-4 py-2 bg-slate-800 text-white rounded">
-                    Lihat Bukti (PDF)
-                </a>
-                <?php else: ?>
-                <img src="<?php echo $bukti_url; ?>" class="max-h-96 mx-auto rounded shadow">
-                <?php endif; ?>
-            </div>
-
-            <!-- VERIFIKASI -->
-            <div class="mt-8 border-t pt-6">
-
-                <?php if ($is_locked): ?>
-
-                <div class="bg-gray-50 border rounded p-4 text-sm">
-                    <b>Status Final:</b> <?php echo htmlspecialchars($status); ?>
-                </div>
-
-                <?php if ($catatan_admin != ''): ?>
-                <div class="mt-4">
-                    <p class="text-sm font-medium">Catatan Admin</p>
-                    <div class="border rounded bg-gray-50 p-3 text-sm">
-                        <?php echo nl2br(htmlspecialchars($catatan_admin)); ?>
-                    </div>
-                </div>
-                <?php endif; ?>
-
-                <a href="<?php echo site_url('admin/pembayaran'); ?>"
-                    class="inline-block mt-4 px-4 py-2 bg-gray-200 rounded">
-                    Kembali
-                </a>
-
-                <?php else: ?>
-
-                <form method="post"
-                    action="<?php echo site_url('admin/pembayaran/verify/'.$id_pembayaran.'/reject'); ?>">
-
-                    <label class="block text-sm font-medium mb-1">Catatan Admin (wajib)</label>
-                    <textarea name="catatan_admin" required class="w-full border rounded px-3 py-2 text-sm"
-                        rows="3"><?php echo htmlspecialchars($catatan_admin); ?></textarea>
-
-                    <div class="flex justify-end gap-3 mt-4">
-
-                        <a href="<?php echo site_url('admin/pembayaran'); ?>"
-                            class="px-4 py-2 bg-gray-200 rounded">Kembali</a>
-
-                        <button type="submit" onclick="return confirm('Yakin menolak pembayaran?')"
-                            class="px-4 py-2 bg-red-600 text-white rounded">
-                            Tolak
-                        </button>
-
-                        <button type="submit"
-                            formaction="<?php echo site_url('admin/pembayaran/verify/'.$id_pembayaran.'/confirm'); ?>"
-                            onclick="return confirm('Yakin menerima pembayaran?')"
-                            class="px-4 py-2 bg-teal-600 text-white rounded">
-                            Terima
-                        </button>
-
-                    </div>
-                </form>
-
-                <?php endif; ?>
-
-            </div>
-        </div>
-    </main>
+    <script src="<?php echo base_url(); ?>assets/home/assets/js/jquery.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/home/materialize/js/materialize.js"></script>
+    <script src="<?php echo base_url(); ?>assets/home/index.js"></script>
 </body>
 
 </html>

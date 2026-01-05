@@ -73,8 +73,34 @@ $total_keseluruhan = 0;
 
                                     <!-- Atas Nama (pengirim) -->
                                     <td class="px-4 py-3">
-                                        <?= $row['ATAS_NAMA_PENGIRIM']; ?>
+                                        <?php
+                                        $nama_lengkap = !empty($row['NAMA_LENGKAP']) ? $row['NAMA_LENGKAP'] : $row['ATAS_NAMA_PENGIRIM'];
+
+                                        // Nama perusahaan
+                                        $nama_perusahaan = !empty($row['nama_perusahaan']) ? $row['nama_perusahaan'] : '-';
+                                        // Departemen (biasanya hanya INTERNAL)
+                                        $departemen = !empty($row['departemen']) ? $row['departemen'] : '';
+
+                                        // Kalau INTERNAL tapi nama_perusahaan kosong, fallback
+                                        if (!empty($row['perusahaan']) && strtoupper(trim($row['perusahaan'])) === 'INTERNAL') {
+                                            if ($nama_perusahaan === '-' || $nama_perusahaan === '') {
+                                                $nama_perusahaan = 'PT Tiga Serangkai Pustaka Mandiri';
+                                            }
+                                        }
+                                        ?>
+
+                                        <div class="font-semibold text-slate-800">
+                                            <?= htmlspecialchars((string)$nama_lengkap, ENT_QUOTES, 'UTF-8'); ?>
+                                        </div>
+
+                                        <div class="text-xs text-slate-500 leading-snug">
+                                            <?= htmlspecialchars((string)$nama_perusahaan, ENT_QUOTES, 'UTF-8'); ?>
+                                            <?php if (!empty($departemen)): ?>
+                                                <br><?= htmlspecialchars((string)$departemen, ENT_QUOTES, 'UTF-8'); ?>
+                                            <?php endif; ?>
+                                        </div>
                                     </td>
+
 
                                     <td class="px-4 py-3 font-semibold text-green-600">
                                         Rp <?= number_format($row['NOMINAL_TRANSFER'], 0, ',', '.'); ?>

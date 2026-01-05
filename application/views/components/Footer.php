@@ -6,11 +6,11 @@
       <i class="bi bi-question-circle"></i> How to Order
     </a>
 
-    <a href="<?= site_url('login'); ?>" class="hover:text-slate-700 flex items-center gap-2">
+    <a href="<?= site_url('ulasan'); ?>" class="hover:text-slate-700 flex items-center gap-2">
       <i class="bi bi-chat-dots"></i> Ulasan
     </a>
 
-    <a href="<?= site_url('login'); ?>" class="hover:text-slate-700 flex items-center gap-2">
+    <a href="<?= site_url('location'); ?>" class="hover:text-slate-700 flex items-center gap-2">
       <i class="bi bi-geo-alt"></i> Location
     </a>
 

@@ -98,19 +98,20 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php $no=1; foreach($recent_pemesanan as $row): ?>
-                                <tr class="border-b">
-                                    <td class="px-3 py-2"><?= $no++ ?></td>
-                                    <td class="px-3 py-2 font-semibold"><?= $row->ID_PEMESANAN ?></td>
-                                    <td class="px-3 py-2"><?= $row->NAMA_GEDUNG ?></td>
-                                    <td class="px-3 py-2"><?= $row->TANGGAL_PEMESANAN ?></td>
-                                    <td class="px-3 py-2">
-                                        <a href="<?= site_url('admin/detail_pemesanan/'.$row->ID_PEMESANAN) ?>"
-                                            class="bg-blue-500 text-white px-3 py-1 rounded text-xs">
-                                            Detail
-                                        </a>
-                                    </td>
-                                </tr>
+                                <?php $no = 1;
+                                foreach ($recent_pemesanan as $row): ?>
+                                    <tr class="border-b">
+                                        <td class="px-3 py-2"><?= $no++ ?></td>
+                                        <td class="px-3 py-2 font-semibold"><?= $row->ID_PEMESANAN ?></td>
+                                        <td class="px-3 py-2"><?= $row->NAMA_GEDUNG ?></td>
+                                        <td class="px-3 py-2"><?= $row->TANGGAL_PEMESANAN ?></td>
+                                        <td class="px-3 py-2">
+                                            <a href="<?= site_url('admin/detail_pemesanan/' . $row->ID_PEMESANAN) ?>"
+                                                class="bg-blue-500 text-white px-3 py-1 rounded text-xs">
+                                                Detail
+                                            </a>
+                                        </td>
+                                    </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
@@ -122,22 +123,22 @@
                     <h2 class="font-bold text-gray-700 mb-4">User Activities</h2>
 
                     <ul class="space-y-4">
-                        <?php foreach($recent_pemesanan as $row): ?>
-                        <li class="flex justify-between items-center">
-                            <div class="flex items-center gap-3">
-                                <div class="w-9 h-9 bg-gray-300 rounded-full"></div>
-                                <div>
-                                    <p class="text-sm">
-                                        <span class="font-semibold"><?= $row->USERNAME ?></span>
-                                        booked <?= $row->NAMA_GEDUNG ?>
-                                    </p>
-                                    <p class="text-xs text-gray-500">
-                                        <?= $row->TANGGAL_PEMESANAN ?> <?= $row->JAM ?>
-                                    </p>
+                        <?php foreach ($recent_pemesanan as $row): ?>
+                            <li class="flex justify-between items-center">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 bg-gray-300 rounded-full"></div>
+                                    <div>
+                                        <p class="text-sm">
+                                            <span class="font-semibold"><?= $row->USERNAME ?></span>
+                                            booked <?= $row->NAMA_GEDUNG ?>
+                                        </p>
+                                        <p class="text-xs text-gray-500">
+                                            <?= $row->TANGGAL_PEMESANAN ?> <?= $row->JAM ?>
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                            <span class="text-gray-400">›</span>
-                        </li>
+                                <span class="text-gray-400">›</span>
+                            </li>
                         <?php endforeach; ?>
                     </ul>
 
@@ -163,33 +164,38 @@
                                 <th class="px-3 py-2">User</th>
                                 <th class="px-3 py-2">Tanggal</th>
                                 <th class="px-3 py-2">Jam</th>
-                                <th class="px-3 py-2">Status</th>
                                 <th class="px-3 py-2">Aksi</th>
                             </tr>
                         </thead>
+
                         <tbody>
-                            <?php $no=1; foreach($front_data as $row): ?>
-                            <tr class="border-b">
-                                <td class="px-3 py-2"><?= $no++ ?></td>
-                                <td class="px-3 py-2 font-semibold"><?= $row->ID_PEMESANAN ?></td>
-                                <td class="px-3 py-2"><?= $row->NAMA_GEDUNG ?></td>
-                                <td class="px-3 py-2"><?= $row->USERNAME ?></td>
-                                <td class="px-3 py-2"><?= $row->TANGGAL_PEMESANAN ?></td>
-                                <td class="px-3 py-2"><?= $row->JAM ?></td>
-                                <td class="px-3 py-2">
-                                    <span class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs">
-                                        FIXED DATE
-                                    </span>
-                                </td>
-                                <td class="px-3 py-2">
-                                    <a href="<?= site_url('admin/detail_pemesanan/'.$row->ID_PEMESANAN) ?>"
-                                        class="bg-blue-500 text-white px-3 py-1 rounded text-xs">
-                                        Detail
-                                    </a>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
+                            <?php if (!empty($front_data)): ?>
+                                <?php $no = 1;
+                                foreach ($front_data as $row): ?>
+                                    <tr class="border-b">
+                                        <td class="px-3 py-2"><?= $no++ ?></td>
+                                        <td class="px-3 py-2 font-semibold"><?= $row->ID_PEMESANAN ?></td>
+                                        <td class="px-3 py-2"><?= $row->NAMA_GEDUNG ?></td>
+                                        <td class="px-3 py-2"><?= $row->USERNAME ?></td>
+                                        <td class="px-3 py-2"><?= $row->TANGGAL_PEMESANAN ?></td>
+                                        <td class="px-3 py-2"><?= !empty($row->JAM) ? $row->JAM : '-' ?></td>
+                                        <td class="px-3 py-2">
+                                            <a href="<?= site_url('admin/detail_pemesanan/' . $row->ID_PEMESANAN) ?>"
+                                                class="bg-blue-500 text-white px-3 py-1 rounded text-xs">
+                                                Detail
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="7" class="px-3 py-6 text-center text-gray-500">
+                                        Belum ada jadwal SUBMITED.
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
                         </tbody>
+
                     </table>
                 </div>
             </div>

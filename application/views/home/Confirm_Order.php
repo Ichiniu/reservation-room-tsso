@@ -166,7 +166,7 @@ $id_gedung = $this->uri->segment(4);
                     </div>
                     <!-- FORM UPLOAD -->
                     <div class="mt-6 rounded-xl border border-slate-300 bg-slate-50 p-5 ring-1 ring-slate-200">
-                        <?php echo form_open_multipart('home/home/upload_proposal/' . $id); ?>
+                        <?php echo form_open_multipart('home/home/upload_proposal/' . $id, ['id' => 'formUpload']); ?>
                         <input type="hidden" name="request_id" value="<?php echo isset($order['REQUEST_ID']) ? htmlspecialchars($order['REQUEST_ID']) : ''; ?>">
                         <?php if ($this->session->flashdata('upload_error')): ?>
                             <div class="mb-4 p-3 rounded-lg border border-red-200 bg-red-50 text-red-700 text-sm">
