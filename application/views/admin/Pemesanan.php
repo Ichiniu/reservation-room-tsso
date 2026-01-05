@@ -40,16 +40,17 @@ $this->load->helper('text');
 
             <!-- ================= FILTER ================= -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                <input type="text" id="filterId" placeholder="Cari ID Pemesanan" class="border border-gray-300 rounded-lg px-3 py-2 text-sm
-                       focus:border-black focus:ring-0 outline-none">
+                <input type="text" id="filterId" placeholder="Cari ID Pemesanan"
+                    class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
 
-                <select id="filterStatus" class="border border-gray-300 rounded-lg px-3 py-2 text-sm
-                       focus:border-black focus:ring-0 outline-none">
+                <select id="filterStatus" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
                     <option value="">Semua Status</option>
                     <option value="PROPOSAL APPROVE">PROPOSAL APPROVE</option>
                     <option value="REJECTED">REJECTED</option>
                     <option value="PROCESS">PROCESS</option>
                 </select>
+
+                <input type="date" id="filterTanggal" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
 
                 <button id="resetFilter" class="bg-gray-200 hover:bg-gray-300 rounded-lg px-4 py-2 text-sm">
                     Reset
@@ -57,7 +58,7 @@ $this->load->helper('text');
             </div>
             <!-- ================= END FILTER ================= -->
 
-            <!-- TABLE -->
+            <!-- ================= TABLE ================= -->
             <div class="overflow-x-auto">
                 <table class="bordered highlight w-full">
                     <thead class="bg-gray-100">
@@ -76,10 +77,16 @@ $this->load->helper('text');
                         <?php foreach ($pemesanan as $row): ?>
                         <tr class="table-row hover:bg-gray-50">
                             <td class="px-4 py-3 id"><?= $row['ID_PEMESANAN']; ?></td>
+
                             <td class="px-4 py-3"><?= $row['USERNAME']; ?></td>
-                            <td class="px-4 py-3">
+
+                            <!-- tanggal -->
+                            <td class="px-4 py-3 tanggal"
+                                data-date="<?= date('Y-m-d', strtotime($row['TANGGAL_PEMESANAN'])); ?>">
                                 <?= date('d F Y', strtotime($row['TANGGAL_PEMESANAN'])); ?>
                             </td>
+
+                            <!-- jam -->
                             <td class="px-4 py-3">
                                 <?php
                             if (!empty($row['JAM_PEMESANAN']) && !empty($row['JAM_SELESAI'])) {
@@ -90,6 +97,7 @@ $this->load->helper('text');
                             }
                             ?>
                             </td>
+
                             <td class="px-4 py-3"><?= $row['NAMA_GEDUNG']; ?></td>
 
                             <td class="px-4 py-3 status">
@@ -115,8 +123,9 @@ $this->load->helper('text');
                 </table>
             </div>
 
-            <!-- PAGINATION -->
+            <!-- ================= PAGINATION ================= -->
             <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
                 <button id="prevBtn" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 disabled:opacity-50">
                     Prev
                 </button>
@@ -124,8 +133,7 @@ $this->load->helper('text');
                 <span id="pageInfo" class="text-sm text-gray-600 text-center"></span>
 
                 <div class="flex items-center gap-3">
-                    <select id="rowsPerPage" class="border border-gray-300 rounded-lg px-3 py-2 text-sm
-                           focus:border-black focus:ring-0 outline-none">
+                    <select id="rowsPerPage" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
                         <option value="5">5 rows</option>
                         <option value="10" selected>10 rows</option>
                         <option value="25">25 rows</option>
@@ -140,12 +148,14 @@ $this->load->helper('text');
         </div>
     </main>
 
+    <!-- ================= SCRIPT ================= -->
     <script>
     let rows = Array.from(document.querySelectorAll(".table-row"));
     let filteredRows = [...rows];
 
     const filterId = document.getElementById("filterId");
     const filterStatus = document.getElementById("filterStatus");
+    const filterTanggal = document.getElementById("filterTanggal");
     const resetFilter = document.getElementById("resetFilter");
 
     const rowsPerPageSelect = document.getElementById("rowsPerPage");
@@ -176,13 +186,16 @@ $this->load->helper('text');
     function applyFilter() {
         const idVal = filterId.value.toLowerCase();
         const statusVal = filterStatus.value.toLowerCase();
+        const tanggalVal = filterTanggal.value;
 
         filteredRows = rows.filter(row => {
             const idText = row.querySelector(".id").innerText.toLowerCase();
             const statusText = row.querySelector(".status").innerText.toLowerCase();
+            const tanggalText = row.querySelector(".tanggal").dataset.date;
 
             return idText.includes(idVal) &&
-                (statusVal === "" || statusText.includes(statusVal));
+                (statusVal === "" || statusText.includes(statusVal)) &&
+                (tanggalVal === "" || tanggalText === tanggalVal);
         });
 
         currentPage = 1;
@@ -191,10 +204,12 @@ $this->load->helper('text');
 
     filterId.addEventListener("keyup", applyFilter);
     filterStatus.addEventListener("change", applyFilter);
+    filterTanggal.addEventListener("change", applyFilter);
 
     resetFilter.addEventListener("click", () => {
         filterId.value = "";
         filterStatus.value = "";
+        filterTanggal.value = "";
         filteredRows = [...rows];
         currentPage = 1;
         renderTable();
@@ -214,7 +229,8 @@ $this->load->helper('text');
     };
 
     nextBtn.onclick = () => {
-        if (currentPage < Math.ceil(filteredRows.length / rowsPerPage)) {
+        const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+        if (currentPage < totalPages) {
             currentPage++;
             renderTable();
         }
