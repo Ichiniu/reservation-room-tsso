@@ -1,5 +1,7 @@
 <?php
-$session_id = $this->session->userdata('username');
+$session_id = $this->session->userdata('admin_username');
+
+
 $this->load->helper('text');
 ?>
 <!DOCTYPE html>
