@@ -1,16 +1,38 @@
 <?php
-$username = $this->session->userdata('admin_username') ?: $this->session->userdata('username');
+$username = $this->session->userdata('admin_username');
+if (empty($username)) {
+    $username = $this->session->userdata('username');
+}
+
+/**
+ * FIX:
+ * Di halaman admin/detail_pemesanan, $result = object stdClass (detail pesanan),
+ * jadi jangan pernah (int)$result.
+ */
 
 // inbox
 if (isset($result)) {
-    $result = is_array($result) ? count($result) : (int)$result;
+    if (is_array($result)) {
+        $result = count($result);
+    } elseif (is_numeric($result)) {
+        $result = (int)$result;
+    } else {
+        // kalau object (stdClass) atau tipe lain -> anggap 0
+        $result = 0;
+    }
 } else {
     $result = 0;
 }
 
 // transaksi
 if (isset($get_transaction)) {
-    $get_transaction = is_array($get_transaction) ? count($get_transaction) : (int)$get_transaction;
+    if (is_array($get_transaction)) {
+        $get_transaction = count($get_transaction);
+    } elseif (is_numeric($get_transaction)) {
+        $get_transaction = (int)$get_transaction;
+    } else {
+        $get_transaction = 0;
+    }
 } else {
     $get_transaction = 0;
 }
@@ -93,7 +115,7 @@ function is_active($uri, $current_uri)
             </span>
             <span class="font-semibold text-lg">Administrator</span>
             <span class="ml-auto text-sm text-gray-500">
-                <?= htmlspecialchars($username); ?>
+                <?= htmlspecialchars((string)$username, ENT_QUOTES, 'UTF-8'); ?>
             </span>
         </div>
     </header>
@@ -133,14 +155,8 @@ function is_active($uri, $current_uri)
                 <span class="menu-text">List Pemesanan</span>
             </a>
 
-            <!-- <a href="<?= site_url('admin/list') ?>" class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white
-<?= is_active('admin/list', $current_uri) ? 'menu-active' : '' ?>">
-                <span class="material-icons">people</span>
-                <span class="menu-text">List User</span>
-            </a> -->
-
             <!-- INBOX / TRANSAKSI -->
-            <?php $jumlah_inbox = isset($result) ? $result : 0; ?>
+            <?php $jumlah_inbox = (int)$result; ?>
             <a href="<?= site_url('admin/transaksi') ?>" class="relative flex items-center gap-3 px-4 py-3 rounded hover:bg-white
 <?php if ($current_uri == 'admin/transaksi') {
     echo 'menu-active';
@@ -173,32 +189,6 @@ function is_active($uri, $current_uri)
                 <span class="material-icons">summarize</span>
                 <span class="menu-text">Rekap Transaksi</span>
             </a>
-
-            <!-- TRANSAKSI -->
-            <!-- <details class="group" <?= is_active('admin/rekap', $current_uri) ? 'open' : '' ?>>
-                <summary class="flex items-center justify-between px-4 py-3 cursor-pointer rounded hover:bg-white list-none
-<?= is_active('admin/rekap', $current_uri) ? 'menu-active' : '' ?>">
-                    <div class="flex items-center gap-3">
-                        <span class="material-icons">payment</span>
-                        <span class="menu-text">Transaksi</span>
-                    </div> -->
-            <!-- <span class="material-icons arrow-icon transition-transform group-open:rotate-180">
-                        expand_more
-                    </span> -->
-            <!-- </summary> -->
-
-            <!-- <div class="ml-10 mt-1 space-y-1">
-                    <a href="<?= site_url('admin/rekap_aktivitas') ?>" class="block px-3 py-2 rounded hover:bg-white
-<?= is_active('admin/rekap_aktivitas', $current_uri) ? 'menu-active' : '' ?>">
-                        Rekap Aktivitas
-                    </a>
-
-                    <a href="<?= site_url('admin/rekap_transaksi') ?>" class="block px-3 py-2 rounded hover:bg-white
-<?= is_active('admin/rekap_transaksi', $current_uri) ? 'menu-active' : '' ?>">
-                        Rekap Transaksi
-                    </a>
-                </div>
-            </details> -->
 
             <hr class="my-4">
 
