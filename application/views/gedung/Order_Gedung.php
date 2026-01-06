@@ -70,9 +70,9 @@ $id_gedung = $this->uri->segment(3);
 
                 <div class="p-5 sm:p-6">
                     <?php if ($this->session->flashdata('error')): ?>
-                    <div class="p-3 mb-4 rounded bg-red-100 text-red-700">
-                        <?php echo $this->session->flashdata('error'); ?>
-                    </div>
+                        <div class="p-3 mb-4 rounded bg-red-100 text-red-700">
+                            <?php echo $this->session->flashdata('error'); ?>
+                        </div>
                     <?php endif; ?>
 
                     <form action="<?php echo site_url('home/order-gedung/validate/' . $id_gedung); ?>" method="post"
@@ -104,10 +104,10 @@ $id_gedung = $this->uri->segment(3);
                             <!-- Nama Gedung -->
                             <div class="rounded-xl border border-slate-300 bg-slate-50 p-5 ring-1 ring-slate-200">
                                 <label class="block text-xs font-semibold tracking-widest text-slate-500">NAMA
-                                    GEDUNG</label>
+                                    RUANGAN</label>
                                 <div class="mt-2 text-sm font-semibold text-slate-900">
                                     <?php foreach ($hasil as $gedung): ?>
-                                    <?php echo htmlspecialchars($gedung['NAMA_GEDUNG'], ENT_QUOTES, 'UTF-8'); ?>
+                                        <?php echo htmlspecialchars($gedung['NAMA_GEDUNG'], ENT_QUOTES, 'UTF-8'); ?>
                                     <?php endforeach; ?>
                                 </div>
                             </div>
@@ -243,9 +243,9 @@ $id_gedung = $this->uri->segment(3);
                                     ?>
 
                                     <?php foreach ($groups as $jenis => $items): ?>
-                                    <optgroup label="<?php echo htmlspecialchars($jenis, ENT_QUOTES, 'UTF-8'); ?>">
-                                        <?php foreach ($items as $row): ?>
-                                        <?php
+                                        <optgroup label="<?php echo htmlspecialchars($jenis, ENT_QUOTES, 'UTF-8'); ?>">
+                                            <?php foreach ($items as $row): ?>
+                                                <?php
                                                 $id      = (int)$row['ID_CATERING'];
                                                 $nama    = isset($row['NAMA_PAKET']) ? $row['NAMA_PAKET'] : '';
                                                 $harga   = isset($row['HARGA']) ? (int)$row['HARGA'] : 0;
@@ -256,16 +256,16 @@ $id_gedung = $this->uri->segment(3);
                                                 // amanin buat attribute (hapus newline)
                                                 $menujson_attr = str_replace(array("\r", "\n"), ' ', $menujson);
                                                 ?>
-                                        <option value="<?php echo $id; ?>" data-harga="<?php echo $harga; ?>"
-                                            data-minpax="<?php echo $minp; ?>"
-                                            data-nama="<?php echo htmlspecialchars($nama, ENT_QUOTES, 'UTF-8'); ?>"
-                                            data-menujson="<?php echo htmlspecialchars($menujson_attr, ENT_QUOTES, 'UTF-8'); ?>">
-                                            <?php echo htmlspecialchars($nama, ENT_QUOTES, 'UTF-8'); ?>
-                                            — Rp <?php echo number_format($harga, 0, ',', '.'); ?>/pax (min
-                                            <?php echo $minp; ?>)
-                                        </option>
-                                        <?php endforeach; ?>
-                                    </optgroup>
+                                                <option value="<?php echo $id; ?>" data-harga="<?php echo $harga; ?>"
+                                                    data-minpax="<?php echo $minp; ?>"
+                                                    data-nama="<?php echo htmlspecialchars($nama, ENT_QUOTES, 'UTF-8'); ?>"
+                                                    data-menujson="<?php echo htmlspecialchars($menujson_attr, ENT_QUOTES, 'UTF-8'); ?>">
+                                                    <?php echo htmlspecialchars($nama, ENT_QUOTES, 'UTF-8'); ?>
+                                                    — Rp <?php echo number_format($harga, 0, ',', '.'); ?>/pax (min
+                                                    <?php echo $minp; ?>)
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </optgroup>
                                     <?php endforeach; ?>
                                 </select>
 
@@ -376,246 +376,246 @@ $id_gedung = $this->uri->segment(3);
     <?php $this->load->view('components/footer'); ?>
 
     <script>
-    // FORMAT TANGGAL INDONESIA
-    document.addEventListener('DOMContentLoaded', function() {
-        const tglInput = document.getElementById('tgl_pesan');
-        const tglFormatId = document.getElementById('tgl-format-id');
-        const tglText = document.getElementById('tgl-text');
+        // FORMAT TANGGAL INDONESIA
+        document.addEventListener('DOMContentLoaded', function() {
+            const tglInput = document.getElementById('tgl_pesan');
+            const tglFormatId = document.getElementById('tgl-format-id');
+            const tglText = document.getElementById('tgl-text');
 
-        function formatTanggalIndonesia(dateStr) {
-            const months = [
-                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-            ];
-            const parts = dateStr.split('-');
-            if (parts.length !== 3) return '';
-            const year = parts[0];
-            const month = parseInt(parts[1], 10) - 1;
-            const day = parseInt(parts[2], 10);
-            return day + ' ' + months[month] + ' ' + year;
-        }
+            function formatTanggalIndonesia(dateStr) {
+                const months = [
+                    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                ];
+                const parts = dateStr.split('-');
+                if (parts.length !== 3) return '';
+                const year = parts[0];
+                const month = parseInt(parts[1], 10) - 1;
+                const day = parseInt(parts[2], 10);
+                return day + ' ' + months[month] + ' ' + year;
+            }
 
-        tglInput.addEventListener('change', function() {
-            const formatted = formatTanggalIndonesia(tglInput.value);
-            if (formatted) {
-                tglText.textContent = formatted;
-                tglFormatId.classList.remove('hidden');
-            } else {
-                tglFormatId.classList.add('hidden');
+            tglInput.addEventListener('change', function() {
+                const formatted = formatTanggalIndonesia(tglInput.value);
+                if (formatted) {
+                    tglText.textContent = formatted;
+                    tglFormatId.classList.remove('hidden');
+                } else {
+                    tglFormatId.classList.add('hidden');
+                }
+            });
+
+            // inisialisasi jika sudah ada value
+            if (tglInput.value) {
+                const formatted = formatTanggalIndonesia(tglInput.value);
+                if (formatted) {
+                    tglText.textContent = formatted;
+                    tglFormatId.classList.remove('hidden');
+                }
             }
         });
 
-        // inisialisasi jika sudah ada value
-        if (tglInput.value) {
-            const formatted = formatTanggalIndonesia(tglInput.value);
-            if (formatted) {
-                tglText.textContent = formatted;
-                tglFormatId.classList.remove('hidden');
-            }
-        }
-    });
-
-    // disable tombol saat submit
-    document.addEventListener('DOMContentLoaded', function() {
-        var form = document.querySelector('form');
-        var btn = document.querySelector('button[type="submit"], input[type="submit"]');
-        if (!form || !btn) return;
-        form.addEventListener('submit', function() {
-            btn.disabled = true;
-            btn.style.opacity = "0.7";
+        // disable tombol saat submit
+        document.addEventListener('DOMContentLoaded', function() {
+            var form = document.querySelector('form');
+            var btn = document.querySelector('button[type="submit"], input[type="submit"]');
+            if (!form || !btn) return;
+            form.addEventListener('submit', function() {
+                btn.disabled = true;
+                btn.style.opacity = "0.7";
+            });
         });
-    });
 
-    // ALPINE COMPONENT
-    function orderForm() {
-        return {
-            // ==== state umum ====
-            catering: 'tidak',
-            tipeJam: 'CUSTOM',
-            RULES: {
-                HALF_DAY_PAGI: {
-                    start: '08:00',
-                    end: '12:00',
-                    label: 'HALF DAY (08:00 - 12:00)'
-                },
-                HALF_DAY_SIANG: {
-                    start: '13:00',
-                    end: '16:00',
-                    label: 'HALF DAY (13:00 - 16:00)'
-                },
-                FULL_DAY: {
-                    start: '08:00',
-                    end: '17:00',
-                    label: 'FULL DAY (08:00 - 17:00)'
-                }
-            },
-            jamMulai: '',
-            jamSelesai: '',
-            profileOpen: false,
-
-            // ==== catering state ====
-            categories: [],
-            addons: [],
-            selectedHarga: 0,
-            selectedMinPax: 1,
-            selectedNama: '',
-            jumlahPorsi: '',
-
-            get cateringEnabled() {
-                return this.catering === 'ya';
-            },
-            get isCustom() {
-                return this.tipeJam === 'CUSTOM';
-            },
-
-            init: function() {
-                this.jamMulai = '';
-                this.jamSelesai = '';
-
-                var self = this;
-                this.$watch('catering', function(v) {
-                    if (v !== 'ya') self.resetCatering();
-                });
-            },
-
-            applyJam: function() {
-                if (this.isCustom) return;
-                this.jamMulai = this.RULES[this.tipeJam].start;
-                this.jamSelesai = this.RULES[this.tipeJam].end;
-            },
-
-            resetCatering: function() {
-                this.selectedHarga = 0;
-                this.selectedMinPax = 1;
-                this.selectedNama = '';
-                this.jumlahPorsi = '';
-                this.categories = [];
-                this.addons = [];
-                var sel = document.getElementById('selected_catering');
-                if (sel) sel.value = '';
-            },
-
-            onCateringChange: function(e) {
-                var opt = e.target.options[e.target.selectedIndex];
-
-                this.selectedHarga = parseInt(opt.getAttribute('data-harga') || '0', 10);
-                this.selectedMinPax = parseInt(opt.getAttribute('data-minpax') || '1', 10);
-                this.selectedNama = opt.getAttribute('data-nama') || '';
-
-                var raw = opt.getAttribute('data-menujson') || '';
-                this.parseMenuJson(raw);
-
-                var jp = parseInt(this.jumlahPorsi || '0', 10);
-                if (!jp || jp < this.selectedMinPax) this.jumlahPorsi = this.selectedMinPax;
-            },
-
-            parseMenuJson: function(raw) {
-                this.categories = [];
-                this.addons = [];
-                if (!raw) return;
-
-                var obj = null;
-                try {
-                    obj = JSON.parse(raw);
-                } catch (e) {
-                    obj = null;
-                }
-                if (!obj) return;
-
-                // categories
-                if (obj.categories && Array.isArray(obj.categories)) {
-                    for (var i = 0; i < obj.categories.length; i++) {
-                        var c = obj.categories[i] || {};
-                        var key = c.key || ('cat_' + i);
-                        var label = c.label || ('Kategori ' + (i + 1));
-                        var pick = parseInt(c.pick || 0, 10);
-                        var note = c.note || '';
-                        var items = (c.items && Array.isArray(c.items)) ? c.items : [];
-
-                        // sembunyikan yg "tidak termasuk" + kosong
-                        var exclude = false;
-                        if (items.length === 0 && note && note.toLowerCase().indexOf('tidak termasuk') !== -1)
-                            exclude = true;
-
-                        var noteText = '';
-                        if (pick > 0) noteText = 'Bebas memilih ' + pick + ' macam';
-                        if (note) noteText = noteText ? (noteText + ' • ' + note) : note;
-
-                        var example = items.length ? items.slice(0, 2).join(', ') : 'Tulis pilihan kamu di sini';
-
-                        var placeholder = '';
-                        if (pick > 0) placeholder = 'Pilih maksimal ' + pick + ' (contoh: ' + example + ')';
-                        else if (note) placeholder = note + ' (contoh: ' + example + ')';
-                        else placeholder = 'Contoh: ' + example;
-
-                        this.categories.push({
-                            key: key,
-                            label: label,
-                            pick: pick,
-                            note: note,
-                            noteText: noteText,
-                            items: items,
-                            example: example,
-                            placeholder: placeholder,
-                            exclude: exclude
-                        });
+        // ALPINE COMPONENT
+        function orderForm() {
+            return {
+                // ==== state umum ====
+                catering: 'tidak',
+                tipeJam: 'CUSTOM',
+                RULES: {
+                    HALF_DAY_PAGI: {
+                        start: '08:00',
+                        end: '12:00',
+                        label: 'HALF DAY (08:00 - 12:00)'
+                    },
+                    HALF_DAY_SIANG: {
+                        start: '13:00',
+                        end: '16:00',
+                        label: 'HALF DAY (13:00 - 16:00)'
+                    },
+                    FULL_DAY: {
+                        start: '08:00',
+                        end: '17:00',
+                        label: 'FULL DAY (08:00 - 17:00)'
                     }
-                }
+                },
+                jamMulai: '',
+                jamSelesai: '',
+                profileOpen: false,
 
-                // addons
-                if (obj.addons && Array.isArray(obj.addons)) {
-                    for (var j = 0; j < obj.addons.length; j++) {
-                        var a = obj.addons[j] || {};
-                        var akey = a.key || ('addon_' + j);
-                        var alabel = a.label || ('Add-on ' + (j + 1));
-                        var apick = parseInt(a.pick || 0, 10);
-                        var aprice = parseInt(a.price || 0, 10);
-                        var anote = a.note || '';
-                        var aitems = (a.items && Array.isArray(a.items)) ? a.items : [];
+                // ==== catering state ====
+                categories: [],
+                addons: [],
+                selectedHarga: 0,
+                selectedMinPax: 1,
+                selectedNama: '',
+                jumlahPorsi: '',
 
-                        var aexample = aitems.length ? aitems.slice(0, 2).join(', ') : 'Tulis pilihan add-on';
-                        var aplaceholder = '';
-                        if (apick > 0) aplaceholder = 'Pilih maksimal ' + apick + ' (contoh: ' + aexample + ')';
-                        else if (anote) aplaceholder = anote + ' (contoh: ' + aexample + ')';
-                        else aplaceholder = 'Contoh: ' + aexample;
+                get cateringEnabled() {
+                    return this.catering === 'ya';
+                },
+                get isCustom() {
+                    return this.tipeJam === 'CUSTOM';
+                },
 
-                        this.addons.push({
-                            key: akey,
-                            label: alabel,
-                            pick: apick,
-                            price: aprice,
-                            note: anote,
-                            items: aitems,
-                            example: aexample,
-                            placeholder: aplaceholder,
-                            enabled: false
-                        });
+                init: function() {
+                    this.jamMulai = '';
+                    this.jamSelesai = '';
+
+                    var self = this;
+                    this.$watch('catering', function(v) {
+                        if (v !== 'ya') self.resetCatering();
+                    });
+                },
+
+                applyJam: function() {
+                    if (this.isCustom) return;
+                    this.jamMulai = this.RULES[this.tipeJam].start;
+                    this.jamSelesai = this.RULES[this.tipeJam].end;
+                },
+
+                resetCatering: function() {
+                    this.selectedHarga = 0;
+                    this.selectedMinPax = 1;
+                    this.selectedNama = '';
+                    this.jumlahPorsi = '';
+                    this.categories = [];
+                    this.addons = [];
+                    var sel = document.getElementById('selected_catering');
+                    if (sel) sel.value = '';
+                },
+
+                onCateringChange: function(e) {
+                    var opt = e.target.options[e.target.selectedIndex];
+
+                    this.selectedHarga = parseInt(opt.getAttribute('data-harga') || '0', 10);
+                    this.selectedMinPax = parseInt(opt.getAttribute('data-minpax') || '1', 10);
+                    this.selectedNama = opt.getAttribute('data-nama') || '';
+
+                    var raw = opt.getAttribute('data-menujson') || '';
+                    this.parseMenuJson(raw);
+
+                    var jp = parseInt(this.jumlahPorsi || '0', 10);
+                    if (!jp || jp < this.selectedMinPax) this.jumlahPorsi = this.selectedMinPax;
+                },
+
+                parseMenuJson: function(raw) {
+                    this.categories = [];
+                    this.addons = [];
+                    if (!raw) return;
+
+                    var obj = null;
+                    try {
+                        obj = JSON.parse(raw);
+                    } catch (e) {
+                        obj = null;
                     }
+                    if (!obj) return;
+
+                    // categories
+                    if (obj.categories && Array.isArray(obj.categories)) {
+                        for (var i = 0; i < obj.categories.length; i++) {
+                            var c = obj.categories[i] || {};
+                            var key = c.key || ('cat_' + i);
+                            var label = c.label || ('Kategori ' + (i + 1));
+                            var pick = parseInt(c.pick || 0, 10);
+                            var note = c.note || '';
+                            var items = (c.items && Array.isArray(c.items)) ? c.items : [];
+
+                            // sembunyikan yg "tidak termasuk" + kosong
+                            var exclude = false;
+                            if (items.length === 0 && note && note.toLowerCase().indexOf('tidak termasuk') !== -1)
+                                exclude = true;
+
+                            var noteText = '';
+                            if (pick > 0) noteText = 'Bebas memilih ' + pick + ' macam';
+                            if (note) noteText = noteText ? (noteText + ' • ' + note) : note;
+
+                            var example = items.length ? items.slice(0, 2).join(', ') : 'Tulis pilihan kamu di sini';
+
+                            var placeholder = '';
+                            if (pick > 0) placeholder = 'Pilih maksimal ' + pick + ' (contoh: ' + example + ')';
+                            else if (note) placeholder = note + ' (contoh: ' + example + ')';
+                            else placeholder = 'Contoh: ' + example;
+
+                            this.categories.push({
+                                key: key,
+                                label: label,
+                                pick: pick,
+                                note: note,
+                                noteText: noteText,
+                                items: items,
+                                example: example,
+                                placeholder: placeholder,
+                                exclude: exclude
+                            });
+                        }
+                    }
+
+                    // addons
+                    if (obj.addons && Array.isArray(obj.addons)) {
+                        for (var j = 0; j < obj.addons.length; j++) {
+                            var a = obj.addons[j] || {};
+                            var akey = a.key || ('addon_' + j);
+                            var alabel = a.label || ('Add-on ' + (j + 1));
+                            var apick = parseInt(a.pick || 0, 10);
+                            var aprice = parseInt(a.price || 0, 10);
+                            var anote = a.note || '';
+                            var aitems = (a.items && Array.isArray(a.items)) ? a.items : [];
+
+                            var aexample = aitems.length ? aitems.slice(0, 2).join(', ') : 'Tulis pilihan add-on';
+                            var aplaceholder = '';
+                            if (apick > 0) aplaceholder = 'Pilih maksimal ' + apick + ' (contoh: ' + aexample + ')';
+                            else if (anote) aplaceholder = anote + ' (contoh: ' + aexample + ')';
+                            else aplaceholder = 'Contoh: ' + aexample;
+
+                            this.addons.push({
+                                key: akey,
+                                label: alabel,
+                                pick: apick,
+                                price: aprice,
+                                note: anote,
+                                items: aitems,
+                                example: aexample,
+                                placeholder: aplaceholder,
+                                enabled: false
+                            });
+                        }
+                    }
+                },
+
+                get subtotal() {
+                    var jp = parseInt(this.jumlahPorsi || '0', 10);
+                    if (!jp || !this.selectedHarga) return 0;
+                    return jp * this.selectedHarga;
+                },
+
+                get addonsTotal() {
+                    // dihitung per pax
+                    var jp = parseInt(this.jumlahPorsi || '0', 10);
+                    if (!jp) jp = 0;
+                    var total = 0;
+                    for (var i = 0; i < this.addons.length; i++) {
+                        if (this.addons[i].enabled) total += (parseInt(this.addons[i].price || 0, 10) * jp);
+                    }
+                    return total;
+                },
+
+                get grandTotal() {
+                    return this.subtotal + this.addonsTotal;
                 }
-            },
-
-            get subtotal() {
-                var jp = parseInt(this.jumlahPorsi || '0', 10);
-                if (!jp || !this.selectedHarga) return 0;
-                return jp * this.selectedHarga;
-            },
-
-            get addonsTotal() {
-                // dihitung per pax
-                var jp = parseInt(this.jumlahPorsi || '0', 10);
-                if (!jp) jp = 0;
-                var total = 0;
-                for (var i = 0; i < this.addons.length; i++) {
-                    if (this.addons[i].enabled) total += (parseInt(this.addons[i].price || 0, 10) * jp);
-                }
-                return total;
-            },
-
-            get grandTotal() {
-                return this.subtotal + this.addonsTotal;
             }
         }
-    }
     </script>
 </body>
 

@@ -272,53 +272,70 @@ class Home extends CI_Controller
 		// pastikan order ini milik user yg login
 		if (!$this->gedung_model->is_order_owner($id, $username)) show_404();
 
-		// WAJIB UPLOAD
-		if (empty($_FILES['proposal']['name'])) {
-			$this->session->set_flashdata('upload_error', 'Proposal wajib diupload (PDF/DOC/DOCX).');
-			redirect('home/home/validasi_upload/' . $id); // sesuaikan kalau URL kamu beda
-			return;
+		// =========================
+		// OPTIONAL UPLOAD (TIDAK WAJIB)
+		// =========================
+		$hasFile = (isset($_FILES['proposal']) && $_FILES['proposal']['error'] !== UPLOAD_ERR_NO_FILE && !empty($_FILES['proposal']['name']));
+
+		$doc_name    = null;
+		$public_path = null;
+
+		if ($hasFile) {
+			$upload_path = FCPATH . 'assets/user-proposal/';
+			$public_path = rtrim(base_url('assets/user-proposal/'), '/') . '/';
+
+			if (!is_dir($upload_path)) {
+				@mkdir($upload_path, 0775, true);
+			}
+
+			$file_name = $username . "_" . date('dmY_His');
+
+			$config = [
+				'upload_path'   => $upload_path,
+				'allowed_types' => 'pdf|doc|docx',
+				'max_size'      => 800, // KB
+				'file_name'     => $file_name,
+				'overwrite'     => false,
+			];
+
+			$this->load->library('upload');
+			$this->upload->initialize($config);
+
+			if (!$this->upload->do_upload('proposal')) {
+				// Upload OPTIONAL: kalau user pilih file tapi gagal, tetap kasih error
+				$this->session->set_flashdata('upload_error', strip_tags($this->upload->display_errors()));
+				redirect('home/home/validasi_upload/' . $id);
+				return;
+			}
+
+			$upload_data = $this->upload->data();
+			$doc_name    = $upload_data['file_name'];
 		}
 
-		$upload_path = FCPATH . 'assets/user-proposal/';
-		$public_path = rtrim(base_url('assets/user-proposal/'), '/') . '/';
-
-		if (!is_dir($upload_path)) {
-			@mkdir($upload_path, 0775, true);
-		}
-
-		$file_name = $username . "_" . date('dmY_His');
-
-		$config = [
-			'upload_path'   => $upload_path,
-			'allowed_types' => 'pdf|doc|docx',
-			'max_size'      => 800, // KB
-			'file_name'     => $file_name,
-			'overwrite'     => false,
-		];
-
-		$this->load->library('upload');
-		$this->upload->initialize($config);
-
-		if (!$this->upload->do_upload('proposal')) {
-			$this->session->set_flashdata('upload_error', strip_tags($this->upload->display_errors()));
-			redirect('home/home/validasi_upload/' . $id);
-			return;
-		}
-
-		$upload_data = $this->upload->data();
-		$doc_name    = $upload_data['file_name'];
-
+		// data untuk proposal (kalau tidak upload, PATH & FILE_NAME = NULL)
 		$data = [
 			'ID_PEMESANAN'    => $id,
-			'PATH'            => $public_path,
-			'FILE_NAME'       => $doc_name,
+			'PATH'            => $public_path,  // NULL jika tidak upload
+			'FILE_NAME'       => $doc_name,     // NULL jika tidak upload
 			'DESKRIPSI_ACARA' => $this->input->post('deskripsi-acara', TRUE),
 		];
 
 		// update kalau sudah ada, insert kalau belum
 		if ($this->gedung_model->proposal_exists($id)) {
-			$this->gedung_model->update_proposal($id, $data);
+
+			// OPSI AMAN:
+			// Kalau user tidak upload file, jangan timpa file lama jadi NULL.
+			// (Kalau kamu memang mau timpa jadi NULL, hapus blok if ini dan langsung update $data)
+			if (!$hasFile) {
+				$this->gedung_model->update_proposal($id, [
+					'ID_PEMESANAN'    => $id,
+					'DESKRIPSI_ACARA' => $this->input->post('deskripsi-acara', TRUE),
+				]);
+			} else {
+				$this->gedung_model->update_proposal($id, $data);
+			}
 		} else {
+			// Insert baru: kalau tidak ada file, tetap insert dan akan ke-record NULL
 			$this->gedung_model->upload_proposal($data);
 		}
 
@@ -334,7 +351,6 @@ class Home extends CI_Controller
 		$is_internal = ($u && strtoupper(trim((string)$u->perusahaan)) === 'INTERNAL');
 
 		if ($is_internal) {
-			// ambil info pemesanan untuk dicatat di pembayaran (biar muncul di admin)
 			$pesanan = $this->db->select("
                 p.TANGGAL_PEMESANAN,
                 g.NAMA_GEDUNG,
@@ -347,7 +363,6 @@ class Home extends CI_Controller
 				->get()
 				->row();
 
-			// cegah double insert pembayaran kalau user re-upload proposal
 			$exists = $this->db->select('ID_PEMESANAN_RAW')
 				->from('pembayaran')
 				->where('ID_PEMESANAN_RAW', $id)
@@ -364,10 +379,8 @@ class Home extends CI_Controller
 					'TANGGAL_PEMESANAN'  => $pesanan ? $pesanan->TANGGAL_PEMESANAN : date('Y-m-d'),
 					'NAMA_GEDUNG'        => $pesanan ? $pesanan->NAMA_GEDUNG : '-',
 					'NAMA_PAKET'         => ($pesanan && !empty($pesanan->NAMA_PAKET)) ? $pesanan->NAMA_PAKET : '-',
-
 					'TOTAL_TAGIHAN'      => 0,
 
-					// isi default tujuan
 					'BANK_TUJUAN'        => 'BCA',
 					'NO_REKENING_TUJUAN' => '1234567890',
 					'ATAS_NAMA_TUJUAN'   => 'Tiga Serangkai Smart Office',
@@ -377,10 +390,9 @@ class Home extends CI_Controller
 					'BANK_PENGIRIM'      => '-',
 					'NOMINAL_TRANSFER'   => 0,
 
-					// 🔥 GANTI INI: jangan NULL
 					'BUKTI_PATH'         => '-',
 					'BUKTI_NAME'         => '-',
-					'BUKTI_MIME'         => '-', // boleh string kosong juga
+					'BUKTI_MIME'         => '-',
 
 					'STATUS_VERIF'       => 'CONFIRMED',
 					'CATATAN_ADMIN'      => 'AUTO: INTERNAL - Langsung confirmed (gratis)',
@@ -390,7 +402,6 @@ class Home extends CI_Controller
 				$this->pembayaran_model->insert_pembayaran($data_bayar);
 			}
 
-			// set status pemesanan langsung confirmed
 			$this->db->where('ID_PEMESANAN', $id);
 			$this->db->update('pemesanan', array('STATUS' => 3));
 
@@ -410,10 +421,11 @@ class Home extends CI_Controller
 		// =========================
 		// EKSTERNAL: tetap flow normal (menunggu admin)
 		// =========================
-		$this->session->set_flashdata('upload_success', 'Proposal berhasil diupload.');
+		$this->session->set_flashdata('upload_success', 'Proposal berhasil disimpan (tanpa upload juga boleh).');
 		redirect('home/home/proposal_success/' . $id);
 		return;
 	}
+
 
 	public function proposal_success($id = null)
 	{
@@ -814,7 +826,7 @@ class Home extends CI_Controller
 
 		$this->load->view('home/ulasan', $data);
 	}
-	
+
 
 
 	public function submit_ulasan()
