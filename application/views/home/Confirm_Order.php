@@ -101,66 +101,66 @@ $id_gedung = $this->uri->segment(4);
                                     }
                                 ?>
 
-                                <tr class="bg-white">
-                                    <td class="w-48 px-4 py-3 font-semibold text-slate-700">Username</td>
-                                    <td class="px-2 py-3 text-slate-400">:</td>
-                                    <td class="px-4 py-3 text-slate-900"><?php echo $order['USERNAME']; ?></td>
-                                </tr>
+                                    <tr class="bg-white">
+                                        <td class="w-48 px-4 py-3 font-semibold text-slate-700">Username</td>
+                                        <td class="px-2 py-3 text-slate-400">:</td>
+                                        <td class="px-4 py-3 text-slate-900"><?php echo $order['USERNAME']; ?></td>
+                                    </tr>
 
-                                <tr class="bg-white">
-                                    <td class="w-48 px-4 py-3 font-semibold text-slate-700">Tanggal Pemesanan</td>
-                                    <td class="px-2 py-3 text-slate-400">:</td>
-                                    <td class="px-4 py-3 text-slate-900">
-                                        <?php
+                                    <tr class="bg-white">
+                                        <td class="w-48 px-4 py-3 font-semibold text-slate-700">Tanggal Pemesanan</td>
+                                        <td class="px-2 py-3 text-slate-400">:</td>
+                                        <td class="px-4 py-3 text-slate-900">
+                                            <?php
                                             $date = date_create($order['TANGGAL_PEMESANAN']);
                                             echo $date ? date_format($date, 'd F Y') : '';
                                             ?>
-                                    </td>
-                                </tr>
+                                        </td>
+                                    </tr>
 
-                                <tr class="bg-white">
-                                    <td class="w-48 px-4 py-3 font-semibold text-slate-700">Jam Pemesanan</td>
-                                    <td class="px-2 py-3 text-slate-400">:</td>
-                                    <td class="px-4 py-3 text-slate-900"><?php echo $jam_tampil; ?></td>
-                                </tr>
+                                    <tr class="bg-white">
+                                        <td class="w-48 px-4 py-3 font-semibold text-slate-700">Jam Pemesanan</td>
+                                        <td class="px-2 py-3 text-slate-400">:</td>
+                                        <td class="px-4 py-3 text-slate-900"><?php echo $jam_tampil; ?></td>
+                                    </tr>
 
-                                <tr class="bg-white">
-                                    <td class="w-48 px-4 py-3 font-semibold text-slate-700">Email</td>
-                                    <td class="px-2 py-3 text-slate-400">:</td>
-                                    <td class="px-4 py-3 text-slate-900"><?php echo $order['EMAIL']; ?></td>
-                                </tr>
+                                    <tr class="bg-white">
+                                        <td class="w-48 px-4 py-3 font-semibold text-slate-700">Email</td>
+                                        <td class="px-2 py-3 text-slate-400">:</td>
+                                        <td class="px-4 py-3 text-slate-900"><?php echo $order['EMAIL']; ?></td>
+                                    </tr>
 
-                                <tr class="bg-white">
-                                    <td class="w-48 px-4 py-3 font-semibold text-slate-700">Nama Gedung</td>
-                                    <td class="px-2 py-3 text-slate-400">:</td>
-                                    <td class="px-4 py-3 text-slate-900"><?php echo $order['NAMA_GEDUNG']; ?></td>
-                                </tr>
+                                    <tr class="bg-white">
+                                        <td class="w-48 px-4 py-3 font-semibold text-slate-700">Nama Ruangan</td>
+                                        <td class="px-2 py-3 text-slate-400">:</td>
+                                        <td class="px-4 py-3 text-slate-900"><?php echo $order['NAMA_GEDUNG']; ?></td>
+                                    </tr>
 
-                                <tr class="bg-white">
-                                    <td class="w-48 px-4 py-3 font-semibold text-slate-700">Nama Catering</td>
-                                    <td class="px-2 py-3 text-slate-400">:</td>
-                                    <td class="px-4 py-3 text-slate-900"><?php echo $order['NAMA_PAKET']; ?></td>
-                                </tr>
+                                    <tr class="bg-white">
+                                        <td class="w-48 px-4 py-3 font-semibold text-slate-700">Nama Catering</td>
+                                        <td class="px-2 py-3 text-slate-400">:</td>
+                                        <td class="px-4 py-3 text-slate-900"><?php echo $order['NAMA_PAKET']; ?></td>
+                                    </tr>
 
-                                <tr class="bg-white">
-                                    <td class="w-48 px-4 py-3 font-semibold text-slate-700">Jumlah Catering</td>
-                                    <td class="px-2 py-3 text-slate-400">:</td>
-                                    <td class="px-4 py-3 text-slate-900"><?php echo $order['JUMLAH_CATERING']; ?></td>
-                                </tr>
+                                    <tr class="bg-white">
+                                        <td class="w-48 px-4 py-3 font-semibold text-slate-700">Jumlah Catering</td>
+                                        <td class="px-2 py-3 text-slate-400">:</td>
+                                        <td class="px-4 py-3 text-slate-900"><?php echo $order['JUMLAH_CATERING']; ?></td>
+                                    </tr>
 
-                                <tr class="bg-white">
-                                    <td class="w-48 px-4 py-3 font-semibold text-slate-700">Harga Satuan</td>
-                                    <td class="px-2 py-3 text-slate-400">:</td>
-                                    <td class="px-4 py-3 text-slate-900">Rp.
-                                        <?php echo number_format((float)$order['HARGA_SATUAN']); ?></td>
-                                </tr>
+                                    <tr class="bg-white">
+                                        <td class="w-48 px-4 py-3 font-semibold text-slate-700">Harga Satuan</td>
+                                        <td class="px-2 py-3 text-slate-400">:</td>
+                                        <td class="px-4 py-3 text-slate-900">Rp.
+                                            <?php echo number_format((float)$order['HARGA_SATUAN']); ?></td>
+                                    </tr>
 
-                                <tr class="bg-white">
-                                    <td class="w-48 px-4 py-3 font-semibold text-slate-700">Total Harga Catering</td>
-                                    <td class="px-2 py-3 text-slate-400">:</td>
-                                    <td class="px-4 py-3 text-slate-900">Rp.
-                                        <?php echo number_format((float)$order['TOTAL_HARGA']); ?></td>
-                                </tr>
+                                    <tr class="bg-white">
+                                        <td class="w-48 px-4 py-3 font-semibold text-slate-700">Total Harga Catering</td>
+                                        <td class="px-2 py-3 text-slate-400">:</td>
+                                        <td class="px-4 py-3 text-slate-900">Rp.
+                                            <?php echo number_format((float)$order['TOTAL_HARGA']); ?></td>
+                                    </tr>
                                 <?php } // end else 
                                 ?>
                             </tbody>
@@ -172,9 +172,9 @@ $id_gedung = $this->uri->segment(4);
                         <input type="hidden" name="request_id"
                             value="<?php echo isset($order['REQUEST_ID']) ? htmlspecialchars($order['REQUEST_ID']) : ''; ?>">
                         <?php if ($this->session->flashdata('upload_error')): ?>
-                        <div class="mb-4 p-3 rounded-lg border border-red-200 bg-red-50 text-red-700 text-sm">
-                            <?php echo $this->session->flashdata('upload_error'); ?>
-                        </div>
+                            <div class="mb-4 p-3 rounded-lg border border-red-200 bg-red-50 text-red-700 text-sm">
+                                <?php echo $this->session->flashdata('upload_error'); ?>
+                            </div>
                         <?php endif; ?>
                         <div class="grid grid-cols-1 gap-4">
                             <div>
@@ -187,19 +187,17 @@ $id_gedung = $this->uri->segment(4);
                                 <p class="mt-2 text-xs text-slate-500">Maks 200 karakter.</p>
                             </div>
 
-                            <div>
-                                <label class="block text-xs font-semibold tracking-widest text-slate-600">UPLOAD
-                                    PROPOSAL</label>
+                            <div class="hidden">
+                                <label class="block text-xs font-semibold tracking-widest text-slate-600">UPLOAD PROPOSAL</label>
 
-                                <!-- tetap pakai struktur materialize file-field agar tidak merusak logic -->
                                 <div class="file-field input-field" style="margin-top:8px;">
-                                    <div class="btn"
-                                        style="background: #fafafa;border-radius:12px;text-transform:none;">
+                                    <div class="btn" style="background: #fafafa;border-radius:12px;text-transform:none;">
                                         <span>Pilih File</span>
-                                        <input type="file" name="proposal" id="proposal" required
-                                            accept=".pdf,.doc,.docx">
 
+                                        <!-- optional: tidak ada required -->
+                                        <input type="file" name="proposal" id="proposal" accept=".pdf,.doc,.docx">
                                     </div>
+
                                     <div class="file-path-wrapper">
                                         <input class="file-path validate" type="text" placeholder="Upload file PDF/DOCX"
                                             style="border-bottom:1px solid #cbd5e1; box-shadow:none;">
@@ -233,19 +231,21 @@ $id_gedung = $this->uri->segment(4);
         </div>
     </main>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('formUpload');
-        if (!form) return;
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('formUpload');
+            if (!form) return;
 
-        form.addEventListener('submit', function(e) {
-            const f = document.getElementById('proposal');
-            if (!f || !f.files || f.files.length === 0) {
-                e.preventDefault();
-                alert('Proposal wajib diupload sebelum submit.');
-            }
+            form.addEventListener('submit', function(e) {
+                // proposal OPTIONAL: jangan dicegat kalau kosong
+                // kalau mau validasi, lakukan hanya jika user memilih file
+                const f = document.getElementById('proposal');
+                if (f && f.files && f.files.length > 0) {
+                    // opsional: validasi ekstensi di sini kalau perlu
+                }
+            });
         });
-    });
     </script>
+
 
 </body>
 
