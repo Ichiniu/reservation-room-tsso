@@ -2,6 +2,13 @@
 $session_id = $this->session->userdata('username');
 $this->load->helper('text');
 $id_gedung = $this->uri->segment(3);
+
+// ✅ opsi pilihan jam dari controller (fallback aman)
+$allowed_tipe_jam = (isset($allowed_tipe_jam) && is_array($allowed_tipe_jam))
+    ? $allowed_tipe_jam
+    : array('CUSTOM', 'HALF_DAY_PAGI', 'HALF_DAY_SIANG', 'FULL_DAY');
+
+$default_tipe_jam = isset($default_tipe_jam) ? $default_tipe_jam : $allowed_tipe_jam[0];
 ?>
 <!doctype html>
 <html lang="id">
@@ -104,7 +111,7 @@ $id_gedung = $this->uri->segment(3);
                             <!-- Nama Gedung -->
                             <div class="rounded-xl border border-slate-300 bg-slate-50 p-5 ring-1 ring-slate-200">
                                 <label class="block text-xs font-semibold tracking-widest text-slate-500">NAMA
-                                    RUANGAN</label>
+                                    GEDUNG</label>
                                 <div class="mt-2 text-sm font-semibold text-slate-900">
                                     <?php foreach ($hasil as $gedung): ?>
                                         <?php echo htmlspecialchars($gedung['NAMA_GEDUNG'], ENT_QUOTES, 'UTF-8'); ?>
@@ -141,10 +148,19 @@ $id_gedung = $this->uri->segment(3);
                                 <select name="tipe_jam" id="tipe_jam" required x-model="tipeJam" @change="applyJam()"
                                     class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
                          focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40">
-                                    <option value="CUSTOM">HH:MM - HH:MM (HANYA UNTUK STUDIO PODCAST)</option>
-                                    <option value="HALF_DAY_PAGI">HALF DAY (08-12)</option>
-                                    <option value="HALF_DAY_SIANG">HALF DAY (13-16)</option>
-                                    <option value="FULL_DAY">FULL DAY</option>
+                                    <?php
+                                    $labels_tipe_jam = array(
+                                        'CUSTOM'         => 'HH:MM - HH:MM (PER JAM)',
+                                        'HALF_DAY_PAGI'  => 'HALF DAY (08-12)',
+                                        'HALF_DAY_SIANG' => 'HALF DAY (13-16)',
+                                        'FULL_DAY'       => 'FULL DAY',
+                                    );
+                                    ?>
+                                    <?php foreach ($allowed_tipe_jam as $opt): ?>
+                                        <option value="<?php echo htmlspecialchars($opt, ENT_QUOTES, 'UTF-8'); ?>">
+                                            <?php echo htmlspecialchars(isset($labels_tipe_jam[$opt]) ? $labels_tipe_jam[$opt] : $opt, ENT_QUOTES, 'UTF-8'); ?>
+                                        </option>
+                                    <?php endforeach; ?>
                                 </select>
 
                                 <div x-show="!isCustom"
@@ -431,7 +447,9 @@ $id_gedung = $this->uri->segment(3);
             return {
                 // ==== state umum ====
                 catering: 'tidak',
-                tipeJam: 'CUSTOM',
+                tipeJam: <?php echo json_encode($default_tipe_jam); ?>,
+                allowedTipeJam: <?php echo json_encode(array_values($allowed_tipe_jam)); ?>,
+                defaultTipeJam: <?php echo json_encode($default_tipe_jam); ?>,
                 RULES: {
                     HALF_DAY_PAGI: {
                         start: '08:00',
@@ -472,6 +490,14 @@ $id_gedung = $this->uri->segment(3);
                     this.jamMulai = '';
                     this.jamSelesai = '';
 
+                    // ✅ guard: pastikan tipeJam valid sesuai allowed
+                    if (this.allowedTipeJam && this.allowedTipeJam.indexOf(this.tipeJam) === -1) {
+                        this.tipeJam = this.defaultTipeJam;
+                    }
+
+                    // set default jam jika bukan CUSTOM
+                    if (!this.isCustom) this.applyJam();
+
                     var self = this;
                     this.$watch('catering', function(v) {
                         if (v !== 'ya') self.resetCatering();
@@ -479,7 +505,14 @@ $id_gedung = $this->uri->segment(3);
                 },
 
                 applyJam: function() {
+                    // ✅ guard: pastikan tipeJam valid sesuai allowed
+                    if (this.allowedTipeJam && this.allowedTipeJam.indexOf(this.tipeJam) === -1) {
+                        this.tipeJam = this.defaultTipeJam;
+                    }
+
                     if (this.isCustom) return;
+
+                    if (!this.RULES[this.tipeJam]) return;
                     this.jamMulai = this.RULES[this.tipeJam].start;
                     this.jamSelesai = this.RULES[this.tipeJam].end;
                 },

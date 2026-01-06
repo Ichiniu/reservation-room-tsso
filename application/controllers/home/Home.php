@@ -194,10 +194,43 @@ class Home extends CI_Controller
 
 		$data['email'] = $this->gedung_model->get_email_address($username);
 		$data['flag']  = $this->gedung_model->get_pemesanan_flag($username);
+		// ✅ TAMBAHAN: cek INTERNAL / EKSTERNAL + aturan pilihan jam per ruangan
+		$u = $this->db->select('perusahaan')
+			->from('user')
+			->where('USERNAME', $username)
+			->get()
+			->row();
+
+		$perusahaan = ($u && isset($u->perusahaan)) ? $u->perusahaan : '';
+		$data['is_internal'] = (strtoupper(trim((string)$perusahaan)) === 'INTERNAL');
+
+		// Ambil nama ruangan untuk deteksi STUDIO
+		$nama_gedung = '';
+		if (!empty($gedung['hasil']) && is_array($gedung['hasil'])) {
+			$first = reset($gedung['hasil']);
+			if (is_array($first) && isset($first['NAMA_GEDUNG'])) {
+				$nama_gedung = (string) $first['NAMA_GEDUNG'];
+			}
+		}
+		$is_studio = (stripos($nama_gedung, 'studio') !== false);
+
+		// INTERNAL: semua opsi | EKSTERNAL: studio = per jam saja, selain studio = half/full day saja
+		if (!empty($data['is_internal'])) {
+			$data['allowed_tipe_jam'] = array('CUSTOM', 'HALF_DAY_PAGI', 'HALF_DAY_SIANG', 'FULL_DAY');
+		} else {
+			$data['allowed_tipe_jam'] = $is_studio
+				? array('CUSTOM')
+				: array('HALF_DAY_PAGI', 'HALF_DAY_SIANG', 'FULL_DAY');
+		}
+
+		$data['default_tipe_jam'] = $data['allowed_tipe_jam'][0];
+
 
 		$hasil = array_merge($gedung, $data);
 		$this->load->view('gedung/order_gedung', $hasil);
 	}
+
+
 
 
 
