@@ -1,40 +1,38 @@
 <?php
-$username = $this->session->userdata('username');
+$username   = $this->session->userdata('username');
 $session_id = $this->session->userdata('username');
+
+if (isset($flag)) {
+    $flag = (int)$flag;
+} else {
+    $flag = 0;
+}
 ?>
 
-<!-- Bootstrap Icons -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
 <body class="bg-white text-slate-800">
 
-    <!-- ================= NAVBAR ================= -->
     <header class="bg-white border-b border-black/5 sticky top-0 z-30">
         <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-10">
             <div class="flex items-center justify-between h-16">
 
-                <!-- ===== LEFT: BRAND ===== -->
+                <!-- BRAND -->
                 <div class="flex items-center gap-4">
                     <div class="h-9 w-9 rounded-lg bg-white border border-black/10 flex items-center justify-center">
                         <img src="<?= base_url('assets/login/LogoTSNew.png'); ?>" class="h-8 w-8 object-contain"
                             alt="Logo">
                     </div>
-
                     <div class="leading-tight">
-                        <div class="text-[10px] font-semibold tracking-[0.25em] uppercase text-slate-500">
-                            Smart Office
+                        <div class="text-[10px] font-semibold tracking-[0.25em] uppercase text-slate-500">Smart Office
                         </div>
-                        <div class="text-sm font-semibold text-slate-800">
-                            SIRERU
-                        </div>
+                        <div class="text-sm font-semibold text-slate-800">SIRERU</div>
                     </div>
                 </div>
 
-                <!-- ===== DESKTOP MENU ===== -->
+                <!-- DESKTOP MENU -->
                 <nav
                     class="hidden md:flex items-center gap-10 text-[11px] font-semibold tracking-widest text-slate-700">
-
-
                     <a href="<?= site_url('home/'.$session_id.'/'); ?>"
                         class="flex items-center gap-2 hover:text-slate-900">
                         <i class="bi bi-house-door"></i> HOME
@@ -44,14 +42,15 @@ $session_id = $this->session->userdata('username');
                         <i class="bi bi-calendar-week"></i> JADWAL
                     </a>
 
-                    <a href="<?= site_url('home/pemesanan'); ?>"
+                    <!-- PEMESANAN -->
+                    <a id="pemesananLinkDesktop" href="<?= site_url('home/pemesanan'); ?>"
                         class="relative flex items-center gap-2 hover:text-slate-900">
                         <i class="bi bi-journal-text"></i> PEMESANAN
-                        <?php if (!empty($flag) && $flag > 0): ?>
-                        <span class="ml-1 rounded-full bg-red-500 text-[10px] text-white px-1.5 py-0.5">
-                            <?= $flag; ?>
+
+                        <span id="notifBadge" data-count="<?= $flag; ?>"
+                            class="<?= ($flag > 0) ? '' : 'hidden'; ?> ml-1 rounded-full bg-red-500 text-[10px] text-white px-1.5 py-0.5">
+                            <?= ($flag > 0) ? $flag : ''; ?>
                         </span>
-                        <?php endif; ?>
                     </a>
 
                     <a href="<?= site_url('home/view-catering'); ?>"
@@ -64,31 +63,26 @@ $session_id = $this->session->userdata('username');
                     </a>
                 </nav>
 
-                <!-- ===== RIGHT ===== -->
+                <!-- RIGHT -->
                 <div class="flex items-center gap-3">
 
-                    <!-- ===== MOBILE HAMBURGER ===== -->
-                    <button id="mobileMenuBtn" class="md:hidden inline-flex items-center justify-center
-                 rounded-lg border border-black/10
-                 p-2 hover:bg-slate-100 transition">
+                    <button id="mobileMenuBtn"
+                        class="md:hidden inline-flex items-center justify-center rounded-lg border border-black/10 p-2 hover:bg-slate-100 transition">
                         <i class="bi bi-list text-xl"></i>
                     </button>
 
-                    <!-- ===== PROFILE ===== -->
                     <div class="relative hidden md:block">
-                        <button type="button" class="profile-toggle flex items-center gap-2 px-3 py-2 rounded-full
-                   bg-white hover:bg-slate-100 border border-black/10 transition">
-
+                        <button type="button"
+                            class="profile-toggle flex items-center gap-2 px-3 py-2 rounded-full bg-white hover:bg-slate-100 border border-black/10 transition">
                             <i class="bi bi-person-circle text-slate-700"></i>
                             <span class="text-xs font-medium text-slate-700">
-                                <?= htmlspecialchars($username); ?>
+                                <?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8'); ?>
                             </span>
                             <i class="bi bi-chevron-down text-xs text-slate-600"></i>
                         </button>
 
-                        <!-- PROFILE DROPDOWN -->
-                        <div class="profile-menu hidden absolute right-0 mt-2 w-48
-                      bg-white rounded-xl shadow-md border border-black/10 text-sm">
+                        <div
+                            class="profile-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-md border border-black/10 text-sm">
                             <a href="<?= site_url('edit_data/'.$username); ?>"
                                 class="flex items-center gap-2 px-4 py-2 hover:bg-slate-100">
                                 <i class="bi bi-pencil-square"></i> Edit Data Diri
@@ -105,12 +99,13 @@ $session_id = $this->session->userdata('username');
                             </div>
                         </div>
                     </div>
+
                 </div>
 
             </div>
         </div>
 
-        <!-- ===== MOBILE MENU PANEL ===== -->
+        <!-- MOBILE MENU -->
         <div id="mobileMenu" class="hidden md:hidden border-t border-black/5 bg-white">
             <nav class="flex flex-col p-4 text-sm font-semibold text-slate-700 gap-3">
 
@@ -122,8 +117,12 @@ $session_id = $this->session->userdata('username');
                     <i class="bi bi-calendar-week"></i> JADWAL
                 </a>
 
-                <a href="<?= site_url('home/pemesanan'); ?>" class="flex items-center gap-2">
+                <a id="pemesananLinkMobile" href="<?= site_url('home/pemesanan'); ?>" class="flex items-center gap-2">
                     <i class="bi bi-journal-text"></i> PEMESANAN
+                    <span id="notifBadgeMobile" data-count="<?= $flag; ?>"
+                        class="<?= ($flag > 0) ? '' : 'hidden'; ?> ml-1 rounded-full bg-red-500 text-[10px] text-white px-1.5 py-0.5">
+                        <?= ($flag > 0) ? $flag : ''; ?>
+                    </span>
                 </a>
 
                 <a href="<?= site_url('home/view-catering'); ?>" class="flex items-center gap-2">
@@ -145,17 +144,22 @@ $session_id = $this->session->userdata('username');
                 </div>
             </nav>
         </div>
+
     </header>
 
-    <!-- ================= SCRIPT ================= -->
+    <!-- AUDIO -->
+    <audio id="notifSound" preload="auto">
+        <source src="<?= base_url('assets/nada_notifikasi.mp3'); ?>" type="audio/mpeg">
+    </audio>
+
     <script>
     document.addEventListener('DOMContentLoaded', function() {
 
-        // PROFILE DROPDOWN
-        const profileToggle = document.querySelector('.profile-toggle');
-        const profileMenu = document.querySelector('.profile-menu');
+        // ================== PROFILE DROPDOWN ==================
+        var profileToggle = document.querySelector('.profile-toggle');
+        var profileMenu = document.querySelector('.profile-menu');
 
-        if (profileToggle) {
+        if (profileToggle && profileMenu) {
             profileToggle.addEventListener('click', function(e) {
                 e.stopPropagation();
                 profileMenu.classList.toggle('hidden');
@@ -166,23 +170,93 @@ $session_id = $this->session->userdata('username');
             });
         }
 
-        // MOBILE MENU
-        const mobileBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
+        // ================== MOBILE MENU ==================
+        var mobileBtn = document.getElementById('mobileMenuBtn');
+        var mobileMenu = document.getElementById('mobileMenu');
 
-        mobileBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            mobileMenu.classList.toggle('hidden');
+        if (mobileBtn && mobileMenu) {
+            mobileBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', function() {
+                mobileMenu.classList.add('hidden');
+            });
+
+            mobileMenu.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+
+        // ================== NOTIF TANPA API (hanya saat load/refresh) ==================
+        var badgeDesktop = document.getElementById('notifBadge');
+        var soundEl = document.getElementById('notifSound');
+
+        var currentCount = 0;
+        if (badgeDesktop && badgeDesktop.getAttribute('data-count')) {
+            currentCount = parseInt(badgeDesktop.getAttribute('data-count'), 10);
+            if (isNaN(currentCount)) currentCount = 0;
+        }
+
+        var lastCountStr = localStorage.getItem('lastFlagPemesanan');
+        var lastCount = 0;
+        if (lastCountStr !== null) {
+            lastCount = parseInt(lastCountStr, 10);
+            if (isNaN(lastCount)) lastCount = 0;
+        }
+
+        // unlock audio (browser biasanya butuh interaksi user)
+        var audioUnlocked = false;
+
+        function unlockAudioOnce() {
+            if (!soundEl || audioUnlocked) return;
+            audioUnlocked = true;
+            soundEl.play().then(function() {
+                soundEl.pause();
+                soundEl.currentTime = 0;
+            }).catch(function() {});
+        }
+        document.addEventListener('click', unlockAudioOnce, {
+            once: true
+        });
+        document.addEventListener('keydown', unlockAudioOnce, {
+            once: true
         });
 
-        document.addEventListener('click', function() {
-            mobileMenu.classList.add('hidden');
+        function playSound() {
+            if (!soundEl) return;
+            soundEl.currentTime = 0;
+            soundEl.play().catch(function() {});
+        }
+
+        function requestNotifPermission() {
+            if (!("Notification" in window)) return;
+            if (Notification.permission === "default") {
+                Notification.requestPermission();
+            }
+        }
+        document.addEventListener('click', requestNotifPermission, {
+            once: true
         });
 
-        mobileMenu.addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
+        function showDesktopNotif(title, body) {
+            if (!("Notification" in window)) return;
+            if (Notification.permission !== "granted") return;
+            new Notification(title, {
+                body: body,
+                tag: "sireru-notif"
+            });
+        }
 
+        // Kalau count naik dibanding kunjungan sebelumnya -> bunyi + desktop notif
+        if (currentCount > lastCount) {
+            showDesktopNotif("Notifikasi baru", "Ada update baru di pemesanan.");
+            playSound();
+        }
+
+        // simpan untuk pembanding load berikutnya
+        localStorage.setItem('lastFlagPemesanan', String(currentCount));
     });
     </script>
 

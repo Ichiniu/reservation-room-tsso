@@ -89,5 +89,10 @@ $route['manage/kebersihan_download_pdf'] = 'manage/manage/kebersihan_export_to_p
 $route['manage/report_kegiatan'] = 'manage/manage/laporan_kegiatan';
 $route['manage/kegiatan_download_pdf/(:any)/(:any)'] = 'manage/manage/kegiatan_export_pdf/$1/$2';
 
+$route['api/notif/unread-count'] = 'api/notifications/unread_count';
+$route['api/notif/mark-read']    = 'api/notifications/mark_read';
+
+
+
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;

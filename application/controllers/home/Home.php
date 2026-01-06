@@ -202,15 +202,20 @@ class Home extends CI_Controller
 
 
 	public function pemesanan()
-	{
-		$username = $this->session->userdata('username');
-		$this->load->model('gedung/gedung_model');
-		$data['res'] = $this->gedung_model->get_pemesanan($username);
-		$data['flag'] = $this->gedung_model->get_pemesanan_flag($username);
-		$data['no_data'] = "Data Kosong";
-		$data['rows'] = $this->gedung_model->count_pemesanan($username);
-		$this->load->view('home/pemesanan', $data);
-	}
+{
+    $username = $this->session->userdata('username');
+    $this->load->model('gedung/gedung_model');
+
+    // wajib di sini
+    $this->gedung_model->clear_pemesanan_flag($username);
+
+    $data['res'] = $this->gedung_model->get_pemesanan($username);
+    $data['flag'] = $this->gedung_model->get_pemesanan_flag($username);
+    $data['no_data'] = "Data Kosong";
+    $data['rows'] = $this->gedung_model->count_pemesanan($username);
+
+    $this->load->view('home/pemesanan', $data);
+}
 
 	public function pembayaran()
 	{

@@ -91,7 +91,7 @@ $this->load->helper('text');
                                 <?php
                             if (!empty($row['JAM_PEMESANAN']) && !empty($row['JAM_SELESAI'])) {
                                 echo date('H:i', strtotime($row['JAM_PEMESANAN'])) . ' - ' .
-                                     date('H:i', strtotime($row['JAM_SELESAI'])) . ' WIB';
+                                    date('H:i', strtotime($row['JAM_SELESAI'])) . ' WIB';
                             } else {
                                 echo '-';
                             }
