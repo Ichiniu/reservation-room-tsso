@@ -120,14 +120,14 @@ class Gedung_Model extends CI_Model
 
 
 	public function get_pemesanan_flag($username)
-{
-    $sql = "
-        SELECT COUNT(*) AS jml
+	{
+		$sql = "
+        SELECT COUNT(DISTINCT p.ID_PEMESANAN) AS jml
         FROM v_pemesanan v
         JOIN pemesanan p
           ON p.ID_PEMESANAN = (
                 CASE
-                    WHEN v.ID_PEMESANAN LIKE 'PMSN%' THEN CAST(SUBSTRING(v.ID_PEMESANAN, 8) AS UNSIGNED)
+                    WHEN v.ID_PEMESANAN LIKE 'PMSN%' THEN CAST(SUBSTRING(v.ID_PEMESANAN, 5) AS UNSIGNED)
                     ELSE CAST(v.ID_PEMESANAN AS UNSIGNED)
                 END
           )
@@ -136,14 +136,15 @@ class Gedung_Model extends CI_Model
           AND p.FLAG = 1
     ";
 
-    $row = $this->db->query($sql, array($username))->row();
-    return $row ? (int)$row->jml : 0;
-}
+		$row = $this->db->query($sql, [$username])->row();
+		return $row ? (int)$row->jml : 0;
+	}
 
 
-public function clear_pemesanan_flag($username)
-{
-    $sql = "
+
+	public function clear_pemesanan_flag($username)
+	{
+		$sql = "
         UPDATE pemesanan p
         JOIN v_pemesanan v
           ON p.ID_PEMESANAN = (
@@ -158,8 +159,8 @@ public function clear_pemesanan_flag($username)
           AND v.STATUS IN ('PROPOSAL APPROVE', 'SUBMITED')
     ";
 
-    return $this->db->query($sql, array($username));
-}
+		return $this->db->query($sql, array($username));
+	}
 
 
 

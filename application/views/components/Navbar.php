@@ -33,7 +33,7 @@ if (isset($flag)) {
                 <!-- DESKTOP MENU -->
                 <nav
                     class="hidden md:flex items-center gap-10 text-[11px] font-semibold tracking-widest text-slate-700">
-                    <a href="<?= site_url('home/'.$session_id.'/'); ?>"
+                    <a href="<?= site_url('home/' . $session_id . '/'); ?>"
                         class="flex items-center gap-2 hover:text-slate-900">
                         <i class="bi bi-house-door"></i> HOME
                     </a>
@@ -83,11 +83,11 @@ if (isset($flag)) {
 
                         <div
                             class="profile-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-md border border-black/10 text-sm">
-                            <a href="<?= site_url('edit_data/'.$username); ?>"
+                            <a href="<?= site_url('edit_data/' . $username); ?>"
                                 class="flex items-center gap-2 px-4 py-2 hover:bg-slate-100">
                                 <i class="bi bi-pencil-square"></i> Edit Data Diri
                             </a>
-                            <a href="<?= site_url('edit_foto/'.$username); ?>"
+                            <a href="<?= site_url('edit_foto/' . $username); ?>"
                                 class="flex items-center gap-2 px-4 py-2 hover:bg-slate-100">
                                 <i class="bi bi-camera"></i> Edit Foto Profil
                             </a>
@@ -135,7 +135,7 @@ if (isset($flag)) {
 
                 <div class="border-t border-black/10 pt-3 mt-2">
                     <div class="text-xs text-slate-500 mb-2">Akun</div>
-                    <a href="<?= site_url('edit_data/'.$username); ?>" class="flex items-center gap-2">
+                    <a href="<?= site_url('edit_data/' . $username); ?>" class="flex items-center gap-2">
                         <i class="bi bi-pencil-square"></i> Edit Data
                     </a>
                     <a href="<?= site_url('home/home/logout'); ?>" class="flex items-center gap-2 text-red-600">
@@ -149,115 +149,115 @@ if (isset($flag)) {
 
     <!-- AUDIO -->
     <audio id="notifSound" preload="auto">
-        <source src="<?= base_url('assets/nada_notifikasi.mp3'); ?>" type="audio/mpeg">
+        <source src="<?= base_url('assets/nada_notifikasi1.mp3'); ?>" type="audio/mpeg">
     </audio>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function() {
 
-        // ================== PROFILE DROPDOWN ==================
-        var profileToggle = document.querySelector('.profile-toggle');
-        var profileMenu = document.querySelector('.profile-menu');
+            // ================== PROFILE DROPDOWN ==================
+            var profileToggle = document.querySelector('.profile-toggle');
+            var profileMenu = document.querySelector('.profile-menu');
 
-        if (profileToggle && profileMenu) {
-            profileToggle.addEventListener('click', function(e) {
-                e.stopPropagation();
-                profileMenu.classList.toggle('hidden');
-            });
+            if (profileToggle && profileMenu) {
+                profileToggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    profileMenu.classList.toggle('hidden');
+                });
 
-            document.addEventListener('click', function() {
-                profileMenu.classList.add('hidden');
-            });
-        }
-
-        // ================== MOBILE MENU ==================
-        var mobileBtn = document.getElementById('mobileMenuBtn');
-        var mobileMenu = document.getElementById('mobileMenu');
-
-        if (mobileBtn && mobileMenu) {
-            mobileBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                mobileMenu.classList.toggle('hidden');
-            });
-
-            document.addEventListener('click', function() {
-                mobileMenu.classList.add('hidden');
-            });
-
-            mobileMenu.addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
-        }
-
-        // ================== NOTIF TANPA API (hanya saat load/refresh) ==================
-        var badgeDesktop = document.getElementById('notifBadge');
-        var soundEl = document.getElementById('notifSound');
-
-        var currentCount = 0;
-        if (badgeDesktop && badgeDesktop.getAttribute('data-count')) {
-            currentCount = parseInt(badgeDesktop.getAttribute('data-count'), 10);
-            if (isNaN(currentCount)) currentCount = 0;
-        }
-
-        var lastCountStr = localStorage.getItem('lastFlagPemesanan');
-        var lastCount = 0;
-        if (lastCountStr !== null) {
-            lastCount = parseInt(lastCountStr, 10);
-            if (isNaN(lastCount)) lastCount = 0;
-        }
-
-        // unlock audio (browser biasanya butuh interaksi user)
-        var audioUnlocked = false;
-
-        function unlockAudioOnce() {
-            if (!soundEl || audioUnlocked) return;
-            audioUnlocked = true;
-            soundEl.play().then(function() {
-                soundEl.pause();
-                soundEl.currentTime = 0;
-            }).catch(function() {});
-        }
-        document.addEventListener('click', unlockAudioOnce, {
-            once: true
-        });
-        document.addEventListener('keydown', unlockAudioOnce, {
-            once: true
-        });
-
-        function playSound() {
-            if (!soundEl) return;
-            soundEl.currentTime = 0;
-            soundEl.play().catch(function() {});
-        }
-
-        function requestNotifPermission() {
-            if (!("Notification" in window)) return;
-            if (Notification.permission === "default") {
-                Notification.requestPermission();
+                document.addEventListener('click', function() {
+                    profileMenu.classList.add('hidden');
+                });
             }
-        }
-        document.addEventListener('click', requestNotifPermission, {
-            once: true
-        });
 
-        function showDesktopNotif(title, body) {
-            if (!("Notification" in window)) return;
-            if (Notification.permission !== "granted") return;
-            new Notification(title, {
-                body: body,
-                tag: "sireru-notif"
+            // ================== MOBILE MENU ==================
+            var mobileBtn = document.getElementById('mobileMenuBtn');
+            var mobileMenu = document.getElementById('mobileMenu');
+
+            if (mobileBtn && mobileMenu) {
+                mobileBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    mobileMenu.classList.toggle('hidden');
+                });
+
+                document.addEventListener('click', function() {
+                    mobileMenu.classList.add('hidden');
+                });
+
+                mobileMenu.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            }
+
+            // ================== NOTIF TANPA API (hanya saat load/refresh) ==================
+            var badgeDesktop = document.getElementById('notifBadge');
+            var soundEl = document.getElementById('notifSound');
+
+            var currentCount = 0;
+            if (badgeDesktop && badgeDesktop.getAttribute('data-count')) {
+                currentCount = parseInt(badgeDesktop.getAttribute('data-count'), 10);
+                if (isNaN(currentCount)) currentCount = 0;
+            }
+
+            var lastCountStr = localStorage.getItem('lastFlagPemesanan');
+            var lastCount = 0;
+            if (lastCountStr !== null) {
+                lastCount = parseInt(lastCountStr, 10);
+                if (isNaN(lastCount)) lastCount = 0;
+            }
+
+            // unlock audio (browser biasanya butuh interaksi user)
+            var audioUnlocked = false;
+
+            function unlockAudioOnce() {
+                if (!soundEl || audioUnlocked) return;
+                audioUnlocked = true;
+                soundEl.play().then(function() {
+                    soundEl.pause();
+                    soundEl.currentTime = 0;
+                }).catch(function() {});
+            }
+            document.addEventListener('click', unlockAudioOnce, {
+                once: true
             });
-        }
+            document.addEventListener('keydown', unlockAudioOnce, {
+                once: true
+            });
 
-        // Kalau count naik dibanding kunjungan sebelumnya -> bunyi + desktop notif
-        if (currentCount > lastCount) {
-            showDesktopNotif("Notifikasi baru", "Ada update baru di pemesanan.");
-            playSound();
-        }
+            function playSound() {
+                if (!soundEl) return;
+                soundEl.currentTime = 0;
+                soundEl.play().catch(function() {});
+            }
 
-        // simpan untuk pembanding load berikutnya
-        localStorage.setItem('lastFlagPemesanan', String(currentCount));
-    });
+            function requestNotifPermission() {
+                if (!("Notification" in window)) return;
+                if (Notification.permission === "default") {
+                    Notification.requestPermission();
+                }
+            }
+            document.addEventListener('click', requestNotifPermission, {
+                once: true
+            });
+
+            function showDesktopNotif(title, body) {
+                if (!("Notification" in window)) return;
+                if (Notification.permission !== "granted") return;
+                new Notification(title, {
+                    body: body,
+                    tag: "sireru-notif"
+                });
+            }
+
+            // Kalau count naik dibanding kunjungan sebelumnya -> bunyi + desktop notif
+            if (currentCount > lastCount) {
+                showDesktopNotif("Notifikasi baru", "Ada update baru di pemesanan.");
+                playSound();
+            }
+
+            // simpan untuk pembanding load berikutnya
+            localStorage.setItem('lastFlagPemesanan', String(currentCount));
+        });
     </script>
 
 </body>
