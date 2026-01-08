@@ -29,4 +29,9 @@ class User_Model extends CI_Model
 		$hasil = $sql->result_array();
 		return $hasil;
 	}
+	public function update_foto_profil($username, $foto_rel_path)
+	{
+		$this->db->where('USERNAME', $username);
+		return $this->db->update('user', ['FOTO_PROFIL' => $foto_rel_path]);
+	}
 }
