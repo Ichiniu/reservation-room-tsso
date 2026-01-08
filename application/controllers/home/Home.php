@@ -235,20 +235,20 @@ class Home extends CI_Controller
 
 
 	public function pemesanan()
-{
-    $username = $this->session->userdata('username');
-    $this->load->model('gedung/gedung_model');
+	{
+		$username = $this->session->userdata('username');
+		$this->load->model('gedung/gedung_model');
 
-    // wajib di sini
-    $this->gedung_model->clear_pemesanan_flag($username);
+		// wajib di sini
+		$this->gedung_model->clear_pemesanan_flag($username);
 
-    $data['res'] = $this->gedung_model->get_pemesanan($username);
-    $data['flag'] = $this->gedung_model->get_pemesanan_flag($username);
-    $data['no_data'] = "Data Kosong";
-    $data['rows'] = $this->gedung_model->count_pemesanan($username);
+		$data['res'] = $this->gedung_model->get_pemesanan($username);
+		$data['flag'] = $this->gedung_model->get_pemesanan_flag($username);
+		$data['no_data'] = "Data Kosong";
+		$data['rows'] = $this->gedung_model->count_pemesanan($username);
 
-    $this->load->view('home/pemesanan', $data);
-}
+		$this->load->view('home/pemesanan', $data);
+	}
 
 	public function pembayaran()
 	{
@@ -881,6 +881,11 @@ class Home extends CI_Controller
 		}
 
 		$this->load->model('Ulasan/Ulasan_Model', 'Ulasan_model');
+		if ($this->Ulasan_model->exists_by_username($name)) {
+			$this->session->set_flashdata('error', 'Kamu sudah pernah mengirim ulasan. Tidak bisa mengisi ulang.');
+			redirect('home/ulasan');
+			return;
+		}
 
 		$ok = $this->Ulasan_model->insert_ulasan(array(
 			'USERNAME'   => $name,
