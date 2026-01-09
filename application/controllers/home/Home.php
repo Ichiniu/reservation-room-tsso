@@ -1018,4 +1018,55 @@ class Home extends CI_Controller
 
 		redirect('home/ulasan');
 	}
+	public function notif_status()
+{
+    $username = $this->session->userdata('username');
+    if (empty($username)) {
+        show_error('Unauthorized', 401);
+        return;
+    }
+
+    $this->load->model('gedung/gedung_model');
+
+    $rows = $this->gedung_model->get_status_by_user($username);
+
+    $this->output
+        ->set_content_type('application/json')
+        ->set_output(json_encode($rows));
+}
+ public function notif_poll()
+    {
+        $username = $this->session->userdata('username');
+
+        // keamanan: kalau belum login jangan kasih data
+        if (!$username) {
+            $this->output
+                ->set_status_header(401)
+                ->set_content_type('application/json')
+                ->set_output(json_encode([
+                    'ok' => false,
+                    'flag' => 0,
+                    'message' => 'unauthorized'
+                ]));
+            return;
+        }
+
+        $this->load->model('gedung/gedung_model');
+
+        $flag = (int) $this->gedung_model->get_pemesanan_flag($username);
+
+        $this->output
+            ->set_content_type('application/json')
+            ->set_output(json_encode([
+                'ok' => true,
+                'flag' => $flag
+            ]));
+    } 
+	public function notif_status_by_user(){
+		$username = $this->session->userdata('username');	
+		$this->load->model('gedung/gedung_model');
+		$data['res'] = $this->gedung_model->get_status_by_user($username);
+		$this->load->view('home/notif_status_by_user', $data);
+	}
+
 }
