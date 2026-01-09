@@ -27,6 +27,8 @@ $route['location'] = 'home/home/location';
 $route['home/ulasan'] = 'home/home/ulasan';
 $route['home/submit_ulasan'] = 'home/home/submit_ulasan';
 $route['ulasan'] = 'home/home/ulasan';
+$route['edit_foto'] = 'home/home/edit_foto';
+$route['edit_foto/(:any)'] = 'home/home/edit_foto/$1';
 
 
 

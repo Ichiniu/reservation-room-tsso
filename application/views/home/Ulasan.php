@@ -1,30 +1,5 @@
 <?php
-// ====== DATA DUMMY (nanti kalau sudah DB, $reviews diisi dari controller) ======
-if (!isset($reviews) || !is_array($reviews)) {
-    $reviews = array(
-        array(
-            'name' => 'Rina P.',
-            'rating' => 5,
-            'date' => '2026-01-02',
-            'title' => 'Pelayanan cepat & gedung nyaman',
-            'comment' => 'Proses booking gampang, CS responsif, dan ruangannya bersih. Recommended!'
-        ),
-        array(
-            'name' => 'Bagas A.',
-            'rating' => 4,
-            'date' => '2025-12-21',
-            'title' => 'Acara lancar',
-            'comment' => 'Overall oke. Sound system mantap, tapi parkir agak penuh saat jam ramai.'
-        ),
-        array(
-            'name' => 'Dewi S.',
-            'rating' => 5,
-            'date' => '2025-12-10',
-            'title' => 'Catering enak',
-            'comment' => 'Menu cateringnya enak dan porsi pas. Tim sangat membantu dari awal sampai selesai.'
-        )
-    );
-}
+
 
 // ====== Helper bintang (PHP 5 friendly) ======
 function star_svg($filled)
@@ -188,6 +163,14 @@ $username = $this->session->userdata('username');
         </section>
 
         <!-- Form -->
+        <?php if (!empty($already_reviewed)): ?>
+            <div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+                Kamu sudah pernah mengirim ulasan, jadi tidak bisa mengisi ulang.
+            </div>
+        <?php else: ?>
+            <!-- section id="tulis-ulasan" (form kamu) taruh di sini -->
+        <?php endif; ?>
+
         <section id="tulis-ulasan" class="mt-8">
             <div class="bg-white rounded-2xl border border-black/10 shadow-sm p-6">
                 <div class="text-lg font-bold text-slate-900">Tulis Ulasan</div>

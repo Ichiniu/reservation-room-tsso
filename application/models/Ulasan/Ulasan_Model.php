@@ -43,4 +43,13 @@ class Ulasan_model extends CI_Model
             'dist' => $dist
         );
     }
+    public function exists_by_username($username)
+    {
+        $username = trim((string)$username);
+        if ($username === '') return false;
+
+        return $this->db->where('USERNAME', $username)
+            ->from('ulasan')
+            ->count_all_results() > 0;
+    }
 }
