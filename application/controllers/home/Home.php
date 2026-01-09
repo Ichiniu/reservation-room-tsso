@@ -950,6 +950,7 @@ class Home extends CI_Controller
 	public function ulasan()
 	{
 		$this->load->model('Ulasan/Ulasan_Model', 'Ulasan_model');
+		$this->load->model('pemesanan/Pemesanan_Model', 'Pemesanan_model');
 
 		// ambil ulasan APPROVED
 		$rows = $this->Ulasan_model->get_approved(30);
@@ -961,54 +962,154 @@ class Home extends CI_Controller
 				'name'    => isset($r['USERNAME']) ? $r['USERNAME'] : '',
 				'rating'  => isset($r['RATING']) ? (int)$r['RATING'] : 0,
 				'date'    => isset($r['CREATED_AT']) ? date('Y-m-d', strtotime($r['CREATED_AT'])) : '',
-				'title'   => isset($r['TITLE']) ? $r['TITLE'] : '',      // ini nanti jadi NAMA GEDUNG
+				'title'   => isset($r['TITLE']) ? $r['TITLE'] : '',
 				'comment' => isset($r['COMMENT']) ? $r['COMMENT'] : ''
 			);
 		}
 
-		// ✅ ambil list gedung untuk dropdown
-		$gedungs = $this->db->select('ID_GEDUNG, NAMA_GEDUNG')
-			->from('gedung')
-			->order_by('NAMA_GEDUNG', 'ASC')
-			->get()
-			->result_array();
+		// summary akurat (berdasarkan semua APPROVED)
+		$data['summary'] = $this->Ulasan_model->get_summary_approved();
+
+		// helper format jam HH:MM
+		$time_hm = function ($t) {
+			$t = trim((string)$t);
+			if ($t === '') return '';
+			return (strlen($t) >= 5) ? substr($t, 0, 5) : $t;
+		};
+
+		// dropdown pemesanan: hanya STATUS=3 (submitted) dan belum pernah diulas
+		$username = $this->session->userdata('username');
+		$reservasi_list = array();
+
+		if (!empty($username)) {
+			$orders = $this->Pemesanan_model->get_submitted_by_username($username);
+
+			// filter agar yang sudah diulas tidak muncul
+			$has_id_pemesanan_col = $this->db->field_exists('ID_PEMESANAN', 'ulasan');
+			$reviewed_ids = $has_id_pemesanan_col ? $this->Ulasan_model->get_reviewed_id_pemesanan_by_username($username) : array();
+			$reviewed_titles = !$has_id_pemesanan_col ? $this->Ulasan_model->get_reviewed_titles_by_username($username) : array();
+
+			$reviewed_ids_map = array();
+			foreach ($reviewed_ids as $rid) $reviewed_ids_map[(int)$rid] = true;
+
+			$reviewed_titles_map = array();
+			foreach ($reviewed_titles as $t) $reviewed_titles_map[$t] = true;
+
+			foreach ($orders as $o) {
+				$id = (int)$o['ID_PEMESANAN'];
+
+				$nama_gedung = isset($o['NAMA_GEDUNG']) ? trim((string)$o['NAMA_GEDUNG']) : '';
+				$tanggal     = isset($o['TANGGAL_PEMESANAN']) ? trim((string)$o['TANGGAL_PEMESANAN']) : '';
+
+				$jam_mulai_disp   = $time_hm(isset($o['JAM_PEMESANAN']) ? $o['JAM_PEMESANAN'] : '');
+				$jam_selesai_disp = $time_hm(isset($o['JAM_SELESAI']) ? $o['JAM_SELESAI'] : '');
+
+				if ($jam_selesai_disp === '00:00') $jam_selesai_disp = '';
+
+				$range = $jam_selesai_disp ? ($jam_mulai_disp . ' - ' . $jam_selesai_disp) : $jam_mulai_disp;
+
+				// label untuk dropdown + kunci untuk cek sudah diulas
+				$title_key = $nama_gedung . ' - ' . $tanggal . ' (' . $range . ')';
+
+				if ($has_id_pemesanan_col) {
+					if (isset($reviewed_ids_map[$id])) continue;
+				} else {
+					if (isset($reviewed_titles_map[$title_key])) continue;
+				}
+
+				$reservasi_list[] = array(
+					'ID_PEMESANAN' => $id,
+					'label'        => $title_key,
+					'title_key'    => $title_key,
+				);
+			}
+		}
 
 		$data['reviews'] = $reviews;
-		$data['gedungs'] = $gedungs;
+		$data['reservasi_list'] = $reservasi_list;
 
 		$this->load->view('home/ulasan', $data);
 	}
 
-
-
 	public function submit_ulasan()
 	{
-		$rating  = (int)$this->input->post('rating');
-		$name    = trim($this->input->post('name'));
-		$gedung  = trim($this->input->post('gedung'));  // ✅ nama gedung dari dropdown
-		$comment = trim($this->input->post('comment'));
-
-		if ($rating < 1 || $rating > 5 || $comment === '' || $name === '' || $gedung === '') {
-			$this->session->set_flashdata('error', 'Nama, gedung, rating, dan komentar wajib diisi.');
-			redirect('home/ulasan');
-			return;
-		}
-
 		$this->load->model('Ulasan/Ulasan_Model', 'Ulasan_model');
-		if ($this->Ulasan_model->exists_by_username($name)) {
-			$this->session->set_flashdata('error', 'Kamu sudah pernah mengirim ulasan. Tidak bisa mengisi ulang.');
+		$this->load->model('pemesanan/Pemesanan_Model', 'Pemesanan_model');
+
+		$username = $this->session->userdata('username');
+		if (empty($username)) {
+			$this->session->set_flashdata('error', 'Silakan login dulu untuk mengirim ulasan.');
 			redirect('home/ulasan');
 			return;
 		}
 
-		$ok = $this->Ulasan_model->insert_ulasan(array(
-			'USERNAME'   => $name,
+		$rating       = (int)$this->input->post('rating');
+		$id_pemesanan = (int)$this->input->post('id_pemesanan');
+		$comment      = trim($this->input->post('comment'));
+
+		if ($rating < 1 || $rating > 5 || $comment === '' || $id_pemesanan <= 0) {
+			$this->session->set_flashdata('error', 'Pemesanan, rating, dan komentar wajib diisi.');
+			redirect('home/ulasan');
+			return;
+		}
+
+		// validasi: pemesanan harus milik user + STATUS=3 (submitted)
+		$pesanan = $this->Pemesanan_model->get_one_submitted_by_id_and_username($id_pemesanan, $username);
+		if (empty($pesanan)) {
+			$this->session->set_flashdata('error', 'Pemesanan tidak valid / bukan milik kamu / belum status submitted.');
+			redirect('home/ulasan');
+			return;
+		}
+
+		// helper format jam HH:MM
+		$time_hm = function ($t) {
+			$t = trim((string)$t);
+			if ($t === '') return '';
+			return (strlen($t) >= 5) ? substr($t, 0, 5) : $t;
+		};
+
+		$nama_gedung = isset($pesanan['NAMA_GEDUNG']) ? trim((string)$pesanan['NAMA_GEDUNG']) : '';
+		$tanggal     = isset($pesanan['TANGGAL_PEMESANAN']) ? trim((string)$pesanan['TANGGAL_PEMESANAN']) : '';
+
+		// kalau nama gedung / tanggal kosong, stop biar tidak tersimpan "- - (...)"
+		if ($nama_gedung === '' || $tanggal === '') {
+			$this->session->set_flashdata('error', 'Data gedung/tanggal pemesanan tidak ditemukan. Coba pilih pemesanan lain.');
+			redirect('home/ulasan');
+			return;
+		}
+
+		$jam_mulai_disp   = $time_hm(isset($pesanan['JAM_PEMESANAN']) ? $pesanan['JAM_PEMESANAN'] : '');
+		$jam_selesai_disp = $time_hm(isset($pesanan['JAM_SELESAI']) ? $pesanan['JAM_SELESAI'] : '');
+
+		if ($jam_selesai_disp === '00:00') $jam_selesai_disp = '';
+
+		$range = $jam_selesai_disp ? ($jam_mulai_disp . ' - ' . $jam_selesai_disp) : $jam_mulai_disp;
+
+		// ini yang disimpan ke TITLE
+		$title_key = $nama_gedung . ' - ' . $tanggal . ' (' . $range . ')';
+
+		// blokir dobel ulasan untuk pemesanan yang sama
+		if ($this->Ulasan_model->exists_for_pemesanan($id_pemesanan, $username, $title_key)) {
+			$this->session->set_flashdata('error', 'Pemesanan ini sudah pernah kamu ulas.');
+			redirect('home/ulasan');
+			return;
+		}
+
+		$insert = array(
+			'USERNAME'   => $username,
 			'RATING'     => $rating,
-			'TITLE'      => $gedung,          // ✅ simpan nama gedung ke kolom TITLE
+			'TITLE'      => $title_key,
 			'COMMENT'    => $comment,
-			'STATUS'     => 'APPROVED',        // Opsi A: langsung tampil
+			'STATUS'     => 'APPROVED',
 			'CREATED_AT' => date('Y-m-d H:i:s')
-		));
+		);
+
+		// optional: jika kolom ID_PEMESANAN sudah ada di tabel ulasan, ikut simpan
+		if ($this->db->field_exists('ID_PEMESANAN', 'ulasan')) {
+			$insert['ID_PEMESANAN'] = $id_pemesanan;
+		}
+
+		$ok = $this->Ulasan_model->insert_ulasan($insert);
 
 		if ($ok) {
 			$this->session->set_flashdata('success', 'Ulasan kamu berhasil dikirim dan sudah tampil.');
@@ -1018,55 +1119,56 @@ class Home extends CI_Controller
 
 		redirect('home/ulasan');
 	}
+
 	public function notif_status()
-{
-    $username = $this->session->userdata('username');
-    if (empty($username)) {
-        show_error('Unauthorized', 401);
-        return;
-    }
+	{
+		$username = $this->session->userdata('username');
+		if (empty($username)) {
+			show_error('Unauthorized', 401);
+			return;
+		}
 
-    $this->load->model('gedung/gedung_model');
+		$this->load->model('gedung/gedung_model');
 
-    $rows = $this->gedung_model->get_status_by_user($username);
+		$rows = $this->gedung_model->get_status_by_user($username);
 
-    $this->output
-        ->set_content_type('application/json')
-        ->set_output(json_encode($rows));
-}
- public function notif_poll()
-    {
-        $username = $this->session->userdata('username');
+		$this->output
+			->set_content_type('application/json')
+			->set_output(json_encode($rows));
+	}
+	public function notif_poll()
+	{
+		$username = $this->session->userdata('username');
 
-        // keamanan: kalau belum login jangan kasih data
-        if (!$username) {
-            $this->output
-                ->set_status_header(401)
-                ->set_content_type('application/json')
-                ->set_output(json_encode([
-                    'ok' => false,
-                    'flag' => 0,
-                    'message' => 'unauthorized'
-                ]));
-            return;
-        }
+		// keamanan: kalau belum login jangan kasih data
+		if (!$username) {
+			$this->output
+				->set_status_header(401)
+				->set_content_type('application/json')
+				->set_output(json_encode([
+					'ok' => false,
+					'flag' => 0,
+					'message' => 'unauthorized'
+				]));
+			return;
+		}
 
-        $this->load->model('gedung/gedung_model');
+		$this->load->model('gedung/gedung_model');
 
-        $flag = (int) $this->gedung_model->get_pemesanan_flag($username);
+		$flag = (int) $this->gedung_model->get_pemesanan_flag($username);
 
-        $this->output
-            ->set_content_type('application/json')
-            ->set_output(json_encode([
-                'ok' => true,
-                'flag' => $flag
-            ]));
-    } 
-	public function notif_status_by_user(){
-		$username = $this->session->userdata('username');	
+		$this->output
+			->set_content_type('application/json')
+			->set_output(json_encode([
+				'ok' => true,
+				'flag' => $flag
+			]));
+	}
+	public function notif_status_by_user()
+	{
+		$username = $this->session->userdata('username');
 		$this->load->model('gedung/gedung_model');
 		$data['res'] = $this->gedung_model->get_status_by_user($username);
 		$this->load->view('home/notif_status_by_user', $data);
 	}
-
 }
