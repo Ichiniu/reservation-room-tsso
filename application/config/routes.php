@@ -91,6 +91,7 @@ $route['manage/kegiatan_download_pdf/(:any)/(:any)'] = 'manage/manage/kegiatan_e
 
 $route['api/notif/unread-count'] = 'api/notifications/unread_count';
 $route['api/notif/mark-read']    = 'api/notifications/mark_read';
+$route['admin/notif_unread_count'] = 'Admin_Controls/notif_unread_count';
 
 
 

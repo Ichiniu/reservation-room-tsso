@@ -696,4 +696,15 @@ class Gedung_Model extends CI_Model
 		$q = $this->db->query($sql, [$id_gedung, $tanggal, $jam_selesai, $jam_mulai]);
 		return $q->num_rows() > 0;
 	}
+
+	public function get_status_by_user($username)
+{
+    return $this->db->select('ID_PEMESANAN, STATUS')
+        ->from('pemesanan')
+        ->where('USERNAME', $username)
+        ->order_by('ID_PEMESANAN', 'DESC')
+        ->get()
+        ->result_array();
+}
+
 }
