@@ -288,11 +288,24 @@ class Home extends CI_Controller
 			? $u->EMAIL
 			: (isset($data['result']->EMAIL) ? $data['result']->EMAIL : null);
 
-		// ambil proposal: keperluan acara + file upload
-		$data['proposal_details'] = $this->gedung_model->get_proposal_by_id((int)$temp_id);
+		// =========================
+		// ✅ TAMBAHAN: Catatan Admin saat REJECT (dari tabel pembayaran)
+		// =========================
+		$cat = $this->db
+			->select('CATATAN_ADMIN')
+			->from('pembayaran')
+			->where('ID_PEMESANAN_RAW', (int)$temp_id)
+			->where('STATUS_VERIF', 'REJECTED')
+			->order_by('ID_PEMBAYARAN', 'DESC')
+			->limit(1)
+			->get()
+			->row();
+
+		$data['catatan_admin_reject'] = $cat ? (string)$cat->CATATAN_ADMIN : '';
 
 		$this->load->view('home/detail_pemesanan', $data);
 	}
+
 
 	public function upload_proposal($id_pemesanan = null)
 	{
