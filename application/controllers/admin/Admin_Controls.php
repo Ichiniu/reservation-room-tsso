@@ -229,7 +229,7 @@ class Admin_Controls extends CI_Controller
 		$data['details'] = $this->gedung_model->get_details_transaction($id_pembayaran);
 
 		if (!$data['details']) {
-			show_error('Data pembayaran tidak ditemukan');
+			show_error('Data pembayaran tidak ditemukan');	
 			return;
 		}
 
@@ -502,214 +502,212 @@ class Admin_Controls extends CI_Controller
 	}
 
 	public function verify_pembayaran($id_pembayaran, $action)
-{
-    $id_pembayaran = (int) $id_pembayaran;
-    $action        = strtolower(trim((string)$action));
+	{
+		$id_pembayaran = (int) $id_pembayaran;
+		$action        = strtolower(trim((string)$action));
 
-    // =========================
-    // Validasi input dasar
-    // =========================
-    if ($id_pembayaran <= 0) {
-        show_error('ID pembayaran tidak valid');
-        return;
-    }
+		// =========================
+		// Validasi input dasar
+		// =========================
+		if ($id_pembayaran <= 0) {
+			show_error('ID pembayaran tidak valid');
+			return;
+		}
 
-    // Ambil data pembayaran
-    $p = $this->db->get_where('pembayaran', [
-        'ID_PEMBAYARAN' => $id_pembayaran
-    ])->row_array();
+		// Ambil data pembayaran
+		$p = $this->db->get_where('pembayaran', [
+			'ID_PEMBAYARAN' => $id_pembayaran
+		])->row_array();
 
-    if (!$p) {
-        show_error('Data pembayaran tidak ditemukan');
-        return;
-    }
+		if (!$p) {
+			show_error('Data pembayaran tidak ditemukan');
+			return;
+		}
 
-    // Pastikan field ID_PEMESANAN_RAW ada & valid
-    if (empty($p['ID_PEMESANAN_RAW'])) {
-        show_error('ID pemesanan pada data pembayaran tidak ditemukan (ID_PEMESANAN_RAW kosong).');
-        return;
-    }
+		// Pastikan field ID_PEMESANAN_RAW ada & valid
+		if (empty($p['ID_PEMESANAN_RAW'])) {
+			show_error('ID pemesanan pada data pembayaran tidak ditemukan (ID_PEMESANAN_RAW kosong).');
+			return;
+		}
 
-    $id_pemesanan = (int) $p['ID_PEMESANAN_RAW'];
-    if ($id_pemesanan <= 0) {
-        show_error('ID pemesanan tidak valid');
-        return;
-    }
+		$id_pemesanan = (int) $p['ID_PEMESANAN_RAW'];
+		if ($id_pemesanan <= 0) {
+			show_error('ID pemesanan tidak valid');
+			return;
+		}
 
-    // Catatan admin (dibutuhkan saat reject)
-    $catatan = trim((string) $this->input->post('catatan_admin', TRUE));
+		// Catatan admin (dibutuhkan saat reject)
+		$catatan = trim((string) $this->input->post('catatan_admin', TRUE));
 
-    // =========================
-    // Mulai transaksi database
-    // =========================
-    $this->db->trans_begin();
+		// =========================
+		// Mulai transaksi database
+		// =========================
+		$this->db->trans_begin();
 
-    // =========================
-    // Aksi CONFIRM
-    // =========================
-    if ($action === 'confirm') {
+		// =========================
+		// Aksi CONFIRM
+		// =========================
+		if ($action === 'confirm') {
 
-        // 1) Update pembayaran
-        $this->db->where('ID_PEMBAYARAN', $id_pembayaran);
-        $this->db->update('pembayaran', [
-            'STATUS_VERIF'  => 'CONFIRMED',
-            'CATATAN_ADMIN' => $catatan, // boleh kosong saat confirm
-            'CONFIRMED_AT'  => date('Y-m-d H:i:s')
-        ]);
+			// 1) Update pembayaran
+			$this->db->where('ID_PEMBAYARAN', $id_pembayaran);
+			$this->db->update('pembayaran', [
+				'STATUS_VERIF'  => 'CONFIRMED',
+				'CATATAN_ADMIN' => $catatan, // boleh kosong saat confirm
+				'CONFIRMED_AT'  => date('Y-m-d H:i:s')
+			]);
 
-        // 2) Update status pemesanan -> 3 (misal: confirmed/paid)
-        $this->db->where('ID_PEMESANAN', $id_pemesanan);
-        $this->db->update('pemesanan', ['STATUS' => 3]);
+			// 2) Update status pemesanan -> 3 (misal: confirmed/paid)
+			$this->db->where('ID_PEMESANAN', $id_pemesanan);
+			$this->db->update('pemesanan', ['STATUS' => 3]);
 
-        // 3) Ambil data pemesanan untuk isi fix detail
-        $ps = $this->db->get_where('pemesanan', [
-            'ID_PEMESANAN' => $id_pemesanan
-        ])->row_array();
+			// 3) Ambil data pemesanan untuk isi fix detail
+			$ps = $this->db->get_where('pemesanan', [
+				'ID_PEMESANAN' => $id_pemesanan
+			])->row_array();
 
-        if (!$ps) {
-            $this->db->trans_rollback();
-            show_error('Data pemesanan tidak ditemukan.');
-            return;
-        }
+			if (!$ps) {
+				$this->db->trans_rollback();
+				show_error('Data pemesanan tidak ditemukan.');
+				return;
+			}
 
-        // 4) Pastikan jam mulai tidak NULL
-        $jam_mulai = !empty($ps['JAM_PEMESANAN']) ? $ps['JAM_PEMESANAN'] : '08:00:00';
+			// 4) Pastikan jam mulai tidak NULL
+			$jam_mulai = !empty($ps['JAM_PEMESANAN']) ? $ps['JAM_PEMESANAN'] : '08:00:00';
 
-        // 5) Jam selesai fallback kalau kosong
-        $jam_selesai = !empty($ps['JAM_SELESAI']) ? $ps['JAM_SELESAI'] : '';
-        if ($jam_selesai === '') {
+			// 5) Jam selesai fallback kalau kosong
+			$jam_selesai = !empty($ps['JAM_SELESAI']) ? $ps['JAM_SELESAI'] : '';
+			if ($jam_selesai === '') {
 
-            $tipe_jam = !empty($ps['TIPE_JAM']) ? $ps['TIPE_JAM'] : 'CUSTOM';
+				$tipe_jam = !empty($ps['TIPE_JAM']) ? $ps['TIPE_JAM'] : 'CUSTOM';
 
-            // Durasi default: CUSTOM 1 jam
-            $durasi_jam = 1;
-            if ($tipe_jam === 'HALF_DAY') {
-                $durasi_jam = 4;
-            } elseif ($tipe_jam === 'FULL_DAY') {
-                $durasi_jam = 8;
-            }
+				// Durasi default: CUSTOM 1 jam
+				$durasi_jam = 1;
+				if ($tipe_jam === 'HALF_DAY') {
+					$durasi_jam = 4;
+				} elseif ($tipe_jam === 'FULL_DAY') {
+					$durasi_jam = 8;
+				}
 
-            $jam_selesai = date('H:i:s', strtotime($jam_mulai . " +{$durasi_jam} hours"));
-        }
+				$jam_selesai = date('H:i:s', strtotime($jam_mulai . " +{$durasi_jam} hours"));
+			}
 
-        // 6) Deadline (hindari kasus strtotime gagal -> 1970-01-01)
-        $tanggal_deadline = date('Y-m-d'); // fallback: hari ini
-        if (!empty($ps['TANGGAL_PEMESANAN'])) {
-            $ts_deadline = strtotime($ps['TANGGAL_PEMESANAN'] . ' -1 day');
-            if ($ts_deadline !== false) {
-                $tanggal_deadline = date('Y-m-d', $ts_deadline);
-            }
-        }
+			// 6) Deadline (hindari kasus strtotime gagal -> 1970-01-01)
+			$tanggal_deadline = date('Y-m-d'); // fallback: hari ini
+			if (!empty($ps['TANGGAL_PEMESANAN'])) {
+				$ts_deadline = strtotime($ps['TANGGAL_PEMESANAN'] . ' -1 day');
+				if ($ts_deadline !== false) {
+					$tanggal_deadline = date('Y-m-d', $ts_deadline);
+				}
+			}
 
-        // 7) Data fix detail (sesuai struktur pemesanan_fix_detail)
-        $fix = [
-            'ID_PEMESANAN'            => (int) $ps['ID_PEMESANAN'],
-            'ID_GEDUNG'               => (int) $ps['ID_GEDUNG'],
-            'USERNAME'                => $ps['USERNAME'],
-            'TANGGAL_APPROVAL'        => date('Y-m-d'),
-            'TANGGAL_FINAL_PEMESANAN' => $ps['TANGGAL_PEMESANAN'],
-            'JAM_MULAI'               => $jam_mulai,
-            'JAM_SELESAI'             => $jam_selesai,
-            'TANGGAL_DEADLINE'        => $tanggal_deadline,
-            'FINAL_STATUS'            => 1
-        ];
+			// 7) Data fix detail (sesuai struktur pemesanan_fix_detail)
+			$fix = [
+				'ID_PEMESANAN'            => (int) $ps['ID_PEMESANAN'],
+				'ID_GEDUNG'               => (int) $ps['ID_GEDUNG'],
+				'USERNAME'                => $ps['USERNAME'],
+				'TANGGAL_APPROVAL'        => date('Y-m-d'),
+				'TANGGAL_FINAL_PEMESANAN' => $ps['TANGGAL_PEMESANAN'],
+				'JAM_MULAI'               => $jam_mulai,
+				'JAM_SELESAI'             => $jam_selesai,
+				'TANGGAL_DEADLINE'        => $tanggal_deadline,
+				'FINAL_STATUS'            => 1
+			];
 
-        // 8) UPSERT ke pemesanan_fix_detail
-        $exist = $this->db->get_where('pemesanan_fix_detail', [
-            'ID_PEMESANAN' => $id_pemesanan
-        ])->row_array();
+			// 8) UPSERT ke pemesanan_fix_detail
+			$exist = $this->db->get_where('pemesanan_fix_detail', [
+				'ID_PEMESANAN' => $id_pemesanan
+			])->row_array();
 
-        if ($exist) {
-            $this->db->where('ID_PEMESANAN', $id_pemesanan);
-            $this->db->update('pemesanan_fix_detail', $fix);
-        } else {
-            $this->db->insert('pemesanan_fix_detail', $fix);
-        }
+			if ($exist) {
+				$this->db->where('ID_PEMESANAN', $id_pemesanan);
+				$this->db->update('pemesanan_fix_detail', $fix);
+			} else {
+				$this->db->insert('pemesanan_fix_detail', $fix);
+			}
 
-    // =========================
-    // Aksi REJECT
-    // =========================
-    } elseif ($action === 'reject') {
+			// =========================
+			// Aksi REJECT
+			// =========================
+		} elseif ($action === 'reject') {
 
-        // Catatan wajib di reject
-        if ($catatan === '') {
-            $this->db->trans_rollback();
-            show_error('Catatan admin wajib diisi saat menolak pembayaran.');
-            return;
-        }
+			// Catatan wajib di reject
+			if ($catatan === '') {
+				$this->db->trans_rollback();
+				show_error('Catatan admin wajib diisi saat menolak pembayaran.');
+				return;
+			}
 
-        // 1) Update pembayaran jadi REJECTED
-        $this->db->where('ID_PEMBAYARAN', $id_pembayaran);
-        $this->db->update('pembayaran', [
-            'STATUS_VERIF'  => 'REJECTED',
-            'CATATAN_ADMIN' => $catatan,
-            'CONFIRMED_AT'  => null
-        ]);
+			// 1) Update pembayaran jadi REJECTED
+			$this->db->where('ID_PEMBAYARAN', $id_pembayaran);
+			$this->db->update('pembayaran', [
+				'STATUS_VERIF'  => 'REJECTED',
+				'CATATAN_ADMIN' => $catatan,
+				'CONFIRMED_AT'  => null
+			]);
 
-        // 2) Update status pemesanan -> 4 (misal: rejected)
-        $this->db->where('ID_PEMESANAN', $id_pemesanan);
-        $this->db->update('pemesanan', ['STATUS' => 4]);
+			// 2) Update status pemesanan -> 4 (misal: rejected)
+			$this->db->where('ID_PEMESANAN', $id_pemesanan);
+			$this->db->update('pemesanan', ['STATUS' => 4]);
 
-        // 3) OPTIONAL: kalau sudah pernah masuk fix, matikan
-        $this->db->where('ID_PEMESANAN', $id_pemesanan);
-        $this->db->update('pemesanan_fix_detail', ['FINAL_STATUS' => 0]);
+			// 3) OPTIONAL: kalau sudah pernah masuk fix, matikan
+			$this->db->where('ID_PEMESANAN', $id_pemesanan);
+			$this->db->update('pemesanan_fix_detail', ['FINAL_STATUS' => 0]);
+		} else {
+			$this->db->trans_rollback();
+			show_error('Aksi tidak dikenali');
+			return;
+		}
 
-    } else {
-        $this->db->trans_rollback();
-        show_error('Aksi tidak dikenali');
-        return;
-    }
+		// =========================
+		// Cek transaksi
+		// =========================
+		if ($this->db->trans_status() === FALSE) {
+			$this->db->trans_rollback();
+			$err = $this->db->error();
+			show_error('Gagal menyimpan data: ' . $err['message']);
+			return;
+		}
 
-    // =========================
-    // Cek transaksi
-    // =========================
-    if ($this->db->trans_status() === FALSE) {
-        $this->db->trans_rollback();
-        $err = $this->db->error();
-        show_error('Gagal menyimpan data: ' . $err['message']);
-        return;
-    }
-
-    $this->db->trans_commit();
-    redirect('admin/pembayaran');
-}
+		$this->db->trans_commit();
+		redirect('admin/pembayaran');
+	}
 
 
 	// =====================================================================
-// ✅ ADDED: Endpoint polling untuk desktop notification (browser)
-// Tujuan: JS di halaman admin akan memanggil endpoint ini tiap beberapa detik.
-// Output: JSON { ok: true, count: <jumlah unread> }
-// =====================================================================
-public function notif_unread_count()
-{
-    // keamanan: pastikan admin login
-    if ($this->session->userdata('admin_logged_in') !== TRUE) {
-        $this->output
-            ->set_status_header(401)
-            ->set_content_type('application/json')
-            ->set_output(json_encode([
-                'ok' => false,
-                'message' => 'unauthorized'
-            ]));
-        return;
-    }
+	// ✅ ADDED: Endpoint polling untuk desktop notification (browser)
+	// Tujuan: JS di halaman admin akan memanggil endpoint ini tiap beberapa detik.
+	// Output: JSON { ok: true, count: <jumlah unread> }
+	// =====================================================================
+	public function notif_unread_count()
+	{
+		// keamanan: pastikan admin login
+		if ($this->session->userdata('admin_logged_in') !== TRUE) {
+			$this->output
+				->set_status_header(401)
+				->set_content_type('application/json')
+				->set_output(json_encode([
+					'ok' => false,
+					'message' => 'unauthorized'
+				]));
+			return;
+		}
 
-    // pakai model yang sudah kamu gunakan di file ini
-    $this->load->model('gedung/gedung_model');
+		// pakai model yang sudah kamu gunakan di file ini
+		$this->load->model('gedung/gedung_model');
 
-    // get_unread_transaction() kamu sudah dipakai di banyak view admin
-    $unread = $this->gedung_model->get_unread_transaction();
+		// get_unread_transaction() kamu sudah dipakai di banyak view admin
+		$unread = $this->gedung_model->get_unread_transaction();
 
-    // aman: kalau array -> count, kalau bukan -> 0
-    $count = is_array($unread) ? count($unread) : 0;
+		// aman: kalau array -> count, kalau bukan -> 0
+		$count = is_array($unread) ? count($unread) : 0;
 
-    $this->output
-        ->set_content_type('application/json')
-        ->set_output(json_encode([
-            'ok'    => true,
-            'count' => $count,
-            'ts'    => date('Y-m-d H:i:s')
-        ]));
-}
-
+		$this->output
+			->set_content_type('application/json')
+			->set_output(json_encode([
+				'ok'    => true,
+				'count' => $count,
+				'ts'    => date('Y-m-d H:i:s')
+			]));
+	}
 }

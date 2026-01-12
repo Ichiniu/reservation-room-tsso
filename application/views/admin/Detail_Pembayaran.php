@@ -1,6 +1,15 @@
 <?php
 // $details ini object dari $this->db->row()
 $d = $details;
+
+// Normalisasi status biar aman (misal: "pending", "Pending", "PENDING")
+$statusVerif = strtoupper(trim((string) ($d->STATUS_VERIF)));
+
+// Hanya pending yang boleh muncul tombol
+$isPending = ($statusVerif === 'PENDING');
+
+// Catatan admin dari DB
+$catatanAdmin = trim((string) ($d->CATATAN_ADMIN));
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -40,6 +49,21 @@ $d = $details;
                     <div class="text-slate-500">Status Verifikasi</div>
                     <div class="font-semibold">
                         <?= htmlspecialchars($d->STATUS_VERIF); ?>
+                    </div>
+
+                    <!-- Catatan Admin dipindah ke bawah Status Verifikasi -->
+                    <div class="mt-2">
+                        <div class="text-slate-500">Catatan Admin</div>
+                        <?php
+                        $catatanAdmin = trim((string)($d->CATATAN_ADMIN));
+                        ?>
+                        <?php if ($catatanAdmin !== ''): ?>
+                            <div class="font-semibold text-slate-800 whitespace-pre-line">
+                                <?= htmlspecialchars($catatanAdmin); ?>
+                            </div>
+                        <?php else: ?>
+                            <div class="text-slate-500">-</div>
+                        <?php endif; ?>
                     </div>
                 </div>
 
@@ -92,37 +116,55 @@ $d = $details;
                 </div>
             </div>
 
+
             <hr>
 
-            <form method="post">
-                <label class="block text-sm font-semibold text-slate-700 mb-2">
-                    Catatan Admin (wajib saat Reject)
-                </label>
-                <textarea name="catatan_admin"
-                    class="w-full border rounded-lg p-3 text-sm"
-                    rows="3"
-                    placeholder="Tulis catatan admin..."></textarea>
+            <?php if ($isPending): ?>
+                <form method="post">
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">
+                        Catatan Admin (wajib saat Reject)
+                    </label>
+                    <textarea name="catatan_admin"
+                        class="w-full border rounded-lg p-3 text-sm"
+                        rows="3"
+                        placeholder="Tulis catatan admin..."></textarea>
 
-                <div class="mt-4 flex flex-wrap gap-3">
-                    <button type="submit"
-                        formaction="<?= site_url('admin/admin_controls/verify_pembayaran/' . $d->ID_PEMBAYARAN . '/confirm'); ?>"
-                        class="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700">
-                        Confirm
-                    </button>
+                    <div class="mt-4 flex flex-wrap gap-3">
+                        <button type="submit"
+                            formaction="<?= site_url('admin/admin_controls/verify_pembayaran/' . $d->ID_PEMBAYARAN . '/confirm'); ?>"
+                            class="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700">
+                            Confirm
+                        </button>
 
-                    <button type="submit"
-                        formaction="<?= site_url('admin/admin_controls/verify_pembayaran/' . $d->ID_PEMBAYARAN . '/reject'); ?>"
-                        onclick="return confirm('Yakin tolak pembayaran ini? Catatan wajib diisi.');"
-                        class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">
-                        Reject
-                    </button>
+                        <button type="submit"
+                            formaction="<?= site_url('admin/admin_controls/verify_pembayaran/' . $d->ID_PEMBAYARAN . '/reject'); ?>"
+                            onclick="return confirm('Yakin tolak pembayaran ini? Catatan wajib diisi.');"
+                            class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">
+                            Reject
+                        </button>
 
+                        <a href="<?= site_url('admin/admin_controls/pembayaran'); ?>"
+                            class="px-4 py-2 rounded-lg bg-slate-200 hover:bg-slate-300">
+                            Kembali
+                        </a>
+                    </div>
+
+                </form>
+
+            <?php else: ?>
+                <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 text-sm text-slate-700">
+                    Pembayaran ini sudah diproses dengan status:
+                    <b><?= htmlspecialchars($d->STATUS_VERIF); ?></b>.
+
+                </div>
+
+                <div class="mt-4">
                     <a href="<?= site_url('admin/admin_controls/pembayaran'); ?>"
-                        class="px-4 py-2 rounded-lg bg-slate-200 hover:bg-slate-300">
+                        class="inline-block px-4 py-2 rounded-lg bg-slate-200 hover:bg-slate-300">
                         Kembali
                     </a>
                 </div>
-            </form>
+            <?php endif; ?>
 
         </div>
     </main>

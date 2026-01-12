@@ -661,6 +661,22 @@ class Home extends CI_Controller
 			$menu_input_json    = null;
 			$addon_input_json   = null;
 		}
+		// ===== STATUS AWAL (INTERNAL vs EKSTERNAL) =====
+		$perusahaan = $this->db->select('perusahaan')
+			->from('user')
+			->where('USERNAME', $username)
+			->get()
+			->row('perusahaan');
+
+		$perusahaan = strtoupper(trim((string)$perusahaan));
+
+		// default: eksternal / tidak ketemu -> PROCESS (0)
+		$status_awal = 0;
+
+		// internal -> SUBMITTED (3)
+		if ($perusahaan === 'INTERNAL') {
+			$status_awal = 3;
+		}
 
 		// ===== INSERT PEMESANAN =====
 		$data = array(

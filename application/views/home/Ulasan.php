@@ -114,7 +114,7 @@ $can_review = $has_login && count($reservasi_list) > 0;
             </div>
 
             <div class="bg-white rounded-2xl border border-black/10 shadow-sm p-6 lg:col-span-2">
-                <div class="text-sm font-semibold text-slate-900">Distribusi Rating</div>
+                <div class="text-sm font-semibold text-slate-900">Rating</div>
 
                 <div class="mt-4 space-y-2">
                     <?php for ($s = 5; $s >= 1; $s--): ?>
@@ -238,7 +238,7 @@ $can_review = $has_login && count($reservasi_list) > 0;
                         </button>
 
                         <p class="text-xs text-slate-500">
-                            Catatan: Ulasan dapat ditinjau admin terlebih dahulu sebelum tampil publik.
+                            Catatan: Ulasan dapat ditinjau terlebih dahulu sebelum submit
                         </p>
                     </form>
                 </div>
