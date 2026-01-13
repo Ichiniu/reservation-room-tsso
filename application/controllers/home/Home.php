@@ -235,21 +235,21 @@ class Home extends CI_Controller
 
 
 	public function pemesanan()
-{
-    $username = $this->session->userdata('username');
-    $this->load->model('gedung/gedung_model');
-	$this->gedung_model->clear_pemesanan_flag($username);
+	{
+		$username = $this->session->userdata('username');
+		$this->load->model('gedung/gedung_model');
+		$this->gedung_model->clear_pemesanan_flag($username);
 
-    // wajib di sini
-    $this->gedung_model->clear_pemesanan_flag($username);
+		// wajib di sini
+		$this->gedung_model->clear_pemesanan_flag($username);
 
-    $data['res'] = $this->gedung_model->get_pemesanan($username);
-    $data['flag'] = $this->gedung_model->get_pemesanan_flag($username);
-    $data['no_data'] = "Data Kosong";
-    $data['rows'] = $this->gedung_model->count_pemesanan($username);
+		$data['res'] = $this->gedung_model->get_pemesanan($username);
+		$data['flag'] = $this->gedung_model->get_pemesanan_flag($username);
+		$data['no_data'] = "Data Kosong";
+		$data['rows'] = $this->gedung_model->count_pemesanan($username);
 
-    $this->load->view('home/pemesanan', $data);
-}
+		$this->load->view('home/pemesanan', $data);
+	}
 
 	public function pembayaran()
 	{
@@ -1088,5 +1088,75 @@ class Home extends CI_Controller
 		$this->load->model('gedung/gedung_model');
 		$data['res'] = $this->gedung_model->get_status_by_user($username);
 		$this->load->view('home/notif_status_by_user', $data);
+	}
+	public function edit_foto()
+	{
+		$this->load->model('user/user_model');
+		$username = (string)$this->session->userdata('username');
+		if ($username === '') {
+			redirect('login');
+			return;
+		}
+
+		// kalau POST berarti simpan hasil crop (base64)
+		if ($this->input->method(TRUE) === 'POST') {
+			$imgData = $this->input->post('cropped_image');
+			if (empty($imgData)) {
+				$this->session->set_flashdata('error', 'Gambar belum dipilih.');
+				redirect('edit_foto');
+				return;
+			}
+
+			// pastikan folder ada
+			$dir = FCPATH . 'assets/user-profile/';
+			if (!is_dir($dir)) @mkdir($dir, 0775, true);
+
+			// ambil foto lama (buat delete)
+			$old = $this->db->select('FOTO_PROFIL')->from('user')->where('USERNAME', $username)->get()->row();
+			$oldPath = ($old && !empty($old->FOTO_PROFIL)) ? $old->FOTO_PROFIL : null;
+
+			// decode base64
+			if (strpos($imgData, 'base64,') !== false) {
+				$imgData = substr($imgData, strpos($imgData, 'base64,') + 7);
+			}
+			$bin = base64_decode($imgData);
+			if ($bin === false) {
+				$this->session->set_flashdata('error', 'Format gambar tidak valid.');
+				redirect('edit_foto');
+				return;
+			}
+
+			// simpan file dengan nama UNIK (biar gak kena cache)
+			$filename = 'avatar_' . $username . '_' . date('Ymd_His') . '_' . substr(md5(mt_rand()), 0, 6) . '.jpg';
+			$full = $dir . $filename;
+			if (file_put_contents($full, $bin) === false) {
+				$this->session->set_flashdata('error', 'Gagal menyimpan file. Cek permission folder assets/user-profile.');
+				redirect('edit_foto');
+				return;
+			}
+
+			$relative = 'assets/user-profile/' . $filename;
+
+			// update DB
+			$this->db->where('USERNAME', $username)->update('user', ['FOTO_PROFIL' => $relative]);
+
+			// update session biar navbar langsung berubah
+			$this->session->set_userdata('foto_profil', $relative);
+
+			// hapus file lama kalau ada dan memang file lokal
+			if ($oldPath && strpos($oldPath, 'assets/user-profile/') === 0) {
+				$oldFull = FCPATH . $oldPath;
+				if (is_file($oldFull)) @unlink($oldFull);
+			}
+
+			$this->session->set_flashdata('success', 'Foto profil berhasil diperbarui.');
+			redirect('edit_data'); // atau redirect('home');
+			return;
+		}
+
+		// GET: tampilkan halaman edit foto
+		$row = $this->db->select('FOTO_PROFIL')->from('user')->where('USERNAME', $username)->get()->row();
+		$data['foto_profil'] = ($row && !empty($row->FOTO_PROFIL)) ? $row->FOTO_PROFIL : 'assets/default-avatar.png';
+		$this->load->view('home/Edit_fotoprofil', $data);
 	}
 }

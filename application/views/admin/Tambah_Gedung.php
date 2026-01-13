@@ -62,70 +62,70 @@ $this->load->helper('form');
                 <a href="<?php echo site_url('admin/pemesanan2') ?>" class="waves-effect waves-teal">List Pemesanan</a>
             </li>
             <li class="bold">
-                <?php if($result > 0): ?>
-                <a href="<?php echo site_url('admin/transaksi') ?>" class="waves-effect waves-teal">Inbox Pemesanan<span
-                        class="new badge"><?php echo $result ?></span></a>
-                <?php endif;?>
-                <?php if($result <= 0): ?>
+                <?php if ($result > 0): ?>
+                    <a href="<?php echo site_url('admin/transaksi') ?>" class="waves-effect waves-teal">Inbox Pemesanan<span
+                            class="new badge"><?php echo $result ?></span></a>
+                <?php endif; ?>
+                <?php if ($result <= 0): ?>
             <li class="bold">
                 <a href="<?php echo site_url('admin/transaksi') ?>" class="waves-effect waves-teal">Inbox Pemesanan</a>
             </li>
-            <?php endif; ?>
-            </li>
-            </li>
-            <li class="bold">
-                <a href="<?php echo site_url('admin/pembayaran') ?>" class="waves-effect waves-teal">Transaksi</a>
-            </li>
-            <li class="no-padding">
-                <ul class="collapsible collapsible-accordion">
-                    <li class="bold">
-                        <a class="collapsible-header waves-effect waves-teal">Perawatan</a>
-                        <div class="collapsible-body">
-                            <ul>
-                                <li>
-                                    <a class="waves-effect waves-teal"
-                                        href="<?php echo site_url('admin/pembayaran-listrik') ?>">Pembayaran Listrik</a>
-                                </li>
-                                <li>
-                                    <a class="waves-effect waves-teal"
-                                        href="<?php echo site_url('admin/pembayaran-air') ?>">Pembayaran Air</a>
-                                </li>
-                                <li>
-                                    <a class="waves-effect waves-teal"
-                                        href="<?php echo site_url('admin/pembayaran-kebersihan') ?>">Pembayaran
-                                        Kebersihan</a>
-                                </li>
-                                <li>
-                                    <a class="waves-effect waves-teal"
-                                        href="<?php echo site_url('admin/rekap_pembayaran') ?>">Rekap Pembayaran</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                </ul>
-            </li>
-            <li class="no-padding">
-                <ul class="collapsible collapsible-accordion">
-                    <li class="bold">
-                        <a class="collapsible-header waves-effect waves-teal">Rekapitulasi</a>
-                        <div class="collapsible-body">
-                            <ul>
-                                <li>
-                                    <a class="waves-effect waves-teal"
-                                        href="<?php echo site_url('admin/rekap_aktivitas') ?>">Rekap Aktivitas</a>
-                                </li>
-                                <li>
-                                    <a class="waves-effect waves-teal"
-                                        href="<?php echo site_url('admin/rekap_transaksi') ?>">Rekap Transaksi</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                </ul>
-            </li>
-            <li class="bold">
-                <a href="<?php echo site_url('admin/log_out') ?>" class="waves-effect waves-teal">Sign Out</a>
-            </li>
+        <?php endif; ?>
+        </li>
+        </li>
+        <li class="bold">
+            <a href="<?php echo site_url('admin/pembayaran') ?>" class="waves-effect waves-teal">Transaksi</a>
+        </li>
+        <li class="no-padding">
+            <ul class="collapsible collapsible-accordion">
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-teal">Perawatan</a>
+                    <div class="collapsible-body">
+                        <ul>
+                            <li>
+                                <a class="waves-effect waves-teal"
+                                    href="<?php echo site_url('admin/pembayaran-listrik') ?>">Pembayaran Listrik</a>
+                            </li>
+                            <li>
+                                <a class="waves-effect waves-teal"
+                                    href="<?php echo site_url('admin/pembayaran-air') ?>">Pembayaran Air</a>
+                            </li>
+                            <li>
+                                <a class="waves-effect waves-teal"
+                                    href="<?php echo site_url('admin/pembayaran-kebersihan') ?>">Pembayaran
+                                    Kebersihan</a>
+                            </li>
+                            <li>
+                                <a class="waves-effect waves-teal"
+                                    href="<?php echo site_url('admin/rekap_pembayaran') ?>">Rekap Pembayaran</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </li>
+        <li class="no-padding">
+            <ul class="collapsible collapsible-accordion">
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-teal">Rekapitulasi</a>
+                    <div class="collapsible-body">
+                        <ul>
+                            <li>
+                                <a class="waves-effect waves-teal"
+                                    href="<?php echo site_url('admin/rekap_aktivitas') ?>">Rekap Aktivitas</a>
+                            </li>
+                            <li>
+                                <a class="waves-effect waves-teal"
+                                    href="<?php echo site_url('admin/rekap_transaksi') ?>">Rekap Transaksi</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </li>
+        <li class="bold">
+            <a href="<?php echo site_url('admin/log_out') ?>" class="waves-effect waves-teal">Sign Out</a>
+        </li>
         </ul>
         <div class="container">
             <div class="row">
@@ -150,6 +150,12 @@ $this->load->helper('form');
                         <textarea class="materialize-textarea" name="deskripsi_gedung"></textarea>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="input-field col s6">Fasilitas Gedung
+                        <textarea class="materialize-textarea" name="fasilitas_gedung" placeholder="Contoh: Proyektor, AC, Sound System, WiFi"></textarea>
+                    </div>
+                </div>
+
                 <div class="row">
                     <div class="input-field col s2">Harga Sewa
                         <input placeholder="650,000,000" id="kapasitas" name="harga_sewa" type="text" class="validate">
