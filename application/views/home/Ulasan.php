@@ -73,17 +73,15 @@ $can_review = $has_login && count($reservasi_list) > 0;
             </div>
 
             <?php if ($can_review): ?>
-                <a href="#tulis-ulasan"
-                    class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold
+            <a href="#tulis-ulasan" class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold
                bg-teal-700 text-white hover:bg-teal-800 transition">
-                    Tulis Ulasan
-                </a>
+                Tulis Ulasan
+            </a>
             <?php else: ?>
-                <button type="button" disabled
-                    class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold
+            <button type="button" disabled class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold
                     bg-slate-300 text-slate-600 cursor-not-allowed">
-                    Tulis Ulasan
-                </button>
+                Tulis Ulasan
+            </button>
             <?php endif; ?>
         </div>
 
@@ -118,7 +116,7 @@ $can_review = $has_login && count($reservasi_list) > 0;
 
                 <div class="mt-4 space-y-2">
                     <?php for ($s = 5; $s >= 1; $s--): ?>
-                        <?php
+                    <?php
                         $count = isset($dist[$s]) ? (int)$dist[$s] : 0;
                         $pct = $total ? round(($count / $total) * 100) : 0;
                         ?>
@@ -179,70 +177,70 @@ $can_review = $has_login && count($reservasi_list) > 0;
 
         <!-- Info jika tidak bisa mengulas -->
         <?php if (!$has_login): ?>
-            <div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-                Silakan login untuk menulis ulasan.
-            </div>
+        <div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+            Silakan login untuk menulis ulasan.
+        </div>
         <?php elseif (!$can_review): ?>
-            <div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-                Tidak ada pemesanan dengan status <b>submitted</b> yang bisa diulas (atau sudah diulas semua).
-            </div>
+        <div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+            Tidak ada pemesanan dengan status <b>submitted</b> yang bisa diulas (atau sudah diulas semua).
+        </div>
         <?php endif; ?>
 
         <!-- Form (hanya tampil jika ada pemesanan submitted yang belum diulas) -->
         <?php if ($can_review): ?>
-            <section id="tulis-ulasan" class="mt-8">
-                <div class="bg-white rounded-2xl border border-black/10 shadow-sm p-6">
-                    <div class="text-lg font-bold text-slate-900">Tulis Ulasan</div>
-                    <p class="mt-1 text-sm text-slate-600">Pilih pemesananmu, lalu beri rating dan komentar.</p>
+        <section id="tulis-ulasan" class="mt-8">
+            <div class="bg-white rounded-2xl border border-black/10 shadow-sm p-6">
+                <div class="text-lg font-bold text-slate-900">Tulis Ulasan</div>
+                <p class="mt-1 text-sm text-slate-600">Pilih pemesananmu, lalu beri rating dan komentar.</p>
 
-                    <form method="post" action="<?php echo site_url('home/submit_ulasan'); ?>" class="mt-5 space-y-4">
+                <form method="post" action="<?php echo site_url('home/submit_ulasan'); ?>" class="mt-5 space-y-4">
 
-                        <div>
-                            <label class="text-sm font-semibold text-slate-900">Rating</label>
-                            <input type="hidden" name="rating" id="ratingInput" value="5">
+                    <div>
+                        <label class="text-sm font-semibold text-slate-900">Rating</label>
+                        <input type="hidden" name="rating" id="ratingInput" value="5">
 
-                            <div class="mt-2 flex items-center gap-1" id="starPicker">
-                                <?php for ($i = 1; $i <= 5; $i++): ?>
-                                    <button type="button" class="star-btn" data-value="<?php echo (int)$i; ?>" aria-label="<?php echo (int)$i; ?> bintang">
-                                        <?php echo star_svg(true); ?>
-                                    </button>
-                                <?php endfor; ?>
-                                <span class="ml-2 text-sm text-slate-600" id="ratingLabel">5/5</span>
-                            </div>
+                        <div class="mt-2 flex items-center gap-1" id="starPicker">
+                            <?php for ($i = 1; $i <= 5; $i++): ?>
+                            <button type="button" class="star-btn" data-value="<?php echo (int)$i; ?>"
+                                aria-label="<?php echo (int)$i; ?> bintang">
+                                <?php echo star_svg(true); ?>
+                            </button>
+                            <?php endfor; ?>
+                            <span class="ml-2 text-sm text-slate-600" id="ratingLabel">5/5</span>
                         </div>
+                    </div>
 
-                        <div>
-                            <label class="text-sm font-semibold text-slate-900">Pemesanan (Gedung - Tanggal - Jam)</label>
-                            <select name="id_pemesanan" required
-                                class="mt-2 w-full rounded-xl border border-black/10 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-200">
-                                <option value="">-- Pilih Pemesanan --</option>
-                                <?php foreach ($reservasi_list as $row): ?>
-                                    <option value="<?php echo (int)$row['ID_PEMESANAN']; ?>">
-                                        <?php echo htmlspecialchars($row['label'], ENT_QUOTES, 'UTF-8'); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
+                    <div>
+                        <label class="text-sm font-semibold text-slate-900">Pemesanan (Gedung - Tanggal - Jam)</label>
+                        <select name="id_pemesanan" required
+                            class="mt-2 w-full rounded-xl border border-black/10 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-200">
+                            <option value="">-- Pilih Pemesanan --</option>
+                            <?php foreach ($reservasi_list as $row): ?>
+                            <option value="<?php echo (int)$row['ID_PEMESANAN']; ?>">
+                                <?php echo htmlspecialchars($row['label'], ENT_QUOTES, 'UTF-8'); ?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
 
-                        <div>
-                            <label class="text-sm font-semibold text-slate-900">Komentar</label>
-                            <textarea name="comment" rows="4" required
-                                class="mt-2 w-full rounded-xl border border-black/10 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-200"
-                                placeholder="Ceritakan pengalamanmu..."></textarea>
-                        </div>
+                    <div>
+                        <label class="text-sm font-semibold text-slate-900">Komentar</label>
+                        <textarea name="comment" rows="4" required
+                            class="mt-2 w-full rounded-xl border border-black/10 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-200"
+                            placeholder="Ceritakan pengalamanmu..."></textarea>
+                    </div>
 
-                        <button type="submit"
-                            class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold
+                    <button type="submit" class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold
                             bg-teal-700 text-white hover:bg-teal-800 transition">
-                            Kirim Ulasan
-                        </button>
+                        Kirim Ulasan
+                    </button>
 
-                        <p class="text-xs text-slate-500">
-                            Catatan: Ulasan dapat ditinjau terlebih dahulu sebelum submit
-                        </p>
-                    </form>
-                </div>
-            </section>
+                    <p class="text-xs text-slate-500">
+                        Catatan: Ulasan dapat ditinjau terlebih dahulu sebelum submit
+                    </p>
+                </form>
+            </div>
+        </section>
         <?php endif; ?>
 
     </main>
@@ -250,38 +248,38 @@ $can_review = $has_login && count($reservasi_list) > 0;
     <?php $this->load->view('components/footer'); ?>
 
     <script>
-        // Aman: hanya jalan kalau form ada
-        var ratingInput = document.getElementById('ratingInput');
-        var ratingLabel = document.getElementById('ratingLabel');
-        var buttons = document.getElementsByClassName('star-btn');
+    // Aman: hanya jalan kalau form ada
+    var ratingInput = document.getElementById('ratingInput');
+    var ratingLabel = document.getElementById('ratingLabel');
+    var buttons = document.getElementsByClassName('star-btn');
 
-        function setRating(val) {
-            if (!ratingInput || !ratingLabel || !buttons) return;
+    function setRating(val) {
+        if (!ratingInput || !ratingLabel || !buttons) return;
 
-            ratingInput.value = val;
-            ratingLabel.innerHTML = val + "/5";
+        ratingInput.value = val;
+        ratingLabel.innerHTML = val + "/5";
 
-            for (var i = 0; i < buttons.length; i++) {
-                var svg = buttons[i].getElementsByTagName('svg')[0];
-                if (!svg) continue;
-                var filled = (i + 1) <= val;
-                svg.setAttribute('fill', filled ? '#F59E0B' : 'none');
-                svg.setAttribute('stroke', filled ? '#F59E0B' : '#94A3B8');
-            }
+        for (var i = 0; i < buttons.length; i++) {
+            var svg = buttons[i].getElementsByTagName('svg')[0];
+            if (!svg) continue;
+            var filled = (i + 1) <= val;
+            svg.setAttribute('fill', filled ? '#F59E0B' : 'none');
+            svg.setAttribute('stroke', filled ? '#F59E0B' : '#94A3B8');
         }
     }
+    }
 
-        if (buttons && buttons.length) {
-            for (var j = 0; j < buttons.length; j++) {
-                (function(idx) {
-                    buttons[idx].addEventListener('click', function() {
-                        var v = parseInt(this.getAttribute('data-value'), 10);
-                        setRating(v);
-                    });
-                })(j);
-            }
-            setRating(5);
+    if (buttons && buttons.length) {
+        for (var j = 0; j < buttons.length; j++) {
+            (function(idx) {
+                buttons[idx].addEventListener('click', function() {
+                    var v = parseInt(this.getAttribute('data-value'), 10);
+                    setRating(v);
+                });
+            })(j);
         }
+        setRating(5);
+    }
     </script>
 </body>
 
