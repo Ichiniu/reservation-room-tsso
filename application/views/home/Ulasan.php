@@ -65,8 +65,7 @@ $username = $this->session->userdata('username');
                 <p class="mt-1 text-sm text-slate-600">Lihat pengalaman customer lain dan tulis ulasanmu.</p>
             </div>
 
-            <a href="#tulis-ulasan"
-                class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold
+            <a href="#tulis-ulasan" class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold
               bg-teal-700 text-white hover:bg-teal-800 transition">
                 Tulis Ulasan
             </a>
@@ -74,15 +73,15 @@ $username = $this->session->userdata('username');
 
         <!-- Flash message -->
         <?php if ($this->session->flashdata('success')): ?>
-            <div class="mt-4 rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-800">
-                <?php echo htmlspecialchars($this->session->flashdata('success'), ENT_QUOTES, 'UTF-8'); ?>
-            </div>
+        <div class="mt-4 rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-800">
+            <?php echo htmlspecialchars($this->session->flashdata('success'), ENT_QUOTES, 'UTF-8'); ?>
+        </div>
         <?php endif; ?>
 
         <?php if ($this->session->flashdata('error')): ?>
-            <div class="mt-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
-                <?php echo htmlspecialchars($this->session->flashdata('error'), ENT_QUOTES, 'UTF-8'); ?>
-            </div>
+        <div class="mt-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+            <?php echo htmlspecialchars($this->session->flashdata('error'), ENT_QUOTES, 'UTF-8'); ?>
+        </div>
         <?php endif; ?>
 
         <!-- Summary -->
@@ -103,17 +102,17 @@ $username = $this->session->userdata('username');
 
                 <div class="mt-4 space-y-2">
                     <?php for ($s = 5; $s >= 1; $s--): ?>
-                        <?php
+                    <?php
                         $count = isset($dist[$s]) ? $dist[$s] : 0;
                         $pct = $total ? round(($count / $total) * 100) : 0;
                         ?>
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 text-sm text-slate-700 font-medium"><?php echo (int)$s; ?>★</div>
-                            <div class="flex-1 h-2 rounded-full bg-slate-100 overflow-hidden">
-                                <div class="h-full bg-amber-400" style="width: <?php echo (int)$pct; ?>%;"></div>
-                            </div>
-                            <div class="w-12 text-right text-sm text-slate-600"><?php echo (int)$pct; ?>%</div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 text-sm text-slate-700 font-medium"><?php echo (int)$s; ?>★</div>
+                        <div class="flex-1 h-2 rounded-full bg-slate-100 overflow-hidden">
+                            <div class="h-full bg-amber-400" style="width: <?php echo (int)$pct; ?>%;"></div>
                         </div>
+                        <div class="w-12 text-right text-sm text-slate-600"><?php echo (int)$pct; ?>%</div>
+                    </div>
                     <?php endfor; ?>
                 </div>
             </div>
@@ -128,35 +127,35 @@ $username = $this->session->userdata('username');
 
                 <div class="divide-y divide-black/5">
                     <?php if (!empty($reviews)): ?>
-                        <?php foreach ($reviews as $r): ?>
-                            <div class="p-6">
-                                <div class="flex items-start justify-between gap-4">
-                                    <div>
-                                        <div class="text-sm font-semibold text-slate-900">
-                                            <?php echo htmlspecialchars($r['name'], ENT_QUOTES, 'UTF-8'); ?>
-                                        </div>
-                                        <div class="text-xs text-slate-500 mt-0.5">
-                                            <?php echo htmlspecialchars($r['date'], ENT_QUOTES, 'UTF-8'); ?>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <?php echo stars_html((int)$r['rating']); ?>
-                                    </div>
+                    <?php foreach ($reviews as $r): ?>
+                    <div class="p-6">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <div class="text-sm font-semibold text-slate-900">
+                                    <?php echo htmlspecialchars($r['name'], ENT_QUOTES, 'UTF-8'); ?>
                                 </div>
-
-                                <?php if (!empty($r['title'])): ?>
-                                    <div class="mt-3 text-sm font-semibold text-slate-900">
-                                        <?php echo htmlspecialchars($r['title'], ENT_QUOTES, 'UTF-8'); ?>
-                                    </div>
-                                <?php endif; ?>
-
-                                <p class="mt-2 text-sm text-slate-600 leading-relaxed">
-                                    <?php echo nl2br(htmlspecialchars($r['comment'], ENT_QUOTES, 'UTF-8')); ?>
-                                </p>
+                                <div class="text-xs text-slate-500 mt-0.5">
+                                    <?php echo htmlspecialchars($r['date'], ENT_QUOTES, 'UTF-8'); ?>
+                                </div>
                             </div>
-                        <?php endforeach; ?>
+                            <div class="flex items-center">
+                                <?php echo stars_html((int)$r['rating']); ?>
+                            </div>
+                        </div>
+
+                        <?php if (!empty($r['title'])): ?>
+                        <div class="mt-3 text-sm font-semibold text-slate-900">
+                            <?php echo htmlspecialchars($r['title'], ENT_QUOTES, 'UTF-8'); ?>
+                        </div>
+                        <?php endif; ?>
+
+                        <p class="mt-2 text-sm text-slate-600 leading-relaxed">
+                            <?php echo nl2br(htmlspecialchars($r['comment'], ENT_QUOTES, 'UTF-8')); ?>
+                        </p>
+                    </div>
+                    <?php endforeach; ?>
                     <?php else: ?>
-                        <div class="p-6 text-sm text-slate-600">Belum ada ulasan.</div>
+                    <div class="p-6 text-sm text-slate-600">Belum ada ulasan.</div>
                     <?php endif; ?>
                 </div>
             </div>
@@ -164,11 +163,11 @@ $username = $this->session->userdata('username');
 
         <!-- Form -->
         <?php if (!empty($already_reviewed)): ?>
-            <div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-                Kamu sudah pernah mengirim ulasan, jadi tidak bisa mengisi ulang.
-            </div>
+        <div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+            Kamu sudah pernah mengirim ulasan, jadi tidak bisa mengisi ulang.
+        </div>
         <?php else: ?>
-            <!-- section id="tulis-ulasan" (form kamu) taruh di sini -->
+        <!-- section id="tulis-ulasan" (form kamu) taruh di sini -->
         <?php endif; ?>
 
         <section id="tulis-ulasan" class="mt-8">
@@ -184,9 +183,10 @@ $username = $this->session->userdata('username');
 
                         <div class="mt-2 flex items-center gap-1" id="starPicker">
                             <?php for ($i = 1; $i <= 5; $i++): ?>
-                                <button type="button" class="star-btn" data-value="<?php echo (int)$i; ?>" aria-label="<?php echo (int)$i; ?> bintang">
-                                    <?php echo star_svg(true); ?>
-                                </button>
+                            <button type="button" class="star-btn" data-value="<?php echo (int)$i; ?>"
+                                aria-label="<?php echo (int)$i; ?> bintang">
+                                <?php echo star_svg(true); ?>
+                            </button>
                             <?php endfor; ?>
                             <span class="ml-2 text-sm text-slate-600" id="ratingLabel">5/5</span>
                         </div>
@@ -194,16 +194,16 @@ $username = $this->session->userdata('username');
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="text-sm font-semibold text-slate-900">Nama Gedung</label>
+                            <label class="text-sm font-semibold text-slate-900">Nama Ruangan</label>
                             <select name="gedung" required
                                 class="mt-2 w-full rounded-xl border border-black/10 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-200">
-                                <option value="">-- Pilih Gedung --</option>
+                                <option value="">-- Pilih Ruangan --</option>
                                 <?php if (isset($gedungs) && is_array($gedungs)): ?>
-                                    <?php foreach ($gedungs as $g): ?>
-                                        <option value="<?php echo htmlspecialchars($g['NAMA_GEDUNG'], ENT_QUOTES, 'UTF-8'); ?>">
-                                            <?php echo htmlspecialchars($g['NAMA_GEDUNG'], ENT_QUOTES, 'UTF-8'); ?>
-                                        </option>
-                                    <?php endforeach; ?>
+                                <?php foreach ($gedungs as $g): ?>
+                                <option value="<?php echo htmlspecialchars($g['NAMA_GEDUNG'], ENT_QUOTES, 'UTF-8'); ?>">
+                                    <?php echo htmlspecialchars($g['NAMA_GEDUNG'], ENT_QUOTES, 'UTF-8'); ?>
+                                </option>
+                                <?php endforeach; ?>
                                 <?php endif; ?>
                             </select>
                         </div>
@@ -225,8 +225,7 @@ $username = $this->session->userdata('username');
                             placeholder="Ceritakan pengalamanmu..."></textarea>
                     </div>
 
-                    <button type="submit"
-                        class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold
+                    <button type="submit" class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold
                        bg-teal-700 text-white hover:bg-teal-800 transition">
                         Kirim Ulasan
                     </button>
@@ -243,32 +242,32 @@ $username = $this->session->userdata('username');
     <?php $this->load->view('components/footer'); ?>
 
     <script>
-        var ratingInput = document.getElementById('ratingInput');
-        var ratingLabel = document.getElementById('ratingLabel');
-        var buttons = document.getElementsByClassName('star-btn');
+    var ratingInput = document.getElementById('ratingInput');
+    var ratingLabel = document.getElementById('ratingLabel');
+    var buttons = document.getElementsByClassName('star-btn');
 
-        function setRating(val) {
-            ratingInput.value = val;
-            ratingLabel.innerHTML = val + "/5";
+    function setRating(val) {
+        ratingInput.value = val;
+        ratingLabel.innerHTML = val + "/5";
 
-            for (var i = 0; i < buttons.length; i++) {
-                var svg = buttons[i].getElementsByTagName('svg')[0];
-                var filled = (i + 1) <= val;
-                svg.setAttribute('fill', filled ? '#F59E0B' : 'none');
-                svg.setAttribute('stroke', filled ? '#F59E0B' : '#94A3B8');
-            }
+        for (var i = 0; i < buttons.length; i++) {
+            var svg = buttons[i].getElementsByTagName('svg')[0];
+            var filled = (i + 1) <= val;
+            svg.setAttribute('fill', filled ? '#F59E0B' : 'none');
+            svg.setAttribute('stroke', filled ? '#F59E0B' : '#94A3B8');
         }
+    }
 
-        for (var j = 0; j < buttons.length; j++) {
-            (function(idx) {
-                buttons[idx].addEventListener('click', function() {
-                    var v = parseInt(this.getAttribute('data-value'), 10);
-                    setRating(v);
-                });
-            })(j);
-        }
+    for (var j = 0; j < buttons.length; j++) {
+        (function(idx) {
+            buttons[idx].addEventListener('click', function() {
+                var v = parseInt(this.getAttribute('data-value'), 10);
+                setRating(v);
+            });
+        })(j);
+    }
 
-        setRating(5);
+    setRating(5);
     </script>
 </body>
 

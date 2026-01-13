@@ -77,7 +77,7 @@ $id_gedung = $this->uri->segment(3);
                                 <th class="px-4 py-3 text-left">ID Pemesanan</th>
                                 <th class="px-4 py-3 text-left">Jam Pemesanan</th>
                                 <th class="px-4 py-3 text-left">Paket Catering</th>
-                                <th class="px-4 py-3 text-left">Nama Gedung</th>
+                                <th class="px-4 py-3 text-left">Nama Ruangan</th>
                                 <th class="px-4 py-3 text-left">Status Pemesanan</th>
                                 <th class="px-4 py-3 text-left">Details</th>
                             </tr>

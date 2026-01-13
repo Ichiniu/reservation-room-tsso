@@ -503,6 +503,7 @@ class Admin_Controls extends CI_Controller
 
 	public function verify_pembayaran($id_pembayaran, $action)
 {
+	$this->load->model('gedung/gedung_model');
     $id_pembayaran = (int) $id_pembayaran;
     $action        = strtolower(trim((string)$action));
 
@@ -542,6 +543,8 @@ class Admin_Controls extends CI_Controller
     // =========================
     // Mulai transaksi database
     // =========================
+	
+
     $this->db->trans_begin();
 
     // =========================
@@ -560,6 +563,8 @@ class Admin_Controls extends CI_Controller
         // 2) Update status pemesanan -> 3 (misal: confirmed/paid)
         $this->db->where('ID_PEMESANAN', $id_pemesanan);
         $this->db->update('pemesanan', ['STATUS' => 3]);
+		$this->gedung_model->mark_flag_unread('PMSN000' . $id_pemesanan);
+
 
         // 3) Ambil data pemesanan untuk isi fix detail
         $ps = $this->db->get_where('pemesanan', [
@@ -649,6 +654,8 @@ class Admin_Controls extends CI_Controller
         // 2) Update status pemesanan -> 4 (misal: rejected)
         $this->db->where('ID_PEMESANAN', $id_pemesanan);
         $this->db->update('pemesanan', ['STATUS' => 4]);
+		$this->gedung_model->mark_flag_unread('PMSN000' . $id_pemesanan);
+
 
         // 3) OPTIONAL: kalau sudah pernah masuk fix, matikan
         $this->db->where('ID_PEMESANAN', $id_pemesanan);

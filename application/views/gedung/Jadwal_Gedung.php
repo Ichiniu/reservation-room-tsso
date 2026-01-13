@@ -8,7 +8,7 @@ $this->load->helper('text');
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Jadwal Gedung</title>
+    <title>Jadwal Ruangan</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -39,8 +39,8 @@ $this->load->helper('text');
 
             <!-- HEADER -->
             <div class="mb-6">
-                <h1 class="text-2xl font-semibold">Jadwal Penggunaan Gedung</h1>
-                <p class="text-sm text-slate-600">Data jadwal penggunaan gedung</p>
+                <h1 class="text-2xl font-semibold">Jadwal Penggunaan Ruangan</h1>
+                <p class="text-sm text-slate-600">Data jadwal penggunaan ruangan</p>
             </div>
 
             <!-- FILTER -->
@@ -90,7 +90,7 @@ $this->load->helper('text');
                             <th class="px-4 py-3 text-left">NO</th>
                             <th class="px-4 py-3 text-left">TANGGAL</th>
                             <th class="px-4 py-3 text-left">JAM</th>
-                            <th class="px-4 py-3 text-left">GEDUNG</th>
+                            <th class="px-4 py-3 text-left">RUANGAN</th>
                             <th class="px-4 py-3 text-left">DESKRIPSI</th>
                         </tr>
                     </thead>

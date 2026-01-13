@@ -27,71 +27,71 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .hint {
-            font-size: 12px;
-            color: #6b7280;
-            margin-top: 6px;
-        }
+    .hint {
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 6px;
+    }
 
-        input.validate,
-        input[type="text"] {
-            border-bottom: 1px solid #e5e7eb !important;
-            box-shadow: none !important;
-        }
+    input.validate,
+    input[type="text"] {
+        border-bottom: 1px solid #e5e7eb !important;
+        box-shadow: none !important;
+    }
 
-        input.validate:focus,
-        input[type="text"]:focus {
-            border-bottom: 2px solid #1d4ed8 !important;
-            box-shadow: 0 1px 0 0 #1d4ed8 !important;
-        }
+    input.validate:focus,
+    input[type="text"]:focus {
+        border-bottom: 2px solid #1d4ed8 !important;
+        box-shadow: 0 1px 0 0 #1d4ed8 !important;
+    }
 
-        table.bordered td,
-        table.bordered th {
-            padding: 10px 12px;
-        }
+    table.bordered td,
+    table.bordered th {
+        padding: 10px 12px;
+    }
 
-        table.bordered tr {
-            border-bottom: 1px solid #e5e7eb;
-        }
+    table.bordered tr {
+        border-bottom: 1px solid #e5e7eb;
+    }
 
-        table.bordered {
-            margin: 0;
-        }
+    table.bordered {
+        margin: 0;
+    }
 
-        .btn-blue700 {
-            background: #1d4ed8 !important;
-            border-radius: 12px !important;
-        }
+    .btn-blue700 {
+        background: #1d4ed8 !important;
+        border-radius: 12px !important;
+    }
 
-        .btn-blue700:hover {
-            filter: brightness(0.95);
-        }
+    .btn-blue700:hover {
+        filter: brightness(0.95);
+    }
 
-        .link-file {
-            color: #111827;
-            text-decoration: underline;
-        }
+    .link-file {
+        color: #111827;
+        text-decoration: underline;
+    }
 
-        .link-file:hover {
-            color: #1d4ed8;
-        }
+    .link-file:hover {
+        color: #1d4ed8;
+    }
 
-        .cardbox {
-            background: #fff;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
-        }
+    .cardbox {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
+    }
 
-        .cardhead {
-            padding: 16px 18px;
-            border-bottom: 1px solid #e5e7eb;
-        }
+    .cardhead {
+        padding: 16px 18px;
+        border-bottom: 1px solid #e5e7eb;
+    }
 
-        .cardbody {
-            padding: 16px 18px;
-        }
+    .cardbody {
+        padding: 16px 18px;
+    }
     </style>
 </head>
 
@@ -271,12 +271,12 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
                                                 <td>:</td>
                                                 <td>
                                                     <?php if (!empty($details) && !empty($details->FILE_NAME)) : ?>
-                                                        <a class="link-file"
-                                                            href="<?php echo site_url('admin/admin_controls/download_proposal/' . $hasil->ID_PEMESANAN); ?>">
-                                                            <?php echo $details->FILE_NAME; ?>
-                                                        </a>
+                                                    <a class="link-file"
+                                                        href="<?php echo site_url('admin/admin_controls/download_proposal/' . $hasil->ID_PEMESANAN); ?>">
+                                                        <?php echo $details->FILE_NAME; ?>
+                                                    </a>
                                                     <?php else: ?>
-                                                        <em>Belum ada proposal</em>
+                                                    <em>Belum ada proposal</em>
                                                     <?php endif; ?>
                                                 </td>
                                             </tr>
@@ -355,74 +355,74 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
     <script src="<?php echo base_url(); ?>assets/home/index.js"></script>
 
     <script type="text/javascript">
-        function dialog() {
-            if (confirm("Lanjutkan? ")) {
-                return true;
-            } else {
-                return false;
-            }
+    function dialog() {
+        if (confirm("Lanjutkan? ")) {
+            return true;
+        } else {
+            return false;
         }
+    }
 
-        function showInput() {
-            var tolak = document.getElementById("tidak").checked;
-            var terima = document.getElementById("ya").checked;
-            if (tolak == true) {
-                document.getElementById("title").hidden = false;
-                document.getElementById("colon").hidden = false;
-                document.getElementById("remarks").hidden = false;
-            } else if (terima == true) {
-                document.getElementById("title").hidden = true;
-                document.getElementById("colon").hidden = true;
-                document.getElementById("remarks").hidden = true;
-            }
+    function showInput() {
+        var tolak = document.getElementById("tidak").checked;
+        var terima = document.getElementById("ya").checked;
+        if (tolak == true) {
+            document.getElementById("title").hidden = false;
+            document.getElementById("colon").hidden = false;
+            document.getElementById("remarks").hidden = false;
+        } else if (terima == true) {
+            document.getElementById("title").hidden = true;
+            document.getElementById("colon").hidden = true;
+            document.getElementById("remarks").hidden = true;
         }
+    }
     </script>
 
     <!-- Sidebar toggle -->
     <script>
-        (function() {
-            var sidebar = document.getElementById('sidebar');
-            var overlay = document.getElementById('sidebarOverlay');
-            var btn = document.getElementById('sidebarToggle');
-            if (!sidebar) return;
+    (function() {
+        var sidebar = document.getElementById('sidebar');
+        var overlay = document.getElementById('sidebarOverlay');
+        var btn = document.getElementById('sidebarToggle');
+        if (!sidebar) return;
 
-            function openSidebar() {
-                sidebar.classList.remove('-translate-x-full');
-                if (overlay) overlay.classList.remove('hidden');
-                document.body.classList.add('overflow-hidden');
-            }
+        function openSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            if (overlay) overlay.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+        }
 
-            function closeSidebar() {
-                sidebar.classList.add('-translate-x-full');
+        function closeSidebar() {
+            sidebar.classList.add('-translate-x-full');
+            if (overlay) overlay.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        if (btn) {
+            btn.addEventListener('click', function() {
+                var isClosed = sidebar.classList.contains('-translate-x-full');
+                if (isClosed) openSidebar();
+                else closeSidebar();
+            });
+        }
+
+        if (overlay) overlay.addEventListener('click', closeSidebar);
+
+        window.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeSidebar();
+        });
+
+        var mq = window.matchMedia('(min-width: 768px)');
+        mq.addEventListener('change', function(e) {
+            if (e.matches) {
                 if (overlay) overlay.classList.add('hidden');
+                sidebar.classList.remove('-translate-x-full');
                 document.body.classList.remove('overflow-hidden');
+            } else {
+                closeSidebar();
             }
-
-            if (btn) {
-                btn.addEventListener('click', function() {
-                    var isClosed = sidebar.classList.contains('-translate-x-full');
-                    if (isClosed) openSidebar();
-                    else closeSidebar();
-                });
-            }
-
-            if (overlay) overlay.addEventListener('click', closeSidebar);
-
-            window.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') closeSidebar();
-            });
-
-            var mq = window.matchMedia('(min-width: 768px)');
-            mq.addEventListener('change', function(e) {
-                if (e.matches) {
-                    if (overlay) overlay.classList.add('hidden');
-                    sidebar.classList.remove('-translate-x-full');
-                    document.body.classList.remove('overflow-hidden');
-                } else {
-                    closeSidebar();
-                }
-            });
-        })();
+        });
+    })();
     </script>
 
 </body>

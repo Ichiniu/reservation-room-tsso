@@ -89,85 +89,86 @@ if ($statusText === 'PROCESS') {
             </div>
         </div>
 
-    <table class="w-full text-sm">
-      <tbody class="space-y-2">
-        <tr>
-          <td class="font-semibold">ID Pemesanan</td>
-          <td>: <?= $result->ID_PEMESANAN ?></td>
-        </tr>
-        <tr>
-          <td class="font-semibold">Username</td>
-          <td>: <?= htmlspecialchars((string)$display_username, ENT_QUOTES, 'UTF-8') ?></td>
-        </tr>
-        <tr>
-          <td class="font-semibold">Email</td>
-          <td>: <?= htmlspecialchars((string)$display_email, ENT_QUOTES, 'UTF-8') ?></td>
-        </tr>
-        <tr>
-          <td class="font-semibold">Tanggal Pemesanan</td>
-          <td>: <?= date('d F Y', strtotime($result->TANGGAL_PEMESANAN)) ?></td>
-        </tr>
-        <tr>
-          <td class="font-semibold">Jam Pemesanan</td>
-          <td>:
-            <?php if (!empty($result->JAM_PEMESANAN) && !empty($result->JAM_SELESAI)): ?>
-              <?= date('H:i', strtotime($result->JAM_PEMESANAN)); ?> -
-              <?= date('H:i', strtotime($result->JAM_SELESAI)); ?> WIB
-            <?php else: ?>
-              -
-            <?php endif; ?>
-          </td>
-        </tr>
-        <tr>
-          <td class="font-semibold">Gedung</td>
-          <td>: <?= $result->NAMA_GEDUNG ?></td>
-        </tr>
-        <tr>
-          <td class="font-semibold">Nama Catering</td>
-          <td>: <?= $result->NAMA_PAKET ?></td>
-        </tr>
-        <tr>
-          <td class="font-semibold">Jumlah Catering</td>
-          <td>: <?= $result->JUMLAH_CATERING ?></td>
-        </tr>
-        <tr>
-          <td class="font-semibold">Harga Gedung</td>
-          <td>: Rp <?= number_format($result->HARGA_SEWA) ?></td>
-        </tr>
-        <tr>
-          <td class="font-semibold">Total Catering</td>
-          <td>: Rp <?= number_format($result->TOTAL_HARGA) ?></td>
-        </tr>
-        <tr>
-          <td class="font-semibold">Pajak 10%</td>
-          <td>: Rp <?= number_format($tax) ?></td>
-        </tr>
-        <tr class="font-bold text-red-600">
-          <td>Total Keseluruhan</td>
-          <td>: Rp <?= number_format($result->TOTAL_KESELURUHAN + $tax) ?></td>
-        </tr>
-        <tr>
-          <td class="font-semibold">Status</td>
-          <td>: <?= $result->STATUS ?></td>
-        </tr>
-        <tr>
-          <td class="font-semibold">Keperluan Acara</td>
-          <td>: <?= nl2br(htmlspecialchars((string)$deskripsi_acara, ENT_QUOTES, 'UTF-8')) ?></td>
-        </tr>
-        <tr>
-          <td class="font-semibold">File Upload (Proposal)</td>
-          <td>:
-            <?php if (!empty($proposal_file_name)): ?>
-              <a class="text-blue-600 hover:underline" href="<?= $proposal_file_url ?>" target="_blank" rel="noopener">
-                <?= htmlspecialchars((string)$proposal_file_name, ENT_QUOTES, 'UTF-8') ?>
-              </a>
-            <?php else: ?>
-              <span class="text-slate-500">Belum ada file</span>
-            <?php endif; ?>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+        <table class="w-full text-sm">
+            <tbody class="space-y-2">
+                <tr>
+                    <td class="font-semibold">ID Pemesanan</td>
+                    <td>: <?= $result->ID_PEMESANAN ?></td>
+                </tr>
+                <tr>
+                    <td class="font-semibold">Username</td>
+                    <td>: <?= htmlspecialchars((string)$display_username, ENT_QUOTES, 'UTF-8') ?></td>
+                </tr>
+                <tr>
+                    <td class="font-semibold">Email</td>
+                    <td>: <?= htmlspecialchars((string)$display_email, ENT_QUOTES, 'UTF-8') ?></td>
+                </tr>
+                <tr>
+                    <td class="font-semibold">Tanggal Pemesanan</td>
+                    <td>: <?= date('d F Y', strtotime($result->TANGGAL_PEMESANAN)) ?></td>
+                </tr>
+                <tr>
+                    <td class="font-semibold">Jam Pemesanan</td>
+                    <td>:
+                        <?php if (!empty($result->JAM_PEMESANAN) && !empty($result->JAM_SELESAI)): ?>
+                        <?= date('H:i', strtotime($result->JAM_PEMESANAN)); ?> -
+                        <?= date('H:i', strtotime($result->JAM_SELESAI)); ?> WIB
+                        <?php else: ?>
+                        -
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="font-semibold">Ruangan</td>
+                    <td>: <?= $result->NAMA_GEDUNG ?></td>
+                </tr>
+                <tr>
+                    <td class="font-semibold">Nama Catering</td>
+                    <td>: <?= $result->NAMA_PAKET ?></td>
+                </tr>
+                <tr>
+                    <td class="font-semibold">Jumlah Catering</td>
+                    <td>: <?= $result->JUMLAH_CATERING ?></td>
+                </tr>
+                <tr>
+                    <td class="font-semibold">Harga Ruangan</td>
+                    <td>: Rp <?= number_format($result->HARGA_SEWA) ?></td>
+                </tr>
+                <tr>
+                    <td class="font-semibold">Total Catering</td>
+                    <td>: Rp <?= number_format($result->TOTAL_HARGA) ?></td>
+                </tr>
+                <tr>
+                    <td class="font-semibold">Pajak 10%</td>
+                    <td>: Rp <?= number_format($tax) ?></td>
+                </tr>
+                <tr class="font-bold text-red-600">
+                    <td>Total Keseluruhan</td>
+                    <td>: Rp <?= number_format($result->TOTAL_KESELURUHAN + $tax) ?></td>
+                </tr>
+                <tr>
+                    <td class="font-semibold">Status</td>
+                    <td>: <?= $result->STATUS ?></td>
+                </tr>
+                <tr>
+                    <td class="font-semibold">Keperluan Acara</td>
+                    <td>: <?= nl2br(htmlspecialchars((string)$deskripsi_acara, ENT_QUOTES, 'UTF-8')) ?></td>
+                </tr>
+                <tr>
+                    <td class="font-semibold">File Upload (Proposal)</td>
+                    <td>:
+                        <?php if (!empty($proposal_file_name)): ?>
+                        <a class="text-blue-600 hover:underline" href="<?= $proposal_file_url ?>" target="_blank"
+                            rel="noopener">
+                            <?= htmlspecialchars((string)$proposal_file_name, ENT_QUOTES, 'UTF-8') ?>
+                        </a>
+                        <?php else: ?>
+                        <span class="text-slate-500">Belum ada file</span>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
         <!-- BUTTON AREA -->
         <div class="mt-6 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -237,7 +238,7 @@ if ($statusText === 'PROCESS') {
                                     <?php endif; ?>
                                 </div>
 
-                                <div class="text-gray-600">Gedung</div>
+                                <div class="text-gray-600">Ruangan</div>
                                 <div class="font-semibold">
                                     <?php echo htmlspecialchars($result->NAMA_GEDUNG, ENT_QUOTES, 'UTF-8'); ?></div>
 

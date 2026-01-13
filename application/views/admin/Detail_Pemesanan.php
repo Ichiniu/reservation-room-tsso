@@ -84,7 +84,8 @@ if (!empty($result->TANGGAL_PEMESANAN)) {
                 <tbody>
                     <tr>
                         <td class="font-semibold w-48 py-1">ID Pemesanan</td>
-                        <td class="py-1">: <?= htmlspecialchars((string)$result->ID_PEMESANAN, ENT_QUOTES, 'UTF-8'); ?></td>
+                        <td class="py-1">: <?= htmlspecialchars((string)$result->ID_PEMESANAN, ENT_QUOTES, 'UTF-8'); ?>
+                        </td>
                     </tr>
                     <tr>
                         <td class="font-semibold py-1">Username</td>
@@ -103,19 +104,22 @@ if (!empty($result->TANGGAL_PEMESANAN)) {
                         <td class="py-1">: <?= htmlspecialchars((string)$jam_range, ENT_QUOTES, 'UTF-8'); ?></td>
                     </tr>
                     <tr>
-                        <td class="font-semibold py-1">Gedung</td>
-                        <td class="py-1">: <?= htmlspecialchars((string)$result->NAMA_GEDUNG, ENT_QUOTES, 'UTF-8'); ?></td>
+                        <td class="font-semibold py-1">Ruang</td>
+                        <td class="py-1">: <?= htmlspecialchars((string)$result->NAMA_GEDUNG, ENT_QUOTES, 'UTF-8'); ?>
+                        </td>
                     </tr>
                     <tr>
                         <td class="font-semibold py-1">Nama Catering</td>
-                        <td class="py-1">: <?= htmlspecialchars((string)$result->NAMA_PAKET, ENT_QUOTES, 'UTF-8'); ?></td>
+                        <td class="py-1">: <?= htmlspecialchars((string)$result->NAMA_PAKET, ENT_QUOTES, 'UTF-8'); ?>
+                        </td>
                     </tr>
                     <tr>
                         <td class="font-semibold py-1">Jumlah Catering</td>
-                        <td class="py-1">: <?= htmlspecialchars((string)$result->JUMLAH_CATERING, ENT_QUOTES, 'UTF-8'); ?></td>
+                        <td class="py-1">:
+                            <?= htmlspecialchars((string)$result->JUMLAH_CATERING, ENT_QUOTES, 'UTF-8'); ?></td>
                     </tr>
                     <tr>
-                        <td class="font-semibold py-1">Harga Gedung</td>
+                        <td class="font-semibold py-1">Harga Ruangan</td>
                         <td class="py-1">: Rp <?= number_format($harga_sewa); ?></td>
                     </tr>
                     <tr>
@@ -136,18 +140,19 @@ if (!empty($result->TANGGAL_PEMESANAN)) {
                     </tr>
                     <tr>
                         <td class="font-semibold py-1">Keperluan Acara</td>
-                        <td class="py-1">: <?= nl2br(htmlspecialchars((string)$deskripsi_acara, ENT_QUOTES, 'UTF-8')); ?></td>
+                        <td class="py-1">:
+                            <?= nl2br(htmlspecialchars((string)$deskripsi_acara, ENT_QUOTES, 'UTF-8')); ?></td>
                     </tr>
                     <tr>
                         <td class="font-semibold py-1">File Proposal</td>
                         <td class="py-1">:
                             <?php if (!empty($proposal_file_name)): ?>
-                                <a class="text-blue-600 hover:underline"
-                                    href="<?= site_url('admin/admin_controls/download_proposal/' . (int)$result->ID_PEMESANAN); ?>">
-                                    <?= htmlspecialchars((string)$proposal_file_name, ENT_QUOTES, 'UTF-8'); ?>
-                                </a>
+                            <a class="text-blue-600 hover:underline"
+                                href="<?= site_url('admin/admin_controls/download_proposal/' . (int)$result->ID_PEMESANAN); ?>">
+                                <?= htmlspecialchars((string)$proposal_file_name, ENT_QUOTES, 'UTF-8'); ?>
+                            </a>
                             <?php else: ?>
-                                <span class="text-slate-500">Belum ada file</span>
+                            <span class="text-slate-500">Belum ada file</span>
                             <?php endif; ?>
                         </td>
                     </tr>
