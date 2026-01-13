@@ -1,25 +1,29 @@
 <?php
-// $details ini object dari $this->db->row()
 $d = $details;
 
-// Normalisasi status biar aman (misal: "pending", "Pending", "PENDING")
-$statusVerif = strtoupper(trim((string) ($d->STATUS_VERIF)));
+// Normalisasi status
+$statusText = strtoupper(trim((string)$d->STATUS_VERIF));
+$isPending  = ($statusText === 'PENDING');
+$catatanAdmin = trim((string)$d->CATATAN_ADMIN);
 
-// Hanya pending yang boleh muncul tombol
-$isPending = ($statusVerif === 'PENDING');
+// ===== Warna Catatan Admin =====
+$badgeClass = 'bg-slate-50 text-slate-700 border-slate-200';
+$dotClass   = 'bg-slate-400';
 
-// Catatan admin dari DB
-$catatanAdmin = trim((string) ($d->CATATAN_ADMIN));
+if ($statusText === 'SUBMITED') {
+    $badgeClass = 'bg-indigo-50 text-indigo-800 border-indigo-200';
+    $dotClass   = 'bg-indigo-500';
+} elseif ($statusText === 'REJECTED') {
+    $badgeClass = 'bg-rose-50 text-rose-800 border-rose-200';
+    $dotClass   = 'bg-rose-500';
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detail Pembayaran</title>
-
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -28,142 +32,130 @@ $catatanAdmin = trim((string) ($d->CATATAN_ADMIN));
     <?php $this->load->view('admin/components/sidebar'); ?>
 
     <main class="pt-24 pl-0 md:pl-64 px-4 md:px-6 pb-10">
+
         <div class="max-w-4xl mx-auto mb-6">
             <h1 class="text-2xl font-bold text-slate-800">Detail Pembayaran</h1>
-            <p class="text-slate-600 text-sm">
-                Kode Transaksi: <b><?= 'PB' . str_pad($d->ID_PEMBAYARAN, 6, '0', STR_PAD_LEFT); ?></b>
+            <p class="text-sm text-slate-600">
+                Kode Transaksi:
+                <b><?= 'PB' . str_pad((int)$d->ID_PEMBAYARAN, 6, '0', STR_PAD_LEFT); ?></b>
             </p>
         </div>
 
-        <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md p-6 space-y-5">
+        <div class="max-w-4xl mx-auto bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
 
+            <!-- INFO -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <div>
                     <div class="text-slate-500">Kode Pemesanan</div>
-                    <div class="font-semibold text-slate-800">
+                    <div class="font-semibold">
                         <?= htmlspecialchars($d->KODE_PEMESANAN . $d->ID_PEMESANAN_RAW); ?>
                     </div>
                 </div>
 
                 <div>
-                    <div class="text-slate-500">Status Verifikasi</div>
-                    <div class="font-semibold">
-                        <?= htmlspecialchars($d->STATUS_VERIF); ?>
-                    </div>
-
-                    <!-- Catatan Admin dipindah ke bawah Status Verifikasi -->
-                    <div class="mt-2">
-                        <div class="text-slate-500">Catatan Admin</div>
-                        <?php
-                        $catatanAdmin = trim((string)($d->CATATAN_ADMIN));
-                        ?>
-                        <?php if ($catatanAdmin !== ''): ?>
-                            <div class="font-semibold text-slate-800 whitespace-pre-line">
-                                <?= htmlspecialchars($catatanAdmin); ?>
-                            </div>
-                        <?php else: ?>
-                            <div class="text-slate-500">-</div>
-                        <?php endif; ?>
-                    </div>
+                    <div class="text-slate-500">Status</div>
+                    <div class="font-semibold"><?= htmlspecialchars($d->STATUS_VERIF); ?></div>
                 </div>
 
                 <div>
-                    <div class="text-slate-500">Atas Nama Pengirim</div>
-                    <div class="font-semibold text-slate-800">
-                        <?= htmlspecialchars($d->ATAS_NAMA_PENGIRIM); ?>
-                    </div>
+                    <div class="text-slate-500">Atas Nama</div>
+                    <div class="font-semibold"><?= htmlspecialchars($d->ATAS_NAMA_PENGIRIM); ?></div>
                 </div>
 
                 <div>
-                    <div class="text-slate-500">Bank Pengirim</div>
-                    <div class="font-semibold text-slate-800">
-                        <?= htmlspecialchars($d->BANK_PENGIRIM); ?>
-                    </div>
+                    <div class="text-slate-500">Bank</div>
+                    <div class="font-semibold"><?= htmlspecialchars($d->BANK_PENGIRIM); ?></div>
                 </div>
 
                 <div>
                     <div class="text-slate-500">Tanggal Transfer</div>
-                    <div class="font-semibold text-slate-800">
-                        <?= htmlspecialchars($d->TANGGAL_TRANSFER); ?>
+                    <div class="font-semibold">
+                        <?= !empty($d->TANGGAL_TRANSFER) ? date('d F Y', strtotime($d->TANGGAL_TRANSFER)) : '-'; ?>
                     </div>
                 </div>
 
                 <div>
-                    <div class="text-slate-500">Nominal Transfer</div>
+                    <div class="text-slate-500">Nominal</div>
                     <div class="font-semibold text-green-700">
-                        Rp <?= number_format((int)$d->NOMINAL_TRANSFER, 0, ',', '.'); ?>
+                        Rp <?= number_format((int)$d->NOMINAL_TRANSFER,0,',','.'); ?>
                     </div>
                 </div>
 
                 <div>
                     <div class="text-slate-500">Total Tagihan</div>
-                    <div class="font-semibold text-slate-800">
-                        Rp <?= number_format((int)$d->TOTAL_TAGIHAN, 0, ',', '.'); ?>
+                    <div class="font-semibold">
+                        Rp <?= number_format((int)$d->TOTAL_TAGIHAN,0,',','.'); ?>
                     </div>
                 </div>
 
                 <div>
-                    <div class="text-slate-500">Bukti Pembayaran</div>
+                    <div class="text-slate-500">Bukti</div>
                     <?php if (!empty($d->BUKTI_PATH)): ?>
-                        <a class="text-blue-600 underline"
-                            href="<?= base_url($d->BUKTI_PATH); ?>"
-                            target="_blank" rel="noopener">
-                            Lihat / Download
-                        </a>
+                    <a href="<?= base_url($d->BUKTI_PATH); ?>" target="_blank" class="text-blue-600 underline">Lihat /
+                        Download</a>
                     <?php else: ?>
-                        <span class="text-slate-500">-</span>
+                    <span class="text-slate-500">-</span>
                     <?php endif; ?>
                 </div>
             </div>
 
-
             <hr>
 
-            <?php if ($isPending): ?>
-                <form method="post">
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">
-                        Catatan Admin (wajib saat Reject)
-                    </label>
-                    <textarea name="catatan_admin"
-                        class="w-full border rounded-lg p-3 text-sm"
-                        rows="3"
-                        placeholder="Tulis catatan admin..."></textarea>
-
-                    <div class="mt-4 flex flex-wrap gap-3">
-                        <button type="submit"
-                            formaction="<?= site_url('admin/admin_controls/verify_pembayaran/' . $d->ID_PEMBAYARAN . '/confirm'); ?>"
-                            class="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700">
-                            Confirm
-                        </button>
-
-                        <button type="submit"
-                            formaction="<?= site_url('admin/admin_controls/verify_pembayaran/' . $d->ID_PEMBAYARAN . '/reject'); ?>"
-                            onclick="return confirm('Yakin tolak pembayaran ini? Catatan wajib diisi.');"
-                            class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">
-                            Reject
-                        </button>
-
-                        <a href="<?= site_url('admin/admin_controls/pembayaran'); ?>"
-                            class="px-4 py-2 rounded-lg bg-slate-200 hover:bg-slate-300">
-                            Kembali
-                        </a>
+            <!-- CATATAN ADMIN (BERWARNA SESUAI STATUS) -->
+            <?php if ($catatanAdmin !== ''): ?>
+            <div class="border rounded-xl p-4 <?= $badgeClass; ?>">
+                <div class="flex items-start gap-3">
+                    <span class="mt-1 h-2.5 w-2.5 rounded-full <?= $dotClass; ?>"></span>
+                    <div>
+                        <div class="text-sm font-semibold">
+                            Catatan Admin
+                        </div>
+                        <div class="mt-1 text-sm whitespace-pre-line">
+                            <?= htmlspecialchars($catatanAdmin); ?>
+                        </div>
                     </div>
-
-                </form>
-
-            <?php else: ?>
-                <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 text-sm text-slate-700">
-                    Pembayaran ini sudah diproses dengan status:
-                    <b><?= htmlspecialchars($d->STATUS_VERIF); ?></b>.
-
                 </div>
+            </div>
+            <?php endif; ?>
 
-                <div class="mt-4">
+            <!-- FORM -->
+            <?php if ($isPending): ?>
+            <form method="post" class="space-y-3">
+                <label class="text-sm font-semibold">Catatan Admin (wajib saat Reject)</label>
+                <textarea name="catatan_admin" class="w-full border rounded-xl p-3 text-sm" rows="3"
+                    placeholder="Tulis catatan..."></textarea>
+
+                <div class="flex gap-3 mt-3">
+                    <button type="submit"
+                        formaction="<?= site_url('admin/admin_controls/verify_pembayaran/'.$d->ID_PEMBAYARAN.'/confirm'); ?>"
+                        class="px-5 py-2.5 bg-green-600 text-white rounded-xl hover:bg-green-700">
+                        Confirm
+                    </button>
+
+                    <button type="submit"
+                        formaction="<?= site_url('admin/admin_controls/verify_pembayaran/'.$d->ID_PEMBAYARAN.'/reject'); ?>"
+                        onclick="return confirm('Yakin tolak pembayaran ini? Catatan wajib diisi.');"
+                        class="px-5 py-2.5 bg-rose-600 text-white rounded-xl hover:bg-rose-700">
+                        Reject
+                    </button>
+
                     <a href="<?= site_url('admin/admin_controls/pembayaran'); ?>"
-                        class="inline-block px-4 py-2 rounded-lg bg-slate-200 hover:bg-slate-300">
+                        class="px-5 py-2.5 bg-slate-200 rounded-xl hover:bg-slate-300">
                         Kembali
                     </a>
                 </div>
+            </form>
+
+            <?php else: ?>
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm">
+                Pembayaran ini sudah diproses dengan status:
+                <b><?= htmlspecialchars($d->STATUS_VERIF); ?></b>.
+            </div>
+
+            <a href="<?= site_url('admin/admin_controls/pembayaran'); ?>"
+                class="inline-block mt-4 px-5 py-2.5 bg-slate-200 rounded-xl hover:bg-slate-300">
+                Kembali
+            </a>
             <?php endif; ?>
 
         </div>

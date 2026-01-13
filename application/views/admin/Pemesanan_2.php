@@ -74,6 +74,7 @@ function formatTanggalIndo($tgl)
                     </button>
                 </div>
             </div>
+
             <div class="text-xs text-gray-500 mb-4">
                 * Filter berjalan otomatis saat mengetik / memilih status. Pagination mengikuti hasil filter.
             </div>
@@ -98,39 +99,42 @@ function formatTanggalIndo($tgl)
                         <?php $no = 1; ?>
                         <?php foreach ($pemesanan as $row): ?>
                         <?php
-                                $statusUpper = isset($row['STATUS']) ? strtoupper(trim($row['STATUS'])) : '';
-                                $badge = 'bg-gray-100 text-gray-700';
+                            $statusUpper = isset($row['STATUS']) ? strtoupper(trim($row['STATUS'])) : '';
+                            $badge = 'bg-gray-100 text-gray-700';
 
-                                if ($statusUpper === 'REJECTED') $badge = 'bg-red-100 text-red-700';
-                                else if ($statusUpper === 'APPROVE & PAID') $badge = 'bg-green-100 text-green-700';
-                                else if ($statusUpper === 'PROPOSAL APPROVE') $badge = 'bg-lime-100 text-lime-700';
-                                else if ($statusUpper === 'SUBMITED') $badge = 'bg-blue-100 text-blue-700';
-                                else if ($statusUpper === 'PROCESS') $badge = 'bg-yellow-100 text-yellow-700';
+                            if ($statusUpper === 'REJECTED') $badge = 'bg-red-100 text-red-700';
+                            else if ($statusUpper === 'APPROVE & PAID') $badge = 'bg-green-100 text-green-700';
+                            else if ($statusUpper === 'PROPOSAL APPROVE') $badge = 'bg-lime-100 text-lime-700';
+                            else if ($statusUpper === 'SUBMITED') $badge = 'bg-blue-100 text-blue-700';
+                            else if ($statusUpper === 'PROCESS') $badge = 'bg-yellow-100 text-yellow-700';
 
-                                $idPemesanan = isset($row['ID_PEMESANAN']) ? $row['ID_PEMESANAN'] : '-';
-                                $tanggalRaw  = isset($row['TANGGAL_PEMESANAN']) ? $row['TANGGAL_PEMESANAN'] : '';
-                                $namaGedung  = isset($row['NAMA_GEDUNG']) ? $row['NAMA_GEDUNG'] : '-';
-                                $statusText  = isset($row['STATUS']) ? $row['STATUS'] : '-';
-                                $usernameRow = isset($row['USERNAME']) ? $row['USERNAME'] : '-';
+                            $idPemesanan = isset($row['ID_PEMESANAN']) ? $row['ID_PEMESANAN'] : '-';
+                            $tanggalRaw  = isset($row['TANGGAL_PEMESANAN']) ? $row['TANGGAL_PEMESANAN'] : '';
+                            $namaGedung  = isset($row['NAMA_GEDUNG']) ? $row['NAMA_GEDUNG'] : '-';
+                            $statusText  = isset($row['STATUS']) ? $row['STATUS'] : '-';
+                            $usernameRow = isset($row['USERNAME']) ? $row['USERNAME'] : '-';
 
-                                $namaLengkap = !empty($row['USER_NAMA_LENGKAP']) ? $row['USER_NAMA_LENGKAP'] : $usernameRow;
-                                $namaPT      = !empty($row['USER_NAMA_PERUSAHAAN']) ? $row['USER_NAMA_PERUSAHAAN'] : '-';
-                                $departemen  = !empty($row['USER_DEPARTEMEN']) ? $row['USER_DEPARTEMEN'] : '';
-                                $jenis       = !empty($row['USER_JENIS']) ? strtoupper(trim($row['USER_JENIS'])) : '';
+                            $namaLengkap = !empty($row['USER_NAMA_LENGKAP']) ? $row['USER_NAMA_LENGKAP'] : $usernameRow;
+                            $namaPT      = !empty($row['USER_NAMA_PERUSAHAAN']) ? $row['USER_NAMA_PERUSAHAAN'] : '-';
+                            $departemen  = !empty($row['USER_DEPARTEMEN']) ? $row['USER_DEPARTEMEN'] : '';
+                            $jenis       = !empty($row['USER_JENIS']) ? strtoupper(trim($row['USER_JENIS'])) : '';
 
-                                if ($jenis === 'INTERNAL') {
-                                    if ($namaPT === '-' || $namaPT === '') $namaPT = 'PT Tiga Serangkai Pustaka Mandiri';
-                                }
+                            if ($jenis === 'INTERNAL') {
+                                if ($namaPT === '-' || $namaPT === '') $namaPT = 'PT Tiga Serangkai Pustaka Mandiri';
+                            }
 
-                                // format tanggal Indonesia
-                                $tanggalTampil = formatTanggalIndo($tanggalRaw);
+                            $tanggalTampil = formatTanggalIndo($tanggalRaw);
 
-                                // untuk filter: id + status
-                                $dataId = htmlspecialchars((string)$idPemesanan, ENT_QUOTES, 'UTF-8');
-                                $dataStatus = htmlspecialchars($statusUpper, ENT_QUOTES, 'UTF-8');
-                                ?>
+                            // untuk filter
+                            $dataId = htmlspecialchars((string)$idPemesanan, ENT_QUOTES, 'UTF-8');
+                            $dataStatus = htmlspecialchars($statusUpper, ENT_QUOTES, 'UTF-8');
+
+                            // untuk sorting frontend (angka saja)
+                            $idNum = (int) preg_replace('/\D+/', '', (string)$idPemesanan);
+                        ?>
                         <tr class="table-row hover:bg-gray-50" data-id="<?= $dataId; ?>"
-                            data-status="<?= $dataStatus; ?>">
+                            data-status="<?= $dataStatus; ?>" data-idnum="<?= (int)$idNum; ?>">
+
                             <td class="px-4 py-3 cell-no"><?= $no++; ?></td>
 
                             <td class="px-4 py-3 font-medium">
@@ -202,7 +206,9 @@ function formatTanggalIndo($tgl)
 
     <script>
     (function() {
-        const allRows = Array.from(document.querySelectorAll(".table-row"));
+        const tbody = document.getElementById("tableBody");
+        let allRows = Array.from(document.querySelectorAll(".table-row"));
+
         const filterId = document.getElementById("filterId");
         const filterStatus = document.getElementById("filterStatus");
         const resetBtn = document.getElementById("resetFilter");
@@ -215,10 +221,22 @@ function formatTanggalIndo($tgl)
 
         let currentPage = 1;
         let rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
-        let activeRows = [...allRows];
+        let activeRows = [];
 
         function norm(s) {
             return (s || "").toString().trim().toLowerCase().replace(/\s+/g, "");
+        }
+
+        // ===== SORT FRONTEND: ID TERKECIL (ASC) =====
+        function sortRowsByIdAsc() {
+            allRows.sort((a, b) => {
+                const ida = parseInt(a.dataset.idnum || "0", 10);
+                const idb = parseInt(b.dataset.idnum || "0", 10);
+                return ida - idb;
+            });
+
+            // re-append biar DOM ikut urutan sorting
+            allRows.forEach(r => tbody.appendChild(r));
         }
 
         function applyFilter() {
@@ -248,7 +266,6 @@ function formatTanggalIndo($tgl)
         }
 
         function render() {
-            // hide all
             allRows.forEach(r => r.style.display = "none");
 
             const total = activeRows.length;
@@ -262,7 +279,7 @@ function formatTanggalIndo($tgl)
                 r.style.display = (idx >= start && idx < end) ? "" : "none";
             });
 
-            // renumber No
+            // renumber No (ikut urutan ASC)
             let n = start + 1;
             activeRows.forEach((r, idx) => {
                 if (idx >= start && idx < end) {
@@ -285,7 +302,6 @@ function formatTanggalIndo($tgl)
         // AUTO filter events
         filterId.addEventListener("input", applyFilter);
         filterStatus.addEventListener("change", applyFilter);
-
         resetBtn.addEventListener("click", resetFilter);
 
         rowsPerPageSelect.addEventListener("change", () => {
@@ -310,6 +326,7 @@ function formatTanggalIndo($tgl)
         });
 
         // init
+        sortRowsByIdAsc(); // <--- PENTING: sort dulu
         activeRows = [...allRows];
         render();
     })();
