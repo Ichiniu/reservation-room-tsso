@@ -199,3 +199,318 @@ INFO - 2026-01-13 02:43:13 --> File loaded: C:\xampp\htdocs\bookingsmarts\applic
 INFO - 2026-01-13 02:43:13 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\gedung/View_Catering.php
 INFO - 2026-01-13 02:43:13 --> Final output sent to browser
 DEBUG - 2026-01-13 02:43:13 --> Total execution time: 0.0713
+INFO - 2026-01-13 02:54:23 --> Config Class Initialized
+INFO - 2026-01-13 02:54:23 --> Hooks Class Initialized
+DEBUG - 2026-01-13 02:54:23 --> UTF-8 Support Enabled
+INFO - 2026-01-13 02:54:23 --> Utf8 Class Initialized
+INFO - 2026-01-13 02:54:23 --> URI Class Initialized
+INFO - 2026-01-13 02:54:23 --> Router Class Initialized
+INFO - 2026-01-13 02:54:23 --> Output Class Initialized
+INFO - 2026-01-13 02:54:23 --> Security Class Initialized
+DEBUG - 2026-01-13 02:54:23 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-13 02:54:23 --> Input Class Initialized
+INFO - 2026-01-13 02:54:23 --> Language Class Initialized
+INFO - 2026-01-13 02:54:23 --> Loader Class Initialized
+INFO - 2026-01-13 02:54:23 --> Helper loaded: url_helper
+INFO - 2026-01-13 02:54:23 --> Database Driver Class Initialized
+INFO - 2026-01-13 02:54:23 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-13 02:54:23 --> Controller Class Initialized
+INFO - 2026-01-13 02:54:23 --> Model Class Initialized
+INFO - 2026-01-13 02:54:23 --> Model Class Initialized
+INFO - 2026-01-13 02:54:23 --> Helper loaded: text_helper
+INFO - 2026-01-13 02:54:23 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-13 02:54:23 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/header.php
+INFO - 2026-01-13 02:54:23 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/footer.php
+INFO - 2026-01-13 02:54:23 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\home/pemesanan.php
+INFO - 2026-01-13 02:54:23 --> Final output sent to browser
+DEBUG - 2026-01-13 02:54:23 --> Total execution time: 0.2432
+INFO - 2026-01-13 02:54:26 --> Config Class Initialized
+INFO - 2026-01-13 02:54:26 --> Hooks Class Initialized
+DEBUG - 2026-01-13 02:54:26 --> UTF-8 Support Enabled
+INFO - 2026-01-13 02:54:26 --> Utf8 Class Initialized
+INFO - 2026-01-13 02:54:26 --> URI Class Initialized
+INFO - 2026-01-13 02:54:26 --> Router Class Initialized
+INFO - 2026-01-13 02:54:26 --> Output Class Initialized
+INFO - 2026-01-13 02:54:26 --> Security Class Initialized
+DEBUG - 2026-01-13 02:54:26 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-13 02:54:26 --> Input Class Initialized
+INFO - 2026-01-13 02:54:26 --> Language Class Initialized
+INFO - 2026-01-13 02:54:26 --> Loader Class Initialized
+INFO - 2026-01-13 02:54:26 --> Helper loaded: url_helper
+INFO - 2026-01-13 02:54:26 --> Database Driver Class Initialized
+INFO - 2026-01-13 02:54:26 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-13 02:54:26 --> Controller Class Initialized
+INFO - 2026-01-13 02:54:26 --> Model Class Initialized
+INFO - 2026-01-13 02:54:26 --> Model Class Initialized
+INFO - 2026-01-13 02:54:26 --> Helper loaded: text_helper
+INFO - 2026-01-13 02:54:26 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-13 02:54:26 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/header.php
+ERROR - 2026-01-13 02:54:26 --> Severity: Notice --> Undefined variable: tax C:\xampp\htdocs\bookingsmarts\application\views\home\Detail_Pemesanan.php 145
+ERROR - 2026-01-13 02:54:26 --> Severity: Notice --> Undefined variable: tax C:\xampp\htdocs\bookingsmarts\application\views\home\Detail_Pemesanan.php 149
+INFO - 2026-01-13 02:54:26 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\home/detail_pemesanan.php
+INFO - 2026-01-13 02:54:26 --> Final output sent to browser
+DEBUG - 2026-01-13 02:54:26 --> Total execution time: 0.5629
+INFO - 2026-01-13 02:58:59 --> Config Class Initialized
+INFO - 2026-01-13 02:58:59 --> Hooks Class Initialized
+DEBUG - 2026-01-13 02:58:59 --> UTF-8 Support Enabled
+INFO - 2026-01-13 02:58:59 --> Utf8 Class Initialized
+INFO - 2026-01-13 02:58:59 --> URI Class Initialized
+INFO - 2026-01-13 02:58:59 --> Router Class Initialized
+INFO - 2026-01-13 02:58:59 --> Output Class Initialized
+INFO - 2026-01-13 02:58:59 --> Security Class Initialized
+DEBUG - 2026-01-13 02:58:59 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-13 02:58:59 --> Input Class Initialized
+INFO - 2026-01-13 02:58:59 --> Language Class Initialized
+INFO - 2026-01-13 02:58:59 --> Loader Class Initialized
+INFO - 2026-01-13 02:58:59 --> Helper loaded: url_helper
+INFO - 2026-01-13 02:58:59 --> Database Driver Class Initialized
+INFO - 2026-01-13 02:58:59 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-13 02:58:59 --> Controller Class Initialized
+INFO - 2026-01-13 02:58:59 --> Model Class Initialized
+INFO - 2026-01-13 02:58:59 --> Model Class Initialized
+INFO - 2026-01-13 02:59:00 --> Helper loaded: text_helper
+INFO - 2026-01-13 02:59:00 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-13 02:59:00 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/header.php
+INFO - 2026-01-13 02:59:00 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\home/detail_pemesanan.php
+INFO - 2026-01-13 02:59:00 --> Final output sent to browser
+DEBUG - 2026-01-13 02:59:00 --> Total execution time: 0.5929
+INFO - 2026-01-13 02:59:17 --> Config Class Initialized
+INFO - 2026-01-13 02:59:17 --> Hooks Class Initialized
+DEBUG - 2026-01-13 02:59:17 --> UTF-8 Support Enabled
+INFO - 2026-01-13 02:59:17 --> Utf8 Class Initialized
+INFO - 2026-01-13 02:59:17 --> URI Class Initialized
+INFO - 2026-01-13 02:59:17 --> Router Class Initialized
+INFO - 2026-01-13 02:59:17 --> Output Class Initialized
+INFO - 2026-01-13 02:59:17 --> Security Class Initialized
+DEBUG - 2026-01-13 02:59:17 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-13 02:59:17 --> Input Class Initialized
+INFO - 2026-01-13 02:59:17 --> Language Class Initialized
+INFO - 2026-01-13 02:59:17 --> Loader Class Initialized
+INFO - 2026-01-13 02:59:17 --> Helper loaded: url_helper
+INFO - 2026-01-13 02:59:17 --> Database Driver Class Initialized
+INFO - 2026-01-13 02:59:17 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-13 02:59:17 --> Controller Class Initialized
+INFO - 2026-01-13 02:59:17 --> Model Class Initialized
+INFO - 2026-01-13 02:59:17 --> Model Class Initialized
+INFO - 2026-01-13 02:59:17 --> Helper loaded: text_helper
+INFO - 2026-01-13 02:59:17 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-13 02:59:17 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/header.php
+INFO - 2026-01-13 02:59:17 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/footer.php
+INFO - 2026-01-13 02:59:17 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\home/pemesanan.php
+INFO - 2026-01-13 02:59:17 --> Final output sent to browser
+DEBUG - 2026-01-13 02:59:17 --> Total execution time: 0.1061
+INFO - 2026-01-13 02:59:23 --> Config Class Initialized
+INFO - 2026-01-13 02:59:23 --> Hooks Class Initialized
+DEBUG - 2026-01-13 02:59:23 --> UTF-8 Support Enabled
+INFO - 2026-01-13 02:59:23 --> Utf8 Class Initialized
+INFO - 2026-01-13 02:59:23 --> URI Class Initialized
+INFO - 2026-01-13 02:59:23 --> Router Class Initialized
+INFO - 2026-01-13 02:59:23 --> Output Class Initialized
+INFO - 2026-01-13 02:59:23 --> Security Class Initialized
+DEBUG - 2026-01-13 02:59:23 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-13 02:59:23 --> Input Class Initialized
+INFO - 2026-01-13 02:59:23 --> Language Class Initialized
+INFO - 2026-01-13 02:59:23 --> Loader Class Initialized
+INFO - 2026-01-13 02:59:23 --> Helper loaded: url_helper
+INFO - 2026-01-13 02:59:23 --> Database Driver Class Initialized
+INFO - 2026-01-13 02:59:23 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-13 02:59:23 --> Controller Class Initialized
+INFO - 2026-01-13 02:59:23 --> Model Class Initialized
+INFO - 2026-01-13 02:59:23 --> Model Class Initialized
+INFO - 2026-01-13 02:59:23 --> Helper loaded: text_helper
+INFO - 2026-01-13 02:59:23 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-13 02:59:23 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/header.php
+INFO - 2026-01-13 02:59:23 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\home/detail_pemesanan.php
+INFO - 2026-01-13 02:59:23 --> Final output sent to browser
+DEBUG - 2026-01-13 02:59:23 --> Total execution time: 0.0974
+INFO - 2026-01-13 02:59:36 --> Config Class Initialized
+INFO - 2026-01-13 02:59:36 --> Hooks Class Initialized
+DEBUG - 2026-01-13 02:59:36 --> UTF-8 Support Enabled
+INFO - 2026-01-13 02:59:36 --> Utf8 Class Initialized
+INFO - 2026-01-13 02:59:36 --> URI Class Initialized
+INFO - 2026-01-13 02:59:36 --> Router Class Initialized
+INFO - 2026-01-13 02:59:36 --> Output Class Initialized
+INFO - 2026-01-13 02:59:36 --> Security Class Initialized
+DEBUG - 2026-01-13 02:59:36 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-13 02:59:36 --> Input Class Initialized
+INFO - 2026-01-13 02:59:36 --> Language Class Initialized
+INFO - 2026-01-13 02:59:36 --> Loader Class Initialized
+INFO - 2026-01-13 02:59:36 --> Helper loaded: url_helper
+INFO - 2026-01-13 02:59:36 --> Database Driver Class Initialized
+INFO - 2026-01-13 02:59:36 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-13 02:59:36 --> Controller Class Initialized
+INFO - 2026-01-13 02:59:36 --> Model Class Initialized
+INFO - 2026-01-13 02:59:36 --> Model Class Initialized
+INFO - 2026-01-13 02:59:36 --> Upload Class Initialized
+INFO - 2026-01-13 02:59:36 --> Config Class Initialized
+INFO - 2026-01-13 02:59:36 --> Hooks Class Initialized
+DEBUG - 2026-01-13 02:59:36 --> UTF-8 Support Enabled
+INFO - 2026-01-13 02:59:36 --> Utf8 Class Initialized
+INFO - 2026-01-13 02:59:36 --> URI Class Initialized
+INFO - 2026-01-13 02:59:36 --> Router Class Initialized
+INFO - 2026-01-13 02:59:36 --> Output Class Initialized
+INFO - 2026-01-13 02:59:36 --> Security Class Initialized
+DEBUG - 2026-01-13 02:59:36 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-13 02:59:36 --> Input Class Initialized
+INFO - 2026-01-13 02:59:36 --> Language Class Initialized
+INFO - 2026-01-13 02:59:36 --> Loader Class Initialized
+INFO - 2026-01-13 02:59:36 --> Helper loaded: url_helper
+INFO - 2026-01-13 02:59:36 --> Database Driver Class Initialized
+INFO - 2026-01-13 02:59:36 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-13 02:59:36 --> Controller Class Initialized
+INFO - 2026-01-13 02:59:36 --> Model Class Initialized
+INFO - 2026-01-13 02:59:36 --> Model Class Initialized
+INFO - 2026-01-13 02:59:36 --> Helper loaded: text_helper
+INFO - 2026-01-13 02:59:36 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-13 02:59:36 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/header.php
+INFO - 2026-01-13 02:59:36 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/footer.php
+INFO - 2026-01-13 02:59:36 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\home/pemesanan.php
+INFO - 2026-01-13 02:59:36 --> Final output sent to browser
+DEBUG - 2026-01-13 02:59:36 --> Total execution time: 0.0898
+INFO - 2026-01-13 03:02:12 --> Config Class Initialized
+INFO - 2026-01-13 03:02:12 --> Hooks Class Initialized
+DEBUG - 2026-01-13 03:02:12 --> UTF-8 Support Enabled
+INFO - 2026-01-13 03:02:12 --> Utf8 Class Initialized
+INFO - 2026-01-13 03:02:12 --> URI Class Initialized
+INFO - 2026-01-13 03:02:12 --> Router Class Initialized
+INFO - 2026-01-13 03:02:12 --> Output Class Initialized
+INFO - 2026-01-13 03:02:12 --> Security Class Initialized
+DEBUG - 2026-01-13 03:02:12 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-13 03:02:12 --> Input Class Initialized
+INFO - 2026-01-13 03:02:12 --> Language Class Initialized
+INFO - 2026-01-13 03:02:12 --> Loader Class Initialized
+INFO - 2026-01-13 03:02:12 --> Helper loaded: url_helper
+INFO - 2026-01-13 03:02:12 --> Database Driver Class Initialized
+INFO - 2026-01-13 03:02:12 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-13 03:02:12 --> Controller Class Initialized
+INFO - 2026-01-13 03:02:12 --> Model Class Initialized
+INFO - 2026-01-13 03:02:12 --> Model Class Initialized
+INFO - 2026-01-13 03:02:13 --> Helper loaded: text_helper
+ERROR - 2026-01-13 03:02:13 --> Severity: Notice --> Undefined variable: remarksDisplay C:\xampp\htdocs\bookingsmarts\application\views\home\Detail_Pemesanan.php 42
+INFO - 2026-01-13 03:02:13 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-13 03:02:13 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/header.php
+INFO - 2026-01-13 03:02:13 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\home/detail_pemesanan.php
+INFO - 2026-01-13 03:02:13 --> Final output sent to browser
+DEBUG - 2026-01-13 03:02:13 --> Total execution time: 0.7257
+INFO - 2026-01-13 03:05:40 --> Config Class Initialized
+INFO - 2026-01-13 03:05:40 --> Hooks Class Initialized
+DEBUG - 2026-01-13 03:05:40 --> UTF-8 Support Enabled
+INFO - 2026-01-13 03:05:40 --> Utf8 Class Initialized
+INFO - 2026-01-13 03:05:40 --> URI Class Initialized
+INFO - 2026-01-13 03:05:40 --> Router Class Initialized
+INFO - 2026-01-13 03:05:40 --> Output Class Initialized
+INFO - 2026-01-13 03:05:40 --> Security Class Initialized
+DEBUG - 2026-01-13 03:05:40 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-13 03:05:40 --> Input Class Initialized
+INFO - 2026-01-13 03:05:40 --> Language Class Initialized
+INFO - 2026-01-13 03:05:40 --> Loader Class Initialized
+INFO - 2026-01-13 03:05:40 --> Helper loaded: url_helper
+INFO - 2026-01-13 03:05:40 --> Database Driver Class Initialized
+INFO - 2026-01-13 03:05:40 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-13 03:05:40 --> Controller Class Initialized
+INFO - 2026-01-13 03:05:40 --> Model Class Initialized
+INFO - 2026-01-13 03:05:40 --> Model Class Initialized
+INFO - 2026-01-13 03:05:41 --> Helper loaded: text_helper
+INFO - 2026-01-13 03:05:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-13 03:05:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/header.php
+INFO - 2026-01-13 03:05:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\home/detail_pemesanan.php
+INFO - 2026-01-13 03:05:41 --> Final output sent to browser
+DEBUG - 2026-01-13 03:05:41 --> Total execution time: 0.6612
+INFO - 2026-01-13 03:05:48 --> Config Class Initialized
+INFO - 2026-01-13 03:05:48 --> Hooks Class Initialized
+DEBUG - 2026-01-13 03:05:48 --> UTF-8 Support Enabled
+INFO - 2026-01-13 03:05:48 --> Utf8 Class Initialized
+INFO - 2026-01-13 03:05:48 --> URI Class Initialized
+INFO - 2026-01-13 03:05:48 --> Router Class Initialized
+INFO - 2026-01-13 03:05:48 --> Output Class Initialized
+INFO - 2026-01-13 03:05:48 --> Security Class Initialized
+DEBUG - 2026-01-13 03:05:48 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-13 03:05:48 --> Input Class Initialized
+INFO - 2026-01-13 03:05:48 --> Language Class Initialized
+INFO - 2026-01-13 03:05:48 --> Loader Class Initialized
+INFO - 2026-01-13 03:05:48 --> Helper loaded: url_helper
+INFO - 2026-01-13 03:05:48 --> Database Driver Class Initialized
+INFO - 2026-01-13 03:05:48 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-13 03:05:48 --> Controller Class Initialized
+INFO - 2026-01-13 03:05:48 --> Model Class Initialized
+INFO - 2026-01-13 03:05:48 --> Model Class Initialized
+INFO - 2026-01-13 03:05:48 --> Helper loaded: text_helper
+INFO - 2026-01-13 03:05:48 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-13 03:05:48 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/header.php
+INFO - 2026-01-13 03:05:48 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/footer.php
+INFO - 2026-01-13 03:05:48 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\home/pemesanan.php
+INFO - 2026-01-13 03:05:48 --> Final output sent to browser
+DEBUG - 2026-01-13 03:05:48 --> Total execution time: 0.1028
+INFO - 2026-01-13 03:05:50 --> Config Class Initialized
+INFO - 2026-01-13 03:05:50 --> Hooks Class Initialized
+DEBUG - 2026-01-13 03:05:50 --> UTF-8 Support Enabled
+INFO - 2026-01-13 03:05:50 --> Utf8 Class Initialized
+INFO - 2026-01-13 03:05:50 --> URI Class Initialized
+INFO - 2026-01-13 03:05:50 --> Router Class Initialized
+INFO - 2026-01-13 03:05:50 --> Output Class Initialized
+INFO - 2026-01-13 03:05:50 --> Security Class Initialized
+DEBUG - 2026-01-13 03:05:50 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-13 03:05:50 --> Input Class Initialized
+INFO - 2026-01-13 03:05:50 --> Language Class Initialized
+INFO - 2026-01-13 03:05:50 --> Loader Class Initialized
+INFO - 2026-01-13 03:05:50 --> Helper loaded: url_helper
+INFO - 2026-01-13 03:05:50 --> Database Driver Class Initialized
+INFO - 2026-01-13 03:05:50 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-13 03:05:50 --> Controller Class Initialized
+INFO - 2026-01-13 03:05:50 --> Model Class Initialized
+INFO - 2026-01-13 03:05:50 --> Model Class Initialized
+INFO - 2026-01-13 03:05:50 --> Helper loaded: text_helper
+INFO - 2026-01-13 03:05:50 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-13 03:05:50 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/header.php
+INFO - 2026-01-13 03:05:50 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\home/detail_pemesanan.php
+INFO - 2026-01-13 03:05:50 --> Final output sent to browser
+DEBUG - 2026-01-13 03:05:50 --> Total execution time: 0.0720
+INFO - 2026-01-13 03:05:53 --> Config Class Initialized
+INFO - 2026-01-13 03:05:53 --> Hooks Class Initialized
+DEBUG - 2026-01-13 03:05:53 --> UTF-8 Support Enabled
+INFO - 2026-01-13 03:05:53 --> Utf8 Class Initialized
+INFO - 2026-01-13 03:05:53 --> URI Class Initialized
+INFO - 2026-01-13 03:05:53 --> Router Class Initialized
+INFO - 2026-01-13 03:05:53 --> Output Class Initialized
+INFO - 2026-01-13 03:05:53 --> Security Class Initialized
+DEBUG - 2026-01-13 03:05:53 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-13 03:05:53 --> Input Class Initialized
+INFO - 2026-01-13 03:05:53 --> Language Class Initialized
+INFO - 2026-01-13 03:05:53 --> Loader Class Initialized
+INFO - 2026-01-13 03:05:53 --> Helper loaded: url_helper
+INFO - 2026-01-13 03:05:53 --> Database Driver Class Initialized
+INFO - 2026-01-13 03:05:53 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-13 03:05:53 --> Controller Class Initialized
+INFO - 2026-01-13 03:05:53 --> Model Class Initialized
+INFO - 2026-01-13 03:05:53 --> Model Class Initialized
+INFO - 2026-01-13 03:05:53 --> Helper loaded: text_helper
+INFO - 2026-01-13 03:05:53 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-13 03:05:53 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/header.php
+INFO - 2026-01-13 03:05:53 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/footer.php
+INFO - 2026-01-13 03:05:53 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\home/pemesanan.php
+INFO - 2026-01-13 03:05:53 --> Final output sent to browser
+DEBUG - 2026-01-13 03:05:53 --> Total execution time: 0.0738
+INFO - 2026-01-13 03:05:55 --> Config Class Initialized
+INFO - 2026-01-13 03:05:55 --> Hooks Class Initialized
+DEBUG - 2026-01-13 03:05:55 --> UTF-8 Support Enabled
+INFO - 2026-01-13 03:05:55 --> Utf8 Class Initialized
+INFO - 2026-01-13 03:05:55 --> URI Class Initialized
+INFO - 2026-01-13 03:05:55 --> Router Class Initialized
+INFO - 2026-01-13 03:05:55 --> Output Class Initialized
+INFO - 2026-01-13 03:05:55 --> Security Class Initialized
+DEBUG - 2026-01-13 03:05:55 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-13 03:05:55 --> Input Class Initialized
+INFO - 2026-01-13 03:05:55 --> Language Class Initialized
+INFO - 2026-01-13 03:05:55 --> Loader Class Initialized
+INFO - 2026-01-13 03:05:55 --> Helper loaded: url_helper
+INFO - 2026-01-13 03:05:55 --> Database Driver Class Initialized
+INFO - 2026-01-13 03:05:55 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-13 03:05:55 --> Controller Class Initialized
+INFO - 2026-01-13 03:05:55 --> Model Class Initialized
+INFO - 2026-01-13 03:05:55 --> Model Class Initialized
+INFO - 2026-01-13 03:05:55 --> Helper loaded: text_helper
+INFO - 2026-01-13 03:05:55 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-13 03:05:55 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/header.php
+INFO - 2026-01-13 03:05:55 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\home/detail_pemesanan.php
+INFO - 2026-01-13 03:05:55 --> Final output sent to browser
+DEBUG - 2026-01-13 03:05:55 --> Total execution time: 0.1219
