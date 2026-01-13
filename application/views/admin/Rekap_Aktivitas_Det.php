@@ -12,7 +12,7 @@ $second_date_period = date_create($last_period);
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Admin Smart Office</title>
+    <title>AKTIVITAS FLO</title>
 
     <!-- Favicons -->
     <link rel="apple-touch-icon-precomposed"
@@ -52,10 +52,10 @@ $second_date_period = date_create($last_period);
                                 <th>Jam Kegiatan</th>
                                 <th>Nama Pemesan</th>
                             </tr>
-                            <?php foreach($hasil as $row): ?>
-                            <?php $date = date_create($row['TANGGAL_FINAL_PEMESANAN']) ?>
-                            <?php $date_approval = date_create($row['TANGGAL_APPROVAL']) ?>
-                            <?php
+                            <?php foreach ($hasil as $row): ?>
+                                <?php $date = date_create($row['TANGGAL_FINAL_PEMESANAN']) ?>
+                                <?php $date_approval = date_create($row['TANGGAL_APPROVAL']) ?>
+                                <?php
                                 $jamMulai = null;
                                 if (isset($row['JAM_MULAI']) && $row['JAM_MULAI'] != '') {
                                     $jamMulai = $row['JAM_MULAI'];
@@ -75,16 +75,16 @@ $second_date_period = date_create($last_period);
                                     $jamText = date('H:i', strtotime($jamMulai));
                                 }
                                 ?>
-                            <tr>
-                                <td><?php echo $no++?></td>
-                                <td><?php echo $row['NAMA_GEDUNG']?></td>
-                                <td><?php echo date_format($date, 'd M Y')?></td>
-                                <td><?php echo date_format($date_approval, 'd M Y')?></td>
-                                <td><?php echo $row['DESKRIPSI_ACARA']?></td>
-                                <td><?php echo $jamText; ?></td>
-                                <td><?php echo $row['NAMA_LENGKAP']?></td>
-                            </tr>
-                            <?php endforeach;?>
+                                <tr>
+                                    <td><?php echo $no++ ?></td>
+                                    <td><?php echo $row['NAMA_GEDUNG'] ?></td>
+                                    <td><?php echo date_format($date, 'd M Y') ?></td>
+                                    <td><?php echo date_format($date_approval, 'd M Y') ?></td>
+                                    <td><?php echo $row['DESKRIPSI_ACARA'] ?></td>
+                                    <td><?php echo $jamText; ?></td>
+                                    <td><?php echo $row['NAMA_LENGKAP'] ?></td>
+                                </tr>
+                            <?php endforeach; ?>
                         </table>
                         <table style="display: inline-block;">
                             <tr>
@@ -96,7 +96,7 @@ $second_date_period = date_create($last_period);
                             <tr>
                                 <td>
                                     <a
-                                        href="<?php echo site_url('admin/kegiatan_download_pdf/'.$first_period.'/'.$last_period.'') ?>">Ekspor
+                                        href="<?php echo site_url('admin/kegiatan_download_pdf/' . $first_period . '/' . $last_period . '') ?>">Ekspor
                                         ke PDF</a>
                                 </td>
                             </tr>
@@ -112,68 +112,68 @@ $second_date_period = date_create($last_period);
             <script src="<?php echo base_url(); ?>assets/home/materialize/js/materialize.js"></script>
             <script src="<?php echo base_url(); ?>assets/home/index.js"></script>
             <script type="text/javascript">
-            var startDate = document.getElementById("start_date");
-            var label = document.getElementById("labelDari");
-            var labelsampai = document.getElementById("labelSampai");
-            var endDate = document.getElementById("end_date");
-            var btnProses = document.getElementById("btnProses");
-            var btnFilter = document.getElementById("btnFilter");
+                var startDate = document.getElementById("start_date");
+                var label = document.getElementById("labelDari");
+                var labelsampai = document.getElementById("labelSampai");
+                var endDate = document.getElementById("end_date");
+                var btnProses = document.getElementById("btnProses");
+                var btnFilter = document.getElementById("btnFilter");
 
-            function unhideElement() {
-                if (startDate.hidden = true) {
-                    startDate.hidden = false;
-                    label.hidden = false;
-                    labelsampai.hidden = false;
-                    endDate.hidden = false;
-                    btnProses.hidden = false
-                    btnFilter.disabled = true;
+                function unhideElement() {
+                    if (startDate.hidden = true) {
+                        startDate.hidden = false;
+                        label.hidden = false;
+                        labelsampai.hidden = false;
+                        endDate.hidden = false;
+                        btnProses.hidden = false
+                        btnFilter.disabled = true;
 
-                } else {
-                    hideElement();
+                    } else {
+                        hideElement();
+                    }
                 }
-            }
 
-            function hideElement() {
-                startDate.hidden = true;
-                label.hidden = true;
-                endDate.hidden = true;
-                btnProses.hidden = true;
-            }
-
-            function btnProsesAlert() {
-                if (startDate.value == "") {
-                    alert("Harap Isi Form Tanggal!");
-                    return false;
-                } else if (endDate.value == "") {
-                    alert("Harap Isi Form Tanggal!");
-                    return false;
+                function hideElement() {
+                    startDate.hidden = true;
+                    label.hidden = true;
+                    endDate.hidden = true;
+                    btnProses.hidden = true;
                 }
-            }
+
+                function btnProsesAlert() {
+                    if (startDate.value == "") {
+                        alert("Harap Isi Form Tanggal!");
+                        return false;
+                    } else if (endDate.value == "") {
+                        alert("Harap Isi Form Tanggal!");
+                        return false;
+                    }
+                }
             </script>
             <script>
-            $(document).ready(function() {
+                $(document).ready(function() {
 
-                $(".button-collapse").sideNav({
-                    menuWidth: 260,
-                    edge: 'left',
-                    closeOnClick: false,
-                    draggable: true
+                    $(".button-collapse").sideNav({
+                        menuWidth: 260,
+                        edge: 'left',
+                        closeOnClick: false,
+                        draggable: true
+                    });
+
+                    // OPEN / CLOSE SIDEBAR + SHIFT CONTENT
+                    $(".button-collapse").on("click", function() {
+                        $("body").toggleClass("nav-open");
+                    });
+
+                    // CLOSE JIKA KLIK LUAR SIDEBAR
+                    $(document).mouseup(function(e) {
+                        let sb = $(".side-nav");
+                        if (!sb.is(e.target) && sb.has(e.target).length === 0) {
+                            $("body").removeClass("nav-open");
+                        }
+                    });
+
                 });
-
-                // OPEN / CLOSE SIDEBAR + SHIFT CONTENT
-                $(".button-collapse").on("click", function() {
-                    $("body").toggleClass("nav-open");
-                });
-
-                // CLOSE JIKA KLIK LUAR SIDEBAR
-                $(document).mouseup(function(e) {
-                    let sb = $(".side-nav");
-                    if (!sb.is(e.target) && sb.has(e.target).length === 0) {
-                        $("body").removeClass("nav-open");
-                    }
-                });
-
-            });
             </script>
 </body>
 

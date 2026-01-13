@@ -13,7 +13,7 @@ $rows = (isset($row) && is_array($row)) ? $row : array();
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rekap</title>
+    <title>Rekap Transaksi Det</title>
 
     <link rel="apple-touch-icon-precomposed" href="<?php echo base_url(); ?>assets/home/assets/img/favicon/apple-touch-icon-152x152.png">
     <meta name="msapplication-TileColor" content="#FFFFFF">
