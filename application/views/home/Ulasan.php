@@ -1,10 +1,8 @@
 <?php
-
-
 // ====== Helper bintang (PHP 5 friendly) ======
 function star_svg($filled)
 {
-    $fill = $filled ? '#F59E0B' : 'none';     // amber-500
+    $fill = $filled ? '#F59E0B' : 'none';      // amber-500
     $stroke = $filled ? '#F59E0B' : '#94A3B8'; // slate-400
     return '<svg class="w-5 h-5" viewBox="0 0 24 24" fill="' . $fill . '" stroke="' . $stroke . '" stroke-width="1.5" aria-hidden="true">
     <path stroke-linecap="round" stroke-linejoin="round"
@@ -15,33 +13,42 @@ function star_svg($filled)
 function stars_html($rating)
 {
     $out = '';
-    for ($i = 1; $i <= 5; $i++) {
-        $out .= star_svg($i <= $rating);
-    }
+    for ($i = 1; $i <= 5; $i++) $out .= star_svg($i <= $rating);
     return $out;
 }
 
+$username = $this->session->userdata('username');
+
 // ====== Summary (avg & distribusi) ======
-$total = count($reviews);
-$sum = 0;
+$total = 0;
+$avg = 0;
 $dist = array(1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0);
 
-for ($i = 0; $i < $total; $i++) {
-    $rating = (int)$reviews[$i]['rating'];
-    $sum += $rating;
-    if (isset($dist[$rating])) $dist[$rating]++;
-}
-if (isset($summary) && is_array($summary)) {
+// Prioritas: pakai $summary dari controller (lebih akurat)
+if (isset($summary) && is_array($summary) && isset($summary['total'], $summary['avg'], $summary['dist'])) {
     $total = (int)$summary['total'];
-    $avg = (float)$summary['avg'];
-    $dist = $summary['dist'];
+    $avg   = (float)$summary['avg'];
+    $dist  = $summary['dist'];
+} else {
+    // fallback: hitung dari $reviews
+    $total = !empty($reviews) ? count($reviews) : 0;
+    $sum = 0;
+    if (!empty($reviews)) {
+        foreach ($reviews as $rv) {
+            $rating = (int)$rv['rating'];
+            $sum += $rating;
+            if (isset($dist[$rating])) $dist[$rating]++;
+        }
+    }
+    $avg = $total ? round($sum / $total, 1) : 0;
 }
 
-
-$avg = $total ? round($sum / $total, 1) : 0;
 $avgRounded = (int)round($avg);
 
-$username = $this->session->userdata('username');
+// ====== Hak tampil form ======
+$reservasi_list = (isset($reservasi_list) && is_array($reservasi_list)) ? $reservasi_list : array();
+$has_login = !empty($username);
+$can_review = $has_login && count($reservasi_list) > 0;
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -65,10 +72,19 @@ $username = $this->session->userdata('username');
                 <p class="mt-1 text-sm text-slate-600">Lihat pengalaman customer lain dan tulis ulasanmu.</p>
             </div>
 
-            <a href="#tulis-ulasan" class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold
-              bg-teal-700 text-white hover:bg-teal-800 transition">
-                Tulis Ulasan
-            </a>
+            <?php if ($can_review): ?>
+                <a href="#tulis-ulasan"
+                    class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold
+               bg-teal-700 text-white hover:bg-teal-800 transition">
+                    Tulis Ulasan
+                </a>
+            <?php else: ?>
+                <button type="button" disabled
+                    class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold
+                    bg-slate-300 text-slate-600 cursor-not-allowed">
+                    Tulis Ulasan
+                </button>
+            <?php endif; ?>
         </div>
 
         <!-- Flash message -->
@@ -98,12 +114,12 @@ $username = $this->session->userdata('username');
             </div>
 
             <div class="bg-white rounded-2xl border border-black/10 shadow-sm p-6 lg:col-span-2">
-                <div class="text-sm font-semibold text-slate-900">Distribusi Rating</div>
+                <div class="text-sm font-semibold text-slate-900">Rating</div>
 
                 <div class="mt-4 space-y-2">
                     <?php for ($s = 5; $s >= 1; $s--): ?>
-                    <?php
-                        $count = isset($dist[$s]) ? $dist[$s] : 0;
+                        <?php
+                        $count = isset($dist[$s]) ? (int)$dist[$s] : 0;
                         $pct = $total ? round(($count / $total) * 100) : 0;
                         ?>
                     <div class="flex items-center gap-3">
@@ -161,113 +177,111 @@ $username = $this->session->userdata('username');
             </div>
         </section>
 
-        <!-- Form -->
-        <?php if (!empty($already_reviewed)): ?>
-        <div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-            Kamu sudah pernah mengirim ulasan, jadi tidak bisa mengisi ulang.
-        </div>
-        <?php else: ?>
-        <!-- section id="tulis-ulasan" (form kamu) taruh di sini -->
+        <!-- Info jika tidak bisa mengulas -->
+        <?php if (!$has_login): ?>
+            <div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+                Silakan login untuk menulis ulasan.
+            </div>
+        <?php elseif (!$can_review): ?>
+            <div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+                Tidak ada pemesanan dengan status <b>submitted</b> yang bisa diulas (atau sudah diulas semua).
+            </div>
         <?php endif; ?>
 
-        <section id="tulis-ulasan" class="mt-8">
-            <div class="bg-white rounded-2xl border border-black/10 shadow-sm p-6">
-                <div class="text-lg font-bold text-slate-900">Tulis Ulasan</div>
-                <p class="mt-1 text-sm text-slate-600">Berikan rating dan pengalamanmu.</p>
+        <!-- Form (hanya tampil jika ada pemesanan submitted yang belum diulas) -->
+        <?php if ($can_review): ?>
+            <section id="tulis-ulasan" class="mt-8">
+                <div class="bg-white rounded-2xl border border-black/10 shadow-sm p-6">
+                    <div class="text-lg font-bold text-slate-900">Tulis Ulasan</div>
+                    <p class="mt-1 text-sm text-slate-600">Pilih pemesananmu, lalu beri rating dan komentar.</p>
 
-                <form method="post" action="<?php echo site_url('home/submit_ulasan'); ?>" class="mt-5 space-y-4">
+                    <form method="post" action="<?php echo site_url('home/submit_ulasan'); ?>" class="mt-5 space-y-4">
 
-                    <div>
-                        <label class="text-sm font-semibold text-slate-900">Rating</label>
-                        <input type="hidden" name="rating" id="ratingInput" value="5">
-
-                        <div class="mt-2 flex items-center gap-1" id="starPicker">
-                            <?php for ($i = 1; $i <= 5; $i++): ?>
-                            <button type="button" class="star-btn" data-value="<?php echo (int)$i; ?>"
-                                aria-label="<?php echo (int)$i; ?> bintang">
-                                <?php echo star_svg(true); ?>
-                            </button>
-                            <?php endfor; ?>
-                            <span class="ml-2 text-sm text-slate-600" id="ratingLabel">5/5</span>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="text-sm font-semibold text-slate-900">Nama Ruangan</label>
-                            <select name="gedung" required
+                            <label class="text-sm font-semibold text-slate-900">Rating</label>
+                            <input type="hidden" name="rating" id="ratingInput" value="5">
+
+                            <div class="mt-2 flex items-center gap-1" id="starPicker">
+                                <?php for ($i = 1; $i <= 5; $i++): ?>
+                                    <button type="button" class="star-btn" data-value="<?php echo (int)$i; ?>" aria-label="<?php echo (int)$i; ?> bintang">
+                                        <?php echo star_svg(true); ?>
+                                    </button>
+                                <?php endfor; ?>
+                                <span class="ml-2 text-sm text-slate-600" id="ratingLabel">5/5</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-sm font-semibold text-slate-900">Pemesanan (Gedung - Tanggal - Jam)</label>
+                            <select name="id_pemesanan" required
                                 class="mt-2 w-full rounded-xl border border-black/10 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-200">
-                                <option value="">-- Pilih Ruangan --</option>
-                                <?php if (isset($gedungs) && is_array($gedungs)): ?>
-                                <?php foreach ($gedungs as $g): ?>
-                                <option value="<?php echo htmlspecialchars($g['NAMA_GEDUNG'], ENT_QUOTES, 'UTF-8'); ?>">
-                                    <?php echo htmlspecialchars($g['NAMA_GEDUNG'], ENT_QUOTES, 'UTF-8'); ?>
-                                </option>
+                                <option value="">-- Pilih Pemesanan --</option>
+                                <?php foreach ($reservasi_list as $row): ?>
+                                    <option value="<?php echo (int)$row['ID_PEMESANAN']; ?>">
+                                        <?php echo htmlspecialchars($row['label'], ENT_QUOTES, 'UTF-8'); ?>
+                                    </option>
                                 <?php endforeach; ?>
-                                <?php endif; ?>
                             </select>
                         </div>
 
-
                         <div>
-                            <label class="text-sm font-semibold text-slate-900">Nama</label>
-                            <input type="text" name="name"
+                            <label class="text-sm font-semibold text-slate-900">Komentar</label>
+                            <textarea name="comment" rows="4" required
                                 class="mt-2 w-full rounded-xl border border-black/10 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-200"
-                                placeholder="Nama kamu"
-                                value="<?php echo htmlspecialchars($username ? $username : '', ENT_QUOTES, 'UTF-8'); ?>">
+                                placeholder="Ceritakan pengalamanmu..."></textarea>
                         </div>
-                    </div>
 
-                    <div>
-                        <label class="text-sm font-semibold text-slate-900">Komentar</label>
-                        <textarea name="comment" rows="4" required
-                            class="mt-2 w-full rounded-xl border border-black/10 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-200"
-                            placeholder="Ceritakan pengalamanmu..."></textarea>
-                    </div>
+                        <button type="submit"
+                            class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold
+                            bg-teal-700 text-white hover:bg-teal-800 transition">
+                            Kirim Ulasan
+                        </button>
 
-                    <button type="submit" class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold
-                       bg-teal-700 text-white hover:bg-teal-800 transition">
-                        Kirim Ulasan
-                    </button>
-
-                    <p class="text-xs text-slate-500">
-                        Catatan: Ulasan dapat ditinjau admin terlebih dahulu sebelum tampil publik.
-                    </p>
-                </form>
-            </div>
-        </section>
+                        <p class="text-xs text-slate-500">
+                            Catatan: Ulasan dapat ditinjau terlebih dahulu sebelum submit
+                        </p>
+                    </form>
+                </div>
+            </section>
+        <?php endif; ?>
 
     </main>
 
     <?php $this->load->view('components/footer'); ?>
 
     <script>
-    var ratingInput = document.getElementById('ratingInput');
-    var ratingLabel = document.getElementById('ratingLabel');
-    var buttons = document.getElementsByClassName('star-btn');
+        // Aman: hanya jalan kalau form ada
+        var ratingInput = document.getElementById('ratingInput');
+        var ratingLabel = document.getElementById('ratingLabel');
+        var buttons = document.getElementsByClassName('star-btn');
 
-    function setRating(val) {
-        ratingInput.value = val;
-        ratingLabel.innerHTML = val + "/5";
+        function setRating(val) {
+            if (!ratingInput || !ratingLabel || !buttons) return;
 
-        for (var i = 0; i < buttons.length; i++) {
-            var svg = buttons[i].getElementsByTagName('svg')[0];
-            var filled = (i + 1) <= val;
-            svg.setAttribute('fill', filled ? '#F59E0B' : 'none');
-            svg.setAttribute('stroke', filled ? '#F59E0B' : '#94A3B8');
+            ratingInput.value = val;
+            ratingLabel.innerHTML = val + "/5";
+
+            for (var i = 0; i < buttons.length; i++) {
+                var svg = buttons[i].getElementsByTagName('svg')[0];
+                if (!svg) continue;
+                var filled = (i + 1) <= val;
+                svg.setAttribute('fill', filled ? '#F59E0B' : 'none');
+                svg.setAttribute('stroke', filled ? '#F59E0B' : '#94A3B8');
+            }
         }
     }
 
-    for (var j = 0; j < buttons.length; j++) {
-        (function(idx) {
-            buttons[idx].addEventListener('click', function() {
-                var v = parseInt(this.getAttribute('data-value'), 10);
-                setRating(v);
-            });
-        })(j);
-    }
-
-    setRating(5);
+        if (buttons && buttons.length) {
+            for (var j = 0; j < buttons.length; j++) {
+                (function(idx) {
+                    buttons[idx].addEventListener('click', function() {
+                        var v = parseInt(this.getAttribute('data-value'), 10);
+                        setRating(v);
+                    });
+                })(j);
+            }
+            setRating(5);
+        }
     </script>
 </body>
 

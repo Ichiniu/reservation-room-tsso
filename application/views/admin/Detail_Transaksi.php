@@ -2,8 +2,9 @@
 $session_id = $this->session->userdata('username');
 $this->load->helper('text');
 $this->load->helper('form');
-$tax = 0.1 * $hasil->HARGA_SEWA;
-$total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
+
+// PAJAK DIHILANGKAN TOTAL
+$total_transaksi = (int) $hasil->TOTAL_KESELURUHAN;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -157,7 +158,7 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
                         echo date_format($date, 'd F Y'); ?>
                     </div>
                     <div class="text-sm text-gray-600 mt-2">
-                        Total (incl. pajak): <b>Rp. <?php echo number_format($total_stl_pajak); ?></b>
+                        Total: <b>Rp. <?php echo number_format($total_transaksi); ?></b>
                     </div>
                 </div>
 
@@ -200,7 +201,6 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
                                             <td>:</td>
                                             <td class="px-4 py-3">
                                                 <?php
-                                                // $hasil kemungkinan object dari $this->db->row()
                                                 $mulai   = isset($hasil->JAM_PEMESANAN) ? $hasil->JAM_PEMESANAN : '';
                                                 $selesai = isset($hasil->JAM_SELESAI) ? $hasil->JAM_SELESAI : '';
 
@@ -212,7 +212,6 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
                                                     echo '-';
                                                 }
                                                 ?>
-
                                             </td>
                                         </tr>
                                         <tr>
@@ -250,36 +249,21 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
                                             <td>:</td>
                                             <td>Rp. <?php echo number_format($hasil->TOTAL_KESELURUHAN); ?></td>
                                         </tr>
+
+                                        <!-- PAJAK DIHAPUS -->
+
                                         <tr>
-                                            <td><b>PAJAK 10%</b></td>
+                                            <td><b>TOTAL KESELURUHAN (CATERING + GEDUNG)</b></td>
                                             <td><b>:</b></td>
-                                            <td>Rp. <?php echo number_format($tax); ?></td>
+                                            <td><b>Rp. <?php echo number_format($total_transaksi); ?></b></td>
                                         </tr>
+
                                         <tr>
-                                            <td><b>TOTAL KESELURUHAN (CATERING + GEDUNG + PAJAK)</b></td>
-                                            <td><b>:</b></td>
-                                            <td><b>Rp. <?php echo number_format($total_stl_pajak); ?></b></td>
-                                        </tr>
-                                        <<tr>
-                                            <td><b>DESKRIPSI PEMESANAN</b></td>
+                                            <td><b>DESKRIPSI KEGIATAN</b></td>
                                             <td>:</td>
                                             <td><?php echo !empty($details) ? $details->DESKRIPSI_ACARA : '-'; ?></td>
-                                            </tr>
+                                        </tr>
 
-                                            <tr>
-                                                <td><b>PROPOSAL ACARA</b></td>
-                                                <td>:</td>
-                                                <td>
-                                                    <?php if (!empty($details) && !empty($details->FILE_NAME)) : ?>
-                                                    <a class="link-file"
-                                                        href="<?php echo site_url('admin/admin_controls/download_proposal/' . $hasil->ID_PEMESANAN); ?>">
-                                                        <?php echo $details->FILE_NAME; ?>
-                                                    </a>
-                                                    <?php else: ?>
-                                                    <em>Belum ada proposal</em>
-                                                    <?php endif; ?>
-                                                </td>
-                                            </tr>
 
                                     </tbody>
                                 </table>
@@ -292,7 +276,7 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
                         <div class="cardhead">
                             <div class="font-semibold text-gray-900 flex items-center gap-2">
                                 <i class="material-icons text-gray-700 text-base">gavel</i>
-                                Aksi Proposal
+                                Verify Kegiatan
                             </div>
                             <div class="hint">Remarks muncul hanya jika menolak.</div>
                         </div>
@@ -301,7 +285,7 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
                             <p style="margin:0;">
                                 <input class="with-gap" name="status-proposal" type="radio" id="ya" value="1"
                                     onclick="return showInput();" />
-                                <label for="ya">TERIMA PROPOSAL</label>
+                                <label for="ya">TERIMA KEGIATAN</label>
                             </p>
 
                             <div style="height:10px;"></div>
@@ -309,7 +293,7 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
                             <p style="margin:0;">
                                 <input class="with-gap" name="status-proposal" type="radio" id="tidak" value="4"
                                     onclick="return showInput();" />
-                                <label for="tidak">TOLAK PROPOSAL</label>
+                                <label for="tidak">TOLAK KEGIATAN</label>
                             </p>
 
                             <div style="height:14px;"></div>
@@ -341,10 +325,6 @@ $total_stl_pajak = $hasil->TOTAL_KESELURUHAN + $tax;
                     <?php echo form_close(); ?>
                 </div>
             </div>
-
-            <!-- <div class="text-xs text-gray-500 text-center mt-6">
-                © <?php echo date('Y'); ?> Smart Office • Admin Panel
-            </div> -->
 
         </div>
     </main>

@@ -363,9 +363,10 @@ public function mark_flag_unread($id_view)
 
 	public function get_pending_transaction()
 	{
-		$sql = "SELECT STATUS FROM V_PEMESANAN WHERE STATUS = 'PROCESS'";
-		$query = $this->db->query($sql);
-		return $query->num_rows();
+		$sql = "SELECT vp.ID_PEMESANAN
+    FROM V_PEMESANAN vp
+    JOIN pemesanan_details pd ON pd.ID_PEMESANAN = vp.ID_PEMESANAN
+    WHERE vp.STATUS = 'PROCESS'";
 	}
 	public function get_all_pemesanan()
 	{
@@ -387,13 +388,23 @@ public function mark_flag_unread($id_view)
 
 	public function get_all_pending_transaction()
 	{
-		$sql = "SELECT * 
-            FROM V_PEMESANAN 
-            WHERE STATUS IN ('PROCESS','PROPOSAL APPROVE','PAID')
-            ORDER BY TANGGAL_PEMESANAN DESC";
-		$query = $this->db->query($sql);
-		return $query->result_array();
+		$sql = "SELECT vp.*
+            FROM V_PEMESANAN vp
+            JOIN pemesanan_details pd
+              ON pd.ID_PEMESANAN =
+                 (CASE
+                    WHEN vp.ID_PEMESANAN LIKE 'PMSN%' THEN CAST(SUBSTRING(vp.ID_PEMESANAN, 5) AS UNSIGNED)
+                    ELSE CAST(vp.ID_PEMESANAN AS UNSIGNED)
+                  END)
+            WHERE vp.STATUS IN ('PROCESS','PROPOSAL APPROVE','PAID')
+            ORDER BY vp.TANGGAL_PEMESANAN DESC";
+
+		$q = $this->db->query($sql);
+		if (!$q) return [];
+
+		return $q->result_array();
 	}
+
 
 
 	public function user_detail_pembayaran($username)
@@ -719,13 +730,12 @@ public function mark_flag_unread($id_view)
 	}
 
 	public function get_status_by_user($username)
-{
-    return $this->db->select('ID_PEMESANAN, STATUS')
-        ->from('pemesanan')
-        ->where('USERNAME', $username)
-        ->order_by('ID_PEMESANAN', 'DESC')
-        ->get()
-        ->result_array();
-}
-
+	{
+		return $this->db->select('ID_PEMESANAN, STATUS')
+			->from('pemesanan')
+			->where('USERNAME', $username)
+			->order_by('ID_PEMESANAN', 'DESC')
+			->get()
+			->result_array();
+	}
 }

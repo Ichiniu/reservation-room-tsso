@@ -3,11 +3,14 @@ $session_id = $this->session->userdata('username');
 $this->load->helper('text');
 
 $id_gedung = $this->uri->segment(3);
-$tax = 0.1 * $result->HARGA_SEWA;
+
+// PAJAK DIHILANGKAN TOTAL
+$total_tagihan = (int) $result->TOTAL_KESELURUHAN;
 
 $tanggal_pesan = $result->TANGGAL_PEMESANAN;
 $min_refund = date('Y-m-d', time());
 $perbedaan = date_diff(new DateTime($tanggal_pesan), new DateTime($min_refund));
+
 // info user & proposal (untuk ditampilkan)
 $display_username = !empty($user_username) ? $user_username : $session_id;
 $display_email    = !empty($user_email) ? $user_email : (isset($result->EMAIL) ? $result->EMAIL : '-');
@@ -76,7 +79,6 @@ if ($statusText === 'PROCESS') {
     <div class="max-w-4xl mx-auto mt-10 bg-white rounded-xl shadow-lg p-6">
 
         <!-- Header + Status badge menonjol -->
-
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 border-b pb-3">
 
             <h2 class="text-xl font-bold">Detail Pemesanan</h2>
@@ -169,6 +171,92 @@ if ($statusText === 'PROCESS') {
                 </tr>
             </tbody>
         </table>
+        <table class="w-full text-sm">
+            <tbody class="space-y-2">
+                <tr>
+                    <td class="font-semibold">ID Pemesanan</td>
+                    <td>: <?= $result->ID_PEMESANAN ?></td>
+                </tr>
+                <tr>
+                    <td class="font-semibold">Username</td>
+                    <td>: <?= htmlspecialchars((string)$display_username, ENT_QUOTES, 'UTF-8') ?></td>
+                </tr>
+                <tr>
+                    <td class="font-semibold">Email</td>
+                    <td>: <?= htmlspecialchars((string)$display_email, ENT_QUOTES, 'UTF-8') ?></td>
+                </tr>
+                <tr>
+                    <td class="font-semibold">Tanggal Pemesanan</td>
+                    <td>: <?= date('d F Y', strtotime($result->TANGGAL_PEMESANAN)) ?></td>
+                </tr>
+                <tr>
+                    <td class="font-semibold">Jam Pemesanan</td>
+                    <td>:
+                        <?php if (!empty($result->JAM_PEMESANAN) && !empty($result->JAM_SELESAI)): ?>
+                        <?= date('H:i', strtotime($result->JAM_PEMESANAN)); ?> -
+                        <?= date('H:i', strtotime($result->JAM_SELESAI)); ?> WIB
+                        <?php else: ?>
+                        -
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="font-semibold">Gedung</td>
+                    <td>: <?= $result->NAMA_GEDUNG ?></td>
+                </tr>
+                <tr>
+                    <td class="font-semibold">Nama Catering</td>
+                    <td>: <?= $result->NAMA_PAKET ?></td>
+                </tr>
+                <tr>
+                    <td class="font-semibold">Jumlah Catering</td>
+                    <td>: <?= $result->JUMLAH_CATERING ?></td>
+                </tr>
+                <tr>
+                    <td class="font-semibold">Harga Gedung</td>
+                    <td>: Rp <?= number_format($result->HARGA_SEWA) ?></td>
+                </tr>
+                <tr>
+                    <td class="font-semibold">Total Catering</td>
+                    <td>: Rp <?= number_format($result->TOTAL_HARGA) ?></td>
+                </tr>
+
+                <!-- PAJAK DIHAPUS -->
+
+                <tr class="font-bold text-red-600">
+                    <td>Total Keseluruhan</td>
+                    <td>: Rp <?= number_format($total_tagihan) ?></td>
+                </tr>
+                <tr>
+                    <td class="font-semibold">Status</td>
+                    <td>: <?= $result->STATUS ?></td>
+                </tr>
+                <tr>
+                    <td class="font-semibold">Keperluan Acara</td>
+                    <td>: <?= nl2br(htmlspecialchars((string)$deskripsi_acara, ENT_QUOTES, 'UTF-8')) ?></td>
+                </tr>
+                <tr>
+                    <?php
+          // Catatan admin reject dari controller
+          $catatanAdminReject = isset($catatan_admin_reject) ? trim((string)$catatan_admin_reject) : '';
+          ?>
+
+                    <?php if ($statusText === 'REJECTED'): ?>
+                    <div class="mb-4 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm">
+                        <div class="font-semibold text-rose-800">Catatan Admin : </div>
+                        <?php if ($catatanAdminReject !== ''): ?>
+                        <div class="flex justify-center mt-1 text-slate-800 whitespace-pre-line">
+                            <?= htmlspecialchars($catatanAdminReject, ENT_QUOTES, 'UTF-8'); ?>
+                        </div>
+                        <?php else: ?>
+                        <div class="mt-1 text-slate-500">-</div>
+                        <?php endif; ?>
+                    </div>
+                    <?php endif; ?>
+
+                </tr>
+            </tbody>
+        </table>
 
         <!-- BUTTON AREA -->
         <div class="mt-6 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -201,7 +289,6 @@ if ($statusText === 'PROCESS') {
             </div>
         </div>
 
-
         <!-- MODAL PEMBAYARAN -->
         <div id="modalBayar" class="fixed inset-0 z-[999] hidden bg-black/50 items-center justify-center p-9">
             <div class="flex min-h-screen items-start justify-center p-4 sm:p-6">
@@ -226,7 +313,8 @@ if ($statusText === 'PROCESS') {
 
                                 <div class="text-gray-600">Tanggal Pemesanan</div>
                                 <div class="font-semibold">
-                                    <?php echo date('d F Y', strtotime($result->TANGGAL_PEMESANAN)); ?></div>
+                                    <?php echo date('d F Y', strtotime($result->TANGGAL_PEMESANAN)); ?>
+                                </div>
 
                                 <div class="text-gray-600">Jam Pemesanan</div>
                                 <div class="font-semibold">
@@ -238,17 +326,20 @@ if ($statusText === 'PROCESS') {
                                     <?php endif; ?>
                                 </div>
 
-                                <div class="text-gray-600">Ruangan</div>
+                                <div class="text-gray-600">Gedung</div>
                                 <div class="font-semibold">
-                                    <?php echo htmlspecialchars($result->NAMA_GEDUNG, ENT_QUOTES, 'UTF-8'); ?></div>
+                                    <?php echo htmlspecialchars($result->NAMA_GEDUNG, ENT_QUOTES, 'UTF-8'); ?>
+                                </div>
 
                                 <div class="text-gray-600">Catering</div>
                                 <div class="font-semibold">
-                                    <?php echo htmlspecialchars($result->NAMA_PAKET, ENT_QUOTES, 'UTF-8'); ?></div>
+                                    <?php echo htmlspecialchars($result->NAMA_PAKET, ENT_QUOTES, 'UTF-8'); ?>
+                                </div>
 
                                 <div class="text-gray-600">Total Tagihan</div>
                                 <div class="font-semibold">Rp
-                                    <?php echo number_format((int)($result->TOTAL_KESELURUHAN + $tax)); ?></div>
+                                    <?php echo number_format($total_tagihan); ?>
+                                </div>
                             </div>
                         </div>
 
@@ -282,10 +373,10 @@ if ($statusText === 'PROCESS') {
 
                             <input type="text" id="nominal_transfer_display" class="w-full border rounded-lg p-2 mb-3"
                                 inputmode="numeric" placeholder="Rp 0"
-                                value="Rp <?php echo number_format((int)($result->TOTAL_KESELURUHAN + $tax), 0, ',', '.'); ?>">
+                                value="Rp <?php echo number_format($total_tagihan, 0, ',', '.'); ?>">
 
                             <input type="hidden" id="nominal_transfer" name="nominal_transfer"
-                                value="<?php echo (int)($result->TOTAL_KESELURUHAN + $tax); ?>">
+                                value="<?php echo (int)$total_tagihan; ?>">
 
                             <label class="block mb-1 text-sm font-medium">Upload Bukti Pembayaran</label>
                             <input type="file" name="bukti" required class="w-full border rounded-lg p-2 mb-4">
