@@ -6,232 +6,286 @@ $no    = 1;
 $total = 0;
 
 $rows = (isset($row) && is_array($row)) ? $row : array();
+
+/* ===== Format tanggal Indonesia ===== */
+function formatTanggalIndo($tgl)
+{
+    if (empty($tgl)) return '-';
+
+    $bulan = [
+        1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ];
+
+    $ts = strtotime($tgl);
+    if (!$ts) return '-';
+
+    $d = date('d', $ts);      // 01, 02, ...
+    $m = (int) date('n', $ts);
+    $y = date('Y', $ts);
+
+    return $d . ' ' . $bulan[$m] . ' ' . $y;
+}
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rekap</title>
 
-    <link rel="apple-touch-icon-precomposed" href="<?php echo base_url(); ?>assets/home/assets/img/favicon/apple-touch-icon-152x152.png">
-    <meta name="msapplication-TileColor" content="#FFFFFF">
-    <meta name="msapplication-TileImage" content="<?php echo base_url(); ?>assets/home/assets/img/favicon/mstile-144x144.png">
-    <link rel="icon" href="<?php echo base_url(); ?>assets/home/assets/img/favicon/favicon-32x32.png" sizes="32x32">
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="<?php echo base_url(); ?>assets/home/materialize/css/materialize.css" rel="stylesheet" type="text/css">
-    <link href="<?php echo base_url(); ?>assets/home/template.css" rel="stylesheet" type="text/css">
+    <style>
+    .scroll-stable {
+        scrollbar-gutter: stable;
+    }
+    </style>
 </head>
 
-<body>
-    <header>
-        <nav class="top-nav">
-            <a href="#" data-activates="nav-mobile" class="button-collapse menu-btn show-on-large">
-                <i class="material-icons">menu</i>
-            </a>
-            <div class="nav-wrapper center-title">
-                <span class="page-title">Administrator</span>
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- SIDEBAR COMPONENT -->
+    <?php $this->load->view('admin/components/sidebar'); ?>
+
+    <!-- MAIN -->
+    <main class="pt-24 pl-0 md:pl-64 px-6 pb-10">
+        <div class="max-w-6xl mx-auto">
+            <h1 class="text-xl font-semibold mb-2">Rekapitulasi Transaksi</h1>
+
+            <div class="text-sm text-slate-600 mb-5">
+                <span class="font-semibold text-slate-800">Periode:</span>
+                <?= formatTanggalIndo($start_date); ?>
+                <span class="mx-2"> - </span>
+                <?= formatTanggalIndo($end_date); ?>
             </div>
-        </nav>
 
-        <ul id="nav-mobile" class="side-nav" style="width: 240px;">
-            <li class="logo"></li>
+            <!-- CARD -->
+            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm">
+                <div
+                    class="p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <div class="text-sm text-slate-600">
+                        Data transaksi berdasarkan periode yang dipilih.
+                    </div>
 
-            <li class="bold"><a href="<?php echo site_url('admin/dashboard') ?>" class="waves-effect waves-teal">Home</a></li>
-            <li class="bold"><a href="<?php echo site_url('admin/list') ?>" class="waves-effect waves-teal">List User</a></li>
-            <li class="bold"><a href="<?php echo site_url('admin/gedung') ?>" class="waves-effect waves-teal">List Gedung</a></li>
-            <li class="bold"><a href="<?php echo site_url('admin/catering') ?>" class="waves-effect waves-teal">Catering</a></li>
-            <li class="bold"><a href="<?php echo site_url('admin/pemesanan2') ?>" class="waves-effect waves-teal">List Pemesanan</a></li>
-
-            <li class="bold">
-                <a href="<?php echo site_url('admin/transaksi') ?>" class="waves-effect waves-teal">
-                    Inbox Pemesanan
-                    <?php if (isset($result) && (int)$result > 0): ?>
-                        <span class="new badge"><?php echo (int)$result; ?></span>
-                    <?php endif; ?>
-                </a>
-            </li>
-
-            <li class="bold">
-                <a href="<?php echo site_url('admin/pembayaran') ?>" class="waves-effect waves-teal">
-                    Transaksi
-                    <?php if (isset($get_transaction) && (int)$get_transaction > 0): ?>
-                        <span class="new badge"><?php echo (int)$get_transaction; ?></span>
-                    <?php endif; ?>
-                </a>
-            </li>
-
-            <li class="no-padding">
-                <ul class="collapsible collapsible-accordion">
-                    <li class="bold">
-                        <a class="collapsible-header waves-effect waves-teal">Perawatan</a>
-                        <div class="collapsible-body">
-                            <ul>
-                                <li><a class="waves-effect waves-teal" href="<?php echo site_url('admin/pembayaran-listrik') ?>">Pembayaran Listrik</a></li>
-                                <li><a class="waves-effect waves-teal" href="<?php echo site_url('admin/pembayaran-air') ?>">Pembayaran Air</a></li>
-                                <li><a class="waves-effect waves-teal" href="<?php echo site_url('admin/pembayaran-kebersihan') ?>">Pembayaran Kebersihan</a></li>
-                                <li><a class="waves-effect waves-teal" href="<?php echo site_url('admin/rekap_pembayaran') ?>">Rekap Pembayaran</a></li>
-                            </ul>
-                        </div>
-                    </li>
-                </ul>
-            </li>
-
-            <li class="no-padding">
-                <ul class="collapsible collapsible-accordion">
-                    <li class="bold">
-                        <a class="collapsible-header waves-effect waves-teal">Rekapitulasi</a>
-                        <div class="collapsible-body">
-                            <ul>
-                                <li><a class="waves-effect waves-teal" href="<?php echo site_url('admin/rekap_aktivitas') ?>">Rekap Aktivitas</a></li>
-                                <li><a class="waves-effect waves-teal" href="<?php echo site_url('admin/rekap_transaksi') ?>">Rekap Transaksi</a></li>
-                            </ul>
-                        </div>
-                    </li>
-                </ul>
-            </li>
-
-            <li class="bold"><a href="<?php echo site_url('admin/log_out') ?>" class="waves-effect waves-teal">Sign Out</a></li>
-        </ul>
-    </header>
-
-    <main class="container" style="margin-top: 24px;">
-        <h5 class="center-align">Rekapitulasi Transaksi</h5>
-        <div class="center-align" style="margin-bottom: 16px;">
-            <b>
-                Periode
-                <?php echo date_format(date_create($start_date), 'd/m/Y'); ?>
-                -
-                <?php echo date_format(date_create($end_date), 'd/m/Y'); ?>
-            </b>
-        </div>
-
-        <div class="row">
-            <div class="col s12">
-                <table class="bordered responsive-table">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Kode Pembayaran</th>
-                            <th>Kode Pemesanan</th>
-                            <th>Atas Nama</th>
-                            <th>Bank</th>
-                            <th>Tanggal Transfer</th>
-                            <th>Jumlah Transfer</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (count($rows) > 0): ?>
-                            <?php foreach ($rows as $r): ?>
-                                <?php
-                                // fallback kolom lama/baru biar semua kepanggil
-                                $atasNama = '-';
-                                // === ATAS NAMA (khusus INTERNAL tampilkan: Nama + (PT + Departemen)) ===
-                                $isInternal = false;
-                                if (isset($r['perusahaan']) && strtoupper(trim($r['perusahaan'])) == 'INTERNAL') {
-                                    $isInternal = true;
-                                }
-
-                                if ($isInternal) {
-                                    $nama = (isset($r['NAMA_LENGKAP']) && $r['NAMA_LENGKAP'] != '') ? $r['NAMA_LENGKAP'] : '-';
-                                    $pt   = (isset($r['nama_perusahaan']) && $r['nama_perusahaan'] != '') ? $r['nama_perusahaan'] : 'PT Tiga Serangkai Pustaka Mandiri';
-                                    $dept = (isset($r['departemen']) && $r['departemen'] != '') ? $r['departemen'] : '-';
-
-                                    $atasNamaHtml =
-                                        htmlspecialchars($nama, ENT_QUOTES, 'UTF-8') .
-                                        "<br><small>" .
-                                        htmlspecialchars($pt, ENT_QUOTES, 'UTF-8') . " - " . htmlspecialchars($dept, ENT_QUOTES, 'UTF-8') .
-                                        "</small>";
-                                } else {
-                                    // non internal: pakai atas nama pengirim (fallback kolom lama/baru)
-                                    $atasNama = '-';
-                                    if (isset($r['ATAS_NAMA_PENGIRIM']) && $r['ATAS_NAMA_PENGIRIM'] != '') $atasNama = $r['ATAS_NAMA_PENGIRIM'];
-                                    else if (isset($r['ATAS_NAMA']) && $r['ATAS_NAMA'] != '') $atasNama = $r['ATAS_NAMA'];
-
-                                    $atasNamaHtml = htmlspecialchars($atasNama, ENT_QUOTES, 'UTF-8');
-                                }
-
-
-                                $bank = '-';
-                                if (isset($r['BANK_PENGIRIM']) && $r['BANK_PENGIRIM'] !== '') $bank = $r['BANK_PENGIRIM'];
-
-                                $idPemesanan = '';
-                                if (isset($r['ID_PEMESANAN_RAW']) && $r['ID_PEMESANAN_RAW'] !== '') $idPemesanan = $r['ID_PEMESANAN_RAW'];
-                                else if (isset($r['ID_PEMESANAN']) && $r['ID_PEMESANAN'] !== '') $idPemesanan = $r['ID_PEMESANAN'];
-
-                                $kodePemesananPrefix = isset($r['KODE_PEMESANAN']) ? $r['KODE_PEMESANAN'] : 'PMSN000';
-                                $kodePemesanan = $kodePemesananPrefix . $idPemesanan;
-
-                                $kodePembayaranPrefix = isset($r['KODE_PEMBAYARAN']) ? $r['KODE_PEMBAYARAN'] : '';
-                                $idPembayaran = isset($r['ID_PEMBAYARAN']) ? $r['ID_PEMBAYARAN'] : '';
-                                $kodePembayaran = $kodePembayaranPrefix . $idPembayaran;
-
-                                $tgl = (!empty($r['TANGGAL_TRANSFER']))
-                                    ? date('d/m/Y', strtotime($r['TANGGAL_TRANSFER']))
-                                    : '-';
-
-                                $nominal = isset($r['NOMINAL_TRANSFER']) ? (float)$r['NOMINAL_TRANSFER'] : 0;
-                                $total  += $nominal;
-                                ?>
-                                <tr>
-                                    <td><?php echo $no++; ?></td>
-                                    <td><?php echo htmlspecialchars($kodePembayaran, ENT_QUOTES, 'UTF-8'); ?></td>
-                                    <td><?php echo htmlspecialchars($kodePemesanan, ENT_QUOTES, 'UTF-8'); ?></td>
-                                    <td><?php echo $atasNamaHtml; ?></td>
-                                    <td><?php echo htmlspecialchars($bank, ENT_QUOTES, 'UTF-8'); ?></td>
-                                    <td><?php echo $tgl; ?></td>
-                                    <td><?php echo "Rp." . number_format($nominal, 0, ',', '.'); ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-
-                            <tr>
-                                <td colspan="6"><b>Total Transfer:</b></td>
-                                <td><b><?php echo "Rp." . number_format($total, 0, ',', '.'); ?></b></td>
-                            </tr>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="7" class="center-align">Tidak ada data transaksi pada periode ini.</td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-
-                <div style="margin-top: 14px;">
-                    <a href="<?php echo site_url('admin/transaksi_download_pdf/' . $start_date . '/' . $end_date); ?>">
+                    <a class="text-sm font-medium text-teal-700 hover:text-teal-800 underline"
+                        href="<?= site_url('admin/transaksi_download_pdf/' . $start_date . '/' . $end_date); ?>">
                         Ekspor ke PDF
                     </a>
                 </div>
+
+                <div class="p-5">
+                    <!-- TABLE WRAP: yang scroll hanya tabel -->
+                    <div class="border border-slate-200 rounded-xl overflow-hidden">
+                        <div id="tableScroll" class="max-h-[420px] overflow-auto scroll-stable">
+                            <table id="rekapTable" class="min-w-[1100px] w-full text-sm">
+                                <thead class="sticky top-0 z-10 bg-slate-50 border-b border-slate-200">
+                                    <tr class="text-left">
+                                        <th class="px-4 py-3 font-semibold text-slate-700 w-[70px] text-center">No</th>
+                                        <th class="px-4 py-3 font-semibold text-slate-700 w-[170px]">Kode Pembayaran
+                                        </th>
+                                        <th class="px-4 py-3 font-semibold text-slate-700 w-[170px]">Kode Pemesanan</th>
+                                        <th class="px-4 py-3 font-semibold text-slate-700 w-[260px]">Atas Nama</th>
+                                        <th class="px-4 py-3 font-semibold text-slate-700 w-[140px]">Bank</th>
+                                        <th class="px-4 py-3 font-semibold text-slate-700 w-[180px]">Tanggal Transfer
+                                        </th>
+                                        <th class="px-4 py-3 font-semibold text-slate-700 w-[160px] text-right">Jumlah
+                                            Transfer</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="rekapBody" class="divide-y divide-slate-200">
+                                    <?php if (count($rows) > 0): ?>
+                                    <?php foreach ($rows as $r): ?>
+                                    <?php
+                                            // === ATAS NAMA (INTERNAL: Nama + (PT - Departemen)) ===
+                                            $isInternal = (isset($r['perusahaan']) && strtoupper(trim($r['perusahaan'])) === 'INTERNAL');
+
+                                            if ($isInternal) {
+                                                $nama = (!empty($r['NAMA_LENGKAP'])) ? $r['NAMA_LENGKAP'] : '-';
+                                                $pt   = (!empty($r['nama_perusahaan'])) ? $r['nama_perusahaan'] : 'PT Tiga Serangkai Pustaka Mandiri';
+                                                $dept = (!empty($r['departemen'])) ? $r['departemen'] : '-';
+
+                                                $atasNamaHtml =
+                                                    htmlspecialchars($nama, ENT_QUOTES, 'UTF-8') .
+                                                    "<div class='text-xs text-slate-500 mt-0.5'>" .
+                                                    htmlspecialchars($pt, ENT_QUOTES, 'UTF-8') . " - " . htmlspecialchars($dept, ENT_QUOTES, 'UTF-8') .
+                                                    "</div>";
+                                            } else {
+                                                $atasNama = '-';
+                                                if (!empty($r['ATAS_NAMA_PENGIRIM'])) $atasNama = $r['ATAS_NAMA_PENGIRIM'];
+                                                else if (!empty($r['ATAS_NAMA'])) $atasNama = $r['ATAS_NAMA'];
+
+                                                $atasNamaHtml = htmlspecialchars($atasNama, ENT_QUOTES, 'UTF-8');
+                                            }
+
+                                            $bank = !empty($r['BANK_PENGIRIM']) ? $r['BANK_PENGIRIM'] : '-';
+
+                                            $idPemesanan = '';
+                                            if (!empty($r['ID_PEMESANAN_RAW'])) $idPemesanan = $r['ID_PEMESANAN_RAW'];
+                                            else if (!empty($r['ID_PEMESANAN'])) $idPemesanan = $r['ID_PEMESANAN'];
+
+                                            $kodePemesananPrefix = isset($r['KODE_PEMESANAN']) ? $r['KODE_PEMESANAN'] : 'PMSN000';
+                                            $kodePemesanan = $kodePemesananPrefix . $idPemesanan;
+
+                                            $kodePembayaranPrefix = isset($r['KODE_PEMBAYARAN']) ? $r['KODE_PEMBAYARAN'] : 'PB0000';
+                                            $idPembayaran = isset($r['ID_PEMBAYARAN']) ? $r['ID_PEMBAYARAN'] : '';
+                                            $kodePembayaran = $kodePembayaranPrefix . $idPembayaran;
+
+                                            // Tanggal Transfer versi Indonesia
+                                            $tglIndo = !empty($r['TANGGAL_TRANSFER']) ? formatTanggalIndo($r['TANGGAL_TRANSFER']) : '-';
+
+                                            $nominal = isset($r['NOMINAL_TRANSFER']) ? (float)$r['NOMINAL_TRANSFER'] : 0;
+                                            $total  += $nominal;
+                                            ?>
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="px-4 py-3 text-center w-[70px]"><?= $no++; ?></td>
+                                        <td class="px-4 py-3 w-[170px]">
+                                            <?= htmlspecialchars($kodePembayaran, ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td class="px-4 py-3 w-[170px]">
+                                            <?= htmlspecialchars($kodePemesanan, ENT_QUOTES, 'UTF-8'); ?></td>
+
+                                        <td class="px-4 py-3 w-[260px] whitespace-normal break-words">
+                                            <?= $atasNamaHtml; ?>
+                                        </td>
+
+                                        <td class="px-4 py-3 w-[140px]">
+                                            <?= htmlspecialchars($bank, ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td class="px-4 py-3 w-[180px]"><?= $tglIndo; ?></td>
+                                        <td class="px-4 py-3 w-[160px] text-right">
+                                            <?= "Rp." . number_format($nominal, 0, ',', '.'); ?></td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                    <?php else: ?>
+                                    <tr>
+                                        <td colspan="7" class="px-4 py-6 text-center text-slate-500">
+                                            Tidak ada data transaksi pada periode ini.
+                                        </td>
+                                    </tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- SUMMARY TOTAL -->
+                    <div class="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <div class="text-sm text-slate-700">
+                            <span class="font-semibold">Total Transfer:</span>
+                            <span class="font-semibold"><?= "Rp." . number_format($total, 0, ',', '.'); ?></span>
+                        </div>
+                    </div>
+
+                    <!-- PAGINATION -->
+                    <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <button id="prevBtn"
+                            class="px-4 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 disabled:opacity-40 disabled:cursor-not-allowed">
+                            Prev
+                        </button>
+
+                        <span id="pageInfo" class="text-sm text-slate-600 text-center"></span>
+
+                        <div class="flex items-center gap-3">
+                            <select id="rowsPerPage" class="rounded-lg border border-slate-200 px-3 py-2 text-sm">
+                                <option value="5">5 rows</option>
+                                <option value="10" selected>10 rows</option>
+                                <option value="25">25 rows</option>
+                            </select>
+
+                            <button id="nextBtn"
+                                class="px-4 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 disabled:opacity-40 disabled:cursor-not-allowed">
+                                Next
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
             </div>
+            <!-- /CARD -->
         </div>
     </main>
 
-    <script src="<?php echo base_url(); ?>assets/home/assets/js/jquery.min.js"></script>
-    <script src="<?php echo base_url(); ?>assets/home/materialize/js/materialize.js"></script>
-    <script src="<?php echo base_url(); ?>assets/home/index.js"></script>
-
     <script>
-        $(document).ready(function() {
-            $(".button-collapse").sideNav({
-                menuWidth: 260,
-                edge: 'left',
-                closeOnClick: false,
-                draggable: true
+    (function() {
+        const tbody = document.getElementById('rekapBody');
+        const scrollBox = document.getElementById('tableScroll');
+        if (!tbody) return;
+
+        let rows = Array.from(tbody.querySelectorAll('tr'));
+        const onlyEmptyRow = rows.length === 1 && rows[0].innerText.toLowerCase().includes('tidak ada data');
+        if (onlyEmptyRow) return;
+
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const pageInfo = document.getElementById('pageInfo');
+        const rowsPerPageSelect = document.getElementById('rowsPerPage');
+
+        let currentPage = 1;
+        let rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
+
+        function totalPages() {
+            return Math.max(1, Math.ceil(rows.length / rowsPerPage));
+        }
+
+        function render() {
+            const tp = totalPages();
+            if (currentPage > tp) currentPage = tp;
+
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+
+            rows.forEach((row, idx) => {
+                row.style.display = (idx >= start && idx < end) ? '' : 'none';
             });
 
-            $(".button-collapse").on("click", function() {
-                $("body").toggleClass("nav-open");
-            });
+            prevBtn.disabled = currentPage <= 1;
+            nextBtn.disabled = currentPage >= tp;
 
-            $(document).mouseup(function(e) {
-                var sb = $(".side-nav");
-                if (!sb.is(e.target) && sb.has(e.target).length === 0) {
-                    $("body").removeClass("nav-open");
+            const totalRows = rows.length;
+            const showingFrom = totalRows === 0 ? 0 : start + 1;
+            const showingTo = Math.min(end, totalRows);
+
+            pageInfo.textContent =
+                `Page ${currentPage} of ${tp} • Showing ${showingFrom}-${showingTo} of ${totalRows}`;
+
+            // renumber No
+            let visibleNo = start + 1;
+            rows.forEach((row, idx) => {
+                if (idx >= start && idx < end) {
+                    const firstCell = row.querySelector('td');
+                    if (firstCell) firstCell.textContent = visibleNo++;
                 }
             });
+
+            if (scrollBox) scrollBox.scrollTop = 0;
+        }
+
+        prevBtn.addEventListener('click', function() {
+            if (currentPage > 1) {
+                currentPage--;
+                render();
+            }
         });
+
+        nextBtn.addEventListener('click', function() {
+            if (currentPage < totalPages()) {
+                currentPage++;
+                render();
+            }
+        });
+
+        rowsPerPageSelect.addEventListener('change', function() {
+            rowsPerPage = parseInt(this.value, 10) || 10;
+            currentPage = 1;
+            render();
+        });
+
+        render();
+    })();
     </script>
+
 </body>
 
 </html>
