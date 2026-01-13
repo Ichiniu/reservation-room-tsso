@@ -76,9 +76,10 @@ if (isset($flag)) {
                             class="profile-toggle flex items-center gap-2 px-3 py-1 rounded-full bg-white hover:bg-slate-100 border border-black/10 transition">
                             <?php $foto_profil = $this->session->userdata('foto_profil'); ?>
                             <?php if (!empty($foto_profil)): ?>
-                                <img src="<?= base_url($foto_profil); ?>" class="h-7 w-7 rounded-full object-cover" alt="Foto Profil">
+                            <img src="<?= base_url($foto_profil); ?>" class="h-7 w-7 rounded-full object-cover"
+                                alt="Foto Profil">
                             <?php else: ?>
-                                <i class="bi bi-person-circle text-slate-700"></i>
+                            <i class="bi bi-person-circle text-slate-700"></i>
                             <?php endif; ?>
 
                             <span class="text-xs font-medium text-slate-700">
@@ -342,6 +343,9 @@ if (isset($flag)) {
         // set status notif saat page load
         updateNotifUI();
     });
+    console.log("[notif] currentCount=", currentCount, "lastCount=", lastCount);
+    console.log("[notif] sound src=", soundEl ? soundEl.currentSrc : null);
+    console.log("[notif] sound readyState=", soundEl ? soundEl.readyState : null);
     </script>
 
 </body>

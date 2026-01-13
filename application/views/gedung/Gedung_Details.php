@@ -9,7 +9,7 @@ $id_gedung = $this->uri->segment(3);
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Detail Gedung</title>
+    <title>Detail Ruangan</title>
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
@@ -64,7 +64,7 @@ $id_gedung = $this->uri->segment(3);
                         <div
                             class="inline-flex items-center gap-2 rounded-full bg-teal-50 border border-teal-100 px-3 py-1 text-xs text-teal-800">
                             <span class="h-2 w-2 rounded-full bg-teal-500"></span>
-                            Informasi Gedung
+                            Informasi Ruangan
                         </div>
 
                         <h1 class="mt-4 text-2xl sm:text-3xl font-semibold text-slate-900 tracking-wide">
@@ -136,7 +136,7 @@ $id_gedung = $this->uri->segment(3);
             <section class="rounded-3xl border border-slate-200 bg-white shadow-xl overflow-hidden">
                 <div class="p-6 sm:p-8 flex items-center justify-between gap-4">
                     <div>
-                        <h2 class="text-xl font-semibold text-slate-900">Gallery Gedung</h2>
+                        <h2 class="text-xl font-semibold text-slate-900">Gallery Ruangan</h2>
                         <p class="mt-1 text-sm text-slate-600">Geser foto untuk melihat lebih banyak tampilan
                             ruangan/gedung.</p>
                     </div>
@@ -167,7 +167,7 @@ $id_gedung = $this->uri->segment(3);
                             <?php endforeach; ?>
                             <?php else: ?>
                             <div class="min-w-full flex items-center justify-center h-[260px] sm:h-[360px]">
-                                <p class="text-slate-500 text-sm">Belum ada foto untuk gedung ini.</p>
+                                <p class="text-slate-500 text-sm">Belum ada foto untuk Ruangan ini.</p>
                             </div>
                             <?php endif; ?>
                         </div>
@@ -253,8 +253,7 @@ $id_gedung = $this->uri->segment(3);
                 e.stopPropagation();
             });
         }
-    }
-    );
+    });
     </script>
 
 </body>

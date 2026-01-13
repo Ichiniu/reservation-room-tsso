@@ -502,9 +502,10 @@ class Admin_Controls extends CI_Controller
 	}
 
 	public function verify_pembayaran($id_pembayaran, $action)
-	{
-		$id_pembayaran = (int) $id_pembayaran;
-		$action        = strtolower(trim((string)$action));
+{
+	$this->load->model('gedung/gedung_model');
+    $id_pembayaran = (int) $id_pembayaran;
+    $action        = strtolower(trim((string)$action));
 
 		// =========================
 		// Validasi input dasar
@@ -539,10 +540,12 @@ class Admin_Controls extends CI_Controller
 		// Catatan admin (dibutuhkan saat reject)
 		$catatan = trim((string) $this->input->post('catatan_admin', TRUE));
 
-		// =========================
-		// Mulai transaksi database
-		// =========================
-		$this->db->trans_begin();
+    // =========================
+    // Mulai transaksi database
+    // =========================
+	
+
+    $this->db->trans_begin();
 
 		// =========================
 		// Aksi CONFIRM
@@ -557,9 +560,11 @@ class Admin_Controls extends CI_Controller
 				'CONFIRMED_AT'  => date('Y-m-d H:i:s')
 			]);
 
-			// 2) Update status pemesanan -> 3 (misal: confirmed/paid)
-			$this->db->where('ID_PEMESANAN', $id_pemesanan);
-			$this->db->update('pemesanan', ['STATUS' => 3]);
+        // 2) Update status pemesanan -> 3 (misal: confirmed/paid)
+        $this->db->where('ID_PEMESANAN', $id_pemesanan);
+        $this->db->update('pemesanan', ['STATUS' => 3]);
+		$this->gedung_model->mark_flag_unread('PMSN000' . $id_pemesanan);
+
 
 			// 3) Ambil data pemesanan untuk isi fix detail
 			$ps = $this->db->get_where('pemesanan', [
@@ -646,9 +651,11 @@ class Admin_Controls extends CI_Controller
 				'CONFIRMED_AT'  => null
 			]);
 
-			// 2) Update status pemesanan -> 4 (misal: rejected)
-			$this->db->where('ID_PEMESANAN', $id_pemesanan);
-			$this->db->update('pemesanan', ['STATUS' => 4]);
+        // 2) Update status pemesanan -> 4 (misal: rejected)
+        $this->db->where('ID_PEMESANAN', $id_pemesanan);
+        $this->db->update('pemesanan', ['STATUS' => 4]);
+		$this->gedung_model->mark_flag_unread('PMSN000' . $id_pemesanan);
+
 
 			// 3) OPTIONAL: kalau sudah pernah masuk fix, matikan
 			$this->db->where('ID_PEMESANAN', $id_pemesanan);

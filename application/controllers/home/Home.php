@@ -235,20 +235,21 @@ class Home extends CI_Controller
 
 
 	public function pemesanan()
-	{
-		$username = $this->session->userdata('username');
-		$this->load->model('gedung/gedung_model');
+{
+    $username = $this->session->userdata('username');
+    $this->load->model('gedung/gedung_model');
+	$this->gedung_model->clear_pemesanan_flag($username);
 
-		// wajib di sini
-		$this->gedung_model->clear_pemesanan_flag($username);
+    // wajib di sini
+    $this->gedung_model->clear_pemesanan_flag($username);
 
-		$data['res'] = $this->gedung_model->get_pemesanan($username);
-		$data['flag'] = $this->gedung_model->get_pemesanan_flag($username);
-		$data['no_data'] = "Data Kosong";
-		$data['rows'] = $this->gedung_model->count_pemesanan($username);
+    $data['res'] = $this->gedung_model->get_pemesanan($username);
+    $data['flag'] = $this->gedung_model->get_pemesanan_flag($username);
+    $data['no_data'] = "Data Kosong";
+    $data['rows'] = $this->gedung_model->count_pemesanan($username);
 
-		$this->load->view('home/pemesanan', $data);
-	}
+    $this->load->view('home/pemesanan', $data);
+}
 
 	public function pembayaran()
 	{
@@ -312,6 +313,8 @@ class Home extends CI_Controller
 		$this->load->helper(['form']);
 		$this->load->model('gedung/gedung_model');
 		$this->load->model('pembayaran/pembayaran_model'); // untuk record admin (pembayaran)
+		$this->gedung_model->mark_flag_unread('PMSN000' . $id);
+
 
 		$username = $this->session->userdata('username');
 		if (!$username) show_404();
@@ -792,120 +795,6 @@ class Home extends CI_Controller
 		$data = array('user' => $existing);
 		$this->load->view('home/edit_data', $data);
 	}
-	public function edit_foto($user = null)
-	{
-		$this->load->helper(['form', 'url']);
-		$this->load->model('user/user_model');
-		$this->load->library('upload');
-
-		$session_user = (string) $this->session->userdata('username');
-		if ($session_user === '') {
-			redirect(site_url('login'));
-			return;
-		}
-
-		// kalau URL mengirim param username, pastikan sama dengan session
-		if ($user !== null && $user !== '' && strcasecmp($session_user, $user) !== 0) {
-			show_404();
-			return;
-		}
-
-		$user = $session_user;
-
-		$existing = $this->user_model->get_by_username($user);
-		if (empty($existing)) {
-			show_404();
-			return;
-		}
-
-		// ===== POST: upload & simpan =====
-		if ($this->input->method(TRUE) === 'POST') {
-
-			$upload_dir = FCPATH . 'assets/images/profile/';
-			if (!is_dir($upload_dir)) {
-				@mkdir($upload_dir, 0755, true);
-			}
-
-			$existing_foto = !empty($existing['FOTO_PROFIL']) ? $existing['FOTO_PROFIL'] : null;
-
-			// (A) Hasil crop base64 dari frontend (Cropper.js)
-			$cropped = $this->input->post('cropped_image', false); // jangan XSS clean (base64 bisa kepotong)
-
-			if (!empty($cropped)) {
-
-				// Format: data:image/jpeg;base64,xxxx atau data:image/png;base64,xxxx
-				if (preg_match('#^data:image/(png|jpeg);base64,#i', $cropped, $m) !== 1) {
-					$this->session->set_flashdata('error', 'Data gambar tidak valid.');
-					redirect(site_url('edit_foto/' . $user));
-					return;
-				}
-
-				$ext = (strtolower($m[1]) === 'jpeg') ? 'jpg' : 'png';
-
-				$base64 = preg_replace('#^data:image/(png|jpeg);base64,#i', '', $cropped);
-				$binary = base64_decode($base64, true);
-
-				if ($binary === false) {
-					$this->session->set_flashdata('error', 'Gagal decode gambar.');
-					redirect(site_url('edit_foto/' . $user));
-					return;
-				}
-
-				// Validasi benar-benar image
-				$imgInfo = @getimagesizefromstring($binary);
-				if ($imgInfo === false || empty($imgInfo['mime']) || strpos($imgInfo['mime'], 'image/') !== 0) {
-					$this->session->set_flashdata('error', 'File bukan gambar valid.');
-					redirect(site_url('edit_foto/' . $user));
-					return;
-				}
-
-				// Batasi ukuran (2MB)
-				if (strlen($binary) > 2 * 1024 * 1024) {
-					$this->session->set_flashdata('error', 'Ukuran hasil crop terlalu besar (maks 2MB).');
-					redirect(site_url('edit_foto/' . $user));
-					return;
-				}
-
-				$filename     = 'pp_' . $user . '_' . date('Ymd_His') . '.' . $ext;
-				$new_rel_path = 'assets/images/profile/' . $filename;
-				$new_abs_path = $upload_dir . $filename;
-
-				if (file_put_contents($new_abs_path, $binary) === false) {
-					$this->session->set_flashdata('error', 'Gagal menyimpan file gambar.');
-					redirect(site_url('edit_foto/' . $user));
-					return;
-				}
-
-				// Hapus foto lama
-				if (!empty($existing_foto)) {
-					$old_abs = FCPATH . $existing_foto;
-					if (file_exists($old_abs)) {
-						@unlink($old_abs);
-					}
-				}
-
-				// Update DB + session
-				$this->user_model->update_foto_profil($user, $new_rel_path);
-				$this->session->set_userdata('foto_profil', $new_rel_path);
-
-				$this->session->set_flashdata('success_popup', 'Foto profil berhasil diubah.');
-				redirect(site_url('home'), 'refresh');
-				return;
-			}
-
-			// (B) Kalau belum ada crop, jangan upload langsung
-			$this->session->set_flashdata('error', 'Pilih foto lalu atur posisi (crop) dulu sebelum simpan.');
-			redirect(site_url('edit_foto/' . $user));
-			return;
-		}
-
-		// ===== GET: tampilkan halaman edit foto =====
-		$data = array('user' => $existing);
-		$this->load->view('home/edit_fotoprofil', $data);
-	}
-
-
-
 
 	public function sort_by_name()
 	{

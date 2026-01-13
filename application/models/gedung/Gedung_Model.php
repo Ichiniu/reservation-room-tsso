@@ -120,47 +120,68 @@ class Gedung_Model extends CI_Model
 
 
 	public function get_pemesanan_flag($username)
-	{
-		$sql = "
-        SELECT COUNT(DISTINCT p.ID_PEMESANAN) AS jml
+{
+    $sql = "
+        SELECT COUNT(*) AS jml
         FROM v_pemesanan v
         JOIN pemesanan p
           ON p.ID_PEMESANAN = (
-                CASE
-                    WHEN v.ID_PEMESANAN LIKE 'PMSN%' THEN CAST(SUBSTRING(v.ID_PEMESANAN, 5) AS UNSIGNED)
-                    ELSE CAST(v.ID_PEMESANAN AS UNSIGNED)
-                END
+            CASE
+              WHEN BINARY LEFT(v.ID_PEMESANAN, 4) = 'PMSN'
+                THEN CAST(SUBSTRING(v.ID_PEMESANAN, 5) AS UNSIGNED)
+              ELSE CAST(v.ID_PEMESANAN AS UNSIGNED)
+            END
           )
-        WHERE v.USERNAME = ?
-          AND v.STATUS IN ('PROPOSAL APPROVE', 'SUBMITED')
+        WHERE LOWER(v.USERNAME) = LOWER(?)
+          AND v.STATUS IN ('PROPOSAL APPROVE','SUBMITED','REJECTED')
           AND p.FLAG = 1
     ";
 
-		$row = $this->db->query($sql, [$username])->row();
-		return $row ? (int)$row->jml : 0;
-	}
+    $row = $this->db->query($sql, [$username])->row();
+    return $row ? (int)$row->jml : 0;
+}
+
+public function mark_flag_unread($id_view)
+{
+    $sql = "
+        UPDATE pemesanan
+        SET FLAG = 1
+        WHERE ID_PEMESANAN = (
+          CASE
+            WHEN BINARY LEFT(?, 4) = 'PMSN'
+              THEN CAST(SUBSTRING(?, 5) AS UNSIGNED)
+            ELSE CAST(? AS UNSIGNED)
+          END
+        )
+    ";
+    return $this->db->query($sql, [$id_view, $id_view, $id_view]);
+}
+
+
 
 
 
 	public function clear_pemesanan_flag($username)
-	{
-		$sql = "
+{
+    $sql = "
         UPDATE pemesanan p
         JOIN v_pemesanan v
           ON p.ID_PEMESANAN = (
-                CASE
-                    WHEN v.ID_PEMESANAN LIKE 'PMSN%' THEN CAST(SUBSTRING(v.ID_PEMESANAN, 8) AS UNSIGNED)
-                    ELSE CAST(v.ID_PEMESANAN AS UNSIGNED)
-                END
+            CASE
+              WHEN BINARY LEFT(v.ID_PEMESANAN, 4) = 'PMSN'
+                THEN CAST(SUBSTRING(v.ID_PEMESANAN, 5) AS UNSIGNED)
+              ELSE CAST(v.ID_PEMESANAN AS UNSIGNED)
+            END
           )
         SET p.FLAG = 2
-        WHERE p.USERNAME = ?
+        WHERE LOWER(v.USERNAME) = LOWER(?)
           AND p.FLAG = 1
-          AND v.STATUS IN ('PROPOSAL APPROVE', 'SUBMITED')
+          AND v.STATUS IN ('PROPOSAL APPROVE','SUBMITED','REJECTED')
     ";
 
-		return $this->db->query($sql, array($username));
-	}
+    return $this->db->query($sql, [$username]);
+}
+
 
 
 
