@@ -21,8 +21,8 @@ $this->load->helper('text');
     <main class="pt-24 pl-0 md:pl-64 px-6 pb-10">
 
         <div class="max-w-6xl mx-auto mb-6">
-            <h1 class="text-2xl font-bold">Data Pemesanan Gedung</h1>
-            <p class="text-sm text-gray-500">Daftar seluruh pemesanan gedung</p>
+            <h1 class="text-2xl font-bold">Data Pemesanan Ruangan</h1>
+            <p class="text-sm text-gray-500">Daftar seluruh pemesanan Ruangan</p>
         </div>
 
         <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-md p-6">
@@ -56,7 +56,7 @@ $this->load->helper('text');
                             <th class="px-4 py-3 text-center">ID Pemesanan</th>
                             <th class="px-4 py-3 text-center">Nama Lengkap</th>
                             <th class="px-4 py-3 text-center">Tanggal</th>
-                            <th class="px-4 py-3 text-center">Gedung</th>
+                            <th class="px-4 py-3 text-center">Ruangan</th>
                             <th class="px-4 py-3 text-center">Status</th>
                         </tr>
                     <tbody class="divide-y text-center">

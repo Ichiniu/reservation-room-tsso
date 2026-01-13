@@ -29,14 +29,14 @@ $this->load->helper('text');
         <!-- HEADER -->
         <div class="max-w-6xl mx-auto mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-                <h1 class="text-2xl font-bold text-slate-800">Data Gedung</h1>
-                <p class="text-sm text-slate-500">Daftar gedung yang tersedia</p>
+                <h1 class="text-2xl font-bold text-slate-800">Data Ruangan</h1>
+                <p class="text-sm text-slate-500">Daftar Ruangan yang tersedia</p>
             </div>
 
             <a href="<?= site_url('admin/add_gedung') ?>" class="inline-flex items-center gap-2 px-4 py-2
               bg-blue-600 text-white text-sm font-medium
               rounded-lg hover:bg-blue-700 transition">
-                Tambah Gedung
+                Tambah Ruangan
             </a>
         </div>
 
@@ -57,37 +57,37 @@ $this->load->helper('text');
                     </thead>
 
                     <tbody class="divide-y">
-                        <?php foreach($res as $row): ?>
-                        <tr class="table-row hover:bg-slate-50 transition">
-                            <td class="px-4 py-3 font-medium"><?= $row['NAMA_GEDUNG'] ?></td>
-                            <td class="px-4 py-3"><?= $row['KAPASITAS'] ?> Orang</td>
-                            <td class="px-4 py-3"><?= $row['ALAMAT'] ?></td>
-                            <td class="px-4 py-3"><?= $row['DESKRIPSI_GEDUNG'] ?></td>
-                            <td class="px-4 py-3 font-semibold">
-                                Rp <?= number_format($row['HARGA_SEWA'], 0, ',', '.') ?>
-                            </td>
-                            <td class="px-4 py-3 ">
-                                <div class="flex justify-center gap-2">
-                                    <a href="<?= site_url('admin/edit/'.$row['ID_GEDUNG']) ?>"
-                                        class="px-3 py-1.5 text-xs bg-yellow-400 rounded hover:bg-yellow-500">
-                                        Edit
-                                    </a>
-                                    <a href="<?= site_url('admin/admin_controls/delete_gedung/'.$row['ID_GEDUNG']) ?>"
-                                        onclick="return confirm('Yakin ingin menghapus gedung ini?')"
-                                        class="px-3 py-1.5 text-xs bg-red-600 text-white rounded hover:bg-red-700">
-                                        Delete
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
+                        <?php foreach ($res as $row): ?>
+                            <tr class="table-row hover:bg-slate-50 transition">
+                                <td class="px-4 py-3 font-medium"><?= $row['NAMA_GEDUNG'] ?></td>
+                                <td class="px-4 py-3"><?= $row['KAPASITAS'] ?> Orang</td>
+                                <td class="px-4 py-3"><?= $row['ALAMAT'] ?></td>
+                                <td class="px-4 py-3"><?= $row['DESKRIPSI_GEDUNG'] ?></td>
+                                <td class="px-4 py-3 font-semibold">
+                                    Rp <?= number_format($row['HARGA_SEWA'], 0, ',', '.') ?>
+                                </td>
+                                <td class="px-4 py-3 ">
+                                    <div class="flex justify-center gap-2">
+                                        <a href="<?= site_url('admin/edit/' . $row['ID_GEDUNG']) ?>"
+                                            class="px-3 py-1.5 text-xs bg-yellow-400 rounded hover:bg-yellow-500">
+                                            Edit
+                                        </a>
+                                        <a href="<?= site_url('admin/admin_controls/delete_gedung/' . $row['ID_GEDUNG']) ?>"
+                                            onclick="return confirm('Yakin ingin menghapus ruangan ini?')"
+                                            class="px-3 py-1.5 text-xs bg-red-600 text-white rounded hover:bg-red-700">
+                                            Delete
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
                         <?php endforeach; ?>
 
-                        <?php if(empty($res)): ?>
-                        <tr>
-                            <td colspan="6" class="px-4 py-6 text-center text-slate-500">
-                                Data gedung belum tersedia
-                            </td>
-                        </tr>
+                        <?php if (empty($res)): ?>
+                            <tr>
+                                <td colspan="6" class="px-4 py-6 text-center text-slate-500">
+                                    Data ruangan belum tersedia
+                                </td>
+                            </tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
@@ -125,51 +125,51 @@ $this->load->helper('text');
 
     <!-- PAGINATION SCRIPT -->
     <script>
-    const rows = document.querySelectorAll(".table-row");
-    const rowsPerPageSelect = document.getElementById("rowsPerPage");
-    const pageInfo = document.getElementById("pageInfo");
-    const prevBtn = document.getElementById("prevBtn");
-    const nextBtn = document.getElementById("nextBtn");
+        const rows = document.querySelectorAll(".table-row");
+        const rowsPerPageSelect = document.getElementById("rowsPerPage");
+        const pageInfo = document.getElementById("pageInfo");
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
 
-    let currentPage = 1;
-    let rowsPerPage = parseInt(rowsPerPageSelect.value);
+        let currentPage = 1;
+        let rowsPerPage = parseInt(rowsPerPageSelect.value);
 
-    function renderTable() {
-        const start = (currentPage - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
+        function renderTable() {
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
 
-        rows.forEach((row, index) => {
-            row.style.display = index >= start && index < end ? "" : "none";
-        });
+            rows.forEach((row, index) => {
+                row.style.display = index >= start && index < end ? "" : "none";
+            });
 
-        const totalPages = Math.ceil(rows.length / rowsPerPage) || 1;
-        pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
+            const totalPages = Math.ceil(rows.length / rowsPerPage) || 1;
+            pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
 
-        prevBtn.disabled = currentPage === 1;
-        nextBtn.disabled = currentPage === totalPages;
-    }
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+        }
 
-    rowsPerPageSelect.onchange = () => {
-        rowsPerPage = parseInt(rowsPerPageSelect.value);
-        currentPage = 1;
+        rowsPerPageSelect.onchange = () => {
+            rowsPerPage = parseInt(rowsPerPageSelect.value);
+            currentPage = 1;
+            renderTable();
+        };
+
+        prevBtn.onclick = () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTable();
+            }
+        };
+
+        nextBtn.onclick = () => {
+            if (currentPage < Math.ceil(rows.length / rowsPerPage)) {
+                currentPage++;
+                renderTable();
+            }
+        };
+
         renderTable();
-    };
-
-    prevBtn.onclick = () => {
-        if (currentPage > 1) {
-            currentPage--;
-            renderTable();
-        }
-    };
-
-    nextBtn.onclick = () => {
-        if (currentPage < Math.ceil(rows.length / rowsPerPage)) {
-            currentPage++;
-            renderTable();
-        }
-    };
-
-    renderTable();
     </script>
 
 </body>
