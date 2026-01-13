@@ -21,6 +21,18 @@ function formatTanggalIndo($tgl)
 
     return $d . ' ' . $bulan[$m] . ' ' . $y;
 }
+
+/* ===== ambil filter ID dari URL ===== */
+$segmentId = $this->uri->segment(3);
+$getId     = isset($_GET['id']) ? $_GET['id'] : '';
+$rawParam  = $segmentId ? $segmentId : $getId;
+
+$filterIdNumeric = (int) preg_replace('/\D+/', '', (string)$rawParam);
+
+$prefillFilterKode = '';
+if ($filterIdNumeric > 0) {
+    $prefillFilterKode = 'PMSN000' . $filterIdNumeric;
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -30,20 +42,16 @@ function formatTanggalIndo($tgl)
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Smart Office</title>
 
-    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- (Opsional) kalau sidebar kamu masih pakai materialize -->
     <link href="<?= base_url('assets/home/materialize/css/materialize.css') ?>" rel="stylesheet">
     <link href="<?= base_url('assets/home/style.css') ?>" rel="stylesheet">
 </head>
 
 <body class="bg-slate-200 min-h-screen flex flex-col">
 
-    <!-- SIDEBAR -->
     <?php $this->load->view('admin/components/sidebar'); ?>
 
-    <!-- MAIN -->
     <main class="flex-1 pt-24 pl-0 md:pl-64 px-4 md:px-6 pb-10">
         <div class="max-w-6xl mx-auto mb-6">
             <h1 class="text-2xl font-bold text-slate-800">Jadwal Ruangan Terbooking</h1>
@@ -52,17 +60,16 @@ function formatTanggalIndo($tgl)
 
         <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-md p-6">
 
-            <!-- FILTER (langsung jalan, tanpa tombol filter) -->
+            <!-- FILTER -->
             <div class="mb-4">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <!-- Kode Pemesanan -->
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">Kode Pemesanan</label>
                         <input id="filterKode" type="text" placeholder="contoh: PMSN00094 / 94"
-                            class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-300" />
+                            class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-300"
+                            value="<?= htmlspecialchars($prefillFilterKode, ENT_QUOTES, 'UTF-8'); ?>" />
                     </div>
 
-                    <!-- Dropdown User -->
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">User</label>
                         <select id="filterUser"
@@ -71,7 +78,6 @@ function formatTanggalIndo($tgl)
                         </select>
                     </div>
 
-                    <!-- Tombol Reset -->
                     <div class="flex items-end">
                         <button id="resetFilter"
                             class="w-full px-4 py-2 rounded-lg bg-slate-200 text-slate-800 text-sm hover:bg-slate-300">
@@ -82,6 +88,11 @@ function formatTanggalIndo($tgl)
 
                 <div class="mt-3 text-xs text-slate-500">
                     * Filter berjalan otomatis saat mengetik / memilih dropdown. Pagination mengikuti hasil filter.
+                    <?php if ($filterIdNumeric > 0): ?>
+                    <span class="ml-2 font-semibold text-slate-700">
+                        (Mode: tampilkan ID <?= (int)$filterIdNumeric; ?>)
+                    </span>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -103,21 +114,30 @@ function formatTanggalIndo($tgl)
 
                     <tbody id="tableBody">
                         <?php if (!empty($front_data)): ?>
-                        <?php $no = 1; foreach ($front_data as $data): ?>
                         <?php
-                            $rawId = $data->ID_PEMESANAN;
-                            $displayId = (stripos((string)$rawId, 'PMSN') === 0) ? $rawId : ('PMSN000' . $rawId);
-                            $linkId = (int) preg_replace('/\D+/', '', (string)$rawId);
+                            $no = 1;
+                            $adaYangTampil = false;
+                            foreach ($front_data as $data):
 
-                            $jam_mulai = !empty($data->JAM) ? $data->JAM : '-';
-                            $username  = !empty($data->USERNAME) ? $data->USERNAME : '-';
-                            $namaGedung = !empty($data->NAMA_GEDUNG) ? $data->NAMA_GEDUNG : '-';
+                                $rawId = $data->ID_PEMESANAN;
+                                $linkId = (int) preg_replace('/\D+/', '', (string)$rawId);
 
-                            // tanggal -> format Indonesia
-                            $tglRaw = !empty($data->TANGGAL_PEMESANAN) ? $data->TANGGAL_PEMESANAN : '';
-                            $tglIndo = formatTanggalIndo($tglRaw);
+                                // filter ID dari URL (opsional)
+                                if ($filterIdNumeric > 0 && $linkId !== $filterIdNumeric) {
+                                    continue;
+                                }
+
+                                $adaYangTampil = true;
+
+                                $displayId  = (stripos((string)$rawId, 'PMSN') === 0) ? $rawId : ('PMSN000' . $rawId);
+                                $jam_mulai  = !empty($data->JAM) ? $data->JAM : '-';
+                                $username   = !empty($data->USERNAME) ? $data->USERNAME : '-';
+                                $namaGedung = !empty($data->NAMA_GEDUNG) ? $data->NAMA_GEDUNG : '-';
+
+                                $tglRaw  = !empty($data->TANGGAL_PEMESANAN) ? $data->TANGGAL_PEMESANAN : '';
+                                $tglIndo = formatTanggalIndo($tglRaw);
                         ?>
-                        <tr class="table-row hover:bg-slate-50"
+                        <tr class="table-row hover:bg-slate-50" data-idnum="<?= (int)$linkId; ?>"
                             data-kode="<?= htmlspecialchars($displayId, ENT_QUOTES, 'UTF-8'); ?>"
                             data-user="<?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8'); ?>">
                             <td class="px-4 py-3 text-center cell-no"><?= $no++; ?></td>
@@ -150,6 +170,15 @@ function formatTanggalIndo($tgl)
                             </td>
                         </tr>
                         <?php endforeach; ?>
+
+                        <?php if (!$adaYangTampil): ?>
+                        <tr>
+                            <td colspan="7" class="px-4 py-6 text-center text-slate-500">
+                                Data dengan ID <?= (int)$filterIdNumeric; ?> tidak ditemukan.
+                            </td>
+                        </tr>
+                        <?php endif; ?>
+
                         <?php else: ?>
                         <tr>
                             <td colspan="7" class="px-4 py-6 text-center text-slate-500">
@@ -193,21 +222,36 @@ function formatTanggalIndo($tgl)
 
     <script>
     (function() {
-        const allRows = Array.from(document.querySelectorAll(".table-row"));
+        const tbody = document.getElementById("tableBody");
+
+        // ambil rows yang bisa dipagination/filter
+        let allRows = Array.from(document.querySelectorAll(".table-row"));
+
         const rowsPerPageSelect = document.getElementById("rowsPerPage");
         const pageInfo = document.getElementById("pageInfo");
         const prevBtn = document.getElementById("prevBtn");
         const nextBtn = document.getElementById("nextBtn");
         const scrollBox = document.getElementById("tableScroll");
 
-        // filter inputs
         const filterKode = document.getElementById("filterKode");
         const filterUser = document.getElementById("filterUser");
         const resetFilterBtn = document.getElementById("resetFilter");
 
         let currentPage = 1;
         let rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
-        let activeRows = [...allRows];
+        let activeRows = [];
+
+        // ===== SORT FRONTEND BY ID TERKECIL =====
+        function sortRowsByIdAsc() {
+            allRows.sort((a, b) => {
+                const ida = parseInt(a.dataset.idnum || "0", 10);
+                const idb = parseInt(b.dataset.idnum || "0", 10);
+                return ida - idb; // ASC
+            });
+
+            // re-append ke tbody biar urutan DOM ikut berubah
+            allRows.forEach(r => tbody.appendChild(r));
+        }
 
         function buildUserDropdown() {
             const users = new Set();
@@ -257,7 +301,6 @@ function formatTanggalIndo($tgl)
         function renderTable() {
             const total = activeRows.length;
             const totalPages = Math.max(1, Math.ceil(total / rowsPerPage));
-
             if (currentPage > totalPages) currentPage = totalPages;
 
             allRows.forEach(r => r.style.display = "none");
@@ -278,7 +321,7 @@ function formatTanggalIndo($tgl)
             pageInfo.textContent =
                 `Page ${currentPage} of ${totalPages} • Showing ${showingFrom}-${showingTo} of ${total}`;
 
-            // renumber No sesuai halaman
+            // renumber No sesuai urutan tampilan (yang sudah disort ASC)
             let n = start + 1;
             activeRows.forEach((row, idx) => {
                 if (idx >= start && idx < end) {
@@ -290,10 +333,9 @@ function formatTanggalIndo($tgl)
             if (scrollBox) scrollBox.scrollTop = 0;
         }
 
-        // events (AUTO)
+        // events
         filterKode.addEventListener("input", applyFilterAuto);
         filterUser.addEventListener("change", applyFilterAuto);
-
         resetFilterBtn.addEventListener("click", resetFilter);
 
         rowsPerPageSelect.addEventListener("change", () => {
@@ -318,9 +360,15 @@ function formatTanggalIndo($tgl)
         });
 
         // init
+        sortRowsByIdAsc(); // <--- PENTING: sort dulu
         buildUserDropdown();
         activeRows = [...allRows];
         renderTable();
+
+        // kalau input sudah terisi dari URL (prefill), langsung terapkan filter
+        if (filterKode.value.trim() !== "" || filterUser.value.trim() !== "") {
+            applyFilterAuto();
+        }
     })();
     </script>
 

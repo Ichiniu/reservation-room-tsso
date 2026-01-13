@@ -308,19 +308,43 @@ $total_transaksi = (int) $hasil->TOTAL_KESELURUHAN;
                     </div>
 
                     <!-- Footer tombol (HANYA DI BAWAH) -->
-                    <div class="mt-6 pt-4 border-t border-gray-200">
+                    <div class="mt-6 pt-4 border-t border-slate-200">
                         <div class="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-end">
-                            <a class="btn-large waves-effect"
-                                style="border-radius:12px;background:#ffffff;color:#111827;border:1px solid #e5e7eb;"
-                                href="<?php echo site_url('admin/transaksi'); ?>">
-                                <i class="material-icons left">close</i>
+
+                            <!-- Tombol Batal -->
+                            <a href="<?= site_url('admin/transaksi'); ?>" class="inline-flex items-center justify-center gap-2
+              px-5 py-2.5 rounded-xl
+              bg-white border border-slate-300
+              text-slate-700 text-sm font-semibold
+              hover:bg-slate-100 hover:border-slate-400
+              transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12" />
+                                </svg>
                                 Batal
                             </a>
 
-                            <input class="btn-large waves-light btn-blue700" name="submit" id="submit" tabindex="10"
-                                value="submit" onclick="return dialog();" type="submit">
+                            <!-- Tombol Submit -->
+                            <button type="submit" name="submit" onclick="return dialog();" class="inline-flex items-center justify-center gap-2
+                   px-6 py-2.5 rounded-xl
+                   bg-blue-700 text-white text-sm font-semibold
+                   hover:bg-blue-800
+                   focus:ring-2 focus:ring-blue-300
+                   transition shadow-sm">
+
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7" />
+                                </svg>
+                                Simpan
+                            </button>
+
                         </div>
                     </div>
+
 
                     <?php echo form_close(); ?>
                 </div>
