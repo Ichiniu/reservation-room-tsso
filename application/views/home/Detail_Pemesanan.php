@@ -8,8 +8,8 @@ $id_gedung = $this->uri->segment(3);
  * TOTAL (PAJAK DIHILANGKAN)
  * ============================= */
 $total_tagihan = isset($result->TOTAL_KESELURUHUHAN)
-  ? (int)$result->TOTAL_KESELURUHUHAN
-  : (isset($result->TOTAL_KESELURUHAN) ? (int)$result->TOTAL_KESELURUHAN : 0);
+    ? (int)$result->TOTAL_KESELURUHUHAN
+    : (isset($result->TOTAL_KESELURUHAN) ? (int)$result->TOTAL_KESELURUHAN : 0);
 
 /** =============================
  * INFO USER & PROPOSAL
@@ -28,15 +28,15 @@ $proposal_file_url  = $proposal_file_name ? base_url('assets/user-proposal/' . $
 $temp_id = isset($result->ID_PEMESANAN) ? substr($result->ID_PEMESANAN, 7) : '';
 
 $statusText = isset($result->STATUS)
-  ? strtoupper(trim(preg_replace('/\s+/', ' ', $result->STATUS)))
-  : 'UNKNOWN';
+    ? strtoupper(trim(preg_replace('/\s+/', ' ', $result->STATUS)))
+    : 'UNKNOWN';
 
 $map = array(
-  'PROCESS' => 0,
-  'PROPOSAL APPROVE' => 1,
-  'APPROVE & PAID' => 2,
-  'SUBMITED' => 3,
-  'REJECTED' => 4,
+    'PROCESS' => 0,
+    'PROPOSAL APPROVE' => 1,
+    'APPROVE & PAID' => 2,
+    'SUBMITED' => 3,
+    'REJECTED' => 4,
 );
 $statusCode = isset($map[$statusText]) ? $map[$statusText] : 0;
 
@@ -59,20 +59,20 @@ $badgeClass = 'bg-gray-100 text-gray-800 border-gray-200';
 $dotClass   = 'bg-gray-500';
 
 if ($statusText === 'PROCESS') {
-  $badgeClass = 'bg-yellow-50 text-yellow-800 border-yellow-200';
-  $dotClass   = 'bg-yellow-500';
+    $badgeClass = 'bg-yellow-50 text-yellow-800 border-yellow-200';
+    $dotClass   = 'bg-yellow-500';
 } elseif ($statusText === 'PROPOSAL APPROVE') {
-  $badgeClass = 'bg-blue-50 text-blue-800 border-blue-200';
-  $dotClass   = 'bg-blue-500';
+    $badgeClass = 'bg-blue-50 text-blue-800 border-blue-200';
+    $dotClass   = 'bg-blue-500';
 } elseif ($statusText === 'APPROVE & PAID') {
-  $badgeClass = 'bg-emerald-50 text-emerald-800 border-emerald-200';
-  $dotClass   = 'bg-emerald-500';
+    $badgeClass = 'bg-emerald-50 text-emerald-800 border-emerald-200';
+    $dotClass   = 'bg-emerald-500';
 } elseif ($statusText === 'SUBMITED') {
-  $badgeClass = 'bg-indigo-50 text-indigo-800 border-indigo-200';
-  $dotClass   = 'bg-indigo-500';
+    $badgeClass = 'bg-indigo-50 text-indigo-800 border-indigo-200';
+    $dotClass   = 'bg-indigo-500';
 } elseif ($statusText === 'REJECTED') {
-  $badgeClass = 'bg-rose-50 text-rose-800 border-rose-200';
-  $dotClass   = 'bg-rose-500';
+    $badgeClass = 'bg-rose-50 text-rose-800 border-rose-200';
+    $dotClass   = 'bg-rose-500';
 }
 
 /** =============================
@@ -126,21 +126,21 @@ $jam_fmt     = ($jam_mulai && $jam_selesai) ? ($jam_mulai . ' - ' . $jam_selesai
 
         <!-- CATATAN ADMIN (SUBMITED / REJECTED) -->
         <?php if ($isShowRemarks): ?>
-        <?php
-        $remarkBoxClass = ($statusText === 'REJECTED') ? 'border-rose-200 bg-rose-50' : 'border-indigo-200 bg-indigo-50';
-        $remarkTitleClass = ($statusText === 'REJECTED') ? 'text-rose-800' : 'text-indigo-800';
-      ?>
-        <div class="mb-4 rounded-xl border p-4 text-sm <?php echo $remarkBoxClass; ?>">
-            <div class="font-semibold <?php echo $remarkTitleClass; ?>">Catatan Admin:</div>
+            <?php
+            $remarkBoxClass = ($statusText === 'REJECTED') ? 'border-rose-200 bg-rose-50' : 'border-indigo-200 bg-indigo-50';
+            $remarkTitleClass = ($statusText === 'REJECTED') ? 'text-rose-800' : 'text-indigo-800';
+            ?>
+            <div class="mb-4 rounded-xl border p-4 text-sm <?php echo $remarkBoxClass; ?>">
+                <div class="font-semibold <?php echo $remarkTitleClass; ?>">Catatan Admin:</div>
 
-            <?php if ($remarksSafe !== ''): ?>
-            <div class="mt-1 text-slate-800 whitespace-pre-line">
-                <?php echo htmlspecialchars($remarksSafe, ENT_QUOTES, 'UTF-8'); ?>
+                <?php if ($remarksSafe !== ''): ?>
+                    <div class="mt-1 text-slate-800 whitespace-pre-line">
+                        <?php echo htmlspecialchars($remarksSafe, ENT_QUOTES, 'UTF-8'); ?>
+                    </div>
+                <?php else: ?>
+                    <div class="mt-1 text-slate-500">Tidak ada catatan admin.</div>
+                <?php endif; ?>
             </div>
-            <?php else: ?>
-            <div class="mt-1 text-slate-500">Tidak ada catatan admin.</div>
-            <?php endif; ?>
-        </div>
         <?php endif; ?>
 
         <!-- TABEL DETAIL -->
@@ -210,19 +210,6 @@ $jam_fmt     = ($jam_mulai && $jam_selesai) ? ($jam_mulai . ' - ' . $jam_selesai
                         <td class="py-2">:
                             <?php echo nl2br(htmlspecialchars((string)$deskripsi_acara, ENT_QUOTES, 'UTF-8')); ?></td>
                     </tr>
-                    <tr>
-                        <td class="py-2 font-semibold">File Upload (Proposal)</td>
-                        <td class="py-2">:
-                            <?php if (!empty($proposal_file_name)): ?>
-                            <a class="text-blue-600 hover:underline" href="<?php echo $proposal_file_url; ?>"
-                                target="_blank" rel="noopener">
-                                <?php echo htmlspecialchars((string)$proposal_file_name, ENT_QUOTES, 'UTF-8'); ?>
-                            </a>
-                            <?php else: ?>
-                            <span class="text-slate-500">Belum ada file</span>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
                 </tbody>
             </table>
         </div>
@@ -236,17 +223,17 @@ $jam_fmt     = ($jam_mulai && $jam_selesai) ? ($jam_mulai . ' - ' . $jam_selesai
 
             <div class="flex flex-col sm:flex-row gap-3 sm:justify-end">
                 <?php if ($statusCode !== 2 && $statusCode !== 3 && $statusCode !== 4): ?>
-                <a href="<?php echo site_url('home/cancel-order/' . $temp_id); ?>" onclick="return dialog();"
-                    class="inline-flex items-center justify-center rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700">
-                    Batalkan Pesanan
-                </a>
+                    <a href="<?php echo site_url('home/cancel-order/' . $temp_id); ?>" onclick="return dialog();"
+                        class="inline-flex items-center justify-center rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700">
+                        Batalkan Pesanan
+                    </a>
                 <?php endif; ?>
 
                 <?php if ($statusText === 'PROPOSAL APPROVE'): ?>
-                <button type="button" onclick="openModal()"
-                    class="inline-flex items-center justify-center rounded-lg bg-green-600 px-6 py-2 text-white hover:bg-green-700">
-                    Bayar
-                </button>
+                    <button type="button" onclick="openModal()"
+                        class="inline-flex items-center justify-center rounded-lg bg-green-600 px-6 py-2 text-white hover:bg-green-700">
+                        Bayar
+                    </button>
                 <?php endif; ?>
             </div>
         </div>
@@ -334,33 +321,33 @@ $jam_fmt     = ($jam_mulai && $jam_selesai) ? ($jam_mulai . ' - ' . $jam_selesai
     </div>
 
     <script>
-    function dialog() {
-        var statusCode = <?php echo (int)$statusCode; ?>;
-        if (statusCode === 0) return confirm("YAKIN HAPUS RESERVASI INI?");
-        if (statusCode === 2 || statusCode === 3) {
-            return confirm("Pesanan sudah dibayar. Jika dibatalkan, dana tidak dapat dikembalikan. Lanjutkan?");
+        function dialog() {
+            var statusCode = <?php echo (int)$statusCode; ?>;
+            if (statusCode === 0) return confirm("YAKIN HAPUS RESERVASI INI?");
+            if (statusCode === 2 || statusCode === 3) {
+                return confirm("Pesanan sudah dibayar. Jika dibatalkan, dana tidak dapat dikembalikan. Lanjutkan?");
+            }
+            return confirm("Yakin batalkan pesanan ini?");
         }
-        return confirm("Yakin batalkan pesanan ini?");
-    }
 
-    function openModal() {
-        const m = document.getElementById('modalBayar');
-        m.classList.remove('hidden');
-        m.classList.add('flex');
-        document.body.classList.add('overflow-hidden');
-    }
+        function openModal() {
+            const m = document.getElementById('modalBayar');
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+            document.body.classList.add('overflow-hidden');
+        }
 
-    function closeModal() {
-        const m = document.getElementById('modalBayar');
-        m.classList.add('hidden');
-        m.classList.remove('flex');
-        document.body.classList.remove('overflow-hidden');
-    }
+        function closeModal() {
+            const m = document.getElementById('modalBayar');
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+            document.body.classList.remove('overflow-hidden');
+        }
 
-    document.addEventListener('click', function(e) {
-        const m = document.getElementById('modalBayar');
-        if (!m.classList.contains('hidden') && e.target === m) closeModal();
-    });
+        document.addEventListener('click', function(e) {
+            const m = document.getElementById('modalBayar');
+            if (!m.classList.contains('hidden') && e.target === m) closeModal();
+        });
     </script>
 </body>
 

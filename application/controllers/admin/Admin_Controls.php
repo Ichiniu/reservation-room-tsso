@@ -29,69 +29,78 @@ class Admin_Controls extends CI_Controller
 
 	function tambah_gedung()
 	{
-		$this->load->helper('form');
-		$this->load->helper('url');
-		$submit = $this->input->post('submit');
+		$this->load->helper(['form', 'url']);
 		$this->load->model('gedung/gedung_model');
-		$path = "./assets/images/gedung/";
-		$img_name = "listrik_" . date('dmY_his');
-		$config['upload_path'] = $path;
-		$config['allowed_types'] = 'jpg|png';
-		$config['max_size'] = '500';
-		$config['max_width'] = '500';
-		$config['max_height'] = '500';
-		$this->load->library('upload', $config);
-		$img_name = $this->upload->data();
 
-		if (!empty($submit)) {
-			$data = array(
-				'NAMA_GEDUNG' => $this->input->post('nama_gedung'),
-				'KAPASITAS' => $this->input->post('kapasitas_gedung'),
-				'ALAMAT' => $this->input->post('alamat_gedung'),
-				'DESKRIPSI_GEDUNG' => $this->input->post('deskripsi_gedung'),
-				'HARGA_SEWA' => $this->input->post('harga_sewa')
-			);
-			//$success = array();
-			//$upload_files = array(
-			//	'img_gedung1' => $_FILES['img_gedung1'],
-			//	'img_gedung2' => $_FILES['img_gedung2'],
-			//	'img_gedung3' => $_FILES['img_gedung3']
-			//	);
+		$submit = $this->input->post('submit');
 
-			foreach ($_FILES as $key => $value) {
+		// untuk view badge
+		$data_view['result'] = $this->gedung_model->get_pending_transaction();
 
-				if (!empty($value['name'])) {
-
-					if (!$this->upload->do_upload($key)) {
-						echo '<script type="text/javascript"> alert("Terjadi Kesalahan, Periksa Resolusi dan Ukuran File Upload Anda");
-						</script>';
-					} else {
-						$files = $this->upload->data();
-						$base_url = base_url();
-						$img_path = $base_url . "assets/images/gedung/";
-						$this->gedung_model->insert_gedung($data);
-						$this->gedung_model->get_last_id_gedung();
-						$id_gedung = $this->gedung_model->get_last_id_gedung();
-						$img_data = array(
-							'ID_GEDUNG' => $id_gedung->ID_GEDUNG,
-							'NAMA_GEDUNG' => $this->input->post('nama_gedung'),
-							'PATH' => $img_path,
-							'IMG_NAME' => $files['file_name']
-						);
-						$this->gedung_model->insert_gedung_img($img_data);
-						redirect('admin/gedung');
-					}
-					//else {
-					//code..
-					//}
-				}
-			}
-			//var_dump($errors);
-			//var_dump($success);
+		if (empty($submit)) {
+			$this->load->view('admin/tambah_gedung', $data_view);
+			return;
 		}
-		$data['result'] = $this->gedung_model->get_pending_transaction();
-		$this->load->view('admin/tambah_gedung', $data);
+
+		// 1) INSERT GEDUNG (SEKALI SAJA)
+		$data_gedung = array(
+			'NAMA_GEDUNG'      => $this->input->post('nama_gedung'),
+			'KAPASITAS'        => $this->input->post('kapasitas_gedung'),
+			'ALAMAT'           => $this->input->post('alamat_gedung'),
+			'DESKRIPSI_GEDUNG' => $this->input->post('deskripsi_gedung'),
+			'fasilitas'        => $this->input->post('fasilitas_gedung'), // ✅ TAMBAH
+			'HARGA_SEWA'       => $this->input->post('harga_sewa')
+		);
+
+		$this->gedung_model->insert_gedung($data_gedung);
+
+		// ambil ID terakhir dengan aman
+		$id_gedung_obj = $this->gedung_model->get_last_id_gedung();
+		$id_gedung = $id_gedung_obj ? (int)$id_gedung_obj->ID_GEDUNG : 0;
+
+		if ($id_gedung <= 0) {
+			show_error('Gagal menyimpan data gedung.');
+			return;
+		}
+
+		// 2) SETUP UPLOAD (GAMBAR OPSIONAL)
+		$path = "./assets/images/gedung/";
+		$config['upload_path']   = $path;
+		$config['allowed_types'] = 'jpg|png';
+		$config['max_size']      = 500;
+		$config['max_width']     = 500;
+		$config['max_height']    = 500;
+
+		$this->load->library('upload');
+		$this->upload->initialize($config);
+
+		$base_url = base_url();
+		$img_path = $base_url . "assets/images/gedung/";
+
+		foreach ($_FILES as $key => $value) {
+			if (empty($value['name'])) continue; // skip kalau kosong
+
+			if (!$this->upload->do_upload($key)) {
+				// kalau upload 1 gambar gagal, lanjut gambar lainnya
+				// kamu bisa simpan error ke flashdata kalau mau
+				continue;
+			}
+
+			$files = $this->upload->data();
+
+			$img_data = array(
+				'ID_GEDUNG'   => $id_gedung,
+				'NAMA_GEDUNG' => $this->input->post('nama_gedung'),
+				'PATH'        => $img_path,
+				'IMG_NAME'    => $files['file_name']
+			);
+
+			$this->gedung_model->insert_gedung_img($img_data);
+		}
+
+		redirect('admin/gedung');
 	}
+
 
 	function rekap_aktivitas()
 	{
@@ -229,7 +238,7 @@ class Admin_Controls extends CI_Controller
 		$data['details'] = $this->gedung_model->get_details_transaction($id_pembayaran);
 
 		if (!$data['details']) {
-			show_error('Data pembayaran tidak ditemukan');	
+			show_error('Data pembayaran tidak ditemukan');
 			return;
 		}
 
@@ -415,20 +424,32 @@ class Admin_Controls extends CI_Controller
 	function edit_gedung($id_gedung)
 	{
 		$this->load->model('gedung/gedung_model');
-		$details['res'] = $this->gedung_model->get_pending_transaction();
-		$details['result'] = $this->gedung_model->gedung_details($id_gedung);
-		$this->load->view('admin/edit_gedung', $details);
+
 		$simpan = $this->input->post('submit');
+
+		// 1) PROSES POST DULU
 		if (!empty($simpan)) {
 			$data = array(
-				'NAMA_GEDUNG' => $this->input->post('nama_gedung'),
-				'KAPASITAS' => $this->input->post('kapasitas_gedung'),
-				'HARGA_SEWA' => $this->input->post('harga_sewa')
+				'NAMA_GEDUNG'      => $this->input->post('nama_gedung'),
+				'KAPASITAS'        => $this->input->post('kapasitas_gedung'),
+				'ALAMAT'           => $this->input->post('alamat_gedung'),
+				'DESKRIPSI_GEDUNG' => $this->input->post('deskripsi_gedung'),
+				'fasilitas'        => $this->input->post('fasilitas_gedung'), // ✅ TAMBAH
+				'HARGA_SEWA'       => $this->input->post('harga_sewa')
 			);
-			$this->gedung_model->update_gedung($id_gedung, $data);
+
+			$this->gedung_model->update_gedung((int)$id_gedung, $data);
 			redirect('admin/gedung');
+			return;
 		}
+
+		// 2) BARU LOAD DATA UNTUK VIEW
+		$details['res']    = $this->gedung_model->get_pending_transaction();
+		$details['result'] = $this->gedung_model->gedung_details((int)$id_gedung);
+
+		$this->load->view('admin/edit_gedung', $details);
 	}
+
 
 	function kegiatan_export_pdf($start_date, $end_date)
 	{
@@ -502,10 +523,10 @@ class Admin_Controls extends CI_Controller
 	}
 
 	public function verify_pembayaran($id_pembayaran, $action)
-{
-	$this->load->model('gedung/gedung_model');
-    $id_pembayaran = (int) $id_pembayaran;
-    $action        = strtolower(trim((string)$action));
+	{
+		$this->load->model('gedung/gedung_model');
+		$id_pembayaran = (int) $id_pembayaran;
+		$action        = strtolower(trim((string)$action));
 
 		// =========================
 		// Validasi input dasar
@@ -540,12 +561,12 @@ class Admin_Controls extends CI_Controller
 		// Catatan admin (dibutuhkan saat reject)
 		$catatan = trim((string) $this->input->post('catatan_admin', TRUE));
 
-    // =========================
-    // Mulai transaksi database
-    // =========================
-	
+		// =========================
+		// Mulai transaksi database
+		// =========================
 
-    $this->db->trans_begin();
+
+		$this->db->trans_begin();
 
 		// =========================
 		// Aksi CONFIRM
@@ -560,10 +581,10 @@ class Admin_Controls extends CI_Controller
 				'CONFIRMED_AT'  => date('Y-m-d H:i:s')
 			]);
 
-        // 2) Update status pemesanan -> 3 (misal: confirmed/paid)
-        $this->db->where('ID_PEMESANAN', $id_pemesanan);
-        $this->db->update('pemesanan', ['STATUS' => 3]);
-		$this->gedung_model->mark_flag_unread('PMSN000' . $id_pemesanan);
+			// 2) Update status pemesanan -> 3 (misal: confirmed/paid)
+			$this->db->where('ID_PEMESANAN', $id_pemesanan);
+			$this->db->update('pemesanan', ['STATUS' => 3]);
+			$this->gedung_model->mark_flag_unread('PMSN000' . $id_pemesanan);
 
 
 			// 3) Ambil data pemesanan untuk isi fix detail
@@ -651,10 +672,10 @@ class Admin_Controls extends CI_Controller
 				'CONFIRMED_AT'  => null
 			]);
 
-        // 2) Update status pemesanan -> 4 (misal: rejected)
-        $this->db->where('ID_PEMESANAN', $id_pemesanan);
-        $this->db->update('pemesanan', ['STATUS' => 4]);
-		$this->gedung_model->mark_flag_unread('PMSN000' . $id_pemesanan);
+			// 2) Update status pemesanan -> 4 (misal: rejected)
+			$this->db->where('ID_PEMESANAN', $id_pemesanan);
+			$this->db->update('pemesanan', ['STATUS' => 4]);
+			$this->gedung_model->mark_flag_unread('PMSN000' . $id_pemesanan);
 
 
 			// 3) OPTIONAL: kalau sudah pernah masuk fix, matikan

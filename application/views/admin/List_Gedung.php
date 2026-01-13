@@ -49,12 +49,14 @@ $this->load->helper('text');
                         <tr>
                             <th class="px-4 py-3 text-center">Nama</th>
                             <th class="px-4 py-3 text-center">Kapasitas</th>
-                            <th class="px-4 py-3 ">Alamat</th>
+                            <th class="px-4 py-3">Alamat</th>
                             <th class="px-4 py-3 text-center">Deskripsi</th>
-                            <th class="px-14 py-3 ">Harga</th>
+                            <th class="px-4 py-3 text-center">Fasilitas</th>
+                            <th class="px-14 py-3">Harga</th>
                             <th class="px-4 py-3 text-center">Aksi</th>
                         </tr>
                     </thead>
+
 
                     <tbody class="divide-y">
                         <?php foreach ($res as $row): ?>
@@ -63,6 +65,11 @@ $this->load->helper('text');
                                 <td class="px-4 py-3"><?= $row['KAPASITAS'] ?> Orang</td>
                                 <td class="px-4 py-3"><?= $row['ALAMAT'] ?></td>
                                 <td class="px-4 py-3"><?= $row['DESKRIPSI_GEDUNG'] ?></td>
+
+                                <td class="px-4 py-3">
+                                    <?= !empty($row['fasilitas']) ? nl2br(htmlspecialchars($row['fasilitas'])) : '-' ?>
+                                </td>
+
                                 <td class="px-4 py-3 font-semibold">
                                     Rp <?= number_format($row['HARGA_SEWA'], 0, ',', '.') ?>
                                 </td>
@@ -80,15 +87,17 @@ $this->load->helper('text');
                                     </div>
                                 </td>
                             </tr>
+
                         <?php endforeach; ?>
 
                         <?php if (empty($res)): ?>
                             <tr>
-                                <td colspan="6" class="px-4 py-6 text-center text-slate-500">
+                                <td colspan="7" class="px-4 py-6 text-center text-slate-500">
                                     Data ruangan belum tersedia
                                 </td>
                             </tr>
                         <?php endif; ?>
+
                     </tbody>
                 </table>
             </div>

@@ -120,8 +120,8 @@ class Gedung_Model extends CI_Model
 
 
 	public function get_pemesanan_flag($username)
-{
-    $sql = "
+	{
+		$sql = "
         SELECT COUNT(*) AS jml
         FROM v_pemesanan v
         JOIN pemesanan p
@@ -137,13 +137,13 @@ class Gedung_Model extends CI_Model
           AND p.FLAG = 1
     ";
 
-    $row = $this->db->query($sql, [$username])->row();
-    return $row ? (int)$row->jml : 0;
-}
+		$row = $this->db->query($sql, [$username])->row();
+		return $row ? (int)$row->jml : 0;
+	}
 
-public function mark_flag_unread($id_view)
-{
-    $sql = "
+	public function mark_flag_unread($id_view)
+	{
+		$sql = "
         UPDATE pemesanan
         SET FLAG = 1
         WHERE ID_PEMESANAN = (
@@ -154,16 +154,16 @@ public function mark_flag_unread($id_view)
           END
         )
     ";
-    return $this->db->query($sql, [$id_view, $id_view, $id_view]);
-}
+		return $this->db->query($sql, [$id_view, $id_view, $id_view]);
+	}
 
 
 
 
 
 	public function clear_pemesanan_flag($username)
-{
-    $sql = "
+	{
+		$sql = "
         UPDATE pemesanan p
         JOIN v_pemesanan v
           ON p.ID_PEMESANAN = (
@@ -179,8 +179,8 @@ public function mark_flag_unread($id_view)
           AND v.STATUS IN ('PROPOSAL APPROVE','SUBMITED','REJECTED')
     ";
 
-    return $this->db->query($sql, [$username]);
-}
+		return $this->db->query($sql, [$username]);
+	}
 
 
 
@@ -644,7 +644,7 @@ public function mark_flag_unread($id_view)
 
 	public function gedung_details($id_gedung)
 	{
-		$query = "SELECT ID_GEDUNG, NAMA_GEDUNG, ALAMAT, DESKRIPSI_GEDUNG, KAPASITAS, HARGA_SEWA FROM GEDUNG WHERE ID_GEDUNG = $id_gedung";
+		$query = "SELECT ID_GEDUNG, NAMA_GEDUNG, ALAMAT, DESKRIPSI_GEDUNG, KAPASITAS, HARGA_SEWA, fasilitas FROM GEDUNG WHERE ID_GEDUNG = $id_gedung";
 		$sql = $this->db->query($query);
 		return $sql->result_array();
 	}
