@@ -28,65 +28,65 @@ function fmtRupiah($angka)
 <html lang="en">
 
 <head>
-	<meta charset="utf-8">
-	<title>Laporan Rekapitulasi Transaksi</title>
-	<style>
-		body {
-			font-family: courier, monospace;
-			font-size: 12px;
-		}
+    <meta charset="utf-8">
+    <title>Laporan Rekapitulasi Transaksi</title>
+    <style>
+    body {
+        font-family: courier, monospace;
+        font-size: 12px;
+    }
 
-		table {
-			border-collapse: collapse;
-			width: 100%;
-		}
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
 
-		th,
-		td {
-			border: 1px solid #000;
-			padding: 5px;
-			vertical-align: top;
-		}
+    th,
+    td {
+        border: 1px solid #000;
+        padding: 5px;
+        vertical-align: top;
+    }
 
-		th {
-			text-align: left;
-		}
+    th {
+        text-align: left;
+    }
 
-		small {
-			font-size: 10px;
-		}
+    small {
+        font-size: 10px;
+    }
 
-		.center {
-			text-align: center;
-		}
-	</style>
+    .center {
+        text-align: center;
+    }
+    </style>
 </head>
 
 <body>
-	<div class="center">
-		<b>
-			<h3 style="margin:0;">Laporan Rekapitulasi Transaksi</h3>
-		</b>
-	</div>
-	<br>
+    <div class="center">
+        <b>
+            <h3 style="margin:0;">Laporan Rekapitulasi Transaksi</h3>
+        </b>
+    </div>
+    <br>
 
-	<table>
-		<tr>
-			<th style="width:40px;">No</th>
-			<th>Kode Pembayaran</th>
-			<th>Kode Pemesanan</th>
-			<th>Atas Nama</th>
-			<th>Bank</th>
-			<th>Tanggal Transfer</th>
-			<th>Jumlah Transfer</th>
-		</tr>
+    <table>
+        <tr>
+            <th style="width:40px;">No</th>
+            <th>Kode Pembayaran</th>
+            <th>Kode Pemesanan</th>
+            <th>Atas Nama</th>
+            <th>Bank</th>
+            <th>Tanggal Transfer</th>
+            <th>Jumlah Transfer</th>
+        </tr>
 
-		<?php if (count($report_rows) > 0): ?>
-			<?php foreach ($report_rows as $row): ?>
+        <?php if (count($report_rows) > 0): ?>
+        <?php foreach ($report_rows as $row): ?>
 
-				<?php
+        <?php
 				// --- KODE PEMBAYARAN ---
-				$kodePembayaran = (isset($row['KODE_PEMBAYARAN']) ? $row['KODE_PEMBAYARAN'] : '') .
+				$kodePembayaran = (isset($row['KODE_PEMBAYARAN']) ? $row['KODE_PEMBAYARAN'] : 'PB0000') .
 					(isset($row['ID_PEMBAYARAN']) ? $row['ID_PEMBAYARAN'] : '');
 
 				// --- KODE PEMESANAN (fallback) ---
@@ -134,43 +134,43 @@ function fmtRupiah($angka)
 				}
 				?>
 
-				<tr>
-					<td><?php echo $no++; ?></td>
-					<td><?php echo htmlspecialchars($kodePembayaran, ENT_QUOTES, 'UTF-8'); ?></td>
-					<td><?php echo htmlspecialchars($kodePemesanan, ENT_QUOTES, 'UTF-8'); ?></td>
-					<td><?php echo $atasNamaHtml; ?></td>
-					<td><?php echo htmlspecialchars($bank, ENT_QUOTES, 'UTF-8'); ?></td>
-					<td><?php echo $tglCetak; ?></td>
-					<td><?php echo fmtRupiah($nominal); ?></td>
-				</tr>
+        <tr>
+            <td><?php echo $no++; ?></td>
+            <td><?php echo htmlspecialchars($kodePembayaran, ENT_QUOTES, 'UTF-8'); ?></td>
+            <td><?php echo htmlspecialchars($kodePemesanan, ENT_QUOTES, 'UTF-8'); ?></td>
+            <td><?php echo $atasNamaHtml; ?></td>
+            <td><?php echo htmlspecialchars($bank, ENT_QUOTES, 'UTF-8'); ?></td>
+            <td><?php echo $tglCetak; ?></td>
+            <td><?php echo fmtRupiah($nominal); ?></td>
+        </tr>
 
-			<?php endforeach; ?>
-		<?php else: ?>
-			<tr>
-				<td colspan="7" class="center">Tidak ada data transaksi pada periode ini.</td>
-			</tr>
-		<?php endif; ?>
+        <?php endforeach; ?>
+        <?php else: ?>
+        <tr>
+            <td colspan="7" class="center">Tidak ada data transaksi pada periode ini.</td>
+        </tr>
+        <?php endif; ?>
 
-		<tr>
-			<td colspan="6"><b>Total Transfer:</b></td>
-			<td><b><?php echo fmtRupiah($total); ?></b></td>
-		</tr>
-	</table>
+        <tr>
+            <td colspan="6"><b>Total Transfer:</b></td>
+            <td><b><?php echo fmtRupiah($total); ?></b></td>
+        </tr>
+    </table>
 
-	<br>
-	<b>
-		Periode
-		<?php echo date_format(date_create($start_date), 'd F Y'); ?>
-		-
-		<?php echo date_format(date_create($end_date), 'd F Y'); ?>
-	</b>
-	<br>
+    <br>
+    <b>
+        Periode
+        <?php echo date_format(date_create($start_date), 'd F Y'); ?>
+        -
+        <?php echo date_format(date_create($end_date), 'd F Y'); ?>
+    </b>
+    <br>
 
-	<b>Dicetak pada: </b>
-	<b><?php echo date_format($date, "d M y"); ?></b>
-	<br>
+    <b>Dicetak pada: </b>
+    <b><?php echo date_format($date, "d M y"); ?></b>
+    <br>
 
-	<b>Dicetak untuk: Administrator</b>
+    <b>Dicetak untuk: Administrator</b>
 </body>
 
-</html>	
+</html>
