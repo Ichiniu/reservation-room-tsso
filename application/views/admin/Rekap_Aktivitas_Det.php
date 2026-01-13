@@ -13,8 +13,7 @@ $second_date_period = !empty($last_period) ? date_create($last_period) : null;
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>AKTIVITAS FLO</title>
+    <title>Admin Smart Office</title>
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -88,114 +87,153 @@ $second_date_period = !empty($last_period) ? date_create($last_period) : null;
                         $jamMulai = !empty($row['JAM_MULAI']) ? $row['JAM_MULAI'] : (!empty($row['JAM_PEMESANAN']) ? $row['JAM_PEMESANAN'] : null);
                         $jamSelesai = !empty($row['JAM_SELESAI']) ? $row['JAM_SELESAI'] : null;
 
-                                $jamText = '-';
-                                if (!empty($jamMulai) && !empty($jamSelesai)) {
-                                    $jamText = date('H:i', strtotime($jamMulai)) . ' - ' . date('H:i', strtotime($jamSelesai));
-                                } elseif (!empty($jamMulai)) {
-                                    $jamText = date('H:i', strtotime($jamMulai));
-                                }
-                                ?>
-                                    <tr>
-                                        <td><?php echo $no++?></td>
-                                        <td><?php echo $row['NAMA_GEDUNG']?></td>
-                                        <td><?php echo date_format($date, 'd M Y')?></td>
-                                        <td><?php echo date_format($date_approval, 'd M Y')?></td>
-                                        <td><?php echo $row['DESKRIPSI_ACARA']?></td>
-                                        <td><?php echo $jamText; ?></td>
-                                        <td><?php echo $row['NAMA_LENGKAP']?></td>
+                        $jamText = '-';
+                        if (!empty($jamMulai) && !empty($jamSelesai)) {
+                          $jamText = date('H:i', strtotime($jamMulai)) . ' - ' . date('H:i', strtotime($jamSelesai));
+                        } elseif (!empty($jamMulai)) {
+                          $jamText = date('H:i', strtotime($jamMulai));
+                        }
+                      ?>
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="px-4 py-3 text-center w-[70px]"><?= $no++; ?></td>
+                                        <td class="px-4 py-3 w-[180px]">
+                                            <?= !empty($row['NAMA_GEDUNG']) ? $row['NAMA_GEDUNG'] : '-'; ?></td>
+                                        <td class="px-4 py-3 w-[160px]">
+                                            <?= $date ? date_format($date, 'd M Y') : '-'; ?></td>
+                                        <td class="px-4 py-3 w-[160px]">
+                                            <?= $date_approval ? date_format($date_approval, 'd M Y') : '-'; ?></td>
+
+                                        <!-- Kegiatan boleh wrap -->
+                                        <td class="px-4 py-3 w-[240px] whitespace-normal break-words">
+                                            <?= !empty($row['DESKRIPSI_ACARA']) ? $row['DESKRIPSI_ACARA'] : '-'; ?>
+                                        </td>
+
+                                        <td class="px-4 py-3 w-[140px]"><?= $jamText; ?></td>
+                                        <td class="px-4 py-3 w-[200px]">
+                                            <?= !empty($row['NAMA_LENGKAP']) ? $row['NAMA_LENGKAP'] : '-'; ?></td>
                                     </tr>
-                                    <?php endforeach;?>
-                            </table>
-                            <table style="display: inline-block;">
-                                <tr>
-                                    <td><b>Periode:</b></td>
-                                    <td><?php echo date_format($first_date_period, 'd F Y') ?></td>
-                                    <td><b>To</b></td>
-                                    <td><?php echo date_format($second_date_period, 'd F Y') ?></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <a
-                                            href="<?php echo site_url('admin/kegiatan_download_pdf/'.$first_period.'/'.$last_period.'') ?>">Ekspor
-                                            ke PDF</a>
-                                    </td>
-                                </tr>
+                                    <?php endforeach; ?>
+                                    <?php else: ?>
+                                    <tr>
+                                        <td colspan="7" class="px-4 py-6 text-center text-slate-500">Tidak ada data.
+                                        </td>
+                                    </tr>
+                                    <?php endif; ?>
+                                </tbody>
                             </table>
                         </div>
-
                     </div>
+
+                    <!-- PAGINATION -->
+                    <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <button id="prevBtn"
+                            class="px-4 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 disabled:opacity-40 disabled:cursor-not-allowed">
+                            Prev
+                        </button>
+
+                        <span id="pageInfo" class="text-sm text-slate-600 text-center"></span>
+
+                        <div class="flex items-center gap-3">
+                            <select id="rowsPerPage" class="rounded-lg border border-slate-200 px-3 py-2 text-sm">
+                                <option value="5">5 rows</option>
+                                <option value="10" selected>10 rows</option>
+                                <option value="25">25 rows</option>
+                            </select>
+
+                            <button id="nextBtn"
+                                class="px-4 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 disabled:opacity-40 disabled:cursor-not-allowed">
+                                Next
+                            </button>
+                        </div>
+                    </div>
+
                 </div>
-                <main class="">
-                </main>
-                <!-- Materialize core JavaScript -->
-                <!-- Placed at the end of the document so the pages load faster -->
-                <script src="<?php echo base_url(); ?>assets/home/assets/js/jquery.min.js"></script>
-                <script src="<?php echo base_url(); ?>assets/home/materialize/js/materialize.js"></script>
-                <script src="<?php echo base_url(); ?>assets/home/index.js"></script>
-                <script type="text/javascript">
-                var startDate = document.getElementById("start_date");
-                var label = document.getElementById("labelDari");
-                var labelsampai = document.getElementById("labelSampai");
-                var endDate = document.getElementById("end_date");
-                var btnProses = document.getElementById("btnProses");
-                var btnFilter = document.getElementById("btnFilter");
+            </div>
+            <!-- /CARD -->
+        </div>
+    </main>
 
-                function unhideElement() {
-                    if (startDate.hidden = true) {
-                        startDate.hidden = false;
-                        label.hidden = false;
-                        labelsampai.hidden = false;
-                        endDate.hidden = false;
-                        btnProses.hidden = false
-                        btnFilter.disabled = true;
+    <script>
+    // Pagination client-side + reset scroll tabel saat pindah halaman
+    (function() {
+        const tbody = document.getElementById('rekapBody');
+        const scrollBox = document.querySelector('.max-h-\\[420px\\]');
+        if (!tbody) return;
 
-                    } else {
-                        hideElement();
-                    }
+        let rows = Array.from(tbody.querySelectorAll('tr'));
+        const onlyEmptyRow = rows.length === 1 && rows[0].innerText.toLowerCase().includes('tidak ada data');
+        if (onlyEmptyRow) return;
+
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const pageInfo = document.getElementById('pageInfo');
+        const rowsPerPageSelect = document.getElementById('rowsPerPage');
+
+        let currentPage = 1;
+        let rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
+
+        function totalPages() {
+            return Math.max(1, Math.ceil(rows.length / rowsPerPage));
+        }
+
+        function render() {
+            const tp = totalPages();
+            if (currentPage > tp) currentPage = tp;
+
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+
+            rows.forEach((row, idx) => {
+                row.style.display = (idx >= start && idx < end) ? '' : 'none';
+            });
+
+            prevBtn.disabled = currentPage <= 1;
+            nextBtn.disabled = currentPage >= tp;
+
+            const totalRows = rows.length;
+            const showingFrom = totalRows === 0 ? 0 : start + 1;
+            const showingTo = Math.min(end, totalRows);
+
+            pageInfo.textContent =
+                `Page ${currentPage} of ${tp} • Showing ${showingFrom}-${showingTo} of ${totalRows}`;
+
+            // nomor ulang sesuai urutan global
+            let visibleNo = start + 1;
+            rows.forEach((row, idx) => {
+                if (idx >= start && idx < end) {
+                    const firstCell = row.querySelector('td');
+                    if (firstCell) firstCell.textContent = visibleNo++;
                 }
+            });
 
-                function hideElement() {
-                    startDate.hidden = true;
-                    label.hidden = true;
-                    endDate.hidden = true;
-                    btnProses.hidden = true;
-                }
+            // balik ke atas tabel saat pindah halaman
+            if (scrollBox) scrollBox.scrollTop = 0;
+        }
 
-                function btnProsesAlert() {
-                    if (startDate.value == "") {
-                        alert("Harap Isi Form Tanggal!");
-                        return false;
-                    } else if (endDate.value == "") {
-                        alert("Harap Isi Form Tanggal!");
-                        return false;
-                    }
-                }
-                </script>
-                <script>
-                $(document).ready(function() {
+        prevBtn.addEventListener('click', function() {
+            if (currentPage > 1) {
+                currentPage--;
+                render();
+            }
+        });
 
-                    $(".button-collapse").sideNav({
-                        menuWidth: 260,
-                        edge: 'left',
-                        closeOnClick: false,
-                        draggable: true
-                    });
+        nextBtn.addEventListener('click', function() {
+            if (currentPage < totalPages()) {
+                currentPage++;
+                render();
+            }
+        });
 
-                    // OPEN / CLOSE SIDEBAR + SHIFT CONTENT
-                    $(".button-collapse").on("click", function() {
-                        $("body").toggleClass("nav-open");
-                    });
+        rowsPerPageSelect.addEventListener('change', function() {
+            rowsPerPage = parseInt(this.value, 10) || 10;
+            currentPage = 1;
+            render();
+        });
 
-                    // CLOSE JIKA KLIK LUAR SIDEBAR
-                    $(document).mouseup(function(e) {
-                        let sb = $(".side-nav");
-                        if (!sb.is(e.target) && sb.has(e.target).length === 0) {
-                            $("body").removeClass("nav-open");
-                        }
-                    });
+        render();
+    })();
+    </script>
 
-                });
-                </script>
 </body>
 
 </html>
