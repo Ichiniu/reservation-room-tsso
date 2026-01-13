@@ -274,18 +274,42 @@ class Gedung_Model extends CI_Model
 	}
 	public function fixed_date()
 	{
-		$sql = "SELECT
-                ID_PEMESANAN,
-                USERNAME,
-                NAMA_GEDUNG,
-                TANGGAL_PEMESANAN,
-                TIME_FORMAT(JAM_PEMESANAN, '%H:%i') AS JAM
-            FROM V_PEMESANAN
-            WHERE UPPER(TRIM(STATUS)) = 'SUBMITED'
-            ORDER BY TANGGAL_PEMESANAN DESC, JAM_PEMESANAN DESC";
+		$sql = "
+        SELECT
+            v.ID_PEMESANAN,
+            v.USERNAME,
+            v.NAMA_GEDUNG,
+            v.TANGGAL_PEMESANAN,
 
-		return $this->db->query($sql)->result(); // object
+            -- jam mulai: dari fix_detail kalau ada, kalau tidak dari V_PEMESANAN
+            TIME_FORMAT(
+                COALESCE(f.JAM_MULAI, v.JAM_PEMESANAN),
+                '%H:%i'
+            ) AS JAM_MULAI,
+
+           -- jam selesai: dari fix_detail kalau ada, kalau tidak dari V_PEMESANAN
+TIME_FORMAT(
+    COALESCE(f.JAM_SELESAI, v.JAM_SELESAI),
+    '%H:%i'
+) AS JAM_SELESAI
+
+        FROM V_PEMESANAN v
+
+        LEFT JOIN pemesanan_fix_detail f
+            ON f.ID_PEMESANAN =
+               CAST(REPLACE(REPLACE(REPLACE(UPPER(TRIM(v.ID_PEMESANAN)), 'PMSN', ''), ' ', ''), '0', '0') AS UNSIGNED)
+            AND f.FINAL_STATUS = 1
+
+        WHERE UPPER(TRIM(v.STATUS)) = 'SUBMITED'
+        ORDER BY
+            CAST(REPLACE(REPLACE(REPLACE(UPPER(TRIM(v.ID_PEMESANAN)), 'PMSN', ''), ' ', ''), '0', '0') AS UNSIGNED) DESC
+    ";
+
+		return $this->db->query($sql)->result();
 	}
+
+
+
 
 
 

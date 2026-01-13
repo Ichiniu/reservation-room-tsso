@@ -214,7 +214,7 @@ $this->load->helper('text');
                                         Fasilitas Ruangan
                                     </div>
                                     <div class="input-field">
-                                        <textarea class="materialize-textarea" name="fasilitas_gedung" placeholder="Contoh: Proyektor, AC, Sound System, WiFi"><?php echo isset($row['fasilitas']) ? htmlspecialchars($row['FASILITAS'], ENT_QUOTES, 'UTF-8') : ''; ?></textarea>
+                                        <textarea class="materialize-textarea" name="fasilitas_gedung" placeholder="Contoh: Proyektor, AC, Sound System, WiFi"><?php echo isset($row['fasilitas']) ? htmlspecialchars($row['fasilitas'], ENT_QUOTES, 'UTF-8') : ''; ?></textarea>
                                         <div class="hint">Pisahkan dengan koma atau baris baru.</div>
                                     </div>
                                 </div>
