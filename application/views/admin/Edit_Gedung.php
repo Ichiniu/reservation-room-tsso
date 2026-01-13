@@ -31,42 +31,42 @@ $this->load->helper('text');
     <link href="<?php echo base_url(); ?>assets/home/template.css" rel="stylesheet" type="text/css">
 
     <style>
-    /* Rapihin input Materialize di layout Tailwind */
-    .input-field {
-        margin-top: 14px;
-    }
+        /* Rapihin input Materialize di layout Tailwind */
+        .input-field {
+            margin-top: 14px;
+        }
 
-    .input-field label {
-        position: static !important;
-        transform: none !important;
-    }
+        .input-field label {
+            position: static !important;
+            transform: none !important;
+        }
 
-    .input-field input,
-    .input-field textarea {
-        margin-top: 8px;
-    }
+        .input-field input,
+        .input-field textarea {
+            margin-top: 8px;
+        }
 
-    input.validate,
-    textarea.materialize-textarea {
-        border-bottom: 1px solid #e5e7eb !important;
-        /* gray-200 */
-        box-shadow: none !important;
-    }
+        input.validate,
+        textarea.materialize-textarea {
+            border-bottom: 1px solid #e5e7eb !important;
+            /* gray-200 */
+            box-shadow: none !important;
+        }
 
-    input.validate:focus,
-    textarea.materialize-textarea:focus {
-        border-bottom: 2px solid #1d4ed8 !important;
-        /* blue-700 */
-        box-shadow: 0 1px 0 0 #1d4ed8 !important;
-    }
+        input.validate:focus,
+        textarea.materialize-textarea:focus {
+            border-bottom: 2px solid #1d4ed8 !important;
+            /* blue-700 */
+            box-shadow: 0 1px 0 0 #1d4ed8 !important;
+        }
 
-    .hint {
-        font-size: 12px;
-        color: #6b7280;
-        margin-top: 6px;
-    }
+        .hint {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 6px;
+        }
 
-    /* gray-500 */
+        /* gray-500 */
     </style>
 </head>
 
@@ -94,7 +94,7 @@ $this->load->helper('text');
                     <i class="material-icons text-gray-800">apartment</i>
                 </span>
                 <div class="leading-tight">
-                    <div class="font-semibold">Edit Gedung</div>
+                    <div class="font-semibold">Edit Ruangan</div>
                     <div class="text-xs text-gray-500">Admin Panel</div>
                 </div>
             </div>
@@ -136,97 +136,108 @@ $this->load->helper('text');
                 </div>
 
                 <div class="p-4 md:p-6">
-                    <?php foreach($result as $row): ?>
+                    <?php foreach ($result as $row): ?>
 
-                    <form class="row" method="post" action="<?php site_url('admin/edit/'.$row['ID_GEDUNG'].'') ?>">
+                        <form class="row" method="post" action="<?php site_url('admin/edit/' . $row['ID_GEDUNG'] . '') ?>">
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-                            <!-- Nama Gedung -->
-                            <div class="border border-gray-200 rounded-xl p-4 bg-white">
-                                <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                                    <i class="material-icons text-base text-gray-700">domain</i>
-                                    Nama Gedung
+                                <!-- Nama Gedung -->
+                                <div class="border border-gray-200 rounded-xl p-4 bg-white">
+                                    <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                                        <i class="material-icons text-base text-gray-700">domain</i>
+                                        Nama Gedung
+                                    </div>
+                                    <div class="input-field">
+                                        <input placeholder="The Ritz Carlton" value="<?php echo $row['NAMA_GEDUNG'] ?>"
+                                            id="nama" name="nama_gedung" type="text" class="validate">
+                                        <div class="hint">Nama resmi gedung.</div>
+                                    </div>
                                 </div>
-                                <div class="input-field">
-                                    <input placeholder="The Ritz Carlton" value="<?php echo $row['NAMA_GEDUNG'] ?>"
-                                        id="nama" name="nama_gedung" type="text" class="validate">
-                                    <div class="hint">Nama resmi gedung.</div>
+
+                                <!-- Kapasitas -->
+                                <div class="border border-gray-200 rounded-xl p-4 bg-white">
+                                    <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                                        <i class="material-icons text-base text-gray-700">groups</i>
+                                        Kapasitas Gedung
+                                    </div>
+                                    <div class="input-field">
+                                        <input placeholder="150" id="kapasitas" value="<?php echo $row['KAPASITAS'] ?>"
+                                            name="kapasitas_gedung" type="text" class="validate">
+                                        <div class="hint">Jumlah maksimal orang.</div>
+                                    </div>
                                 </div>
+
+                                <!-- Harga Sewa -->
+                                <div class="border border-gray-200 rounded-xl p-4 bg-white">
+                                    <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                                        <i class="material-icons text-base text-gray-700">payments</i>
+                                        Harga Sewa
+                                    </div>
+                                    <div class="input-field">
+                                        <input placeholder="650000000" value="<?php echo $row['HARGA_SEWA'] ?>"
+                                            id="kapasitas" name="harga_sewa" type="text" class="validate">
+                                        <div class="hint">Isi angka saja jika memungkinkan (contoh: 650000000).</div>
+                                    </div>
+                                </div>
+
+                                <!-- Placeholder biar grid balance -->
+                                <div class="hidden md:block"></div>
+
+                                <!-- Alamat (full width) -->
+                                <div class="md:col-span-2 border border-gray-200 rounded-xl p-4 bg-white">
+                                    <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                                        <i class="material-icons text-base text-gray-700">location_on</i>
+                                        Alamat Gedung
+                                    </div>
+                                    <div class="input-field">
+                                        <textarea class="materialize-textarea"
+                                            name="alamat_gedung"><?php echo $row['ALAMAT'] ?></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- Deskripsi (full width) -->
+                                <div class="md:col-span-2 border border-gray-200 rounded-xl p-4 bg-white">
+                                    <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                                        <i class="material-icons text-base text-gray-700">description</i>
+                                        Deskripsi Gedung
+                                    </div>
+                                    <div class="input-field">
+                                        <textarea class="materialize-textarea"
+                                            name="deskripsi_gedung"><?php echo $row['DESKRIPSI_GEDUNG'] ?></textarea>
+                                    </div>
+                                </div>
+                                <!-- Fasilitas (full width) -->
+                                <div class="md:col-span-2 border border-gray-200 rounded-xl p-4 bg-white">
+                                    <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                                        <i class="material-icons text-base text-gray-700">checklist</i>
+                                        Fasilitas Ruangan
+                                    </div>
+                                    <div class="input-field">
+                                        <textarea class="materialize-textarea" name="fasilitas_gedung" placeholder="Contoh: Proyektor, AC, Sound System, WiFi"><?php echo isset($row['fasilitas']) ? htmlspecialchars($row['FASILITAS'], ENT_QUOTES, 'UTF-8') : ''; ?></textarea>
+                                        <div class="hint">Pisahkan dengan koma atau baris baru.</div>
+                                    </div>
+                                </div>
+
                             </div>
 
-                            <!-- Kapasitas -->
-                            <div class="border border-gray-200 rounded-xl p-4 bg-white">
-                                <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                                    <i class="material-icons text-base text-gray-700">groups</i>
-                                    Kapasitas Gedung
-                                </div>
-                                <div class="input-field">
-                                    <input placeholder="150" id="kapasitas" value="<?php echo $row['KAPASITAS'] ?>"
-                                        name="kapasitas_gedung" type="text" class="validate">
-                                    <div class="hint">Jumlah maksimal orang.</div>
-                                </div>
+                            <!-- Actions -->
+                            <div class="mt-6 flex items-center gap-3 justify-start">
+                                <button type="submit" name="submit" id="submit" tabindex="10" value="Simpan"
+                                    class="inline-flex h-10 items-center gap-2 rounded-lg bg-blue-700 px-4 text-sm font-semibold text-white hover:bg-blue-800 active:bg-blue-900">
+                                    <i class="material-icons text-[18px]">save</i>
+                                    Simpan
+                                </button>
+
+                                <a href="<?php echo site_url('admin/gedung'); ?>"
+                                    class="inline-flex h-10 items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 text-sm font-semibold text-gray-900 hover:bg-gray-50 active:bg-gray-100">
+                                    <i class="material-icons text-[18px]">close</i>
+                                    Batal
+                                </a>
                             </div>
 
-                            <!-- Harga Sewa -->
-                            <div class="border border-gray-200 rounded-xl p-4 bg-white">
-                                <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                                    <i class="material-icons text-base text-gray-700">payments</i>
-                                    Harga Sewa
-                                </div>
-                                <div class="input-field">
-                                    <input placeholder="650000000" value="<?php echo $row['HARGA_SEWA'] ?>"
-                                        id="kapasitas" name="harga_sewa" type="text" class="validate">
-                                    <div class="hint">Isi angka saja jika memungkinkan (contoh: 650000000).</div>
-                                </div>
-                            </div>
 
-                            <!-- Placeholder biar grid balance -->
-                            <div class="hidden md:block"></div>
-
-                            <!-- Alamat (full width) -->
-                            <div class="md:col-span-2 border border-gray-200 rounded-xl p-4 bg-white">
-                                <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                                    <i class="material-icons text-base text-gray-700">location_on</i>
-                                    Alamat Gedung
-                                </div>
-                                <div class="input-field">
-                                    <textarea class="materialize-textarea"
-                                        name="alamat_gedung"><?php echo $row['ALAMAT'] ?></textarea>
-                                </div>
-                            </div>
-
-                            <!-- Deskripsi (full width) -->
-                            <div class="md:col-span-2 border border-gray-200 rounded-xl p-4 bg-white">
-                                <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                                    <i class="material-icons text-base text-gray-700">description</i>
-                                    Deskripsi Gedung
-                                </div>
-                                <div class="input-field">
-                                    <textarea class="materialize-textarea"
-                                        name="deskripsi_gedung"><?php echo $row['DESKRIPSI_GEDUNG'] ?></textarea>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <!-- Actions -->
-                        <div class="mt-6 flex items-center gap-3 justify-start">
-                            <button type="submit" name="submit" id="submit" tabindex="10" value="Simpan"
-                                class="inline-flex h-10 items-center gap-2 rounded-lg bg-blue-700 px-4 text-sm font-semibold text-white hover:bg-blue-800 active:bg-blue-900">
-                                <i class="material-icons text-[18px]">save</i>
-                                Simpan
-                            </button>
-
-                            <a href="<?php echo site_url('admin/gedung'); ?>"
-                                class="inline-flex h-10 items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 text-sm font-semibold text-gray-900 hover:bg-gray-50 active:bg-gray-100">
-                                <i class="material-icons text-[18px]">close</i>
-                                Batal
-                            </a>
-                        </div>
-
-
-                    </form>
+                        </form>
 
                     <?php endforeach; ?>
                 </div>
@@ -245,49 +256,49 @@ $this->load->helper('text');
 
     <!-- Sidebar toggle -->
     <script>
-    (function() {
-        var sidebar = document.getElementById('sidebar');
-        var overlay = document.getElementById('sidebarOverlay');
-        var btn = document.getElementById('sidebarToggle');
-        if (!sidebar) return;
+        (function() {
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            var btn = document.getElementById('sidebarToggle');
+            if (!sidebar) return;
 
-        function openSidebar() {
-            sidebar.classList.remove('-translate-x-full');
-            if (overlay) overlay.classList.remove('hidden');
-            document.body.classList.add('overflow-hidden');
-        }
-
-        function closeSidebar() {
-            sidebar.classList.add('-translate-x-full');
-            if (overlay) overlay.classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
-        }
-
-        if (btn) {
-            btn.addEventListener('click', function() {
-                var isClosed = sidebar.classList.contains('-translate-x-full');
-                if (isClosed) openSidebar();
-                else closeSidebar();
-            });
-        }
-
-        if (overlay) overlay.addEventListener('click', closeSidebar);
-
-        window.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeSidebar();
-        });
-
-        var mq = window.matchMedia('(min-width: 768px)');
-        mq.addEventListener('change', function(e) {
-            if (e.matches) {
-                if (overlay) overlay.classList.add('hidden');
+            function openSidebar() {
                 sidebar.classList.remove('-translate-x-full');
-                document.body.classList.remove('overflow-hidden');
-            } else {
-                closeSidebar();
+                if (overlay) overlay.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
             }
-        });
-    })();
+
+            function closeSidebar() {
+                sidebar.classList.add('-translate-x-full');
+                if (overlay) overlay.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+
+            if (btn) {
+                btn.addEventListener('click', function() {
+                    var isClosed = sidebar.classList.contains('-translate-x-full');
+                    if (isClosed) openSidebar();
+                    else closeSidebar();
+                });
+            }
+
+            if (overlay) overlay.addEventListener('click', closeSidebar);
+
+            window.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeSidebar();
+            });
+
+            var mq = window.matchMedia('(min-width: 768px)');
+            mq.addEventListener('change', function(e) {
+                if (e.matches) {
+                    if (overlay) overlay.classList.add('hidden');
+                    sidebar.classList.remove('-translate-x-full');
+                    document.body.classList.remove('overflow-hidden');
+                } else {
+                    closeSidebar();
+                }
+            });
+        })();
     </script>
 </body>
 

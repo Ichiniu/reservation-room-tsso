@@ -303,6 +303,10 @@ class Home extends CI_Controller
 			->row();
 
 		$data['catatan_admin_reject'] = $cat ? (string)$cat->CATATAN_ADMIN : '';
+		// kalau status REJECTED, paksa REMARKS pakai catatan admin dari tabel pembayaran
+		if (!empty($data['result']) && $data['catatan_admin_reject'] !== '') {
+			$data['result']->REMARKS = $data['catatan_admin_reject'];
+		}
 
 		$this->load->view('home/detail_pemesanan', $data);
 	}
