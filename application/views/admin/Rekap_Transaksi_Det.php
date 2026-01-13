@@ -33,7 +33,7 @@ function formatTanggalIndo($tgl)
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rekap</title>
+    <title>Rekap Transaksi Det</title>
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>

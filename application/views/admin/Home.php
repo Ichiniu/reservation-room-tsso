@@ -46,8 +46,8 @@ function formatTanggalIndo($tgl)
     <!-- MAIN -->
     <main class="flex-1 pt-24 pl-0 md:pl-64 px-4 md:px-6 pb-10">
         <div class="max-w-6xl mx-auto mb-6">
-            <h1 class="text-2xl font-bold text-slate-800">Jadwal Gedung Terbooking</h1>
-            <p class="text-sm text-slate-500">Daftar pemesanan gedung</p>
+            <h1 class="text-2xl font-bold text-slate-800">Jadwal Ruangan Terbooking</h1>
+            <p class="text-sm text-slate-500">Daftar Pemesanan Ruangan</p>
         </div>
 
         <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-md p-6">
@@ -93,7 +93,7 @@ function formatTanggalIndo($tgl)
                         <tr class="border-b border-slate-200">
                             <th class="px-4 py-3 text-center">No</th>
                             <th class="px-4 py-3 text-center">ID</th>
-                            <th class="px-4 py-3 text-center">Gedung</th>
+                            <th class="px-4 py-3 text-center">Ruangan</th>
                             <th class="px-4 py-3 text-center">User</th>
                             <th class="px-4 py-3 text-center">Tanggal</th>
                             <th class="px-4 py-3 text-center">Jam</th>
