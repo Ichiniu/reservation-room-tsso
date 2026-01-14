@@ -515,10 +515,6 @@ TIME_FORMAT(
 	{
 		$num = (int) preg_replace('/\D+/', '', (string)$id_pemesanan);
 		if ($num <= 0) return null;
-
-		// kemungkinan format di view:
-		// - angka: 94
-		// - kode: PMSN00094
 		$kode = 'PMSN000' . $num;
 
 		$sql = "SELECT *
