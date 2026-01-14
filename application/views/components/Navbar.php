@@ -184,8 +184,16 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
 
     <script>
     /* =========================================================
-   1) Permission button
+   FULL SCRIPT NOTIF PEMESANAN + TRANSAKSI (POPUP TERPISAH)
+   - Badge update realtime (polling)
+   - Popup notif pemesanan + transaksi masing-masing sendiri
+   - Isi popup: jumlah + list ID (dari backend notif_poll)
+   - Suara notif (optional)
 ========================================================= */
+
+    /* =========================
+       1) Permission button
+    ========================= */
     async function aktifkanNotif() {
         if (!("Notification" in window)) {
             alert("Browser kamu tidak mendukung notifikasi.");
@@ -202,25 +210,28 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
             return;
         }
 
-        const permission = await Notification.requestPermission();
-
-        if (permission === "granted") {
-            try {
-                new Notification("Notifikasi aktif ✅", {
-                    body: "Sekarang kamu akan dapat pemberitahuan saat ada update."
-                });
-            } catch (e) {}
-            localStorage.setItem("notifJustEnabled", "1");
-        } else {
-            alert("Notifikasi belum diizinkan. Silakan pilih 'Allow'.");
+        try {
+            const permission = await Notification.requestPermission();
+            if (permission === "granted") {
+                try {
+                    new Notification("Notifikasi aktif ✅", {
+                        body: "Sekarang kamu akan dapat pemberitahuan saat ada update."
+                    });
+                } catch (e) {}
+                localStorage.setItem("notifJustEnabled", "1");
+            } else {
+                alert("Notifikasi belum diizinkan. Silakan pilih 'Allow'.");
+            }
+        } catch (e) {
+            console.log("[notif] requestPermission error", e);
         }
 
         updateNotifUI();
     }
 
-    /* =========================================================
-       2) UI status
-    ========================================================= */
+    /* =========================
+       2) UI status (dot + text)
+    ========================= */
     function updateNotifUI() {
         var dot = document.getElementById("notifDot");
         var txt = document.getElementById("notifStatusText");
@@ -244,9 +255,9 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
         }
     }
 
-    /* =========================================================
+    /* =========================
        3) Badge helper
-    ========================================================= */
+    ========================= */
     function setBadge(el, count) {
         if (!el) return;
         count = parseInt(count || 0, 10);
@@ -263,15 +274,38 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
         }
     }
 
-    /* =========================================================
-       4) Desktop Notification helper (lebih aman)
-       - auto request kalau default
-       - tag dipisah supaya tidak ketimpa
-    ========================================================= */
-    async function showDesktopNotif(title, body, tag) {
-        if (!("Notification" in window)) return;
+    /* =========================
+       4) Format list ID untuk popup
+       - pemesanan: PMSN000 + pad
+       - transaksi: TRX- + id (atau ganti sesuai format kamu)
+    ========================= */
+    function formatIds(ids, prefix, padLen) {
+        if (!ids || !Array.isArray(ids) || ids.length === 0) return "-";
 
-        // kalau belum pernah allow/deny, minta izin
+        var shown = ids.slice(0, 3).map(function(x) {
+            x = parseInt(x, 10);
+            if (isNaN(x)) return prefix + String(x);
+            if (padLen && padLen > 0) {
+                return prefix + String(x).padStart(padLen, "0");
+            }
+            return prefix + String(x);
+        });
+
+        var more = (ids.length > 3) ? (" +" + (ids.length - 3) + " lainnya") : "";
+        return shown.join(", ") + more;
+    }
+
+    /* =========================
+       5) Desktop Notification helper (lebih aman)
+       - minta izin jika default
+       - tag beda: pemesanan / transaksi (biar gak saling timpa)
+    ========================= */
+    async function showDesktopNotif(title, body, tag) {
+        if (!("Notification" in window)) return false;
+
+        // Kalau permission default, wajib minta izin via user gesture.
+        // Jadi kalau masih default, kita jangan spam: coba request,
+        // tapi bisa gagal kalau bukan karena klik user.
         if (Notification.permission === "default") {
             try {
                 await Notification.requestPermission();
@@ -279,8 +313,8 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
         }
 
         if (Notification.permission !== "granted") {
-            console.log("[notif] belum granted:", Notification.permission);
-            return;
+            console.log("[notif] permission bukan granted:", Notification.permission);
+            return false;
         }
 
         try {
@@ -288,12 +322,57 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
                 body: body,
                 tag: tag || ("sireru-" + Date.now())
             });
+            return true;
         } catch (e) {
-            console.log("[notif] gagal:", e);
+            console.log("[notif] gagal create notification:", e);
+            return false;
         }
     }
 
+    /* =========================
+       6) Cooldown popup (biar gak spam)
+       - Simpan last popup time per jenis
+    ========================= */
+    function shouldPopup(key, cooldownMs) {
+        cooldownMs = cooldownMs || 15000; // 15 detik
+        var now = Date.now();
+        var last = parseInt(localStorage.getItem(key) || "0", 10);
+        if (isNaN(last)) last = 0;
+        if (now - last < cooldownMs) return false;
+        localStorage.setItem(key, String(now));
+        return true;
+    }
+
+    /* =========================
+       7) (Opsional) Mark transaksi dibaca
+       - Kalau kamu punya route: home/trx_mark_all_read
+       - Kalau belum ada, boleh hapus fungsi ini
+    ========================= */
+    function markAllTrxRead() {
+        fetch("<?= site_url('home/trx_mark_all_read'); ?>", {
+                method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                credentials: "same-origin"
+            })
+            .then(function(r) {
+                return r.json();
+            })
+            .then(function(j) {
+                if (!j || !j.ok) return;
+                setBadge(document.getElementById("trxBadge"), 0);
+                setBadge(document.getElementById("trxBadgeMobile"), 0);
+                localStorage.setItem("lastFlagTransaksi", "0");
+            })
+            .catch(function() {});
+    }
+
+    /* =========================
+       8) Main
+    ========================= */
     document.addEventListener("DOMContentLoaded", function() {
+
         /* ===== PROFILE DROPDOWN ===== */
         var profileToggle = document.querySelector(".profile-toggle");
         var profileMenu = document.querySelector(".profile-menu");
@@ -324,10 +403,12 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
             });
         }
 
+        /* ===== ELEMENTS ===== */
         var soundEl = document.getElementById("notifSound");
 
         var badgePDesktop = document.getElementById("notifBadge");
         var badgePMobile = document.getElementById("notifBadgeMobile");
+
         var badgeTDesktop = document.getElementById("trxBadge");
         var badgeTMobile = document.getElementById("trxBadgeMobile");
 
@@ -372,27 +453,43 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
 
         var justEnabled = localStorage.getItem("notifJustEnabled") === "1";
 
-        // notif saat load jika naik
+        /* ===== POPUP ON LOAD (jika count naik) ===== */
+        // Note: kalau permission masih default, popup bisa tidak muncul sampai user klik allow.
         if (curP > lastP) {
-            showDesktopNotif("Notifikasi pemesanan", "Ada update baru di pemesanan kamu.", "pemesanan");
-            playSound();
+            showDesktopNotif(
+                "Notifikasi pemesanan",
+                "Ada update pemesanan (" + curP + ").",
+                "pemesanan"
+            ).then(function(ok) {
+                if (ok) playSound();
+            });
         }
+
         if (curT > lastT) {
-            showDesktopNotif("Notifikasi transaksi", "Ada update transaksi / menunggu verifikasi.",
-            "transaksi");
-            playSound();
+            showDesktopNotif(
+                "Notifikasi transaksi",
+                "Ada update transaksi (" + curT + ").",
+                "transaksi"
+            ).then(function(ok) {
+                if (ok) playSound();
+            });
         }
 
         if (justEnabled) {
-            if (curP > 0) showDesktopNotif("Notifikasi", "Kamu punya update pemesanan yang belum dibaca.",
-                "pemesanan");
-            if (curT > 0) showDesktopNotif("Notifikasi", "Kamu punya update transaksi yang belum dibaca.",
-                "transaksi");
+            // setelah user allow, kasih popup jika ada notifikasi existing
+            if (curP > 0) showDesktopNotif("Notifikasi pemesanan", "Kamu punya update pemesanan (" + curP +
+                ").", "pemesanan");
+            if (curT > 0) showDesktopNotif("Notifikasi transaksi", "Kamu punya update transaksi (" + curT +
+                ").", "transaksi");
             localStorage.removeItem("notifJustEnabled");
         }
 
         localStorage.setItem("lastFlagPemesanan", String(curP));
         localStorage.setItem("lastFlagTransaksi", String(curT));
+
+        /* ===== POLL CONFIG ===== */
+        var pollIntervalMs = 5000;
+        var cooldownMs = 15000; // supaya popup tidak spam
 
         /* ===== REALTIME POLL ===== */
         async function pollNotif() {
@@ -410,8 +507,13 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
 
                 var newP = parseInt(data.flag || 0, 10);
                 if (isNaN(newP)) newP = 0;
+
                 var newT = parseInt(data.trx_flag || 0, 10);
                 if (isNaN(newT)) newT = 0;
+
+                // list id dari backend
+                var pemIds = data.pemesanan_ids || [];
+                var trxIds = data.trx_ids || [];
 
                 // update badge
                 setBadge(badgePDesktop, newP);
@@ -419,37 +521,52 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
                 setBadge(badgeTDesktop, newT);
                 setBadge(badgeTMobile, newT);
 
-                // debug
-                console.log("[poll] newP=", newP, "curP=", curP, "newT=", newT, "curT=", curT, "perm=", (
-                    "Notification" in window) ? Notification.permission : "no-api");
+                // isi popup masing-masing (dengan ID)
+                var pemText =
+                    "Kamu punya update pemesanan (" + newP + ").\n" +
+                    "ID: " + formatIds(pemIds, "PMSN000", 3); // padLen 3 -> 001/123 (ubah kalau perlu)
 
-                // popup when increased
-                if (newP > curP) {
-                    await showDesktopNotif("Notifikasi pemesanan", "Ada update baru di pemesanan kamu.",
-                        "pemesanan");
-                    playSound();
-                }
-                if (newT > curT) {
-                    await showDesktopNotif("Notifikasi transaksi",
-                        "Ada update transaksi / menunggu verifikasi.", "transaksi");
-                    playSound();
+                var trxText =
+                    "Kamu punya update transaksi (" + newT + ").\n" +
+                    "ID: " + formatIds(trxIds, "TRX-", 0);
+
+                // POPUP PEMESANAN (sendiri)
+                // Trigger kalau naik ATAU kamu mau tiap polling selama masih >0 (pilih salah satu):
+                // A) naik saja: if (newP > curP)
+                // B) selama masih ada unread: if (newP > 0)
+                // Aku set: naik saja (lebih aman tidak spam)
+                if (newP > curP && shouldPopup("popup_pemesanan", cooldownMs)) {
+                    var okP = await showDesktopNotif("Notifikasi pemesanan", pemText, "pemesanan");
+                    if (okP) playSound();
                 }
 
+                // POPUP TRANSAKSI (sendiri)
+                if (newT > curT && shouldPopup("popup_transaksi", cooldownMs)) {
+                    var okT = await showDesktopNotif("Notifikasi transaksi", trxText, "transaksi");
+                    if (okT) playSound();
+                }
+
+                // geser current
                 curP = newP;
                 curT = newT;
 
                 localStorage.setItem("lastFlagPemesanan", String(curP));
                 localStorage.setItem("lastFlagTransaksi", String(curT));
+
+                // DEBUG
+                // console.log("[poll]", { newP, newT, pemIds, trxIds, perm: Notification.permission });
+
             } catch (e) {
                 // console.log(e);
             }
         }
 
         pollNotif();
-        setInterval(pollNotif, 5000);
+        setInterval(pollNotif, pollIntervalMs);
 
         updateNotifUI();
     });
     </script>
+
 
 </body>
