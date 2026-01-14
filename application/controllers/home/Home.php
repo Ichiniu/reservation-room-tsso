@@ -269,6 +269,9 @@ class Home extends CI_Controller
 
 		// update flag (pastikan numeric)
 		$this->gedung_model->update_user_flag((int)$temp_id);
+		$temp_id = (int) preg_replace('/\D+/', '', (string)$id_pemesanan); // ganti substr biar aman
+
+		$data['proposal_details'] = $this->gedung_model->get_proposal_by_id($temp_id);
 
 		// data pemesanan (dari view V_PEMESANAN)
 		$data['result'] = $this->gedung_model->get_detail_pesanan($id_pemesanan);
@@ -303,6 +306,10 @@ class Home extends CI_Controller
 			->row();
 
 		$data['catatan_admin_reject'] = $cat ? (string)$cat->CATATAN_ADMIN : '';
+		// kalau status REJECTED, paksa REMARKS pakai catatan admin dari tabel pembayaran
+		if (!empty($data['result']) && $data['catatan_admin_reject'] !== '') {
+			$data['result']->REMARKS = $data['catatan_admin_reject'];
+		}
 
 		$this->load->view('home/detail_pemesanan', $data);
 	}

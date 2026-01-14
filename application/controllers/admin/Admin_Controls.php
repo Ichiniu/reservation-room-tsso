@@ -485,11 +485,35 @@ class Admin_Controls extends CI_Controller
 			return;
 		}
 
-		$this->load->model('gedung/gedung_model');
 
+		$this->load->model('gedung/gedung_model');
+		$this->load->model('user/user_model');
+
+		// Badge sidebar (pending transaksi/pembayaran)
+		$data['result']          = $this->gedung_model->get_pending_transaction();
+		$data['get_transaction'] = $this->gedung_model->get_unread_transaction();
+
+		// ===== TOTAL USERS (list user) =====
+		$data['list_user'] = $this->user_model->get_all_users(); // array of users
+
+		// ===== TOTAL GEDUNG (list ruangan) =====
+		$data['list_gedung'] = $this->gedung_model->get_gedung(); // array of gedung
+
+		// ===== PENDING BOOKINGS (berdasarkan inbox) =====
+		// Pakai fungsi yang kamu pakai di halaman "transaksi/inbox"
+		$data['inbox'] = $this->gedung_model->get_all_pending_transaction(); // array pending
+
+		// ===== TOTAL REVENUE (berdasarkan transaksi) =====
+		// Ambil semua pembayaran lalu jumlahkan field numeriknya (aman tanpa asumsi nama kolom)
+		$data['transaksi'] = $this->gedung_model->get_all_pembayaran(); // array pembayaran
+
+		// ===== RECENT BOOKING (invoice terbaru) =====
+		// Pakai semua pemesanan lalu sort by invoice numeric DESC (terbaru di atas)
+		$all = $this->gedung_model->get_all_pemesanan(); // dipakai juga di pemesanan2()
 		$data['front_data']      = $this->gedung_model->fixed_date();
 		$data['result']          = $this->gedung_model->get_pending_transaction();
 		$data['get_transaction'] = $this->gedung_model->get_unread_transaction();
+
 
 		// Pastikan view yang kamu load sesuai nama file (Home.php vs home.php)
 		$this->load->view('admin/home', $data);

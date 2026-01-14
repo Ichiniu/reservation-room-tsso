@@ -13,18 +13,18 @@ $this->load->helper('text');
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-    .table-scroll {
-        max-height: 420px;
-        overflow-y: auto;
-        overflow-x: auto;
-    }
+        .table-scroll {
+            max-height: 420px;
+            overflow-y: auto;
+            overflow-x: auto;
+        }
 
-    .table-scroll thead th {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        background: #f8fafc;
-    }
+        .table-scroll thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: #f8fafc;
+        }
     </style>
 </head>
 
@@ -50,15 +50,24 @@ $this->load->helper('text');
                     <select id="filterBulan" class="w-full rounded-xl border px-4 py-3">
                         <option value="">Semua Bulan</option>
                         <?php
-                $bulan = [
-                    '01'=>'Januari','02'=>'Februari','03'=>'Maret','04'=>'April',
-                    '05'=>'Mei','06'=>'Juni','07'=>'Juli','08'=>'Agustus',
-                    '09'=>'September','10'=>'Oktober','11'=>'November','12'=>'Desember'
-                ];
-                foreach($bulan as $k=>$v){
-                    echo "<option value='$k'>$v</option>";
-                }
-                ?>
+                        $bulan = [
+                            '01' => 'Januari',
+                            '02' => 'Februari',
+                            '03' => 'Maret',
+                            '04' => 'April',
+                            '05' => 'Mei',
+                            '06' => 'Juni',
+                            '07' => 'Juli',
+                            '08' => 'Agustus',
+                            '09' => 'September',
+                            '10' => 'Oktober',
+                            '11' => 'November',
+                            '12' => 'Desember'
+                        ];
+                        foreach ($bulan as $k => $v) {
+                            echo "<option value='$k'>$v</option>";
+                        }
+                        ?>
                     </select>
                 </div>
 
@@ -66,8 +75,8 @@ $this->load->helper('text');
                     <label class="text-xs font-semibold text-slate-700">Tahun</label>
                     <select id="filterTahun" class="w-full rounded-xl border px-4 py-3">
                         <option value="">Semua Tahun</option>
-                        <?php for($y=date('Y')-3;$y<=date('Y')+1;$y++): ?>
-                        <option value="<?= $y ?>"><?= $y ?></option>
+                        <?php for ($y = date('Y') - 3; $y <= date('Y') + 1; $y++): ?>
+                            <option value="<?= $y ?>"><?= $y ?></option>
                         <?php endfor; ?>
                     </select>
                 </div>
@@ -95,22 +104,47 @@ $this->load->helper('text');
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if(!empty($jadwal)): ?>
-                        <?php $no=1; foreach($jadwal as $row): ?>
-                        <tr data-date="<?= date('Y-m-d',strtotime($row['TANGGAL_FINAL_PEMESANAN'])) ?>">
-                            <td class="px-4 py-3"><?= $no++ ?></td>
-                            <td class="px-4 py-3"><?= date('d M Y',strtotime($row['TANGGAL_FINAL_PEMESANAN'])) ?></td>
-                            <td class="px-4 py-3"><?= $row['JAM_MULAI'].' - '.$row['JAM_SELESAI'] ?></td>
-                            <td class="px-4 py-3 font-semibold"><?= $row['NAMA_GEDUNG'] ?></td>
-                            <td class="px-4 py-3"><?= $row['DESKRIPSI_ACARA'] ?></td>
-                        </tr>
-                        <?php endforeach; ?>
-                        <?php else: ?>
-                        <tr>
-                            <td colspan="5" class="text-center py-6">Tidak ada data</td>
-                        </tr>
+                        <?php
+                        $today = date('Y-m-d');
+                        $no = 1;
+
+                        if (!empty($jadwal)):
+
+                            // filter: hanya tanggal hari ini ke depan
+                            $jadwal_filtered = array_values(array_filter($jadwal, function ($row) use ($today) {
+                                $tgl = date('Y-m-d', strtotime($row['TANGGAL_FINAL_PEMESANAN']));
+                                return $tgl >= $today;
+                            }));
+
+                            if (!empty($jadwal_filtered)):
+                                foreach ($jadwal_filtered as $row):
+                                    $tglFinal = date('Y-m-d', strtotime($row['TANGGAL_FINAL_PEMESANAN']));
+                        ?>
+                                    <tr data-date="<?= $tglFinal ?>">
+                                        <td class="px-4 py-3"><?= $no++ ?></td>
+                                        <td class="px-4 py-3"><?= date('d M Y', strtotime($row['TANGGAL_FINAL_PEMESANAN'])) ?></td>
+                                        <td class="px-4 py-3"><?= $row['JAM_MULAI'] . ' - ' . $row['JAM_SELESAI'] ?></td>
+                                        <td class="px-4 py-3 font-semibold"><?= $row['NAMA_GEDUNG'] ?></td>
+                                        <td class="px-4 py-3"><?= $row['DESKRIPSI_ACARA'] ?></td>
+                                    </tr>
+                                <?php
+                                endforeach;
+                            else:
+                                ?>
+                                <tr>
+                                    <td colspan="5" class="text-center py-6">Tidak ada jadwal dari hari ini ke depan</td>
+                                </tr>
+                            <?php
+                            endif;
+
+                        else:
+                            ?>
+                            <tr>
+                                <td colspan="5" class="text-center py-6">Tidak ada data</td>
+                            </tr>
                         <?php endif; ?>
                     </tbody>
+
                 </table>
             </div>
 
@@ -135,89 +169,89 @@ $this->load->helper('text');
     </div>
 
     <script>
-    const rows = Array.from(document.querySelectorAll('tbody tr[data-date]'));
-    const bulanSelect = document.getElementById('filterBulan');
-    const tahunSelect = document.getElementById('filterTahun');
-    const rowsSelect = document.getElementById('rowsPerPage');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const pageInfo = document.getElementById('pageInfo');
-    const totalInfo = document.getElementById('totalInfo');
+        const rows = Array.from(document.querySelectorAll('tbody tr[data-date]'));
+        const bulanSelect = document.getElementById('filterBulan');
+        const tahunSelect = document.getElementById('filterTahun');
+        const rowsSelect = document.getElementById('rowsPerPage');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const pageInfo = document.getElementById('pageInfo');
+        const totalInfo = document.getElementById('totalInfo');
 
-    let rowsPerPage = parseInt(rowsSelect.value);
-    let currentPage = 1;
-    let filteredRows = [...rows];
+        let rowsPerPage = parseInt(rowsSelect.value);
+        let currentPage = 1;
+        let filteredRows = [...rows];
 
-    function render() {
-        rows.forEach(r => r.style.display = 'none');
+        function render() {
+            rows.forEach(r => r.style.display = 'none');
 
-        const totalPages = Math.ceil(filteredRows.length / rowsPerPage) || 1;
-        if (currentPage > totalPages) currentPage = totalPages;
+            const totalPages = Math.ceil(filteredRows.length / rowsPerPage) || 1;
+            if (currentPage > totalPages) currentPage = totalPages;
 
-        const start = (currentPage - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
 
-        filteredRows.slice(start, end).forEach(r => r.style.display = '');
+            filteredRows.slice(start, end).forEach(r => r.style.display = '');
 
-        pageInfo.textContent = `Halaman ${currentPage} dari ${totalPages}`;
-        totalInfo.textContent = `Menampilkan ${filteredRows.length} dari ${rows.length} data`;
+            pageInfo.textContent = `Halaman ${currentPage} dari ${totalPages}`;
+            totalInfo.textContent = `Menampilkan ${filteredRows.length} dari ${rows.length} data`;
 
-        prevBtn.disabled = currentPage === 1;
-        nextBtn.disabled = currentPage === totalPages;
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
 
-        console.group("LOG JADWAL");
-        console.log("Total data:", rows.length);
-        console.log("Setelah filter:", filteredRows.length);
-        console.log("Rows/page:", rowsPerPage);
-        console.log("Total halaman:", totalPages);
-        console.groupEnd();
-    }
+            console.group("LOG JADWAL");
+            console.log("Total data:", rows.length);
+            console.log("Setelah filter:", filteredRows.length);
+            console.log("Rows/page:", rowsPerPage);
+            console.log("Total halaman:", totalPages);
+            console.groupEnd();
+        }
 
-    function applyFilter() {
-        const bulan = bulanSelect.value;
-        const tahun = tahunSelect.value;
+        function applyFilter() {
+            const bulan = bulanSelect.value;
+            const tahun = tahunSelect.value;
 
-        filteredRows = rows.filter(r => {
-            const d = r.dataset.date;
-            if (bulan && !d.includes('-' + bulan)) return false;
-            if (tahun && !d.startsWith(tahun)) return false;
-            return true;
-        });
+            filteredRows = rows.filter(r => {
+                const d = r.dataset.date;
+                if (bulan && !d.includes('-' + bulan)) return false;
+                if (tahun && !d.startsWith(tahun)) return false;
+                return true;
+            });
 
-        currentPage = 1;
-        render();
-    }
-
-    function resetFilter() {
-        bulanSelect.value = '';
-        tahunSelect.value = '';
-        filteredRows = [...rows];
-        currentPage = 1;
-        render();
-    }
-
-    prevBtn.onclick = () => {
-        if (currentPage > 1) {
-            currentPage--;
+            currentPage = 1;
             render();
         }
-    };
-    nextBtn.onclick = () => {
-        currentPage++;
+
+        function resetFilter() {
+            bulanSelect.value = '';
+            tahunSelect.value = '';
+            filteredRows = [...rows];
+            currentPage = 1;
+            render();
+        }
+
+        prevBtn.onclick = () => {
+            if (currentPage > 1) {
+                currentPage--;
+                render();
+            }
+        };
+        nextBtn.onclick = () => {
+            currentPage++;
+            render();
+        };
+
+        bulanSelect.onchange = applyFilter;
+        tahunSelect.onchange = applyFilter;
+
+        rowsSelect.onchange = () => {
+            rowsPerPage = parseInt(rowsSelect.value);
+            currentPage = 1;
+            render();
+        };
+
+        // INIT
         render();
-    };
-
-    bulanSelect.onchange = applyFilter;
-    tahunSelect.onchange = applyFilter;
-
-    rowsSelect.onchange = () => {
-        rowsPerPage = parseInt(rowsSelect.value);
-        currentPage = 1;
-        render();
-    };
-
-    // INIT
-    render();
     </script>
 
 </body>

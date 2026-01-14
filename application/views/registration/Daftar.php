@@ -60,32 +60,40 @@
             <select id="perusahaan" name="perusahaan" required class="form-input">
               <option value="" class="text-black">-- Pilih Perusahaan --</option>
               <option value="INTERNAL" class="text-black">PT Tiga Serangkai Pustaka Mandiri</option>
-              <option value="EKSTERNAL" class="text-black">Perusahaan Eksternal</option>
+              <option value="INTERNAL" class="text-black">PT Assalaam Niaga Utama</option>
+              <option value="INTERNAL" class="text-black">PT Wangsa Jatra Lestari</option>
+              <option value="INTERNAL" class="text-black">PT K33 Distribusi</option>
+              <option value="INTERNAL" class="text-black">Alfirdaus</option>
+              <option value="INTERNAL" class="text-black">Puspa Holistic Integrative Care</option>
+              <option value="INTERNAL" class="text-black">Cerita Rasa Catering </option>
+              <option value="INTERNAL" class="text-black">Montecarlo </option>
+              <option value="INTERNAL" class="text-black">Tiga Serangkai University </option>
+
+              <option value="EKSTERNAL" class="text-black">Perusahaan/Instansi/Kalangan Umum (Non TS Group)</option>
             </select>
             <p class="input-msg hidden"></p>
           </div>
 
           <!-- Nama Perusahaan Eksternal -->
           <div id="wrapEksternal" class="sm:col-span-2 hidden">
-            <label class="text-xs font-semibold text-white/80">NAMA PERUSAHAAN</label>
+            <label class="text-xs font-semibold text-white/80">NAMA PERUSAHAAN / INSTANSI / KALANGAN UMUM</label>
             <input type="text" name="nama_perusahaan" id="nama_perusahaan" class="form-input"
-              placeholder="Nama perusahaan eksternal">
+              placeholder="Nama Non TS Group">
             <p class="input-msg hidden"></p>
           </div>
 
           <!-- Departemen Internal -->
           <div id="wrapDepartemen" class="sm:col-span-2 hidden">
             <label class="text-xs font-semibold text-white/80">DEPARTEMEN</label>
-            <select name="departemen" id="departemen" class="form-input">
-              <option value="" class="text-black">-- Pilih Departemen --</option>
-              <option value="IT" class="text-black">IT</option>
-              <option value="HRD" class="text-black">HRD</option>
-              <option value="Keuangan" class="text-black">Keuangan</option>
-              <option value="Produksi" class="text-black">Produksi</option>
-              <option value="Marketing" class="text-black">Marketing</option>
-            </select>
+            <input
+              type="text"
+              name="departemen"
+              id="departemen"
+              class="form-input"
+              placeholder="Masukkan Departemen" />
             <p class="input-msg hidden"></p>
           </div>
+
 
           <!-- Password -->
           <div>
