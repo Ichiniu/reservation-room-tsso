@@ -184,46 +184,41 @@ if (isset($flag)) {
     </audio>
 
     <script>
-    // =========================================================
-    // 1) Fungsi simpel: user klik -> Notification.requestPermission()
-    // =========================================================
     async function aktifkanNotif() {
         if (!("Notification" in window)) {
             alert("Browser kamu tidak mendukung notifikasi.");
             return;
         }
 
-        // kalau sebelumnya diblokir user, harus buka setting browser (ikon i)
         if (Notification.permission === "denied") {
             alert(
                 "Notifikasi diblokir.\n\n" +
                 "Klik ikon (i) di sebelah URL → Site settings → Notifications → Allow,\n" +
                 "lalu refresh halaman."
             );
-            updateNotifUI(); // update label
+            updateNotifUI();
             return;
         }
 
-        const permission = await Notification.requestPermission(); // ✅ sesuai permintaan kamu
+        const permission = await Notification.requestPermission();
 
         if (permission === "granted") {
             new Notification("Notifikasi aktif ✅", {
                 body: "Sekarang kamu akan dapat pemberitahuan saat ada update."
             });
+
+            // OPTIONAL: biar setelah diaktifkan, notif pemesanan yang sudah ada tetap bisa muncul
+            localStorage.setItem('notifJustEnabled', '1');
         } else {
             alert("Notifikasi belum diizinkan. Silakan pilih 'Allow'.");
         }
 
-        updateNotifUI(); // update label setelah klik
+        updateNotifUI();
     }
 
-    // =========================================================
-    // 2) Helper UI status notifikasi (dot + teks)
-    // =========================================================
     function updateNotifUI() {
         var dot = document.getElementById('notifDot');
         var txt = document.getElementById('notifStatusText');
-
         if (!dot || !txt) return;
 
         if (!("Notification" in window)) {
@@ -245,8 +240,7 @@ if (isset($flag)) {
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-
-        // ================== PROFILE DROPDOWN ==================
+        // PROFILE DROPDOWN
         var profileToggle = document.querySelector('.profile-toggle');
         var profileMenu = document.querySelector('.profile-menu');
 
@@ -254,15 +248,14 @@ if (isset($flag)) {
             profileToggle.addEventListener('click', function(e) {
                 e.stopPropagation();
                 profileMenu.classList.toggle('hidden');
-                updateNotifUI(); // update status saat dropdown dibuka
+                updateNotifUI();
             });
-
             document.addEventListener('click', function() {
                 profileMenu.classList.add('hidden');
             });
         }
 
-        // ================== MOBILE MENU ==================
+        // MOBILE MENU
         var mobileBtn = document.getElementById('mobileMenuBtn');
         var mobileMenu = document.getElementById('mobileMenu');
 
@@ -271,17 +264,15 @@ if (isset($flag)) {
                 e.stopPropagation();
                 mobileMenu.classList.toggle('hidden');
             });
-
             document.addEventListener('click', function() {
                 mobileMenu.classList.add('hidden');
             });
-
             mobileMenu.addEventListener('click', function(e) {
                 e.stopPropagation();
             });
         }
 
-        // ================== NOTIF TANPA API (saat load/refresh) ==================
+        // NOTIF LOGIC
         var badgeDesktop = document.getElementById('notifBadge');
         var soundEl = document.getElementById('notifSound');
 
@@ -291,14 +282,10 @@ if (isset($flag)) {
             if (isNaN(currentCount)) currentCount = 0;
         }
 
-        var lastCountStr = localStorage.getItem('lastFlagPemesanan');
-        var lastCount = 0;
-        if (lastCountStr !== null) {
-            lastCount = parseInt(lastCountStr, 10);
-            if (isNaN(lastCount)) lastCount = 0;
-        }
+        var lastCount = parseInt(localStorage.getItem('lastFlagPemesanan') || '0', 10);
+        if (isNaN(lastCount)) lastCount = 0;
 
-        // unlock audio (browser butuh interaksi user)
+        // unlock audio
         var audioUnlocked = false;
 
         function unlockAudioOnce() {
@@ -326,26 +313,35 @@ if (isset($flag)) {
             if (!("Notification" in window)) return;
             if (Notification.permission !== "granted") return;
             new Notification(title, {
-                body: body,
+                body,
                 tag: "sireru-notif"
             });
         }
 
-        // Kalau count naik dibanding kunjungan sebelumnya -> bunyi + desktop notif
+        // Trigger notif:
+        // A) jika count naik dibanding sebelumnya
+        // B) atau jika user baru saja mengaktifkan notif (optional)
+        var justEnabled = localStorage.getItem('notifJustEnabled') === '1';
+
         if (currentCount > lastCount) {
             showDesktopNotif("Notifikasi baru", "Ada update baru di pemesanan.");
             playSound();
+        } else if (justEnabled && currentCount > 0) {
+            showDesktopNotif("Ada notifikasi", "Kamu punya update pemesanan yang belum dibaca.");
+            // playSound(); // kalau mau
+            localStorage.removeItem('notifJustEnabled');
         }
 
-        // simpan untuk pembanding load berikutnya
         localStorage.setItem('lastFlagPemesanan', String(currentCount));
-
-        // set status notif saat page load
         updateNotifUI();
+
+        // DEBUG (AMAN karena sudah dalam scope)
+        console.log("[notif] currentCount=", currentCount, "lastCount=", lastCount);
+        console.log("[notif] permission=", ("Notification" in window) ? Notification.permission : "no-api");
+        console.log("[notif] sound src=", soundEl ? soundEl.currentSrc : null);
+        console.log("[notif] sound readyState=", soundEl ? soundEl.readyState : null);
     });
-    console.log("[notif] currentCount=", currentCount, "lastCount=", lastCount);
-    console.log("[notif] sound src=", soundEl ? soundEl.currentSrc : null);
-    console.log("[notif] sound readyState=", soundEl ? soundEl.readyState : null);
     </script>
+
 
 </body>
