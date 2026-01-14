@@ -18,6 +18,64 @@ class Gedung_Model extends CI_Model
 		return $query->num_rows();
 	}
 
+// 	public function get_transaksi_flag($username)
+// {
+//     $sql = "
+//         SELECT COUNT(*) AS jml
+//         FROM pembayaran pb
+//         JOIN pemesanan p 
+//           ON p.ID_PEMESANAN = pb.ID_PEMESANAN_RAW
+//         WHERE LOWER(p.USERNAME) = LOWER(?)
+//            AND pb.STATUS_VERIF IN ('PENDING','CONFIRMED','REJECTED')
+//     ";
+
+//     $row = $this->db->query($sql, [$username])->row();
+//     return $row ? (int)$row->jml : 0;
+// }
+public function get_transaksi_flag($username)
+{
+    $sql = "
+        SELECT COUNT(*) AS jml
+        FROM pembayaran pb
+        JOIN pemesanan p ON p.ID_PEMESANAN = pb.ID_PEMESANAN_RAW
+        WHERE LOWER(p.USERNAME) = LOWER(?)
+          AND pb.FLAG_TRX = 1
+          AND pb.STATUS_VERIF IN ('PENDING','CONFIRMED','REJECTED')
+    ";
+    $row = $this->db->query($sql, [$username])->row();
+    return $row ? (int)$row->jml : 0;
+}
+
+public function mark_trx_read($id_pembayaran, $username)
+{
+    $id_pembayaran = (int)$id_pembayaran;
+
+    $sql = "
+        UPDATE pembayaran pb
+        JOIN pemesanan p ON p.ID_PEMESANAN = pb.ID_PEMESANAN_RAW
+        SET pb.FLAG_TRX = 2
+        WHERE pb.ID_PEMBAYARAN = ?
+          AND LOWER(p.USERNAME) = LOWER(?)
+    ";
+    return $this->db->query($sql, [$id_pembayaran, $username]);
+}
+
+
+public function clear_transaksi_flag($username)
+{
+    $sql = "
+        UPDATE pembayaran pb
+        JOIN pemesanan p ON p.ID_PEMESANAN = pb.ID_PEMESANAN_RAW
+        SET pb.FLAG_TRX = 2
+        WHERE LOWER(p.USERNAME) = LOWER(?)
+          AND pb.FLAG_TRX = 1
+          AND pb.STATUS_VERIF IN ('PENDING','CONFIRMED','REJECTED')
+    ";
+    return $this->db->query($sql, [$username]);
+}
+
+
+
 
 
 	public function laporan_pembayaran_periodic($start_date, $end_date)

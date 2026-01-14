@@ -33,7 +33,9 @@ class Home extends CI_Controller
 		$this->load->model('gedung/gedung_model');
 
 		// --- 1. Ambil data dasar seperti biasa ---
-		$data['flag'] = $this->gedung_model->get_pemesanan_flag($username);
+		$data['flag']     = $this->gedung_model->get_pemesanan_flag($username);
+$data['trx_flag'] = $this->gedung_model->get_transaksi_flag($username);
+
 		$data['res']  = $this->gedung_model->get_all();
 
 		// --- 2. Ambil filter tanggal & jam dari QUERY STRING (GET) ---
@@ -99,6 +101,7 @@ class Home extends CI_Controller
 		// semua jadwal yang CONFIRMED
 		$data['jadwal'] = $this->gedung_model->jadwal_gedung();
 		$data['flag']   = $this->gedung_model->get_pemesanan_flag($username);
+		$data['trx_flag'] = $this->gedung_model->get_transaksi_flag($username);
 
 		$this->load->view('gedung/jadwal_gedung', $data);
 	}
@@ -113,7 +116,9 @@ class Home extends CI_Controller
 		$data['start_date'] = $start_date;
 		$data['end_date'] = $end_date;
 		$data['jadwal'] = $this->gedung_model->jadwal_gedung($start_date, $end_date);
-		$data['flag'] = $this->gedung_model->get_pemesanan_flag($username);
+		$data['flag']     = $this->gedung_model->get_pemesanan_flag($username);
+$data['trx_flag'] = $this->gedung_model->get_transaksi_flag($username);
+
 		$this->load->view('gedung/jadwal_gedung_per_periode', $data);
 	}
 
@@ -122,7 +127,9 @@ class Home extends CI_Controller
 		$username = $this->session->userdata('username');
 		$this->load->model('gedung/gedung_model');
 		$data['res'] = $this->gedung_model->get_menu_catering();
-		$data['flag'] = $this->gedung_model->get_pemesanan_flag($username);
+		$data['flag']     = $this->gedung_model->get_pemesanan_flag($username);
+$data['trx_flag'] = $this->gedung_model->get_transaksi_flag($username);
+
 		$this->load->view('gedung/View_Catering', $data);
 	}
 
@@ -194,6 +201,8 @@ class Home extends CI_Controller
 
 		$data['email'] = $this->gedung_model->get_email_address($username);
 		$data['flag']  = $this->gedung_model->get_pemesanan_flag($username);
+		$data['trx_flag'] = $this->gedung_model->get_transaksi_flag($username);
+
 		// ✅ TAMBAHAN: cek INTERNAL / EKSTERNAL + aturan pilihan jam per ruangan
 		$u = $this->db->select('perusahaan')
 			->from('user')
@@ -238,13 +247,15 @@ class Home extends CI_Controller
 	{
 		$username = $this->session->userdata('username');
 		$this->load->model('gedung/gedung_model');
-		$this->gedung_model->clear_pemesanan_flag($username);
+		// $this->gedung_model->clear_pemesanan_flag($username);
 
 		// wajib di sini
 		$this->gedung_model->clear_pemesanan_flag($username);
 
 		$data['res'] = $this->gedung_model->get_pemesanan($username);
-		$data['flag'] = $this->gedung_model->get_pemesanan_flag($username);
+		$data['flag']     = $this->gedung_model->get_pemesanan_flag($username);
+$data['trx_flag'] = $this->gedung_model->get_transaksi_flag($username);
+
 		$data['no_data'] = "Data Kosong";
 		$data['rows'] = $this->gedung_model->count_pemesanan($username);
 
@@ -255,8 +266,12 @@ class Home extends CI_Controller
 	{
 		$this->load->model('gedung/gedung_model');
 		$username = $this->session->userdata('username');
+		  $this->gedung_model->clear_transaksi_flag($username);
+		//  $this->gedung_model->clear_transaksi_flag($username);
 		$data['res'] = $this->gedung_model->user_detail_pembayaran($username);
-		$data['flag'] = $this->gedung_model->get_pemesanan_flag($username);
+		$data['flag']     = $this->gedung_model->get_pemesanan_flag($username);
+$data['trx_flag'] = $this->gedung_model->get_transaksi_flag($username);
+
 		$this->load->view('home/pembayaran', $data);
 	}
 
@@ -276,6 +291,8 @@ class Home extends CI_Controller
 		// data pemesanan (dari view V_PEMESANAN)
 		$data['result'] = $this->gedung_model->get_detail_pesanan($id_pemesanan);
 		$data['flag']   = $this->gedung_model->get_pemesanan_flag($username);
+		$data['trx_flag'] = $this->gedung_model->get_transaksi_flag($username);
+
 
 		// ambil data user untuk ditampilkan
 		$u = $this->db->select('USERNAME, EMAIL, NAMA_LENGKAP, perusahaan')
@@ -320,7 +337,11 @@ class Home extends CI_Controller
 		$this->load->helper(['form']);
 		$this->load->model('gedung/gedung_model');
 		$this->load->model('pembayaran/pembayaran_model'); // untuk record admin (pembayaran)
+		// $this->gedung_model->mark_flag_unread('PMSN000' . $id);
+		$id = $id_pemesanan ?: (int)$this->input->post('id_pemesanan');
 		$this->gedung_model->mark_flag_unread('PMSN000' . $id);
+
+
 
 
 		$username = $this->session->userdata('username');
@@ -808,7 +829,9 @@ class Home extends CI_Controller
 		$username = $this->session->userdata('username');
 		$this->load->model('gedung/gedung_model');
 		$data['res'] = $this->gedung_model->sort_by_name();
-		$data['flag'] = $this->gedung_model->get_pemesanan_flag($username);
+		$data['flag']     = $this->gedung_model->get_pemesanan_flag($username);
+$data['trx_flag'] = $this->gedung_model->get_transaksi_flag($username);
+
 		$this->load->view('/home/home_screen', $data);
 	}
 
@@ -817,7 +840,9 @@ class Home extends CI_Controller
 		$this->load->model('gedung/gedung_model');
 		$data['res'] = $this->gedung_model->sort_by_capacity();
 		$username = $this->session->userdata('username');
-		$data['flag'] = $this->gedung_model->get_pemesanan_flag($username);
+		$data['flag']     = $this->gedung_model->get_pemesanan_flag($username);
+$data['trx_flag'] = $this->gedung_model->get_transaksi_flag($username);
+
 		$this->load->view('/home/home_screen', $data);
 	}
 
@@ -846,7 +871,9 @@ class Home extends CI_Controller
 		$this->load->model('gedung/gedung_model');
 		$data['result'] = $this->gedung_model->search_gedung($nama_gedung);
 		$username = $this->session->userdata('username');
-		$data['flag'] = $this->gedung_model->get_pemesanan_flag($username);
+		$data['flag']     = $this->gedung_model->get_pemesanan_flag($username);
+$data['trx_flag'] = $this->gedung_model->get_transaksi_flag($username);
+
 		$this->load->view('home/search_gedung', $data);
 	}
 
@@ -868,7 +895,9 @@ class Home extends CI_Controller
 		$username = $this->session->userdata('username');
 
 		$this->load->model('gedung/gedung_model');
-		$data['flag'] = $this->gedung_model->get_pemesanan_flag($username);
+		$data['flag']     = $this->gedung_model->get_pemesanan_flag($username);
+$data['trx_flag'] = $this->gedung_model->get_transaksi_flag($username);
+
 
 		$this->load->view('home/location', $data);
 	}
@@ -1061,34 +1090,66 @@ class Home extends CI_Controller
 			->set_content_type('application/json')
 			->set_output(json_encode($rows));
 	}
+	// public function notif_poll()
+	// {
+	// 	$username = $this->session->userdata('username');
+
+	// 	// keamanan: kalau belum login jangan kasih data
+	// 	if (!$username) {
+	// 		$this->output
+	// 			->set_status_header(401)
+	// 			->set_content_type('application/json')
+	// 			->set_output(json_encode([
+	// 				'ok' => false,
+	// 				'flag' => 0,
+	// 				'message' => 'unauthorized'
+	// 			]));
+	// 		return;
+	// 	}
+
+	// 	$this->load->model('gedung/gedung_model');
+
+	// 	$flag = (int) $this->gedung_model->get_pemesanan_flag($username);
+
+	// 	$this->output
+	// 		->set_content_type('application/json')
+	// 		->set_output(json_encode([
+	// 			'ok' => true,
+	// 			'flag' => $flag
+	// 		]));
+	// }
+
 	public function notif_poll()
-	{
-		$username = $this->session->userdata('username');
+{
+    $username = $this->session->userdata('username');
 
-		// keamanan: kalau belum login jangan kasih data
-		if (!$username) {
-			$this->output
-				->set_status_header(401)
-				->set_content_type('application/json')
-				->set_output(json_encode([
-					'ok' => false,
-					'flag' => 0,
-					'message' => 'unauthorized'
-				]));
-			return;
-		}
+    if (!$username) {
+        $this->output
+            ->set_status_header(401)
+            ->set_content_type('application/json')
+            ->set_output(json_encode([
+                'ok' => false,
+                'flag' => 0,
+                'trx_flag' => 0,
+                'message' => 'unauthorized'
+            ]));
+        return;
+    }
 
-		$this->load->model('gedung/gedung_model');
+    $this->load->model('gedung/gedung_model');
 
-		$flag = (int) $this->gedung_model->get_pemesanan_flag($username);
+    $flag     = (int) $this->gedung_model->get_pemesanan_flag($username);
+    $trx_flag = (int) $this->gedung_model->get_transaksi_flag($username);
 
-		$this->output
-			->set_content_type('application/json')
-			->set_output(json_encode([
-				'ok' => true,
-				'flag' => $flag
-			]));
-	}
+    $this->output
+        ->set_content_type('application/json')
+        ->set_output(json_encode([
+            'ok' => true,
+            'flag' => $flag,
+            'trx_flag' => $trx_flag
+        ]));
+}
+
 	public function notif_status_by_user()
 	{
 		$username = $this->session->userdata('username');
@@ -1166,4 +1227,48 @@ class Home extends CI_Controller
 		$data['foto_profil'] = ($row && !empty($row->FOTO_PROFIL)) ? $row->FOTO_PROFIL : 'assets/default-avatar.png';
 		$this->load->view('home/Edit_fotoprofil', $data);
 	}
+
+	public function trx_mark_read($id_pembayaran)
+{
+    $username = $this->session->userdata('username');
+    if (!$username) {
+        $this->output->set_status_header(401)
+            ->set_content_type('application/json')
+            ->set_output(json_encode(['ok' => false, 'message' => 'unauthorized']));
+        return;
+    }
+
+    $id_pembayaran = (int)$id_pembayaran;
+    if ($id_pembayaran <= 0) {
+        $this->output->set_status_header(400)
+            ->set_content_type('application/json')
+            ->set_output(json_encode(['ok' => false, 'message' => 'invalid id']));
+        return;
+    }
+
+    $this->load->model('gedung/gedung_model');
+    $this->gedung_model->mark_trx_read($id_pembayaran, $username);
+
+    $trx_flag = (int)$this->gedung_model->get_transaksi_flag($username);
+
+    $this->output->set_content_type('application/json')
+        ->set_output(json_encode(['ok' => true, 'trx_flag' => $trx_flag]));
+}
+public function trx_mark_all_read()
+{
+    $username = $this->session->userdata('username');
+    if (!$username) {
+        $this->output->set_status_header(401)
+            ->set_content_type('application/json')
+            ->set_output(json_encode(['ok' => false]));
+        return;
+    }
+
+    $this->load->model('gedung/gedung_model');
+    $this->gedung_model->clear_transaksi_flag($username);
+
+    $this->output->set_content_type('application/json')
+        ->set_output(json_encode(['ok' => true, 'trx_flag' => 0]));
+}
+
 }
