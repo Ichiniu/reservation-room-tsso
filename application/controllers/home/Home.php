@@ -1122,7 +1122,6 @@ $data['trx_flag'] = $this->gedung_model->get_transaksi_flag($username);
 	public function notif_poll()
 {
     $username = $this->session->userdata('username');
-
     if (!$username) {
         $this->output
             ->set_status_header(401)
@@ -1131,24 +1130,32 @@ $data['trx_flag'] = $this->gedung_model->get_transaksi_flag($username);
                 'ok' => false,
                 'flag' => 0,
                 'trx_flag' => 0,
-                'message' => 'unauthorized'
+                'pemesanan_ids' => [],
+                'trx_ids' => []
             ]));
         return;
     }
 
     $this->load->model('gedung/gedung_model');
 
-    $flag     = (int) $this->gedung_model->get_pemesanan_flag($username);
-    $trx_flag = (int) $this->gedung_model->get_transaksi_flag($username);
+    $flag     = (int)$this->gedung_model->get_pemesanan_flag($username);
+    $trx_flag = (int)$this->gedung_model->get_transaksi_flag($username); // kalau belum ada, kamu bisa set 0 dulu
+
+    // ambil ID untuk ditampilkan di popup
+    $p_ids  = $this->gedung_model->get_pemesanan_unread_ids($username, 5);
+    $t_ids  = $this->gedung_model->get_transaksi_unread_ids($username, 5);
 
     $this->output
         ->set_content_type('application/json')
         ->set_output(json_encode([
             'ok' => true,
             'flag' => $flag,
-            'trx_flag' => $trx_flag
+            'trx_flag' => $trx_flag,
+            'pemesanan_ids' => $p_ids,
+            'trx_ids' => $t_ids
         ]));
 }
+
 
 	public function notif_status_by_user()
 	{

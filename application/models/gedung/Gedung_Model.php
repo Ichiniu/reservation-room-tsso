@@ -32,6 +32,53 @@ class Gedung_Model extends CI_Model
 //     $row = $this->db->query($sql, [$username])->row();
 //     return $row ? (int)$row->jml : 0;
 // }
+
+// ambil pemesanan yang masih "unread" (misal FLAG = 1 atau 3)
+public function get_pemesanan_unread_ids($username, $limit = 5)
+{
+    $sql = "
+        SELECT DISTINCT p.ID_PEMESANAN AS id
+        FROM v_pemesanan v
+        JOIN pemesanan p
+          ON p.ID_PEMESANAN = (
+                CASE
+                    WHEN v.ID_PEMESANAN LIKE 'PMSN%' THEN CAST(SUBSTRING(v.ID_PEMESANAN, 5) AS UNSIGNED)
+                    ELSE CAST(v.ID_PEMESANAN AS UNSIGNED)
+                END
+          )
+        WHERE LOWER(v.USERNAME)=LOWER(?)
+          AND v.STATUS IN ('PROPOSAL APPROVE','SUBMITED')
+          AND p.FLAG IN (1,3)
+        ORDER BY p.ID_PEMESANAN DESC
+        LIMIT ?
+    ";
+    $rows = $this->db->query($sql, [$username, (int)$limit])->result_array();
+    $ids = [];
+    foreach ($rows as $r) $ids[] = (int)$r['id'];
+    return $ids;
+}
+
+// ambil transaksi yang masih "unread"
+// NOTE: kamu tadi error karena kolom FLAG_TRX belum ada.
+// Jadi sementara pakai kondisi STATUS_VERIF saja (PENDING/REJECTED/CONFIRMED) atau buat kolom FLAG_TRX dulu.
+public function get_transaksi_unread_ids($username, $limit = 5)
+{
+    $sql = "
+        SELECT pb.ID_PEMBAYARAN AS id
+        FROM pembayaran pb
+        JOIN pemesanan p ON p.ID_PEMESANAN = pb.ID_PEMESANAN_RAW
+        WHERE LOWER(p.USERNAME)=LOWER(?)
+          AND pb.STATUS_VERIF IN ('PENDING','CONFIRMED','REJECTED')
+        ORDER BY pb.ID_PEMBAYARAN DESC
+        LIMIT ?
+    ";
+    $rows = $this->db->query($sql, [$username, (int)$limit])->result_array();
+    $ids = [];
+    foreach ($rows as $r) $ids[] = (int)$r['id'];
+    return $ids;
+}
+
+
 public function get_transaksi_flag($username)
 {
     $sql = "
