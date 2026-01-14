@@ -4265,6 +4265,7 @@ INFO - 2026-01-14 04:03:42 --> File loaded: C:\xampp\htdocs\bookingsmarts\applic
 INFO - 2026-01-14 04:03:42 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\gedung/order_gedung.php
 INFO - 2026-01-14 04:03:42 --> Final output sent to browser
 DEBUG - 2026-01-14 04:03:42 --> Total execution time: 0.1132
+<<<<<<< HEAD
 >>>>>>> 15406094cccaa0ec61b1778cacca45427a50e8ab
 INFO - 2026-01-14 04:45:59 --> Config Class Initialized
 INFO - 2026-01-14 04:45:59 --> Hooks Class Initialized
@@ -24205,3 +24206,5 @@ INFO - 2026-01-14 08:09:59 --> File loaded: C:\xampp\htdocs\bookingsmarts\applic
 INFO - 2026-01-14 08:09:59 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\/home/home_screen.php
 INFO - 2026-01-14 08:09:59 --> Final output sent to browser
 DEBUG - 2026-01-14 08:09:59 --> Total execution time: 0.0953
+=======
+>>>>>>> cd42b43c394f1391c5744e815c999f4ab1162292
