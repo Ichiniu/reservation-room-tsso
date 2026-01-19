@@ -16603,3 +16603,795 @@ DEBUG - 2026-01-19 04:20:18 --> Global POST, GET and COOKIE data sanitized
 INFO - 2026-01-19 04:20:18 --> Input Class Initialized
 INFO - 2026-01-19 04:20:18 --> Language Class Initialized
 ERROR - 2026-01-19 04:20:18 --> 404 Page Not Found: admin/Notif_counter/index
+INFO - 2026-01-19 04:20:26 --> Config Class Initialized
+INFO - 2026-01-19 04:20:26 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:20:26 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:20:26 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:20:26 --> URI Class Initialized
+INFO - 2026-01-19 04:20:26 --> Router Class Initialized
+INFO - 2026-01-19 04:20:26 --> Output Class Initialized
+INFO - 2026-01-19 04:20:26 --> Security Class Initialized
+DEBUG - 2026-01-19 04:20:26 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:20:26 --> Input Class Initialized
+INFO - 2026-01-19 04:20:26 --> Language Class Initialized
+ERROR - 2026-01-19 04:20:26 --> 404 Page Not Found: admin/Notif_counter/index
+INFO - 2026-01-19 04:20:34 --> Config Class Initialized
+INFO - 2026-01-19 04:20:34 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:20:34 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:20:34 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:20:34 --> URI Class Initialized
+INFO - 2026-01-19 04:20:34 --> Router Class Initialized
+INFO - 2026-01-19 04:20:34 --> Output Class Initialized
+INFO - 2026-01-19 04:20:34 --> Security Class Initialized
+DEBUG - 2026-01-19 04:20:34 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:20:34 --> Input Class Initialized
+INFO - 2026-01-19 04:20:34 --> Language Class Initialized
+ERROR - 2026-01-19 04:20:34 --> 404 Page Not Found: admin/Notif_counter/index
+INFO - 2026-01-19 04:20:41 --> Config Class Initialized
+INFO - 2026-01-19 04:20:41 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:20:41 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:20:41 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:20:41 --> URI Class Initialized
+INFO - 2026-01-19 04:20:41 --> Router Class Initialized
+INFO - 2026-01-19 04:20:41 --> Output Class Initialized
+INFO - 2026-01-19 04:20:41 --> Security Class Initialized
+DEBUG - 2026-01-19 04:20:41 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:20:41 --> Input Class Initialized
+INFO - 2026-01-19 04:20:41 --> Language Class Initialized
+INFO - 2026-01-19 04:20:41 --> Loader Class Initialized
+INFO - 2026-01-19 04:20:41 --> Helper loaded: url_helper
+INFO - 2026-01-19 04:20:41 --> Database Driver Class Initialized
+INFO - 2026-01-19 04:20:41 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-19 04:20:41 --> Controller Class Initialized
+INFO - 2026-01-19 04:20:41 --> Model Class Initialized
+INFO - 2026-01-19 04:20:41 --> Model Class Initialized
+INFO - 2026-01-19 04:20:41 --> Helper loaded: text_helper
+INFO - 2026-01-19 04:20:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-19 04:20:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/Footer.php
+INFO - 2026-01-19 04:20:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\/home/home_screen.php
+INFO - 2026-01-19 04:20:41 --> Final output sent to browser
+DEBUG - 2026-01-19 04:20:41 --> Total execution time: 0.0601
+INFO - 2026-01-19 04:20:42 --> Config Class Initialized
+INFO - 2026-01-19 04:20:42 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:20:42 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:20:42 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:20:42 --> URI Class Initialized
+INFO - 2026-01-19 04:20:42 --> Router Class Initialized
+INFO - 2026-01-19 04:20:42 --> Output Class Initialized
+INFO - 2026-01-19 04:20:42 --> Security Class Initialized
+DEBUG - 2026-01-19 04:20:42 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:20:42 --> Input Class Initialized
+INFO - 2026-01-19 04:20:42 --> Language Class Initialized
+ERROR - 2026-01-19 04:20:42 --> 404 Page Not Found: admin/Notif_counter/index
+INFO - 2026-01-19 04:21:41 --> Config Class Initialized
+INFO - 2026-01-19 04:21:41 --> Config Class Initialized
+INFO - 2026-01-19 04:21:41 --> Hooks Class Initialized
+INFO - 2026-01-19 04:21:41 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:21:41 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:21:41 --> Utf8 Class Initialized
+DEBUG - 2026-01-19 04:21:41 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:21:41 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:21:41 --> URI Class Initialized
+INFO - 2026-01-19 04:21:41 --> URI Class Initialized
+INFO - 2026-01-19 04:21:41 --> Router Class Initialized
+INFO - 2026-01-19 04:21:41 --> Output Class Initialized
+INFO - 2026-01-19 04:21:41 --> Router Class Initialized
+INFO - 2026-01-19 04:21:41 --> Security Class Initialized
+DEBUG - 2026-01-19 04:21:41 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:21:41 --> Output Class Initialized
+INFO - 2026-01-19 04:21:41 --> Input Class Initialized
+INFO - 2026-01-19 04:21:41 --> Language Class Initialized
+INFO - 2026-01-19 04:21:41 --> Security Class Initialized
+DEBUG - 2026-01-19 04:21:41 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:21:41 --> Input Class Initialized
+INFO - 2026-01-19 04:21:41 --> Language Class Initialized
+ERROR - 2026-01-19 04:21:41 --> 404 Page Not Found: admin/Notif_counter/index
+INFO - 2026-01-19 04:21:41 --> Loader Class Initialized
+INFO - 2026-01-19 04:21:41 --> Helper loaded: url_helper
+INFO - 2026-01-19 04:21:41 --> Database Driver Class Initialized
+INFO - 2026-01-19 04:21:41 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-19 04:21:41 --> Controller Class Initialized
+INFO - 2026-01-19 04:21:41 --> Model Class Initialized
+INFO - 2026-01-19 04:21:41 --> Model Class Initialized
+INFO - 2026-01-19 04:21:41 --> Helper loaded: text_helper
+INFO - 2026-01-19 04:21:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-19 04:21:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/Footer.php
+INFO - 2026-01-19 04:21:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\/home/home_screen.php
+INFO - 2026-01-19 04:21:41 --> Final output sent to browser
+DEBUG - 2026-01-19 04:21:41 --> Total execution time: 0.0544
+INFO - 2026-01-19 04:22:41 --> Config Class Initialized
+INFO - 2026-01-19 04:22:41 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:22:41 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:22:41 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:22:41 --> URI Class Initialized
+INFO - 2026-01-19 04:22:41 --> Router Class Initialized
+INFO - 2026-01-19 04:22:41 --> Output Class Initialized
+INFO - 2026-01-19 04:22:41 --> Security Class Initialized
+DEBUG - 2026-01-19 04:22:41 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:22:41 --> Input Class Initialized
+INFO - 2026-01-19 04:22:41 --> Language Class Initialized
+INFO - 2026-01-19 04:22:41 --> Loader Class Initialized
+INFO - 2026-01-19 04:22:41 --> Helper loaded: url_helper
+INFO - 2026-01-19 04:22:41 --> Database Driver Class Initialized
+INFO - 2026-01-19 04:22:41 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-19 04:22:41 --> Controller Class Initialized
+INFO - 2026-01-19 04:22:41 --> Model Class Initialized
+INFO - 2026-01-19 04:22:41 --> Model Class Initialized
+INFO - 2026-01-19 04:22:41 --> Helper loaded: text_helper
+INFO - 2026-01-19 04:22:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-19 04:22:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/Footer.php
+INFO - 2026-01-19 04:22:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\/home/home_screen.php
+INFO - 2026-01-19 04:22:41 --> Final output sent to browser
+DEBUG - 2026-01-19 04:22:41 --> Total execution time: 0.1148
+INFO - 2026-01-19 04:22:41 --> Config Class Initialized
+INFO - 2026-01-19 04:22:41 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:22:41 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:22:41 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:22:41 --> URI Class Initialized
+INFO - 2026-01-19 04:22:41 --> Router Class Initialized
+INFO - 2026-01-19 04:22:41 --> Output Class Initialized
+INFO - 2026-01-19 04:22:41 --> Security Class Initialized
+DEBUG - 2026-01-19 04:22:41 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:22:41 --> Input Class Initialized
+INFO - 2026-01-19 04:22:41 --> Language Class Initialized
+ERROR - 2026-01-19 04:22:41 --> 404 Page Not Found: admin/Notif_counter/index
+INFO - 2026-01-19 04:23:41 --> Config Class Initialized
+INFO - 2026-01-19 04:23:41 --> Hooks Class Initialized
+INFO - 2026-01-19 04:23:41 --> Config Class Initialized
+INFO - 2026-01-19 04:23:41 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:23:41 --> UTF-8 Support Enabled
+DEBUG - 2026-01-19 04:23:41 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:23:41 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:23:41 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:23:41 --> URI Class Initialized
+INFO - 2026-01-19 04:23:41 --> URI Class Initialized
+INFO - 2026-01-19 04:23:41 --> Router Class Initialized
+INFO - 2026-01-19 04:23:41 --> Router Class Initialized
+INFO - 2026-01-19 04:23:41 --> Output Class Initialized
+INFO - 2026-01-19 04:23:41 --> Security Class Initialized
+INFO - 2026-01-19 04:23:41 --> Output Class Initialized
+DEBUG - 2026-01-19 04:23:41 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:23:41 --> Input Class Initialized
+INFO - 2026-01-19 04:23:41 --> Security Class Initialized
+INFO - 2026-01-19 04:23:41 --> Language Class Initialized
+DEBUG - 2026-01-19 04:23:41 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:23:41 --> Input Class Initialized
+INFO - 2026-01-19 04:23:41 --> Language Class Initialized
+INFO - 2026-01-19 04:23:41 --> Loader Class Initialized
+ERROR - 2026-01-19 04:23:41 --> 404 Page Not Found: admin/Notif_counter/index
+INFO - 2026-01-19 04:23:41 --> Helper loaded: url_helper
+INFO - 2026-01-19 04:23:41 --> Database Driver Class Initialized
+INFO - 2026-01-19 04:23:41 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-19 04:23:41 --> Controller Class Initialized
+INFO - 2026-01-19 04:23:41 --> Model Class Initialized
+INFO - 2026-01-19 04:23:41 --> Model Class Initialized
+INFO - 2026-01-19 04:23:41 --> Helper loaded: text_helper
+INFO - 2026-01-19 04:23:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-19 04:23:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/Footer.php
+INFO - 2026-01-19 04:23:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\/home/home_screen.php
+INFO - 2026-01-19 04:23:41 --> Final output sent to browser
+DEBUG - 2026-01-19 04:23:41 --> Total execution time: 0.0806
+INFO - 2026-01-19 04:24:42 --> Config Class Initialized
+INFO - 2026-01-19 04:24:42 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:24:42 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:24:42 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:24:42 --> URI Class Initialized
+INFO - 2026-01-19 04:24:42 --> Router Class Initialized
+INFO - 2026-01-19 04:24:42 --> Output Class Initialized
+INFO - 2026-01-19 04:24:42 --> Security Class Initialized
+DEBUG - 2026-01-19 04:24:42 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:24:42 --> Input Class Initialized
+INFO - 2026-01-19 04:24:42 --> Language Class Initialized
+INFO - 2026-01-19 04:24:42 --> Loader Class Initialized
+INFO - 2026-01-19 04:24:42 --> Helper loaded: url_helper
+INFO - 2026-01-19 04:24:42 --> Database Driver Class Initialized
+INFO - 2026-01-19 04:24:42 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-19 04:24:42 --> Controller Class Initialized
+INFO - 2026-01-19 04:24:42 --> Model Class Initialized
+INFO - 2026-01-19 04:24:42 --> Model Class Initialized
+INFO - 2026-01-19 04:24:42 --> Helper loaded: text_helper
+INFO - 2026-01-19 04:24:42 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-19 04:24:42 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/Footer.php
+INFO - 2026-01-19 04:24:42 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\/home/home_screen.php
+INFO - 2026-01-19 04:24:42 --> Final output sent to browser
+DEBUG - 2026-01-19 04:24:42 --> Total execution time: 0.0897
+INFO - 2026-01-19 04:24:43 --> Config Class Initialized
+INFO - 2026-01-19 04:24:43 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:24:43 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:24:43 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:24:43 --> URI Class Initialized
+INFO - 2026-01-19 04:24:43 --> Router Class Initialized
+INFO - 2026-01-19 04:24:43 --> Output Class Initialized
+INFO - 2026-01-19 04:24:43 --> Security Class Initialized
+DEBUG - 2026-01-19 04:24:43 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:24:43 --> Input Class Initialized
+INFO - 2026-01-19 04:24:43 --> Language Class Initialized
+ERROR - 2026-01-19 04:24:43 --> 404 Page Not Found: admin/Notif_counter/index
+INFO - 2026-01-19 04:25:41 --> Config Class Initialized
+INFO - 2026-01-19 04:25:41 --> Hooks Class Initialized
+INFO - 2026-01-19 04:25:41 --> Config Class Initialized
+INFO - 2026-01-19 04:25:41 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:25:41 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:25:41 --> Utf8 Class Initialized
+DEBUG - 2026-01-19 04:25:41 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:25:41 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:25:41 --> URI Class Initialized
+INFO - 2026-01-19 04:25:41 --> URI Class Initialized
+INFO - 2026-01-19 04:25:41 --> Router Class Initialized
+INFO - 2026-01-19 04:25:41 --> Router Class Initialized
+INFO - 2026-01-19 04:25:41 --> Output Class Initialized
+INFO - 2026-01-19 04:25:41 --> Security Class Initialized
+DEBUG - 2026-01-19 04:25:41 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:25:41 --> Input Class Initialized
+INFO - 2026-01-19 04:25:41 --> Language Class Initialized
+INFO - 2026-01-19 04:25:41 --> Output Class Initialized
+INFO - 2026-01-19 04:25:41 --> Loader Class Initialized
+INFO - 2026-01-19 04:25:41 --> Security Class Initialized
+INFO - 2026-01-19 04:25:41 --> Helper loaded: url_helper
+DEBUG - 2026-01-19 04:25:41 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:25:41 --> Input Class Initialized
+INFO - 2026-01-19 04:25:41 --> Language Class Initialized
+ERROR - 2026-01-19 04:25:41 --> 404 Page Not Found: admin/Notif_counter/index
+INFO - 2026-01-19 04:25:41 --> Database Driver Class Initialized
+INFO - 2026-01-19 04:25:41 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-19 04:25:41 --> Controller Class Initialized
+INFO - 2026-01-19 04:25:41 --> Model Class Initialized
+INFO - 2026-01-19 04:25:41 --> Model Class Initialized
+INFO - 2026-01-19 04:25:41 --> Helper loaded: text_helper
+INFO - 2026-01-19 04:25:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-19 04:25:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/Footer.php
+INFO - 2026-01-19 04:25:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\/home/home_screen.php
+INFO - 2026-01-19 04:25:41 --> Final output sent to browser
+DEBUG - 2026-01-19 04:25:41 --> Total execution time: 0.0940
+INFO - 2026-01-19 04:26:41 --> Config Class Initialized
+INFO - 2026-01-19 04:26:41 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:26:41 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:26:41 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:26:41 --> URI Class Initialized
+INFO - 2026-01-19 04:26:41 --> Router Class Initialized
+INFO - 2026-01-19 04:26:41 --> Output Class Initialized
+INFO - 2026-01-19 04:26:41 --> Security Class Initialized
+DEBUG - 2026-01-19 04:26:41 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:26:41 --> Input Class Initialized
+INFO - 2026-01-19 04:26:41 --> Language Class Initialized
+INFO - 2026-01-19 04:26:41 --> Loader Class Initialized
+INFO - 2026-01-19 04:26:41 --> Helper loaded: url_helper
+INFO - 2026-01-19 04:26:41 --> Database Driver Class Initialized
+INFO - 2026-01-19 04:26:41 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-19 04:26:41 --> Controller Class Initialized
+INFO - 2026-01-19 04:26:41 --> Model Class Initialized
+INFO - 2026-01-19 04:26:41 --> Model Class Initialized
+INFO - 2026-01-19 04:26:41 --> Helper loaded: text_helper
+INFO - 2026-01-19 04:26:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-19 04:26:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/Footer.php
+INFO - 2026-01-19 04:26:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\/home/home_screen.php
+INFO - 2026-01-19 04:26:41 --> Final output sent to browser
+DEBUG - 2026-01-19 04:26:41 --> Total execution time: 0.1286
+INFO - 2026-01-19 04:26:41 --> Config Class Initialized
+INFO - 2026-01-19 04:26:41 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:26:41 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:26:41 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:26:41 --> URI Class Initialized
+INFO - 2026-01-19 04:26:41 --> Router Class Initialized
+INFO - 2026-01-19 04:26:41 --> Output Class Initialized
+INFO - 2026-01-19 04:26:41 --> Security Class Initialized
+DEBUG - 2026-01-19 04:26:41 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:26:41 --> Input Class Initialized
+INFO - 2026-01-19 04:26:41 --> Language Class Initialized
+ERROR - 2026-01-19 04:26:41 --> 404 Page Not Found: admin/Notif_counter/index
+INFO - 2026-01-19 04:27:41 --> Config Class Initialized
+INFO - 2026-01-19 04:27:41 --> Hooks Class Initialized
+INFO - 2026-01-19 04:27:41 --> Config Class Initialized
+INFO - 2026-01-19 04:27:41 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:27:41 --> UTF-8 Support Enabled
+DEBUG - 2026-01-19 04:27:41 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:27:41 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:27:41 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:27:41 --> URI Class Initialized
+INFO - 2026-01-19 04:27:41 --> URI Class Initialized
+INFO - 2026-01-19 04:27:41 --> Router Class Initialized
+INFO - 2026-01-19 04:27:41 --> Router Class Initialized
+INFO - 2026-01-19 04:27:41 --> Output Class Initialized
+INFO - 2026-01-19 04:27:41 --> Output Class Initialized
+INFO - 2026-01-19 04:27:41 --> Security Class Initialized
+DEBUG - 2026-01-19 04:27:41 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:27:41 --> Input Class Initialized
+INFO - 2026-01-19 04:27:41 --> Security Class Initialized
+INFO - 2026-01-19 04:27:41 --> Language Class Initialized
+DEBUG - 2026-01-19 04:27:41 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:27:41 --> Input Class Initialized
+INFO - 2026-01-19 04:27:41 --> Language Class Initialized
+ERROR - 2026-01-19 04:27:41 --> 404 Page Not Found: admin/Notif_counter/index
+INFO - 2026-01-19 04:27:41 --> Loader Class Initialized
+INFO - 2026-01-19 04:27:41 --> Helper loaded: url_helper
+INFO - 2026-01-19 04:27:41 --> Database Driver Class Initialized
+INFO - 2026-01-19 04:27:41 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-19 04:27:41 --> Controller Class Initialized
+INFO - 2026-01-19 04:27:41 --> Model Class Initialized
+INFO - 2026-01-19 04:27:41 --> Model Class Initialized
+INFO - 2026-01-19 04:27:41 --> Helper loaded: text_helper
+INFO - 2026-01-19 04:27:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-19 04:27:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/Footer.php
+INFO - 2026-01-19 04:27:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\/home/home_screen.php
+INFO - 2026-01-19 04:27:41 --> Final output sent to browser
+DEBUG - 2026-01-19 04:27:41 --> Total execution time: 0.0740
+INFO - 2026-01-19 04:28:41 --> Config Class Initialized
+INFO - 2026-01-19 04:28:41 --> Hooks Class Initialized
+INFO - 2026-01-19 04:28:41 --> Config Class Initialized
+INFO - 2026-01-19 04:28:41 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:28:41 --> UTF-8 Support Enabled
+DEBUG - 2026-01-19 04:28:41 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:28:41 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:28:41 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:28:41 --> URI Class Initialized
+INFO - 2026-01-19 04:28:41 --> URI Class Initialized
+INFO - 2026-01-19 04:28:41 --> Router Class Initialized
+INFO - 2026-01-19 04:28:41 --> Router Class Initialized
+INFO - 2026-01-19 04:28:41 --> Output Class Initialized
+INFO - 2026-01-19 04:28:41 --> Output Class Initialized
+INFO - 2026-01-19 04:28:41 --> Security Class Initialized
+INFO - 2026-01-19 04:28:41 --> Security Class Initialized
+DEBUG - 2026-01-19 04:28:41 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:28:41 --> Input Class Initialized
+INFO - 2026-01-19 04:28:41 --> Language Class Initialized
+DEBUG - 2026-01-19 04:28:41 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:28:41 --> Input Class Initialized
+INFO - 2026-01-19 04:28:41 --> Language Class Initialized
+ERROR - 2026-01-19 04:28:41 --> 404 Page Not Found: admin/Notif_counter/index
+INFO - 2026-01-19 04:28:41 --> Loader Class Initialized
+INFO - 2026-01-19 04:28:41 --> Helper loaded: url_helper
+INFO - 2026-01-19 04:28:41 --> Database Driver Class Initialized
+INFO - 2026-01-19 04:28:41 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-19 04:28:41 --> Controller Class Initialized
+INFO - 2026-01-19 04:28:41 --> Model Class Initialized
+INFO - 2026-01-19 04:28:41 --> Model Class Initialized
+INFO - 2026-01-19 04:28:41 --> Helper loaded: text_helper
+INFO - 2026-01-19 04:28:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-19 04:28:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/Footer.php
+INFO - 2026-01-19 04:28:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\/home/home_screen.php
+INFO - 2026-01-19 04:28:41 --> Final output sent to browser
+DEBUG - 2026-01-19 04:28:41 --> Total execution time: 0.0874
+INFO - 2026-01-19 04:29:41 --> Config Class Initialized
+INFO - 2026-01-19 04:29:41 --> Hooks Class Initialized
+INFO - 2026-01-19 04:29:41 --> Config Class Initialized
+INFO - 2026-01-19 04:29:41 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:29:41 --> UTF-8 Support Enabled
+DEBUG - 2026-01-19 04:29:41 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:29:41 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:29:41 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:29:41 --> URI Class Initialized
+INFO - 2026-01-19 04:29:41 --> URI Class Initialized
+INFO - 2026-01-19 04:29:41 --> Router Class Initialized
+INFO - 2026-01-19 04:29:41 --> Router Class Initialized
+INFO - 2026-01-19 04:29:41 --> Output Class Initialized
+INFO - 2026-01-19 04:29:41 --> Security Class Initialized
+INFO - 2026-01-19 04:29:41 --> Output Class Initialized
+DEBUG - 2026-01-19 04:29:41 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:29:41 --> Input Class Initialized
+INFO - 2026-01-19 04:29:41 --> Language Class Initialized
+INFO - 2026-01-19 04:29:41 --> Security Class Initialized
+DEBUG - 2026-01-19 04:29:41 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:29:41 --> Input Class Initialized
+INFO - 2026-01-19 04:29:41 --> Language Class Initialized
+ERROR - 2026-01-19 04:29:41 --> 404 Page Not Found: admin/Notif_counter/index
+INFO - 2026-01-19 04:29:41 --> Loader Class Initialized
+INFO - 2026-01-19 04:29:41 --> Helper loaded: url_helper
+INFO - 2026-01-19 04:29:41 --> Database Driver Class Initialized
+INFO - 2026-01-19 04:29:41 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-19 04:29:41 --> Controller Class Initialized
+INFO - 2026-01-19 04:29:41 --> Model Class Initialized
+INFO - 2026-01-19 04:29:41 --> Model Class Initialized
+INFO - 2026-01-19 04:29:41 --> Helper loaded: text_helper
+INFO - 2026-01-19 04:29:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-19 04:29:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/Footer.php
+INFO - 2026-01-19 04:29:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\/home/home_screen.php
+INFO - 2026-01-19 04:29:41 --> Final output sent to browser
+DEBUG - 2026-01-19 04:29:41 --> Total execution time: 0.0580
+INFO - 2026-01-19 04:30:41 --> Config Class Initialized
+INFO - 2026-01-19 04:30:41 --> Hooks Class Initialized
+INFO - 2026-01-19 04:30:41 --> Config Class Initialized
+INFO - 2026-01-19 04:30:41 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:30:41 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:30:41 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:30:41 --> URI Class Initialized
+DEBUG - 2026-01-19 04:30:41 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:30:41 --> Router Class Initialized
+INFO - 2026-01-19 04:30:41 --> Output Class Initialized
+INFO - 2026-01-19 04:30:41 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:30:41 --> Security Class Initialized
+INFO - 2026-01-19 04:30:41 --> URI Class Initialized
+DEBUG - 2026-01-19 04:30:41 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:30:41 --> Input Class Initialized
+INFO - 2026-01-19 04:30:41 --> Language Class Initialized
+INFO - 2026-01-19 04:30:41 --> Router Class Initialized
+ERROR - 2026-01-19 04:30:41 --> 404 Page Not Found: admin/Notif_counter/index
+INFO - 2026-01-19 04:30:41 --> Output Class Initialized
+INFO - 2026-01-19 04:30:41 --> Security Class Initialized
+DEBUG - 2026-01-19 04:30:41 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:30:41 --> Input Class Initialized
+INFO - 2026-01-19 04:30:41 --> Language Class Initialized
+INFO - 2026-01-19 04:30:41 --> Loader Class Initialized
+INFO - 2026-01-19 04:30:41 --> Helper loaded: url_helper
+INFO - 2026-01-19 04:30:41 --> Database Driver Class Initialized
+INFO - 2026-01-19 04:30:41 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-19 04:30:41 --> Controller Class Initialized
+INFO - 2026-01-19 04:30:41 --> Model Class Initialized
+INFO - 2026-01-19 04:30:41 --> Model Class Initialized
+INFO - 2026-01-19 04:30:41 --> Helper loaded: text_helper
+INFO - 2026-01-19 04:30:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-19 04:30:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/Footer.php
+INFO - 2026-01-19 04:30:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\/home/home_screen.php
+INFO - 2026-01-19 04:30:41 --> Final output sent to browser
+DEBUG - 2026-01-19 04:30:41 --> Total execution time: 0.1054
+INFO - 2026-01-19 04:31:41 --> Config Class Initialized
+INFO - 2026-01-19 04:31:41 --> Hooks Class Initialized
+INFO - 2026-01-19 04:31:41 --> Config Class Initialized
+INFO - 2026-01-19 04:31:41 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:31:41 --> UTF-8 Support Enabled
+DEBUG - 2026-01-19 04:31:41 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:31:41 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:31:41 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:31:41 --> URI Class Initialized
+INFO - 2026-01-19 04:31:41 --> URI Class Initialized
+INFO - 2026-01-19 04:31:41 --> Router Class Initialized
+INFO - 2026-01-19 04:31:41 --> Router Class Initialized
+INFO - 2026-01-19 04:31:41 --> Output Class Initialized
+INFO - 2026-01-19 04:31:41 --> Output Class Initialized
+INFO - 2026-01-19 04:31:41 --> Security Class Initialized
+INFO - 2026-01-19 04:31:41 --> Security Class Initialized
+DEBUG - 2026-01-19 04:31:41 --> Global POST, GET and COOKIE data sanitized
+DEBUG - 2026-01-19 04:31:41 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:31:41 --> Input Class Initialized
+INFO - 2026-01-19 04:31:41 --> Input Class Initialized
+INFO - 2026-01-19 04:31:41 --> Language Class Initialized
+INFO - 2026-01-19 04:31:41 --> Language Class Initialized
+ERROR - 2026-01-19 04:31:41 --> 404 Page Not Found: admin/Notif_counter/index
+INFO - 2026-01-19 04:31:41 --> Loader Class Initialized
+INFO - 2026-01-19 04:31:41 --> Helper loaded: url_helper
+INFO - 2026-01-19 04:31:41 --> Database Driver Class Initialized
+INFO - 2026-01-19 04:31:41 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-19 04:31:41 --> Controller Class Initialized
+INFO - 2026-01-19 04:31:41 --> Model Class Initialized
+INFO - 2026-01-19 04:31:41 --> Model Class Initialized
+INFO - 2026-01-19 04:31:41 --> Helper loaded: text_helper
+INFO - 2026-01-19 04:31:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-19 04:31:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/Footer.php
+INFO - 2026-01-19 04:31:41 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\/home/home_screen.php
+INFO - 2026-01-19 04:31:41 --> Final output sent to browser
+DEBUG - 2026-01-19 04:31:41 --> Total execution time: 0.0779
+INFO - 2026-01-19 04:32:13 --> Config Class Initialized
+INFO - 2026-01-19 04:32:13 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:32:13 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:32:13 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:32:13 --> URI Class Initialized
+INFO - 2026-01-19 04:32:13 --> Router Class Initialized
+INFO - 2026-01-19 04:32:13 --> Output Class Initialized
+INFO - 2026-01-19 04:32:13 --> Security Class Initialized
+DEBUG - 2026-01-19 04:32:13 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:32:13 --> Input Class Initialized
+INFO - 2026-01-19 04:32:13 --> Language Class Initialized
+INFO - 2026-01-19 04:32:13 --> Loader Class Initialized
+INFO - 2026-01-19 04:32:13 --> Helper loaded: url_helper
+INFO - 2026-01-19 04:32:13 --> Database Driver Class Initialized
+INFO - 2026-01-19 04:32:13 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-19 04:32:13 --> Controller Class Initialized
+INFO - 2026-01-19 04:32:13 --> Model Class Initialized
+INFO - 2026-01-19 04:32:13 --> Model Class Initialized
+INFO - 2026-01-19 04:32:13 --> Helper loaded: text_helper
+INFO - 2026-01-19 04:32:13 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-19 04:32:13 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/Footer.php
+INFO - 2026-01-19 04:32:13 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\/home/home_screen.php
+INFO - 2026-01-19 04:32:13 --> Final output sent to browser
+DEBUG - 2026-01-19 04:32:13 --> Total execution time: 0.1110
+INFO - 2026-01-19 04:32:17 --> Config Class Initialized
+INFO - 2026-01-19 04:32:17 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:32:17 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:32:17 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:32:17 --> URI Class Initialized
+INFO - 2026-01-19 04:32:17 --> Router Class Initialized
+INFO - 2026-01-19 04:32:17 --> Output Class Initialized
+INFO - 2026-01-19 04:32:17 --> Security Class Initialized
+DEBUG - 2026-01-19 04:32:17 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:32:17 --> Input Class Initialized
+INFO - 2026-01-19 04:32:17 --> Language Class Initialized
+INFO - 2026-01-19 04:32:17 --> Loader Class Initialized
+INFO - 2026-01-19 04:32:17 --> Helper loaded: url_helper
+INFO - 2026-01-19 04:32:17 --> Database Driver Class Initialized
+INFO - 2026-01-19 04:32:17 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-19 04:32:17 --> Controller Class Initialized
+INFO - 2026-01-19 04:32:17 --> Model Class Initialized
+INFO - 2026-01-19 04:32:17 --> Model Class Initialized
+INFO - 2026-01-19 04:32:17 --> Helper loaded: text_helper
+INFO - 2026-01-19 04:32:17 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-19 04:32:17 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/Footer.php
+INFO - 2026-01-19 04:32:17 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\/home/home_screen.php
+INFO - 2026-01-19 04:32:17 --> Final output sent to browser
+DEBUG - 2026-01-19 04:32:17 --> Total execution time: 0.1126
+INFO - 2026-01-19 04:32:22 --> Config Class Initialized
+INFO - 2026-01-19 04:32:22 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:32:22 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:32:22 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:32:22 --> URI Class Initialized
+INFO - 2026-01-19 04:32:22 --> Router Class Initialized
+INFO - 2026-01-19 04:32:22 --> Output Class Initialized
+INFO - 2026-01-19 04:32:22 --> Security Class Initialized
+DEBUG - 2026-01-19 04:32:22 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:32:22 --> Input Class Initialized
+INFO - 2026-01-19 04:32:22 --> Language Class Initialized
+INFO - 2026-01-19 04:32:22 --> Loader Class Initialized
+INFO - 2026-01-19 04:32:22 --> Helper loaded: url_helper
+INFO - 2026-01-19 04:32:22 --> Database Driver Class Initialized
+INFO - 2026-01-19 04:32:22 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-19 04:32:22 --> Controller Class Initialized
+INFO - 2026-01-19 04:32:22 --> Model Class Initialized
+INFO - 2026-01-19 04:32:22 --> Model Class Initialized
+INFO - 2026-01-19 04:32:22 --> Helper loaded: text_helper
+INFO - 2026-01-19 04:32:22 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-19 04:32:22 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/Footer.php
+INFO - 2026-01-19 04:32:22 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\/home/home_screen.php
+INFO - 2026-01-19 04:32:22 --> Final output sent to browser
+DEBUG - 2026-01-19 04:32:22 --> Total execution time: 0.0794
+INFO - 2026-01-19 04:32:27 --> Config Class Initialized
+INFO - 2026-01-19 04:32:27 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:32:27 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:32:27 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:32:27 --> URI Class Initialized
+INFO - 2026-01-19 04:32:27 --> Router Class Initialized
+INFO - 2026-01-19 04:32:27 --> Output Class Initialized
+INFO - 2026-01-19 04:32:27 --> Security Class Initialized
+DEBUG - 2026-01-19 04:32:27 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:32:27 --> Input Class Initialized
+INFO - 2026-01-19 04:32:27 --> Language Class Initialized
+INFO - 2026-01-19 04:32:27 --> Loader Class Initialized
+INFO - 2026-01-19 04:32:27 --> Helper loaded: url_helper
+INFO - 2026-01-19 04:32:27 --> Database Driver Class Initialized
+INFO - 2026-01-19 04:32:27 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-19 04:32:27 --> Controller Class Initialized
+INFO - 2026-01-19 04:32:27 --> Model Class Initialized
+INFO - 2026-01-19 04:32:27 --> Model Class Initialized
+INFO - 2026-01-19 04:32:27 --> Helper loaded: text_helper
+INFO - 2026-01-19 04:32:27 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-19 04:32:27 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/Footer.php
+INFO - 2026-01-19 04:32:27 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\/home/home_screen.php
+INFO - 2026-01-19 04:32:27 --> Final output sent to browser
+DEBUG - 2026-01-19 04:32:27 --> Total execution time: 0.0664
+INFO - 2026-01-19 04:32:32 --> Config Class Initialized
+INFO - 2026-01-19 04:32:32 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:32:32 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:32:32 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:32:32 --> URI Class Initialized
+INFO - 2026-01-19 04:32:32 --> Router Class Initialized
+INFO - 2026-01-19 04:32:32 --> Output Class Initialized
+INFO - 2026-01-19 04:32:32 --> Security Class Initialized
+DEBUG - 2026-01-19 04:32:32 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:32:32 --> Input Class Initialized
+INFO - 2026-01-19 04:32:32 --> Language Class Initialized
+ERROR - 2026-01-19 04:32:32 --> 404 Page Not Found: admin/Notif_counter/index
+INFO - 2026-01-19 04:32:33 --> Config Class Initialized
+INFO - 2026-01-19 04:32:33 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:32:33 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:32:33 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:32:33 --> URI Class Initialized
+INFO - 2026-01-19 04:32:33 --> Router Class Initialized
+INFO - 2026-01-19 04:32:33 --> Output Class Initialized
+INFO - 2026-01-19 04:32:33 --> Security Class Initialized
+DEBUG - 2026-01-19 04:32:33 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:32:33 --> Input Class Initialized
+INFO - 2026-01-19 04:32:33 --> Language Class Initialized
+INFO - 2026-01-19 04:32:33 --> Loader Class Initialized
+INFO - 2026-01-19 04:32:33 --> Helper loaded: url_helper
+INFO - 2026-01-19 04:32:33 --> Database Driver Class Initialized
+INFO - 2026-01-19 04:32:33 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-19 04:32:33 --> Controller Class Initialized
+INFO - 2026-01-19 04:32:33 --> Model Class Initialized
+INFO - 2026-01-19 04:32:33 --> Model Class Initialized
+INFO - 2026-01-19 04:32:33 --> Helper loaded: text_helper
+INFO - 2026-01-19 04:32:33 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-19 04:32:33 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/Footer.php
+INFO - 2026-01-19 04:32:33 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\/home/home_screen.php
+INFO - 2026-01-19 04:32:33 --> Final output sent to browser
+DEBUG - 2026-01-19 04:32:33 --> Total execution time: 0.1025
+INFO - 2026-01-19 04:32:35 --> Config Class Initialized
+INFO - 2026-01-19 04:32:35 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:32:35 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:32:35 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:32:35 --> URI Class Initialized
+INFO - 2026-01-19 04:32:35 --> Router Class Initialized
+INFO - 2026-01-19 04:32:35 --> Output Class Initialized
+INFO - 2026-01-19 04:32:35 --> Security Class Initialized
+DEBUG - 2026-01-19 04:32:35 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:32:35 --> Input Class Initialized
+INFO - 2026-01-19 04:32:35 --> Language Class Initialized
+ERROR - 2026-01-19 04:32:35 --> 404 Page Not Found: admin/Notif_counter/index
+INFO - 2026-01-19 04:32:38 --> Config Class Initialized
+INFO - 2026-01-19 04:32:38 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:32:38 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:32:38 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:32:38 --> URI Class Initialized
+INFO - 2026-01-19 04:32:38 --> Router Class Initialized
+INFO - 2026-01-19 04:32:38 --> Output Class Initialized
+INFO - 2026-01-19 04:32:38 --> Security Class Initialized
+DEBUG - 2026-01-19 04:32:38 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:32:38 --> Input Class Initialized
+INFO - 2026-01-19 04:32:38 --> Language Class Initialized
+INFO - 2026-01-19 04:32:38 --> Loader Class Initialized
+INFO - 2026-01-19 04:32:38 --> Helper loaded: url_helper
+INFO - 2026-01-19 04:32:38 --> Database Driver Class Initialized
+INFO - 2026-01-19 04:32:39 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-19 04:32:39 --> Controller Class Initialized
+INFO - 2026-01-19 04:32:39 --> Model Class Initialized
+INFO - 2026-01-19 04:32:39 --> Model Class Initialized
+INFO - 2026-01-19 04:32:39 --> Helper loaded: text_helper
+INFO - 2026-01-19 04:32:39 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-19 04:32:39 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/Footer.php
+INFO - 2026-01-19 04:32:39 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\/home/home_screen.php
+INFO - 2026-01-19 04:32:39 --> Final output sent to browser
+DEBUG - 2026-01-19 04:32:39 --> Total execution time: 0.3072
+INFO - 2026-01-19 04:32:42 --> Config Class Initialized
+INFO - 2026-01-19 04:32:42 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:32:42 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:32:42 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:32:42 --> URI Class Initialized
+INFO - 2026-01-19 04:32:42 --> Router Class Initialized
+INFO - 2026-01-19 04:32:42 --> Output Class Initialized
+INFO - 2026-01-19 04:32:42 --> Security Class Initialized
+DEBUG - 2026-01-19 04:32:42 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:32:42 --> Input Class Initialized
+INFO - 2026-01-19 04:32:42 --> Language Class Initialized
+ERROR - 2026-01-19 04:32:42 --> 404 Page Not Found: admin/Notif_counter/index
+INFO - 2026-01-19 04:32:43 --> Config Class Initialized
+INFO - 2026-01-19 04:32:43 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:32:43 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:32:43 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:32:43 --> URI Class Initialized
+INFO - 2026-01-19 04:32:43 --> Router Class Initialized
+INFO - 2026-01-19 04:32:43 --> Output Class Initialized
+INFO - 2026-01-19 04:32:43 --> Security Class Initialized
+DEBUG - 2026-01-19 04:32:43 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:32:43 --> Input Class Initialized
+INFO - 2026-01-19 04:32:43 --> Language Class Initialized
+INFO - 2026-01-19 04:32:43 --> Loader Class Initialized
+INFO - 2026-01-19 04:32:43 --> Helper loaded: url_helper
+INFO - 2026-01-19 04:32:43 --> Database Driver Class Initialized
+INFO - 2026-01-19 04:32:43 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-19 04:32:43 --> Controller Class Initialized
+INFO - 2026-01-19 04:32:43 --> Model Class Initialized
+INFO - 2026-01-19 04:32:43 --> Model Class Initialized
+INFO - 2026-01-19 04:32:43 --> Helper loaded: text_helper
+INFO - 2026-01-19 04:32:43 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-19 04:32:43 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/Footer.php
+INFO - 2026-01-19 04:32:43 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\/home/home_screen.php
+INFO - 2026-01-19 04:32:43 --> Final output sent to browser
+DEBUG - 2026-01-19 04:32:43 --> Total execution time: 0.0651
+INFO - 2026-01-19 04:32:48 --> Config Class Initialized
+INFO - 2026-01-19 04:32:48 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:32:48 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:32:48 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:32:48 --> URI Class Initialized
+INFO - 2026-01-19 04:32:48 --> Router Class Initialized
+INFO - 2026-01-19 04:32:48 --> Output Class Initialized
+INFO - 2026-01-19 04:32:48 --> Security Class Initialized
+DEBUG - 2026-01-19 04:32:48 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:32:48 --> Input Class Initialized
+INFO - 2026-01-19 04:32:48 --> Language Class Initialized
+INFO - 2026-01-19 04:32:48 --> Loader Class Initialized
+INFO - 2026-01-19 04:32:48 --> Helper loaded: url_helper
+INFO - 2026-01-19 04:32:48 --> Database Driver Class Initialized
+INFO - 2026-01-19 04:32:48 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-19 04:32:48 --> Controller Class Initialized
+INFO - 2026-01-19 04:32:48 --> Model Class Initialized
+INFO - 2026-01-19 04:32:48 --> Model Class Initialized
+INFO - 2026-01-19 04:32:48 --> Helper loaded: text_helper
+INFO - 2026-01-19 04:32:48 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-19 04:32:48 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/Footer.php
+INFO - 2026-01-19 04:32:48 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\/home/home_screen.php
+INFO - 2026-01-19 04:32:48 --> Final output sent to browser
+DEBUG - 2026-01-19 04:32:48 --> Total execution time: 0.1005
+INFO - 2026-01-19 04:32:50 --> Config Class Initialized
+INFO - 2026-01-19 04:32:50 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:32:50 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:32:50 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:32:50 --> URI Class Initialized
+INFO - 2026-01-19 04:32:50 --> Router Class Initialized
+INFO - 2026-01-19 04:32:50 --> Output Class Initialized
+INFO - 2026-01-19 04:32:50 --> Security Class Initialized
+DEBUG - 2026-01-19 04:32:50 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:32:50 --> Input Class Initialized
+INFO - 2026-01-19 04:32:50 --> Language Class Initialized
+ERROR - 2026-01-19 04:32:50 --> 404 Page Not Found: admin/Notif_counter/index
+INFO - 2026-01-19 04:32:53 --> Config Class Initialized
+INFO - 2026-01-19 04:32:53 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:32:53 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:32:53 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:32:53 --> URI Class Initialized
+INFO - 2026-01-19 04:32:53 --> Router Class Initialized
+INFO - 2026-01-19 04:32:53 --> Output Class Initialized
+INFO - 2026-01-19 04:32:53 --> Security Class Initialized
+DEBUG - 2026-01-19 04:32:53 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:32:53 --> Input Class Initialized
+INFO - 2026-01-19 04:32:53 --> Language Class Initialized
+INFO - 2026-01-19 04:32:53 --> Loader Class Initialized
+INFO - 2026-01-19 04:32:53 --> Helper loaded: url_helper
+INFO - 2026-01-19 04:32:53 --> Database Driver Class Initialized
+INFO - 2026-01-19 04:32:53 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-19 04:32:53 --> Controller Class Initialized
+INFO - 2026-01-19 04:32:53 --> Model Class Initialized
+INFO - 2026-01-19 04:32:53 --> Model Class Initialized
+INFO - 2026-01-19 04:32:53 --> Helper loaded: text_helper
+INFO - 2026-01-19 04:32:53 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-19 04:32:53 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/Footer.php
+INFO - 2026-01-19 04:32:53 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\/home/home_screen.php
+INFO - 2026-01-19 04:32:53 --> Final output sent to browser
+DEBUG - 2026-01-19 04:32:53 --> Total execution time: 0.0940
+INFO - 2026-01-19 04:32:59 --> Config Class Initialized
+INFO - 2026-01-19 04:32:59 --> Hooks Class Initialized
+INFO - 2026-01-19 04:32:59 --> Config Class Initialized
+INFO - 2026-01-19 04:32:59 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:32:59 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:32:59 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:32:59 --> URI Class Initialized
+INFO - 2026-01-19 04:32:59 --> Router Class Initialized
+DEBUG - 2026-01-19 04:32:59 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:32:59 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:32:59 --> Output Class Initialized
+INFO - 2026-01-19 04:32:59 --> Security Class Initialized
+DEBUG - 2026-01-19 04:32:59 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:32:59 --> Input Class Initialized
+INFO - 2026-01-19 04:32:59 --> Language Class Initialized
+ERROR - 2026-01-19 04:32:59 --> 404 Page Not Found: admin/Notif_counter/index
+INFO - 2026-01-19 04:32:59 --> URI Class Initialized
+INFO - 2026-01-19 04:32:59 --> Router Class Initialized
+INFO - 2026-01-19 04:32:59 --> Output Class Initialized
+INFO - 2026-01-19 04:32:59 --> Security Class Initialized
+DEBUG - 2026-01-19 04:32:59 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:32:59 --> Input Class Initialized
+INFO - 2026-01-19 04:32:59 --> Language Class Initialized
+INFO - 2026-01-19 04:32:59 --> Loader Class Initialized
+INFO - 2026-01-19 04:32:59 --> Helper loaded: url_helper
+INFO - 2026-01-19 04:32:59 --> Database Driver Class Initialized
+INFO - 2026-01-19 04:32:59 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-19 04:32:59 --> Controller Class Initialized
+INFO - 2026-01-19 04:32:59 --> Model Class Initialized
+INFO - 2026-01-19 04:32:59 --> Model Class Initialized
+INFO - 2026-01-19 04:32:59 --> Helper loaded: text_helper
+INFO - 2026-01-19 04:32:59 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-19 04:32:59 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/Footer.php
+INFO - 2026-01-19 04:32:59 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\/home/home_screen.php
+INFO - 2026-01-19 04:32:59 --> Final output sent to browser
+DEBUG - 2026-01-19 04:32:59 --> Total execution time: 0.1673
+INFO - 2026-01-19 04:33:03 --> Config Class Initialized
+INFO - 2026-01-19 04:33:03 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:33:03 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:33:03 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:33:03 --> URI Class Initialized
+INFO - 2026-01-19 04:33:03 --> Router Class Initialized
+INFO - 2026-01-19 04:33:03 --> Output Class Initialized
+INFO - 2026-01-19 04:33:03 --> Security Class Initialized
+DEBUG - 2026-01-19 04:33:03 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:33:03 --> Input Class Initialized
+INFO - 2026-01-19 04:33:03 --> Language Class Initialized
+INFO - 2026-01-19 04:33:03 --> Loader Class Initialized
+INFO - 2026-01-19 04:33:03 --> Helper loaded: url_helper
+INFO - 2026-01-19 04:33:03 --> Database Driver Class Initialized
+INFO - 2026-01-19 04:33:03 --> Session: Class initialized using 'files' driver.
+INFO - 2026-01-19 04:33:03 --> Controller Class Initialized
+INFO - 2026-01-19 04:33:03 --> Model Class Initialized
+INFO - 2026-01-19 04:33:03 --> Model Class Initialized
+INFO - 2026-01-19 04:33:03 --> Helper loaded: text_helper
+INFO - 2026-01-19 04:33:03 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/navbar.php
+INFO - 2026-01-19 04:33:03 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\components/Footer.php
+INFO - 2026-01-19 04:33:03 --> File loaded: C:\xampp\htdocs\bookingsmarts\application\views\/home/home_screen.php
+INFO - 2026-01-19 04:33:03 --> Final output sent to browser
+DEBUG - 2026-01-19 04:33:03 --> Total execution time: 0.1073
+INFO - 2026-01-19 04:33:07 --> Config Class Initialized
+INFO - 2026-01-19 04:33:07 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:33:07 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:33:07 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:33:07 --> URI Class Initialized
+INFO - 2026-01-19 04:33:07 --> Router Class Initialized
+INFO - 2026-01-19 04:33:07 --> Output Class Initialized
+INFO - 2026-01-19 04:33:07 --> Security Class Initialized
+DEBUG - 2026-01-19 04:33:07 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:33:07 --> Input Class Initialized
+INFO - 2026-01-19 04:33:07 --> Language Class Initialized
+ERROR - 2026-01-19 04:33:07 --> 404 Page Not Found: admin/Notif_counter/index

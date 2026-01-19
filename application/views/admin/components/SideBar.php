@@ -426,7 +426,7 @@ $jumlah_trx   = (int)$get_transaction;
             });
     }
 
-    setInterval(pollNotif, 8000);
+    setInterval(pollNotif, 2000);
     </script>
 
 </body>
