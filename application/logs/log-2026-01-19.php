@@ -16567,3 +16567,39 @@ DEBUG - 2026-01-19 04:19:54 --> Global POST, GET and COOKIE data sanitized
 INFO - 2026-01-19 04:19:54 --> Input Class Initialized
 INFO - 2026-01-19 04:19:54 --> Language Class Initialized
 ERROR - 2026-01-19 04:19:54 --> 404 Page Not Found: admin/Notif_counter/index
+INFO - 2026-01-19 04:20:02 --> Config Class Initialized
+INFO - 2026-01-19 04:20:02 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:20:02 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:20:02 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:20:02 --> URI Class Initialized
+INFO - 2026-01-19 04:20:02 --> Router Class Initialized
+INFO - 2026-01-19 04:20:02 --> Output Class Initialized
+INFO - 2026-01-19 04:20:02 --> Security Class Initialized
+DEBUG - 2026-01-19 04:20:02 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:20:02 --> Input Class Initialized
+INFO - 2026-01-19 04:20:02 --> Language Class Initialized
+ERROR - 2026-01-19 04:20:02 --> 404 Page Not Found: admin/Notif_counter/index
+INFO - 2026-01-19 04:20:10 --> Config Class Initialized
+INFO - 2026-01-19 04:20:10 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:20:10 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:20:10 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:20:10 --> URI Class Initialized
+INFO - 2026-01-19 04:20:10 --> Router Class Initialized
+INFO - 2026-01-19 04:20:10 --> Output Class Initialized
+INFO - 2026-01-19 04:20:10 --> Security Class Initialized
+DEBUG - 2026-01-19 04:20:10 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:20:10 --> Input Class Initialized
+INFO - 2026-01-19 04:20:10 --> Language Class Initialized
+ERROR - 2026-01-19 04:20:10 --> 404 Page Not Found: admin/Notif_counter/index
+INFO - 2026-01-19 04:20:18 --> Config Class Initialized
+INFO - 2026-01-19 04:20:18 --> Hooks Class Initialized
+DEBUG - 2026-01-19 04:20:18 --> UTF-8 Support Enabled
+INFO - 2026-01-19 04:20:18 --> Utf8 Class Initialized
+INFO - 2026-01-19 04:20:18 --> URI Class Initialized
+INFO - 2026-01-19 04:20:18 --> Router Class Initialized
+INFO - 2026-01-19 04:20:18 --> Output Class Initialized
+INFO - 2026-01-19 04:20:18 --> Security Class Initialized
+DEBUG - 2026-01-19 04:20:18 --> Global POST, GET and COOKIE data sanitized
+INFO - 2026-01-19 04:20:18 --> Input Class Initialized
+INFO - 2026-01-19 04:20:18 --> Language Class Initialized
+ERROR - 2026-01-19 04:20:18 --> 404 Page Not Found: admin/Notif_counter/index
