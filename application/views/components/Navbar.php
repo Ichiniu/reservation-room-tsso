@@ -106,11 +106,21 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
                                     class="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-slate-100">
                                     <i class="bi bi-bell"></i> Aktifkan Notifikasi
                                 </button>
+                                <button id="testSound"
+                                    class="ml-2 px-3 py-1 rounded-md text-xs border bg-slate-950 border-gray-300 hover:bg-gray-50">
+                                    Test Sound
+                                </button>
+                                <button id="testDesktop"
+                                    class="ml-2 px-3 py-1 rounded-md text-xs border bg-slate-950 border-gray-300 hover:bg-gray-50">
+                                    Test Desktop
+                                </button>
 
                                 <div class="px-4 pb-2 text-[11px] text-slate-500 flex items-center gap-2">
                                     <span id="notifDot" class="inline-block w-2 h-2 rounded-full bg-slate-300"></span>
                                     <span id="notifStatusText">Notifikasi: belum dicek</span>
                                 </div>
+
+
                             </div>
 
                             <div class="border-t border-black/5">
@@ -181,6 +191,7 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
     <audio id="notifSound" preload="auto">
         <source src="<?= base_url('assets/nada_notifikasi1.mp3'); ?>" type="audio/mpeg">
     </audio>
+
 
     <script>
     /* =========================================================

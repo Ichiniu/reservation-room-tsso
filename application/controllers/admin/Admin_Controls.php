@@ -762,4 +762,44 @@ class Admin_Controls extends CI_Controller
 				'ts'    => date('Y-m-d H:i:s')
 			]));
 	}
+
+	public function notif_counter()
+{
+    // keamanan: pastikan admin login
+    if ($this->session->userdata('admin_logged_in') !== TRUE) {
+        return $this->output
+            ->set_status_header(401)
+            ->set_content_type('application/json')
+            ->set_output(json_encode([
+                'ok' => false,
+                'message' => 'unauthorized'
+            ]));
+    }
+
+    $this->load->model('gedung/gedung_model');
+
+    // =============================
+    // INBOX: pending pemesanan (proposal masuk)
+    // kamu sudah pakai: get_pending_transaction()
+    // =============================
+    $inboxRaw = $this->gedung_model->get_pending_transaction();
+    $inboxCount = is_array($inboxRaw) ? count($inboxRaw) : (is_numeric($inboxRaw) ? (int)$inboxRaw : 0);
+
+    // =============================
+    // TRANSAKSI: unread pembayaran
+    // kamu sudah pakai: get_unread_transaction()
+    // =============================
+    $trxRaw = $this->gedung_model->get_unread_transaction();
+    $trxCount = is_array($trxRaw) ? count($trxRaw) : (is_numeric($trxRaw) ? (int)$trxRaw : 0);
+
+    return $this->output
+        ->set_content_type('application/json')
+        ->set_output(json_encode([
+            'ok' => true,
+            'inbox' => $inboxCount,
+            'transaksi' => $trxCount,
+            'ts' => date('Y-m-d H:i:s')
+        ]));
+}
+
 }
