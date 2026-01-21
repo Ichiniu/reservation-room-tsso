@@ -1,191 +1,298 @@
 <?php
 $no = 1;
+
+function e($v){ return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
+
+function badge_class($statusUpper)
+{
+  $s = strtoupper(trim((string)$statusUpper));
+
+  // Sesuaikan kalau status kamu beda
+  if ($s === 'CONFIRMED' || $s === 'APPROVED') return 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+  if ($s === 'PENDING' || $s === 'PROCESS')   return 'bg-amber-50 text-amber-800 border border-amber-200';
+  if ($s === 'REJECTED' || $s === 'FAILED')   return 'bg-red-50 text-red-700 border border-red-200';
+  if ($s === 'SUBMITED' || $s === 'SUBMITTED')return 'bg-purple-50 text-purple-700 border border-purple-200';
+
+  return 'bg-slate-50 text-slate-700 border border-slate-200';
+}
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
-    <script src="https://cdn.tailwindcss.com"></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pembayaran</title>
 
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="<?php echo base_url(); ?>assets/home/materialize/css/materialize.css" rel="stylesheet">
-    <link href="<?php echo base_url(); ?>assets/home/template.css" rel="stylesheet">
 </head>
 
-<body class="min-h-screen flex flex-col bg-slate-200 text-black">
-
-    <!-- NAVBAR & HEADER -->
+<body class="min-h-screen flex flex-col bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200 text-slate-900">
     <?php $this->load->view('components/navbar'); ?>
     <?php $this->load->view('components/header'); ?>
 
-    <!-- MAIN CONTENT -->
-    <main class="flex-grow">
-        <div class="max-w-7xl mx-auto px-4 py-8">
+    <main class="flex-1 py-8">
+        <div class="max-w-7xl mx-auto px-4 space-y-6">
 
-            <section class="bg-white rounded-3xl shadow-xl p-6">
-                <h2 class="text-xl font-semibold mb-4">Daftar Pembayaran</h2>
+            <!-- HERO -->
+            <section
+                class="relative overflow-hidden rounded-3xl border border-slate-200 bg-white/70 backdrop-blur shadow-sm">
+                <div class="absolute inset-0 pointer-events-none">
+                    <div class="absolute -top-28 -right-28 h-72 w-72 rounded-full bg-sky-200/40 blur-3xl"></div>
+                    <div class="absolute -bottom-28 -left-28 h-72 w-72 rounded-full bg-emerald-200/40 blur-3xl"></div>
+                </div>
 
-                <!-- SCROLL AREA (HANYA TABEL) -->
-                <div class="max-h-[420px] overflow-y-auto rounded-2xl ring-1 ring-black/5">
-                    <table class="min-w-full text-sm">
-                        <thead class="bg-slate-100 sticky top-0 z-10">
-                            <tr>
-                                <th class="px-4 py-3 text-left">No</th>
-                                <th class="px-4 py-3 text-left">ID Pemesanan</th>
-                                <th class="px-4 py-3 text-left">ID Transaksi</th>
-                                <th class="px-4 py-3 text-left">Atas Nama</th>
-                                <th class="px-4 py-3 text-left">Tanggal Transfer</th>
-                                <th class="px-4 py-3 text-left">Jumlah Transfer</th>
-                                <th class="px-4 py-3 text-left">Total Tagihan</th>
-                                <th class="px-4 py-3 text-left">Status</th>
-                            </tr>
-                        </thead>
+                <div class="relative p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+                    <div>
+                        <div
+                            class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 text-white text-xs font-semibold">
+                            <span class="material-icons text-sm">payments</span>
+                            Pembayaran
+                        </div>
 
-                        <tbody>
-                            <?php if (!empty($res)) : ?>
-                            <?php foreach ($res as $row) : ?>
-                            <?php
-                                    $kode   = isset($row['KODE_PEMESANAN']) ? $row['KODE_PEMESANAN'] : '';
-                                    $idraw  = isset($row['ID_PEMESANAN_RAW']) ? $row['ID_PEMESANAN_RAW'] : '';
-                                    $idbyr  = isset($row['ID_PEMBAYARAN']) ? $row['ID_PEMBAYARAN'] : '';
-                                    $atas   = isset($row['ATAS_NAMA_PENGIRIM']) ? $row['ATAS_NAMA_PENGIRIM'] : '-';
-                                    $tgl    = isset($row['TANGGAL_TRANSFER']) ? $row['TANGGAL_TRANSFER'] : '';
-                                    $nom    = isset($row['NOMINAL_TRANSFER']) ? (int)$row['NOMINAL_TRANSFER'] : 0;
-                                    $total  = isset($row['TOTAL_TAGIHAN']) ? (int)$row['TOTAL_TAGIHAN'] : 0;
-                                    $status = isset($row['STATUS_VERIF']) ? $row['STATUS_VERIF'] : '-';
-                                    ?>
-                            <tr class="table-row border-b hover:bg-slate-50">
-                                <td class="px-4 py-3"><?php echo $no++; ?></td>
-                                <td class="px-4 py-3"><?php echo htmlspecialchars($kode . $idraw); ?></td>
-                                <td class="px-4 py-3"><?php echo 'PYMT000' . htmlspecialchars($idbyr); ?></td>
-                                <td class="px-4 py-3"><?php echo htmlspecialchars($atas); ?></td>
+                        <h1 class="mt-3 text-2xl md:text-3xl font-extrabold tracking-tight">
+                            Daftar Pembayaran
+                        </h1>
+                        <!-- <p class="mt-2 text-sm md:text-base text-slate-600">
+                            Riwayat pembayaran yang masuk. Tanggal ditampilkan format Indonesia.
+                        </p> -->
+                    </div>
 
-                                <!-- TANGGAL (DIFORMAT VIA JS) -->
-                                <td class="px-4 py-3 date-cell" data-date="<?php echo htmlspecialchars($tgl); ?>">
-                                    <?php echo htmlspecialchars($tgl); ?>
-                                </td>
+                    <div
+                        class="hidden sm:flex items-center gap-2 text-xs text-slate-600 bg-white rounded-2xl border border-slate-200 px-4 py-3 shadow-sm">
+                        <span class="material-icons text-base text-slate-500">info</span>
+                        Scroll hanya pada tabel
+                    </div>
+                </div>
+            </section>
 
-                                <td class="px-4 py-3"><?php echo 'Rp ' . number_format($nom); ?></td>
-                                <td class="px-4 py-3"><?php echo 'Rp ' . number_format($total); ?></td>
-                                <td class="px-4 py-3">
-                                    <span class="px-3 py-1 rounded-full text-xs bg-slate-200">
-                                        <?php echo htmlspecialchars($status); ?>
-                                    </span>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                            <?php else : ?>
-                            <tr>
-                                <td colspan="8" class="px-4 py-6 text-center text-slate-500">
-                                    Belum ada pembayaran yang dikonfirmasi
-                                </td>
-                            </tr>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
+            <!-- CARD -->
+            <section class="bg-white rounded-3xl border border-slate-200 shadow-xl p-6">
+
+                <div class="flex items-start justify-between gap-4 mb-5">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">Data Pembayaran</h2>
+                        <p class="text-sm text-slate-500">Menampilkan data pembayaran sesuai transaksi pemesanan.</p>
+                    </div>
+
+                    <div class="hidden sm:flex flex-wrap items-center gap-2 text-xs text-slate-600">
+                        <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1">
+                            <span class="material-icons text-[16px] text-sky-600">verified</span>
+                            Verifikasi status
+                        </span>
+                        <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1">
+                            <span class="material-icons text-[16px] text-emerald-600">sync</span>
+                            Tersusun rapi
+                        </span>
+                    </div>
+                </div>
+
+                <!-- TABLE -->
+                <div class="rounded-2xl border border-slate-200 overflow-hidden bg-white">
+                    <div class="max-h-[420px] overflow-auto">
+                        <table class="min-w-full text-sm">
+                            <thead class="sticky top-0 z-10 bg-slate-50 border-b border-slate-200">
+                                <tr class="text-xs text-slate-700">
+                                    <th class="px-4 py-3 text-left font-semibold">No</th>
+                                    <th class="px-4 py-3 text-left font-semibold">ID Pemesanan</th>
+                                    <th class="px-4 py-3 text-left font-semibold">ID Transaksi</th>
+                                    <th class="px-4 py-3 text-left font-semibold">Atas Nama</th>
+                                    <th class="px-4 py-3 text-left font-semibold">Tanggal Transfer</th>
+                                    <th class="px-4 py-3 text-left font-semibold">Jumlah Transfer</th>
+                                    <th class="px-4 py-3 text-left font-semibold">Total Tagihan</th>
+                                    <th class="px-4 py-3 text-left font-semibold">Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody class="divide-y divide-slate-100">
+                                <?php if (!empty($res)) : ?>
+                                <?php foreach ($res as $row) : ?>
+                                <?php
+                      $kode   = isset($row['KODE_PEMESANAN']) ? $row['KODE_PEMESANAN'] : '';
+                      $idraw  = isset($row['ID_PEMESANAN_RAW']) ? $row['ID_PEMESANAN_RAW'] : '';
+                      $idbyr  = isset($row['ID_PEMBAYARAN']) ? $row['ID_PEMBAYARAN'] : '';
+                      $atas   = isset($row['ATAS_NAMA_PENGIRIM']) ? $row['ATAS_NAMA_PENGIRIM'] : '-';
+                      $tgl    = isset($row['TANGGAL_TRANSFER']) ? $row['TANGGAL_TRANSFER'] : '';
+                      $nom    = isset($row['NOMINAL_TRANSFER']) ? (int)$row['NOMINAL_TRANSFER'] : 0;
+                      $total  = isset($row['TOTAL_TAGIHAN']) ? (int)$row['TOTAL_TAGIHAN'] : 0;
+                      $status = isset($row['STATUS_VERIF']) ? $row['STATUS_VERIF'] : '-';
+                      $badge  = badge_class($status);
+
+                      $idPemesanan = e($kode . $idraw);
+                      $idTransaksi = 'PYMT000' . e($idbyr);
+                    ?>
+
+                                <tr class="table-row hover:bg-slate-50 transition">
+                                    <td class="px-4 py-3">
+                                        <span
+                                            class="inline-flex items-center justify-center h-7 min-w-[28px] px-2 rounded-full bg-slate-100 text-slate-700 text-xs font-bold">
+                                            <?php echo $no++; ?>
+                                        </span>
+                                    </td>
+
+                                    <td class="px-4 py-3 font-bold text-slate-900"><?php echo $idPemesanan; ?></td>
+
+                                    <td class="px-4 py-3 text-slate-700">
+                                        <span
+                                            class="inline-flex items-center gap-1 rounded-full bg-sky-50 text-sky-800 px-3 py-1 text-xs font-semibold">
+                                            <span class="material-icons text-[16px]">receipt</span>
+                                            <?php echo $idTransaksi; ?>
+                                        </span>
+                                    </td>
+
+                                    <td class="px-4 py-3 text-slate-700"><?php echo e($atas); ?></td>
+
+                                    <!-- TANGGAL (diformat JS) -->
+                                    <td class="px-4 py-3 text-slate-700 date-cell" data-date="<?php echo e($tgl); ?>">
+                                        <?php echo e($tgl); ?>
+                                    </td>
+
+                                    <td class="px-4 py-3 text-slate-700 font-semibold">
+                                        Rp <?php echo number_format($nom, 0, ',', '.'); ?>
+                                    </td>
+
+                                    <td class="px-4 py-3 text-slate-700 font-semibold">
+                                        Rp <?php echo number_format($total, 0, ',', '.'); ?>
+                                    </td>
+
+                                    <td class="px-4 py-3">
+                                        <span
+                                            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold <?php echo $badge; ?>">
+                                            <?php echo e(strtoupper(trim((string)$status))); ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                                <?php else : ?>
+                                <tr>
+                                    <td colspan="8" class="px-4 py-10 text-center text-slate-600">
+                                        <div
+                                            class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                                            <span class="material-icons text-slate-500">info</span>
+                                            Belum ada pembayaran yang dikonfirmasi
+                                        </div>
+                                    </td>
+                                </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <!-- PAGINATION -->
                 <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <button id="prevBtn" class="px-4 py-2 rounded-xl border bg-white">
+                    <button id="prevBtn" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-2xl border border-slate-200 bg-white
+                   hover:bg-slate-50 active:scale-[0.99] transition disabled:opacity-50 disabled:cursor-not-allowed">
+                        <span class="material-icons text-base">chevron_left</span>
                         Prev
                     </button>
 
-                    <span id="pageInfo" class="text-sm text-slate-600"></span>
+                    <span id="pageInfo" class="text-sm text-slate-700 font-semibold"></span>
 
-                    <div class="flex gap-3">
-                        <select id="rowsPerPage" class="rounded-xl border px-3 py-2">
-                            <option value="5">5 rows</option>
-                            <option value="10" selected>10 rows</option>
-                            <option value="25">25 rows</option>
-                        </select>
+                    <div class="flex items-center gap-3">
+                        <div class="relative">
+                            <span
+                                class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base">table_rows</span>
+                            <select id="rowsPerPage" class="rounded-2xl border border-slate-200 bg-white pl-10 pr-3 py-2 text-sm outline-none
+                       focus:ring-4 focus:ring-sky-100 focus:border-sky-300">
+                                <option value="5">5 rows</option>
+                                <option value="10" selected>10 rows</option>
+                                <option value="25">25 rows</option>
+                            </select>
+                        </div>
 
-                        <button id="nextBtn" class="px-4 py-2 rounded-xl border bg-white">
+                        <button id="nextBtn" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-2xl border border-slate-200 bg-white
+                     hover:bg-slate-50 active:scale-[0.99] transition disabled:opacity-50 disabled:cursor-not-allowed">
                             Next
+                            <span class="material-icons text-base">chevron_right</span>
                         </button>
                     </div>
                 </div>
 
             </section>
+
         </div>
     </main>
 
-    <!-- FOOTER -->
     <?php $this->load->view('components/footer'); ?>
 
-    <!-- JS -->
-    <script src="<?php echo base_url(); ?>assets/home/assets/js/jquery.min.js"></script>
-    <script src="<?php echo base_url(); ?>assets/home/materialize/js/materialize.js"></script>
-
-    <!-- FORMAT TANGGAL + PAGINATION -->
     <script>
     document.addEventListener('DOMContentLoaded', function() {
 
-        /* ===== FORMAT TANGGAL INDONESIA (01, 02, ...) ===== */
-        const bulanIndo = [
-            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        // ===== format tanggal Indonesia (tanpa padStart agar aman) =====
+        var bulanIndo = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September',
+            'Oktober', 'November', 'Desember'
         ];
 
-        document.querySelectorAll('.date-cell').forEach(function(el) {
-            const raw = el.getAttribute('data-date');
-            if (!raw) return;
+        var dateCells = document.querySelectorAll('.date-cell');
+        for (var i = 0; i < dateCells.length; i++) {
+            var el = dateCells[i];
+            var raw = el.getAttribute('data-date');
+            if (!raw) continue;
 
-            const date = new Date(raw);
-            if (isNaN(date)) return;
+            var d = new Date(raw);
+            if (isNaN(d)) continue;
 
-            const tgl = String(date.getDate()).padStart(2, '0');
+            var dd = d.getDate();
+            var tgl = (dd < 10 ? '0' + dd : '' + dd);
 
-            el.textContent =
-                tgl + ' ' +
-                bulanIndo[date.getMonth()] + ' ' +
-                date.getFullYear();
-        });
+            el.textContent = tgl + ' ' + bulanIndo[d.getMonth()] + ' ' + d.getFullYear();
+        }
 
-        /* ===== PAGINATION ===== */
-        const rows = Array.from(document.querySelectorAll('.table-row'));
-        const rowsSelect = document.getElementById('rowsPerPage');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const pageInfo = document.getElementById('pageInfo');
+        // ===== pagination =====
+        var rows = Array.prototype.slice.call(document.querySelectorAll('.table-row'));
+        var rowsSelect = document.getElementById('rowsPerPage');
+        var prevBtn = document.getElementById('prevBtn');
+        var nextBtn = document.getElementById('nextBtn');
+        var pageInfo = document.getElementById('pageInfo');
 
-        let rowsPerPage = parseInt(rowsSelect.value, 10);
-        let currentPage = 1;
+        var rowsPerPage = parseInt(rowsSelect.value, 10);
+        if (!rowsPerPage || rowsPerPage < 1) rowsPerPage = 10;
+
+        var currentPage = 1;
 
         function renderTable() {
-            const totalPages = Math.ceil(rows.length / rowsPerPage) || 1;
+            var totalPages = Math.ceil(rows.length / rowsPerPage);
+            if (!totalPages) totalPages = 1;
 
-            rows.forEach(row => row.style.display = 'none');
+            for (var i = 0; i < rows.length; i++) rows[i].style.display = 'none';
 
-            const start = (currentPage - 1) * rowsPerPage;
-            const end = start + rowsPerPage;
+            var start = (currentPage - 1) * rowsPerPage;
+            var end = start + rowsPerPage;
 
-            rows.slice(start, end).forEach(row => row.style.display = '');
+            for (var j = start; j < end && j < rows.length; j++) {
+                rows[j].style.display = '';
+            }
 
             pageInfo.textContent = 'Page ' + currentPage + ' of ' + totalPages;
-            prevBtn.disabled = currentPage === 1;
-            nextBtn.disabled = currentPage === totalPages;
+            prevBtn.disabled = (currentPage === 1);
+            nextBtn.disabled = (currentPage === totalPages);
         }
 
         rowsSelect.addEventListener('change', function() {
-            rowsPerPage = parseInt(this.value, 10);
+            var v = parseInt(this.value, 10);
+            if (!v || v < 1) v = 10;
+            rowsPerPage = v;
             currentPage = 1;
             renderTable();
         });
 
         prevBtn.addEventListener('click', function() {
             if (currentPage > 1) {
-                currentPage--;
+                currentPage = currentPage - 1;
                 renderTable();
             }
         });
 
         nextBtn.addEventListener('click', function() {
-            currentPage++;
-            renderTable();
+            var totalPages = Math.ceil(rows.length / rowsPerPage);
+            if (!totalPages) totalPages = 1;
+
+            if (currentPage < totalPages) {
+                currentPage = currentPage + 1;
+                renderTable();
+            }
         });
 
         renderTable();

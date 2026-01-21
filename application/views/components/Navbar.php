@@ -72,15 +72,32 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
                         <i class="bi bi-list text-xl"></i>
                     </button>
 
+                    <!-- PROFILE (DESKTOP) -->
                     <div class="relative hidden md:block">
                         <button type="button"
                             class="profile-toggle flex items-center gap-2 px-3 py-1 rounded-full bg-white hover:bg-slate-100 border border-black/10 transition">
+
                             <?php $foto_profil = $this->session->userdata('foto_profil'); ?>
+
                             <?php if (!empty($foto_profil)): ?>
-                            <img src="<?= base_url($foto_profil); ?>" class="h-7 w-7 rounded-full object-cover"
-                                alt="Foto Profil">
+                            <span class="relative inline-flex">
+                                <img src="<?= base_url($foto_profil); ?>" class="h-7 w-7 rounded-full object-cover"
+                                    alt="Foto Profil">
+
+                                <!-- STATUS DOT -->
+                                <span id="userStatusDot"
+                                    class="absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-500"
+                                    title="Online"></span>
+                            </span>
                             <?php else: ?>
-                            <i class="bi bi-person-circle text-slate-700"></i>
+                            <span class="relative inline-flex">
+                                <i class="bi bi-person-circle text-slate-700 text-xl leading-none"></i>
+
+                                <!-- STATUS DOT -->
+                                <span id="userStatusDot"
+                                    class="absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-500"
+                                    title="Online"></span>
+                            </span>
                             <?php endif; ?>
 
                             <span class="text-xs font-medium text-slate-700">
@@ -106,6 +123,7 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
                                     class="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-slate-100">
                                     <i class="bi bi-bell"></i> Aktifkan Notifikasi
                                 </button>
+
                                 <button id="testSound"
                                     class="ml-2 px-3 py-1 rounded-md text-xs border bg-slate-950 border-gray-300 hover:bg-gray-50">
                                     Test Sound
@@ -119,8 +137,6 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
                                     <span id="notifDot" class="inline-block w-2 h-2 rounded-full bg-slate-300"></span>
                                     <span id="notifStatusText">Notifikasi: belum dicek</span>
                                 </div>
-
-
                             </div>
 
                             <div class="border-t border-black/5">
@@ -192,19 +208,71 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
         <source src="<?= base_url('assets/nada_notifikasi1.mp3'); ?>" type="audio/mpeg">
     </audio>
 
+    <script>
+    /* =========================================================
+       ONLINE / IDLE / OFFLINE DOT (DEKAT FOTO PROFIL)
+       - Online: hijau saat halaman aktif
+       - Idle: kuning saat tab hidden / user diam 60 detik
+       - Offline: abu saat internet putus
+    ========================================================= */
+    (function() {
+        var dot = document.getElementById("userStatusDot");
+        if (!dot) return;
+
+        function setOnline() {
+            dot.className =
+                "absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-500";
+            dot.title = "Online";
+        }
+
+        function setIdle() {
+            dot.className =
+                "absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-amber-400";
+            dot.title = "Idle";
+        }
+
+        function setOffline() {
+            dot.className =
+                "absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-slate-400";
+            dot.title = "Offline";
+        }
+
+        // default
+        setOnline();
+
+        // tab hidden -> idle
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) setIdle();
+            else setOnline();
+        });
+
+        // idle jika tidak ada aktivitas 60 detik
+        var idleTimer = null;
+
+        function resetIdle() {
+            if (idleTimer) clearTimeout(idleTimer);
+            setOnline();
+            idleTimer = setTimeout(setIdle, 60000);
+        }
+
+        ["mousemove", "keydown", "click", "scroll", "touchstart"].forEach(function(ev) {
+            document.addEventListener(ev, resetIdle, {
+                passive: true
+            });
+        });
+
+        // internet putus -> offline
+        window.addEventListener("offline", setOffline);
+        window.addEventListener("online", setOnline);
+    })();
+    </script>
 
     <script>
     /* =========================================================
-   FULL SCRIPT NOTIF PEMESANAN + TRANSAKSI (POPUP TERPISAH)
-   - Badge update realtime (polling)
-   - Popup notif pemesanan + transaksi masing-masing sendiri
-   - Isi popup: jumlah + list ID (dari backend notif_poll)
-   - Suara notif (optional)
-========================================================= */
+       FULL SCRIPT NOTIF PEMESANAN + TRANSAKSI (POPUP TERPISAH)
+       (script kamu tetap sama)
+    ========================================================= */
 
-    /* =========================
-       1) Permission button
-    ========================= */
     async function aktifkanNotif() {
         if (!("Notification" in window)) {
             alert("Browser kamu tidak mendukung notifikasi.");
@@ -240,9 +308,6 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
         updateNotifUI();
     }
 
-    /* =========================
-       2) UI status (dot + text)
-    ========================= */
     function updateNotifUI() {
         var dot = document.getElementById("notifDot");
         var txt = document.getElementById("notifStatusText");
@@ -266,9 +331,6 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
         }
     }
 
-    /* =========================
-       3) Badge helper
-    ========================= */
     function setBadge(el, count) {
         if (!el) return;
         count = parseInt(count || 0, 10);
@@ -285,20 +347,13 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
         }
     }
 
-    /* =========================
-       4) Format list ID untuk popup
-       - pemesanan: PMSN000 + pad
-       - transaksi: TRX- + id (atau ganti sesuai format kamu)
-    ========================= */
     function formatIds(ids, prefix, padLen) {
         if (!ids || !Array.isArray(ids) || ids.length === 0) return "-";
 
         var shown = ids.slice(0, 3).map(function(x) {
             x = parseInt(x, 10);
             if (isNaN(x)) return prefix + String(x);
-            if (padLen && padLen > 0) {
-                return prefix + String(x).padStart(padLen, "0");
-            }
+            if (padLen && padLen > 0) return prefix + String(x).padStart(padLen, "0");
             return prefix + String(x);
         });
 
@@ -306,27 +361,16 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
         return shown.join(", ") + more;
     }
 
-    /* =========================
-       5) Desktop Notification helper (lebih aman)
-       - minta izin jika default
-       - tag beda: pemesanan / transaksi (biar gak saling timpa)
-    ========================= */
     async function showDesktopNotif(title, body, tag) {
         if (!("Notification" in window)) return false;
 
-        // Kalau permission default, wajib minta izin via user gesture.
-        // Jadi kalau masih default, kita jangan spam: coba request,
-        // tapi bisa gagal kalau bukan karena klik user.
         if (Notification.permission === "default") {
             try {
                 await Notification.requestPermission();
             } catch (e) {}
         }
 
-        if (Notification.permission !== "granted") {
-            console.log("[notif] permission bukan granted:", Notification.permission);
-            return false;
-        }
+        if (Notification.permission !== "granted") return false;
 
         try {
             new Notification(title, {
@@ -340,12 +384,8 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
         }
     }
 
-    /* =========================
-       6) Cooldown popup (biar gak spam)
-       - Simpan last popup time per jenis
-    ========================= */
     function shouldPopup(key, cooldownMs) {
-        cooldownMs = cooldownMs || 15000; // 15 detik
+        cooldownMs = cooldownMs || 15000;
         var now = Date.now();
         var last = parseInt(localStorage.getItem(key) || "0", 10);
         if (isNaN(last)) last = 0;
@@ -354,37 +394,7 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
         return true;
     }
 
-    /* =========================
-       7) (Opsional) Mark transaksi dibaca
-       - Kalau kamu punya route: home/trx_mark_all_read
-       - Kalau belum ada, boleh hapus fungsi ini
-    ========================= */
-    function markAllTrxRead() {
-        fetch("<?= site_url('home/trx_mark_all_read'); ?>", {
-                method: "POST",
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest"
-                },
-                credentials: "same-origin"
-            })
-            .then(function(r) {
-                return r.json();
-            })
-            .then(function(j) {
-                if (!j || !j.ok) return;
-                setBadge(document.getElementById("trxBadge"), 0);
-                setBadge(document.getElementById("trxBadgeMobile"), 0);
-                localStorage.setItem("lastFlagTransaksi", "0");
-            })
-            .catch(function() {});
-    }
-
-    /* =========================
-       8) Main
-    ========================= */
     document.addEventListener("DOMContentLoaded", function() {
-
-        /* ===== PROFILE DROPDOWN ===== */
         var profileToggle = document.querySelector(".profile-toggle");
         var profileMenu = document.querySelector(".profile-menu");
         if (profileToggle && profileMenu) {
@@ -398,7 +408,6 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
             });
         }
 
-        /* ===== MOBILE MENU ===== */
         var mobileBtn = document.getElementById("mobileMenuBtn");
         var mobileMenu = document.getElementById("mobileMenu");
         if (mobileBtn && mobileMenu) {
@@ -414,16 +423,13 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
             });
         }
 
-        /* ===== ELEMENTS ===== */
         var soundEl = document.getElementById("notifSound");
 
         var badgePDesktop = document.getElementById("notifBadge");
         var badgePMobile = document.getElementById("notifBadgeMobile");
-
         var badgeTDesktop = document.getElementById("trxBadge");
         var badgeTMobile = document.getElementById("trxBadgeMobile");
 
-        /* ===== UNLOCK AUDIO ===== */
         var audioUnlocked = false;
 
         function unlockAudioOnce() {
@@ -447,7 +453,6 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
             soundEl.play().catch(function() {});
         }
 
-        /* ===== INIT COUNTS FROM HTML ===== */
         var curP = parseInt((badgePDesktop && badgePDesktop.dataset.count) ? badgePDesktop.dataset.count : "0",
             10);
         if (isNaN(curP)) curP = 0;
@@ -464,30 +469,21 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
 
         var justEnabled = localStorage.getItem("notifJustEnabled") === "1";
 
-        /* ===== POPUP ON LOAD (jika count naik) ===== */
-        // Note: kalau permission masih default, popup bisa tidak muncul sampai user klik allow.
         if (curP > lastP) {
-            showDesktopNotif(
-                "Notifikasi pemesanan",
-                "Ada update pemesanan (" + curP + ").",
-                "pemesanan"
-            ).then(function(ok) {
-                if (ok) playSound();
-            });
+            showDesktopNotif("Notifikasi pemesanan", "Ada update pemesanan (" + curP + ").", "pemesanan")
+                .then(function(ok) {
+                    if (ok) playSound();
+                });
         }
 
         if (curT > lastT) {
-            showDesktopNotif(
-                "Notifikasi transaksi",
-                "Ada update transaksi (" + curT + ").",
-                "transaksi"
-            ).then(function(ok) {
-                if (ok) playSound();
-            });
+            showDesktopNotif("Notifikasi transaksi", "Ada update transaksi (" + curT + ").", "transaksi")
+                .then(function(ok) {
+                    if (ok) playSound();
+                });
         }
 
         if (justEnabled) {
-            // setelah user allow, kasih popup jika ada notifikasi existing
             if (curP > 0) showDesktopNotif("Notifikasi pemesanan", "Kamu punya update pemesanan (" + curP +
                 ").", "pemesanan");
             if (curT > 0) showDesktopNotif("Notifikasi transaksi", "Kamu punya update transaksi (" + curT +
@@ -498,11 +494,9 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
         localStorage.setItem("lastFlagPemesanan", String(curP));
         localStorage.setItem("lastFlagTransaksi", String(curT));
 
-        /* ===== POLL CONFIG ===== */
         var pollIntervalMs = 5000;
-        var cooldownMs = 15000; // supaya popup tidak spam
+        var cooldownMs = 15000;
 
-        /* ===== REALTIME POLL ===== */
         async function pollNotif() {
             try {
                 const res = await fetch("<?= site_url('home/notif_poll') ?>", {
@@ -518,66 +512,43 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
 
                 var newP = parseInt(data.flag || 0, 10);
                 if (isNaN(newP)) newP = 0;
-
                 var newT = parseInt(data.trx_flag || 0, 10);
                 if (isNaN(newT)) newT = 0;
 
-                // list id dari backend
                 var pemIds = data.pemesanan_ids || [];
                 var trxIds = data.trx_ids || [];
 
-                // update badge
                 setBadge(badgePDesktop, newP);
                 setBadge(badgePMobile, newP);
                 setBadge(badgeTDesktop, newT);
                 setBadge(badgeTMobile, newT);
 
-                // isi popup masing-masing (dengan ID)
-                var pemText =
-                    "Kamu punya update pemesanan (" + newP + ").\n" +
-                    "ID: " + formatIds(pemIds, "PMSN000", 3); // padLen 3 -> 001/123 (ubah kalau perlu)
+                var pemText = "Kamu punya update pemesanan (" + newP + ").\n" + "ID: " + formatIds(pemIds,
+                    "PMSN000", 3);
+                var trxText = "Kamu punya update transaksi (" + newT + ").\n" + "ID: " + formatIds(trxIds,
+                    "TRX-", 0);
 
-                var trxText =
-                    "Kamu punya update transaksi (" + newT + ").\n" +
-                    "ID: " + formatIds(trxIds, "TRX-", 0);
-
-                // POPUP PEMESANAN (sendiri)
-                // Trigger kalau naik ATAU kamu mau tiap polling selama masih >0 (pilih salah satu):
-                // A) naik saja: if (newP > curP)
-                // B) selama masih ada unread: if (newP > 0)
-                // Aku set: naik saja (lebih aman tidak spam)
                 if (newP > curP && shouldPopup("popup_pemesanan", cooldownMs)) {
                     var okP = await showDesktopNotif("Notifikasi pemesanan", pemText, "pemesanan");
                     if (okP) playSound();
                 }
 
-                // POPUP TRANSAKSI (sendiri)
                 if (newT > curT && shouldPopup("popup_transaksi", cooldownMs)) {
                     var okT = await showDesktopNotif("Notifikasi transaksi", trxText, "transaksi");
                     if (okT) playSound();
                 }
 
-                // geser current
                 curP = newP;
                 curT = newT;
-
                 localStorage.setItem("lastFlagPemesanan", String(curP));
                 localStorage.setItem("lastFlagTransaksi", String(curT));
-
-                // DEBUG
-                // console.log("[poll]", { newP, newT, pemIds, trxIds, perm: Notification.permission });
-
-            } catch (e) {
-                // console.log(e);
-            }
+            } catch (e) {}
         }
 
         pollNotif();
         setInterval(pollNotif, pollIntervalMs);
-
         updateNotifUI();
     });
     </script>
-
 
 </body>

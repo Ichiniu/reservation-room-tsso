@@ -44,26 +44,24 @@ $statusDisplay = isset($result->STATUS) ? $result->STATUS : '-';
 $idDisplay     = isset($result->ID_PEMESANAN) ? $result->ID_PEMESANAN : '';
 
 /** =============================
- * REMARKS (CATATAN ADMIN) - FIX URUTAN
+ * REMARKS (CATATAN ADMIN)
  * ============================= */
 $remarksDisplay = isset($result->REMARKS) ? $result->REMARKS : '';
 $remarksSafe    = trim((string)$remarksDisplay);
-
-/** tampilkan remarks hanya saat SUBMITED/REJECTED */
-$isShowRemarks = ($statusText === 'SUBMITED' || $statusText === 'REJECTED');
+$isShowRemarks  = ($statusText === 'SUBMITED' || $statusText === 'REJECTED');
 
 /** =============================
  * BADGE COLOR
  * ============================= */
-$badgeClass = 'bg-gray-100 text-gray-800 border-gray-200';
-$dotClass   = 'bg-gray-500';
+$badgeClass = 'bg-slate-50 text-slate-800 border-slate-200';
+$dotClass   = 'bg-slate-500';
 
 if ($statusText === 'PROCESS') {
-    $badgeClass = 'bg-yellow-50 text-yellow-800 border-yellow-200';
-    $dotClass   = 'bg-yellow-500';
+    $badgeClass = 'bg-amber-50 text-amber-800 border-amber-200';
+    $dotClass   = 'bg-amber-500';
 } elseif ($statusText === 'PROPOSAL APPROVE') {
-    $badgeClass = 'bg-blue-50 text-blue-800 border-blue-200';
-    $dotClass   = 'bg-blue-500';
+    $badgeClass = 'bg-sky-50 text-sky-800 border-sky-200';
+    $dotClass   = 'bg-sky-500';
 } elseif ($statusText === 'APPROVE & PAID') {
     $badgeClass = 'bg-emerald-50 text-emerald-800 border-emerald-200';
     $dotClass   = 'bg-emerald-500';
@@ -94,8 +92,9 @@ $tgl_pemesanan_fmt = $tgl_pemesanan_raw ? date('d F Y', strtotime($tgl_pemesanan
 $jam_mulai   = !empty($result->JAM_PEMESANAN) ? date('H:i', strtotime($result->JAM_PEMESANAN)) : '';
 $jam_selesai = !empty($result->JAM_SELESAI) ? date('H:i', strtotime($result->JAM_SELESAI)) : '';
 $jam_fmt     = ($jam_mulai && $jam_selesai) ? ($jam_mulai . ' - ' . $jam_selesai . ' WIB') : '-';
-?>
 
+function e($v){ return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
+?>
 <!DOCTYPE html>
 <html lang="id">
 
@@ -104,215 +103,314 @@ $jam_fmt     = ($jam_mulai && $jam_selesai) ? ($jam_mulai . ' - ' . $jam_selesai
     <title>Detail Pemesanan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
-<body class="bg-slate-200 min-h-screen">
+<body class="min-h-screen text-slate-900 bg-gradient-to-b from-slate-100 via-slate-50 to-emerald-50">
     <?php $this->load->view('components/navbar'); ?>
     <?php $this->load->view('components/header'); ?>
 
-    <div class="max-w-4xl mx-auto mt-10 bg-white rounded-xl shadow-lg p-6">
+    <main class="py-8">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        <!-- Header + Status badge -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 border-b pb-3">
-            <h2 class="text-xl font-bold">Detail Pemesanan</h2>
+            <!-- CARD -->
+            <section
+                class="relative overflow-hidden rounded-3xl border border-slate-200 bg-white/80 backdrop-blur shadow-xl">
+                <!-- soft glow -->
+                <div class="absolute inset-0 pointer-events-none">
+                    <div class="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-sky-200/25 blur-3xl"></div>
+                    <div class="absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-emerald-200/25 blur-3xl"></div>
+                </div>
 
-            <div class="inline-flex items-center gap-2 rounded-full border px-4 py-2 <?php echo $badgeClass; ?>">
-                <span class="h-2.5 w-2.5 rounded-full <?php echo $dotClass; ?>"></span>
-                <span class="text-sm font-semibold">STATUS:</span>
-                <span
-                    class="text-sm font-bold"><?php echo htmlspecialchars($statusDisplay, ENT_QUOTES, 'UTF-8'); ?></span>
-            </div>
-        </div>
+                <div class="relative p-6 sm:p-8">
+                    <!-- HEADER -->
+                    <div
+                        class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between pb-5 border-b border-slate-200/70">
+                        <div>
+                            <div
+                                class="inline-flex items-center gap-2 rounded-full bg-slate-50 border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-700">
+                                <span class="material-icons text-[16px] text-slate-500">receipt_long</span>
+                                Detail Pemesanan
+                            </div>
+                            <h2 class="mt-3 text-2xl font-extrabold tracking-tight text-slate-900">
+                                <?php echo e($idDisplay); ?>
+                            </h2>
+                            <p class="mt-1 text-sm text-slate-600">
+                                Ruangan: <span
+                                    class="font-semibold text-slate-800"><?php echo e($nama_gedung); ?></span>
+                            </p>
+                        </div>
 
-        <!-- CATATAN ADMIN (SUBMITED / REJECTED) -->
-        <?php if ($isShowRemarks): ?>
-            <?php
-            $remarkBoxClass = ($statusText === 'REJECTED') ? 'border-rose-200 bg-rose-50' : 'border-indigo-200 bg-indigo-50';
-            $remarkTitleClass = ($statusText === 'REJECTED') ? 'text-rose-800' : 'text-indigo-800';
-            ?>
-            <div class="mb-4 rounded-xl border p-4 text-sm <?php echo $remarkBoxClass; ?>">
-                <div class="font-semibold <?php echo $remarkTitleClass; ?>">Catatan Admin:</div>
-
-                <?php if ($remarksSafe !== ''): ?>
-                    <div class="mt-1 text-slate-800 whitespace-pre-line">
-                        <?php echo htmlspecialchars($remarksSafe, ENT_QUOTES, 'UTF-8'); ?>
+                        <!-- STATUS BADGE -->
+                        <div
+                            class="inline-flex items-center gap-2 rounded-full border px-4 py-2 <?php echo $badgeClass; ?>">
+                            <span class="h-2.5 w-2.5 rounded-full <?php echo $dotClass; ?>"></span>
+                            <span class="text-xs font-semibold">STATUS</span>
+                            <span class="text-sm font-extrabold"><?php echo e($statusDisplay); ?></span>
+                        </div>
                     </div>
-                <?php else: ?>
-                    <div class="mt-1 text-slate-500">Tidak ada catatan admin.</div>
-                <?php endif; ?>
+
+                    <!-- CATATAN ADMIN -->
+                    <?php if ($isShowRemarks): ?>
+                    <?php
+                            $remarkBoxClass = ($statusText === 'REJECTED') ? 'border-rose-200 bg-rose-50/80' : 'border-indigo-200 bg-indigo-50/80';
+                            $remarkTitleClass = ($statusText === 'REJECTED') ? 'text-rose-800' : 'text-indigo-800';
+                            $remarkIcon = ($statusText === 'REJECTED') ? 'report' : 'info';
+                        ?>
+                    <div class="mt-5 rounded-2xl border p-4 text-sm <?php echo $remarkBoxClass; ?>">
+                        <div class="flex items-start gap-2">
+                            <span
+                                class="material-icons text-[18px] <?php echo $remarkTitleClass; ?>"><?php echo $remarkIcon; ?></span>
+                            <div>
+                                <div class="font-semibold <?php echo $remarkTitleClass; ?>">Catatan Admin</div>
+                                <?php if ($remarksSafe !== ''): ?>
+                                <div class="mt-1 text-slate-800 whitespace-pre-line"><?php echo e($remarksSafe); ?>
+                                </div>
+                                <?php else: ?>
+                                <div class="mt-1 text-slate-500">Tidak ada catatan admin.</div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
+                    <!-- GRID SUMMARY (mini cards) -->
+                    <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                            <div class="text-xs text-slate-500">Tanggal</div>
+                            <div class="mt-1 font-semibold text-slate-900 flex items-center gap-2">
+                                <span class="material-icons text-[18px] text-sky-600">event</span>
+                                <?php echo e($tgl_pemesanan_fmt); ?>
+                            </div>
+                        </div>
+                        <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                            <div class="text-xs text-slate-500">Jam</div>
+                            <div class="mt-1 font-semibold text-slate-900 flex items-center gap-2">
+                                <span class="material-icons text-[18px] text-emerald-600">schedule</span>
+                                <?php echo e($jam_fmt); ?>
+                            </div>
+                        </div>
+                        <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                            <div class="text-xs text-slate-500">Total Tagihan</div>
+                            <div class="mt-1 font-extrabold text-slate-900 flex items-center gap-2">
+                                <span class="material-icons text-[18px] text-emerald-600">payments</span>
+                                Rp <?php echo number_format($total_tagihan, 0, ',', '.'); ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DETAIL TABLE -->
+                    <div class="mt-6 rounded-2xl border border-slate-200 bg-white overflow-hidden">
+                        <div
+                            class="px-5 py-3 border-b border-slate-200 bg-slate-50 text-sm font-semibold text-slate-800 flex items-center gap-2">
+                            <span class="material-icons text-[18px] text-slate-500">list_alt</span>
+                            Rincian
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <tbody class="[&>tr]:border-b [&>tr:last-child]:border-b-0">
+                                    <tr>
+                                        <td class="px-5 py-3 font-semibold w-52 text-slate-700">ID Pemesanan</td>
+                                        <td class="px-5 py-3 text-slate-800"><?php echo e($idDisplay); ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-5 py-3 font-semibold text-slate-700">Username</td>
+                                        <td class="px-5 py-3 text-slate-800"><?php echo e($display_username); ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-5 py-3 font-semibold text-slate-700">Email</td>
+                                        <td class="px-5 py-3 text-slate-800"><?php echo e($display_email); ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-5 py-3 font-semibold text-slate-700">Tanggal Pemesanan</td>
+                                        <td class="px-5 py-3 text-slate-800"><?php echo e($tgl_pemesanan_fmt); ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-5 py-3 font-semibold text-slate-700">Jam Pemesanan</td>
+                                        <td class="px-5 py-3 text-slate-800"><?php echo e($jam_fmt); ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-5 py-3 font-semibold text-slate-700">Ruangan</td>
+                                        <td class="px-5 py-3 text-slate-800"><?php echo e($nama_gedung); ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-5 py-3 font-semibold text-slate-700">Nama Catering</td>
+                                        <td class="px-5 py-3 text-slate-800"><?php echo e($nama_paket_display); ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-5 py-3 font-semibold text-slate-700">Jumlah Catering</td>
+                                        <td class="px-5 py-3 text-slate-800"><?php echo e($jumlah_cat_display); ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-5 py-3 font-semibold text-slate-700">Harga Ruangan</td>
+                                        <td class="px-5 py-3 text-slate-800">Rp
+                                            <?php echo number_format($harga_sewa, 0, ',', '.'); ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-5 py-3 font-semibold text-slate-700">Total Catering</td>
+                                        <td class="px-5 py-3 text-slate-800">Rp
+                                            <?php echo number_format($total_harga, 0, ',', '.'); ?></td>
+                                    </tr>
+
+                                    <!-- pajak dihilangkan -->
+
+                                    <tr class="bg-emerald-50/60">
+                                        <td class="px-5 py-3 font-extrabold text-emerald-900">Total Keseluruhan</td>
+                                        <td class="px-5 py-3 font-extrabold text-emerald-900">
+                                            Rp <?php echo number_format($total_tagihan, 0, ',', '.'); ?>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="px-5 py-3 font-semibold text-slate-700">Status</td>
+                                        <td class="px-5 py-3 text-slate-800"><?php echo e($statusDisplay); ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-5 py-3 font-semibold text-slate-700 align-top">Keperluan Acara
+                                        </td>
+                                        <td class="px-5 py-3 text-slate-800"><?php echo nl2br(e($deskripsi_acara)); ?>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- BUTTON AREA -->
+                    <div class="mt-6 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <a href="javascript:history.back()" class="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-slate-800
+                                  hover:bg-slate-50 active:scale-[0.99] transition shadow-sm">
+                            <span class="material-icons text-[18px] text-slate-600">arrow_back</span>
+                            Kembali
+                        </a>
+
+                        <div class="flex flex-col sm:flex-row gap-3 sm:justify-end">
+                            <?php if ($statusCode !== 2 && $statusCode !== 3 && $statusCode !== 4): ?>
+                            <a href="<?php echo site_url('home/cancel-order/' . $temp_id); ?>"
+                                onclick="return dialog();" class="inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2 text-white
+                                          bg-rose-600 hover:bg-rose-700 active:scale-[0.99] transition shadow-md">
+                                <span class="material-icons text-[18px]">cancel</span>
+                                Batalkan Pesanan
+                            </a>
+                            <?php endif; ?>
+
+                            <?php if ($statusText === 'PROPOSAL APPROVE'): ?>
+                            <button type="button" onclick="openModal()"
+                                class="inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-2 text-white
+                                               bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] transition shadow-md">
+                                <span class="material-icons text-[18px]">payments</span>
+                                Bayar
+                            </button>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- FOOTNOTE (proposal optional) -->
+            <?php if ($proposal_file_url): ?>
+            <div
+                class="mt-4 rounded-2xl border border-slate-200 bg-white/70 backdrop-blur p-4 text-sm text-slate-700 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                    <span class="material-icons text-[18px] text-slate-500">attach_file</span>
+                    <span>Proposal: <span class="font-semibold"><?php echo e($proposal_file_name); ?></span></span>
+                </div>
+                <a href="<?php echo e($proposal_file_url); ?>" target="_blank"
+                    class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 hover:bg-slate-50 transition">
+                    <span class="material-icons text-[18px] text-slate-600">open_in_new</span>
+                    Buka
+                </a>
             </div>
-        <?php endif; ?>
+            <?php endif; ?>
 
-        <!-- TABEL DETAIL -->
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <tbody class="[&>tr]:border-b [&>tr:last-child]:border-b-0">
-                    <tr>
-                        <td class="py-2 font-semibold w-48">ID Pemesanan</td>
-                        <td class="py-2">: <?php echo htmlspecialchars($idDisplay, ENT_QUOTES, 'UTF-8'); ?></td>
-                    </tr>
-                    <tr>
-                        <td class="py-2 font-semibold">Username</td>
-                        <td class="py-2">:
-                            <?php echo htmlspecialchars((string)$display_username, ENT_QUOTES, 'UTF-8'); ?></td>
-                    </tr>
-                    <tr>
-                        <td class="py-2 font-semibold">Email</td>
-                        <td class="py-2">: <?php echo htmlspecialchars((string)$display_email, ENT_QUOTES, 'UTF-8'); ?>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="py-2 font-semibold">Tanggal Pemesanan</td>
-                        <td class="py-2">: <?php echo $tgl_pemesanan_fmt; ?></td>
-                    </tr>
-                    <tr>
-                        <td class="py-2 font-semibold">Jam Pemesanan</td>
-                        <td class="py-2">: <?php echo $jam_fmt; ?></td>
-                    </tr>
-                    <tr>
-                        <td class="py-2 font-semibold">Ruangan</td>
-                        <td class="py-2">: <?php echo htmlspecialchars((string)$nama_gedung, ENT_QUOTES, 'UTF-8'); ?>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="py-2 font-semibold">Nama Catering</td>
-                        <td class="py-2">:
-                            <?php echo htmlspecialchars((string)$nama_paket_display, ENT_QUOTES, 'UTF-8'); ?></td>
-                    </tr>
-                    <tr>
-                        <td class="py-2 font-semibold">Jumlah Catering</td>
-                        <td class="py-2">:
-                            <?php echo htmlspecialchars((string)$jumlah_cat_display, ENT_QUOTES, 'UTF-8'); ?></td>
-                    </tr>
-                    <tr>
-                        <td class="py-2 font-semibold">Harga Ruangan</td>
-                        <td class="py-2">: Rp <?php echo number_format($harga_sewa); ?></td>
-                    </tr>
-                    <tr>
-                        <td class="py-2 font-semibold">Total Catering</td>
-                        <td class="py-2">: Rp <?php echo number_format($total_harga); ?></td>
-                    </tr>
-
-                    <!-- PAJAK DIHILANGKAN -->
-
-                    <tr class="font-bold text-red-600">
-                        <td class="py-2">Total Keseluruhan</td>
-                        <td class="py-2">: Rp <?php echo number_format($total_tagihan); ?></td>
-                    </tr>
-
-                    <tr>
-                        <td class="py-2 font-semibold">Status</td>
-                        <td class="py-2">: <?php echo htmlspecialchars((string)$statusDisplay, ENT_QUOTES, 'UTF-8'); ?>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="py-2 font-semibold align-top">Keperluan Acara</td>
-                        <td class="py-2">:
-                            <?php echo nl2br(htmlspecialchars((string)$deskripsi_acara, ENT_QUOTES, 'UTF-8')); ?></td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
-
-        <!-- BUTTON AREA -->
-        <div class="mt-6 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3">
-            <a href="javascript:history.back()"
-                class="inline-flex items-center justify-center rounded-lg bg-slate-600 px-4 py-2 text-white hover:bg-slate-700">
-                Kembali
-            </a>
-
-            <div class="flex flex-col sm:flex-row gap-3 sm:justify-end">
-                <?php if ($statusCode !== 2 && $statusCode !== 3 && $statusCode !== 4): ?>
-                    <a href="<?php echo site_url('home/cancel-order/' . $temp_id); ?>" onclick="return dialog();"
-                        class="inline-flex items-center justify-center rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700">
-                        Batalkan Pesanan
-                    </a>
-                <?php endif; ?>
-
-                <?php if ($statusText === 'PROPOSAL APPROVE'): ?>
-                    <button type="button" onclick="openModal()"
-                        class="inline-flex items-center justify-center rounded-lg bg-green-600 px-6 py-2 text-white hover:bg-green-700">
-                        Bayar
-                    </button>
-                <?php endif; ?>
-            </div>
-        </div>
-
-    </div>
+    </main>
 
     <!-- MODAL PEMBAYARAN -->
     <div id="modalBayar" class="fixed inset-0 z-[999] hidden bg-black/50 items-center justify-center p-4">
-        <div class="w-full max-w-lg rounded-2xl bg-white shadow-xl overflow-hidden">
-            <div class="flex items-center justify-between border-b px-5 py-4">
-                <h3 class="text-lg font-bold">Pembayaran</h3>
+        <div class="w-full max-w-lg rounded-3xl bg-white shadow-2xl overflow-hidden border border-slate-200">
+            <div class="flex items-center justify-between border-b px-5 py-4 bg-slate-50">
+                <div class="flex items-center gap-2">
+                    <span class="material-icons text-[20px] text-emerald-600">payments</span>
+                    <h3 class="text-lg font-extrabold text-slate-900">Pembayaran</h3>
+                </div>
                 <button type="button" onclick="closeModal()"
-                    class="text-gray-500 hover:text-gray-800 text-2xl leading-none">&times;</button>
+                    class="inline-flex items-center justify-center h-10 w-10 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50">
+                    <span class="material-icons">close</span>
+                </button>
             </div>
 
             <div class="px-5 py-4 overflow-y-auto max-h-[75vh]">
                 <div class="mb-4 text-sm">
-                    <div class="grid grid-cols-2 gap-2">
-                        <div class="text-gray-600">ID Pemesanan</div>
-                        <div class="font-semibold"><?php echo htmlspecialchars($idDisplay, ENT_QUOTES, 'UTF-8'); ?>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="rounded-2xl border border-slate-200 bg-white p-3">
+                            <div class="text-xs text-slate-500">ID Pemesanan</div>
+                            <div class="font-semibold text-slate-900"><?php echo e($idDisplay); ?></div>
                         </div>
-
-                        <div class="text-gray-600">Tanggal Pemesanan</div>
-                        <div class="font-semibold"><?php echo $tgl_pemesanan_fmt; ?></div>
-
-                        <div class="text-gray-600">Jam Pemesanan</div>
-                        <div class="font-semibold"><?php echo $jam_fmt; ?></div>
-
-                        <div class="text-gray-600">Gedung</div>
-                        <div class="font-semibold">
-                            <?php echo htmlspecialchars((string)$nama_gedung, ENT_QUOTES, 'UTF-8'); ?></div>
-
-                        <div class="text-gray-600">Catering</div>
-                        <div class="font-semibold">
-                            <?php echo htmlspecialchars((string)$nama_paket_display, ENT_QUOTES, 'UTF-8'); ?></div>
-
-                        <div class="text-gray-600">Total Tagihan</div>
-                        <div class="font-semibold">Rp <?php echo number_format($total_tagihan); ?></div>
+                        <div class="rounded-2xl border border-slate-200 bg-white p-3">
+                            <div class="text-xs text-slate-500">Total Tagihan</div>
+                            <div class="font-extrabold text-emerald-700">Rp
+                                <?php echo number_format($total_tagihan, 0, ',', '.'); ?></div>
+                        </div>
+                        <div class="rounded-2xl border border-slate-200 bg-white p-3">
+                            <div class="text-xs text-slate-500">Tanggal</div>
+                            <div class="font-semibold text-slate-900"><?php echo e($tgl_pemesanan_fmt); ?></div>
+                        </div>
+                        <div class="rounded-2xl border border-slate-200 bg-white p-3">
+                            <div class="text-xs text-slate-500">Jam</div>
+                            <div class="font-semibold text-slate-900"><?php echo e($jam_fmt); ?></div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="mb-4 text-sm bg-slate-50 rounded-xl p-3">
-                    <p class="font-semibold mb-1">Transfer ke Rekening:</p>
-                    <p>Bank BCA</p>
-                    <p>No Rekening: <b>1234567890</b></p>
-                    <p>Atas Nama: <b>Tiga Serangkai Smart Office</b></p>
+                <div class="mb-4 text-sm rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4">
+                    <p class="font-semibold mb-1 text-emerald-900">Transfer ke Rekening</p>
+                    <div class="text-slate-700">
+                        <p>Bank <b>BCA</b></p>
+                        <p>No Rekening: <b>1234567890</b></p>
+                        <p>Atas Nama: <b>Tiga Serangkai Smart Office</b></p>
+                    </div>
                 </div>
 
                 <form action="<?php echo site_url('pembayaran/upload_bukti'); ?>" method="post"
                     enctype="multipart/form-data">
-                    <input type="hidden" name="id_pemesanan"
-                        value="<?php echo htmlspecialchars($idDisplay, ENT_QUOTES, 'UTF-8'); ?>">
+                    <input type="hidden" name="id_pemesanan" value="<?php echo e($idDisplay); ?>">
                     <input type="hidden" name="id_pemesanan_raw" value="<?php echo (int)$temp_id; ?>">
 
-                    <label class="block mb-1 text-sm font-medium">Nama Lengkap</label>
-                    <input type="text" name="atas_nama" required readonly
-                        value="<?php echo htmlspecialchars((string)$nama_lengkap_user, ENT_QUOTES, 'UTF-8'); ?>"
-                        class="w-full border rounded-lg p-2 mb-3 bg-slate-100">
+                    <label class="block mb-1 text-sm font-semibold text-slate-800">Nama Lengkap</label>
+                    <input type="text" name="atas_nama" required readonly value="<?php echo e($nama_lengkap_user); ?>"
+                        class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 mb-3 outline-none">
 
-                    <label class="block mb-1 text-sm font-medium">Tanggal Pembayaran</label>
+                    <label class="block mb-1 text-sm font-semibold text-slate-800">Tanggal Pembayaran</label>
                     <input type="date" name="tanggal_transfer" required value="<?php echo date('Y-m-d'); ?>"
-                        class="w-full border rounded-lg p-2 mb-3">
+                        class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 mb-3 outline-none focus:ring-4 focus:ring-emerald-100">
 
-                    <label class="block mb-1 text-sm font-medium">Bank Pengirim</label>
+                    <label class="block mb-1 text-sm font-semibold text-slate-800">Bank Pengirim</label>
                     <input type="text" name="bank_pengirim" required placeholder="Contoh: BCA / BRI / Mandiri"
-                        class="w-full border rounded-lg p-2 mb-3">
+                        class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 mb-3 outline-none focus:ring-4 focus:ring-emerald-100">
 
-                    <label class="block mb-1 text-sm font-medium">Nominal Transfer</label>
-                    <input type="text" class="w-full border rounded-lg p-2 mb-3" readonly
-                        value="Rp <?php echo number_format($total_tagihan, 0, ',', '.'); ?>">
+                    <label class="block mb-1 text-sm font-semibold text-slate-800">Nominal Transfer</label>
+                    <input type="text" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 mb-2"
+                        readonly value="Rp <?php echo number_format($total_tagihan, 0, ',', '.'); ?>">
                     <input type="hidden" name="nominal_transfer" value="<?php echo (int)$total_tagihan; ?>">
 
-                    <label class="block mb-1 text-sm font-medium">Upload Bukti Pembayaran</label>
-                    <input type="file" name="bukti" required class="w-full border rounded-lg p-2 mb-4">
+                    <label class="block mb-1 text-sm font-semibold text-slate-800">Upload Bukti Pembayaran</label>
+                    <input type="file" name="bukti" required
+                        class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 mb-4">
 
-                    <div class="flex justify-end gap-2">
+                    <div class="flex flex-col sm:flex-row justify-end gap-2">
                         <button type="button" onclick="closeModal()"
-                            class="px-4 py-2 bg-gray-400 rounded-lg text-white">Batal</button>
-                        <button type="submit" class="px-4 py-2 bg-blue-600 rounded-lg text-white">Kirim Bukti</button>
+                            class="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 hover:bg-slate-50 transition">
+                            <span class="material-icons text-[18px] text-slate-600">close</span>
+                            Batal
+                        </button>
+                        <button type="submit"
+                            class="inline-flex items-center justify-center gap-2 rounded-2xl bg-sky-600 px-4 py-2 text-white hover:bg-sky-700 transition shadow-md">
+                            <span class="material-icons text-[18px]">upload</span>
+                            Kirim Bukti
+                        </button>
                     </div>
                 </form>
 
@@ -321,33 +419,33 @@ $jam_fmt     = ($jam_mulai && $jam_selesai) ? ($jam_mulai . ' - ' . $jam_selesai
     </div>
 
     <script>
-        function dialog() {
-            var statusCode = <?php echo (int)$statusCode; ?>;
-            if (statusCode === 0) return confirm("YAKIN HAPUS RESERVASI INI?");
-            if (statusCode === 2 || statusCode === 3) {
-                return confirm("Pesanan sudah dibayar. Jika dibatalkan, dana tidak dapat dikembalikan. Lanjutkan?");
-            }
-            return confirm("Yakin batalkan pesanan ini?");
+    function dialog() {
+        var statusCode = <?php echo (int)$statusCode; ?>;
+        if (statusCode === 0) return confirm("YAKIN HAPUS RESERVASI INI?");
+        if (statusCode === 2 || statusCode === 3) {
+            return confirm("Pesanan sudah dibayar. Jika dibatalkan, dana tidak dapat dikembalikan. Lanjutkan?");
         }
+        return confirm("Yakin batalkan pesanan ini?");
+    }
 
-        function openModal() {
-            const m = document.getElementById('modalBayar');
-            m.classList.remove('hidden');
-            m.classList.add('flex');
-            document.body.classList.add('overflow-hidden');
-        }
+    function openModal() {
+        var m = document.getElementById('modalBayar');
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+        document.body.classList.add('overflow-hidden');
+    }
 
-        function closeModal() {
-            const m = document.getElementById('modalBayar');
-            m.classList.add('hidden');
-            m.classList.remove('flex');
-            document.body.classList.remove('overflow-hidden');
-        }
+    function closeModal() {
+        var m = document.getElementById('modalBayar');
+        m.classList.add('hidden');
+        m.classList.remove('flex');
+        document.body.classList.remove('overflow-hidden');
+    }
 
-        document.addEventListener('click', function(e) {
-            const m = document.getElementById('modalBayar');
-            if (!m.classList.contains('hidden') && e.target === m) closeModal();
-        });
+    document.addEventListener('click', function(e) {
+        var m = document.getElementById('modalBayar');
+        if (!m.classList.contains('hidden') && e.target === m) closeModal();
+    });
     </script>
 </body>
 

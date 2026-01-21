@@ -14,109 +14,226 @@ function pick_label($pick)
 <html lang="id">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lihat Catering</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lihat Catering</title>
 
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Material Icons & Materialize -->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link href="<?php echo base_url(); ?>assets/home/materialize/css/materialize.css" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
-<body class="min-h-screen bg-slate-200 text-slate-800">
+<body class="min-h-screen bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200 text-slate-900">
 
-  <?php $this->load->view('components/navbar'); ?>
-  <?php $this->load->view('components/header'); ?>
+    <?php $this->load->view('components/navbar'); ?>
+    <?php $this->load->view('components/header'); ?>
 
-  <div class="max-w-6xl mx-auto px-4 py-8">
-    <h5 class="text-xl font-semibold mb-6">Warsito Catering</h5>
+    <main class="py-8">
+        <div class="max-w-6xl mx-auto px-4 space-y-6">
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-      <?php foreach ($res as $row): ?>
-        <div class="bg-white rounded-2xl shadow-md border border-black/5 p-6 hover:shadow-lg transition">
-
-          <h3 class="text-lg font-semibold text-slate-800 mb-4">
-            <?php echo htmlspecialchars($row['NAMA_PAKET'], ENT_QUOTES, 'UTF-8'); ?>
-          </h3>
-
-          <?php
-          $menu = array();
-          if (!empty($row['MENU_JSON'])) {
-            $tmp = json_decode($row['MENU_JSON'], true);
-            if (is_array($tmp)) $menu = $tmp;
-          }
-          ?>
-
-          <div class="space-y-3 text-sm">
-            <?php if (isset($menu['categories']) && is_array($menu['categories']) && !empty($menu['categories'])): ?>
-              <?php foreach ($menu['categories'] as $cat): ?>
-
-                <?php
-                $label = isset($cat['label']) ? $cat['label'] : '-';
-                $pick  = isset($cat['pick']) ? $cat['pick'] : 0;
-                $note  = isset($cat['note']) ? $cat['note'] : '';
-                $items = (isset($cat['items']) && is_array($cat['items'])) ? $cat['items'] : array();
-                ?>
-
-                <div class="flex gap-3">
-                  <div class="w-40 font-semibold text-slate-600">
-                    <?php echo htmlspecialchars($label, ENT_QUOTES, 'UTF-8'); ?>
-                  </div>
-
-                  <div class="flex-1 text-slate-700">
-                    <?php $rule = pick_label($pick); ?>
-                    <?php if ($rule !== ''): ?>
-                      <div class="text-xs text-slate-500 mb-1"><?php echo $rule; ?></div>
-                    <?php endif; ?>
-
-                    <?php if ($note !== ''): ?>
-                      <div class="text-xs text-slate-500 mb-1">
-                        <?php echo htmlspecialchars($note, ENT_QUOTES, 'UTF-8'); ?>
-                      </div>
-                    <?php endif; ?>
-
-                    <?php if (!empty($items)): ?>
-                      <ul class="list-disc ml-5 columns-2 gap-8">
-                        <?php foreach ($items as $it): ?>
-                          <li class="break-inside-avoid mb-1">
-                            <?= htmlspecialchars($it, ENT_QUOTES, 'UTF-8') ?>
-                          </li>
-                        <?php endforeach; ?>
-                      </ul>
-                    <?php else: ?>
-                      <div class="text-slate-400">-</div>
-                    <?php endif; ?>
-
-                  </div>
+            <!-- HERO -->
+            <section
+                class="relative overflow-hidden rounded-3xl border border-slate-200 bg-white/70 backdrop-blur shadow-sm">
+                <div class="absolute inset-0 pointer-events-none">
+                    <div class="absolute -top-28 -right-28 h-72 w-72 rounded-full bg-emerald-200/40 blur-3xl"></div>
+                    <div class="absolute -bottom-28 -left-28 h-72 w-72 rounded-full bg-sky-200/40 blur-3xl"></div>
                 </div>
 
-              <?php endforeach; ?>
-            <?php else: ?>
-              <div class="text-slate-400">Menu belum diatur</div>
-            <?php endif; ?>
-          </div>
+                <div class="relative p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+                    <div>
+                        <div
+                            class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 text-white text-xs font-semibold">
+                            <span class="material-icons text-sm">restaurant</span>
+                            Catering
+                        </div>
 
-          <div class="mt-6 flex items-center justify-between">
-            <span class="text-sm text-slate-500">Harga / Porsi</span>
-            <span class="text-lg font-semibold text-teal-700">
-              Rp <?php echo number_format((int)$row['HARGA'], 0, ',', '.'); ?>
-            </span>
-          </div>
+                        <h1 class="mt-3 text-2xl md:text-3xl font-extrabold tracking-tight">
+                            Cerita Rasa Catering
+                        </h1>
+
+                        <p class="mt-2 text-sm md:text-base text-slate-600">
+                            Pilih paket sesuai kebutuhan acara. Menu tampil per kategori dan mudah dibaca.
+                        </p>
+                    </div>
+
+                    <div
+                        class="hidden sm:flex items-center gap-2 text-xs text-slate-600 bg-white rounded-2xl border border-slate-200 px-4 py-3 shadow-sm">
+                        <span class="material-icons text-base text-slate-500">tips_and_updates</span>
+                        Harga per porsi, cek menu detail.
+                    </div>
+                </div>
+            </section>
+
+            <!-- GRID -->
+            <section>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <?php if (!empty($res) && is_array($res)): ?>
+                    <?php foreach ($res as $row): ?>
+                    <?php
+                $nama = (isset($row['NAMA_PAKET']) && $row['NAMA_PAKET'] !== '') ? $row['NAMA_PAKET'] : 'Paket Catering';
+                $harga = isset($row['HARGA']) ? (int)$row['HARGA'] : 0;
+
+                $menu = array();
+                if (!empty($row['MENU_JSON'])) {
+                  $tmp = json_decode($row['MENU_JSON'], true);
+                  if (is_array($tmp)) $menu = $tmp;
+                }
+
+                // badge kecil biar keliatan "kaya"
+                $hasCategories = (isset($menu['categories']) && is_array($menu['categories']) && !empty($menu['categories']));
+              ?>
+
+                    <article
+                        class="group bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300 overflow-hidden">
+
+                        <!-- TOP STRIP -->
+                        <div class="px-6 pt-6 pb-4">
+                            <div class="flex items-start justify-between gap-4">
+                                <div>
+                                    <h3
+                                        class="text-lg font-bold text-slate-900 group-hover:text-emerald-700 transition">
+                                        <?php echo htmlspecialchars($nama, ENT_QUOTES, 'UTF-8'); ?>
+                                    </h3>
+
+                                    <div class="mt-2 flex flex-wrap items-center gap-2 text-xs">
+                                        <span
+                                            class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-slate-700">
+                                            <span class="material-icons text-[16px]">receipt_long</span>
+                                            Paket
+                                        </span>
+
+                                        <?php if ($hasCategories): ?>
+                                        <span
+                                            class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-emerald-800 border border-emerald-200">
+                                            <span class="material-icons text-[16px]">check_circle</span>
+                                            Menu tersedia
+                                        </span>
+                                        <?php else: ?>
+                                        <span
+                                            class="inline-flex items-center gap-1 rounded-full bg-amber-50 px-3 py-1 text-amber-900 border border-amber-200">
+                                            <span class="material-icons text-[16px]">info</span>
+                                            Menu belum diatur
+                                        </span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+
+                                <div class="text-right">
+                                    <div class="text-xs text-slate-500">Harga / Porsi</div>
+                                    <div class="mt-1 text-xl font-extrabold text-emerald-700">
+                                        Rp <?php echo number_format($harga, 0, ',', '.'); ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BODY -->
+                        <div class="px-6 pb-6">
+                            <?php if ($hasCategories): ?>
+                            <div class="space-y-4 text-sm">
+
+                                <?php foreach ($menu['categories'] as $cat): ?>
+                                <?php
+                          $label = isset($cat['label']) ? $cat['label'] : '-';
+                          $pick  = isset($cat['pick']) ? (int)$cat['pick'] : 0;
+                          $note  = isset($cat['note']) ? $cat['note'] : '';
+                          $items = (isset($cat['items']) && is_array($cat['items'])) ? $cat['items'] : array();
+
+                          $rule = pick_label($pick);
+                        ?>
+
+                                <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                                    <div class="flex flex-col sm:flex-row sm:items-start gap-3">
+                                        <div class="sm:w-44">
+                                            <div class="text-sm font-bold text-slate-900">
+                                                <?php echo htmlspecialchars($label, ENT_QUOTES, 'UTF-8'); ?>
+                                            </div>
+
+                                            <?php if ($rule !== ''): ?>
+                                            <div class="mt-1 inline-flex items-center gap-1 text-xs text-slate-600">
+                                                <span class="material-icons text-[16px] text-slate-500">check</span>
+                                                <?php echo htmlspecialchars($rule, ENT_QUOTES, 'UTF-8'); ?>
+                                            </div>
+                                            <?php endif; ?>
+
+                                            <?php if ($note !== ''): ?>
+                                            <div class="mt-1 text-xs text-slate-500">
+                                                <?php echo htmlspecialchars($note, ENT_QUOTES, 'UTF-8'); ?>
+                                            </div>
+                                            <?php endif; ?>
+                                        </div>
+
+                                        <div class="flex-1">
+                                            <?php if (!empty($items)): ?>
+                                            <ul class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1 text-slate-700">
+                                                <?php foreach ($items as $it): ?>
+                                                <li class="flex items-start gap-2">
+                                                    <span
+                                                        class="mt-1 h-1.5 w-1.5 rounded-full bg-slate-400 shrink-0"></span>
+                                                    <span class="leading-relaxed break-words">
+                                                        <?php echo htmlspecialchars($it, ENT_QUOTES, 'UTF-8'); ?>
+                                                    </span>
+                                                </li>
+                                                <?php endforeach; ?>
+                                            </ul>
+                                            <?php else: ?>
+                                            <div class="text-slate-400">-</div>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <?php endforeach; ?>
+
+                            </div>
+                            <?php else: ?>
+                            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+                                Menu belum diatur untuk paket ini.
+                            </div>
+                            <?php endif; ?>
+                        </div>
+
+                        <!-- FOOTER ACTION (opsional kalau kamu mau pilih paket) -->
+                        <div class="px-6 py-4 border-t border-slate-100 bg-white flex items-center justify-between">
+                            <div class="text-xs text-slate-500 inline-flex items-center gap-1">
+                                <span class="material-icons text-[16px]">local_dining</span>
+                                Detail menu per kategori
+                            </div>
+
+                            <!-- kalau nanti ada tombol pilih, tinggal aktifkan -->
+                            <!--
+                  <a href="<?php echo site_url('home/catering/pilih/'.$row['ID_PAKET']); ?>"
+                    class="inline-flex items-center gap-2 rounded-2xl bg-emerald-600 text-white px-4 py-2 text-sm font-semibold hover:bg-emerald-700 transition">
+                    Pilih Paket
+                    <span class="material-icons text-base">arrow_forward</span>
+                  </a>
+                  -->
+                        </div>
+
+                    </article>
+                    <?php endforeach; ?>
+                    <?php else: ?>
+                    <div class="col-span-full">
+                        <div class="rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+                            <div class="mx-auto h-12 w-12 rounded-2xl bg-slate-100 flex items-center justify-center">
+                                <span class="material-icons text-slate-500">info</span>
+                            </div>
+                            <h4 class="mt-4 text-lg font-bold">Tidak ada paket catering</h4>
+                            <p class="mt-1 text-sm text-slate-600">Silakan tambahkan data paket terlebih dahulu.</p>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
+                </div>
+            </section>
 
         </div>
-      <?php endforeach; ?>
+    </main>
 
-    </div>
-  </div>
-
-  <script src="<?php echo base_url(); ?>assets/home/assets/js/jquery.min.js"></script>
-  <script src="<?php echo base_url(); ?>assets/home/materialize/js/materialize.js"></script>
-  <?php $this->load->view('components/footer'); ?>
-
+    <?php $this->load->view('components/footer'); ?>
 </body>
 
 </html>
