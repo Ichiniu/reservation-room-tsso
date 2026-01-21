@@ -72,10 +72,13 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
                         <i class="bi bi-list text-xl"></i>
                     </button>
 
+                    <!-- PROFILE (DESKTOP) -->
                     <div class="relative hidden md:block">
                         <button type="button"
                             class="profile-toggle flex items-center gap-2 px-3 py-1 rounded-full bg-white hover:bg-slate-100 border border-black/10 transition">
+
                             <?php $foto_profil = $this->session->userdata('foto_profil'); ?>
+
                             <?php if (!empty($foto_profil)): ?>
                                 <img src="<?= base_url($foto_profil); ?>" class="h-7 w-7 rounded-full object-cover"
                                     alt="Foto Profil">
@@ -105,6 +108,15 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
                                 <button type="button" onclick="aktifkanNotif()"
                                     class="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-slate-100">
                                     <i class="bi bi-bell"></i> Aktifkan Notifikasi
+                                </button>
+
+                                <button id="testSound"
+                                    class="ml-2 px-3 py-1 rounded-md text-xs border bg-slate-950 border-gray-300 hover:bg-gray-50">
+                                    Test Sound
+                                </button>
+                                <button id="testDesktop"
+                                    class="ml-2 px-3 py-1 rounded-md text-xs border bg-slate-950 border-gray-300 hover:bg-gray-50">
+                                    Test Desktop
                                 </button>
 
                                 <div class="px-4 pb-2 text-[11px] text-slate-500 flex items-center gap-2">

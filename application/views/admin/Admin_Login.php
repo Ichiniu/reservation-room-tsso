@@ -1,193 +1,160 @@
 <?php
 $this->load->helper('form');
+
+/* warna brand */
+$ts_main = '#2A7C80';
+$ts_dark = '#225F62';
+
+$errorText = isset($error) ? (string)$error : '';
 ?>
-<html>
+<!doctype html>
+<html lang="id">
 
 <head>
-  <title>Admin Login</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin Login</title>
 
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-  <style>
-    /* WARNA LOGO TIGA SERANGKAI */
+    <!-- Material Icons (eye icon) -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <style>
     :root {
-      --ts-main: #2A7C80;
-      /* warna teal logo */
-      --ts-dark: #225F62;
-      --ts-light: #E1F1F156;
+        --ts-main: <?=$ts_main ?>;
+        --ts-dark: <?=$ts_dark ?>;
     }
-
-    body {
-      display: flex;
-      min-height: 100vh;
-      flex-direction: column;
-
-      background-image: url("<?= base_url('assets/images/gedung/tsu-front.png') ?>");
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: center;
-      background-attachment: fixed;
-
-      font-family: 'arial', sans-serif;
-    }
-
-    main {
-      flex: 1 0 auto;
-    }
-
-    /* Tambahkan logo */
-    .login-logo {
-      width: 140px;
-      margin-bottom: 20px;
-    }
-
-    /* Judul */
-    .indigo-text {
-      color: var(--ts-main) !important;
-      font-weight: 600;
-      letter-spacing: 1px;
-    }
-
-    /* Input */
-    .input-field input[type=text]:focus,
-    .input-field input[type=password]:focus {
-      border-bottom: 3px solid var(--ts-main) !important;
-      box-shadow: 0px 1px 8px rgba(42, 124, 128, 0.5) !important;
-    }
-
-    .input-field label {
-      color: var(--ts-main) !important;
-      font-weight: 600;
-    }
-
-    .input-field input:focus+label {
-      color: var(--ts-main) !important;
-    }
-
-    /* Button Login */
-    .btn-login {
-      background: var(--ts-main) !important;
-      border-radius: 8px;
-      font-weight: 600;
-    }
-
-    .btn-login:hover {
-      background: var(--ts-dark) !important;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-    }
-
-    /* FIX ICON DOUBLE */
-    .material-icons {
-      font-family: 'Material Icons' !important;
-      font-size: 26px !important;
-      font-style: normal !important;
-      font-weight: normal !important;
-      text-transform: none !important;
-      letter-spacing: normal !important;
-      line-height: 1 !important;
-    }
-
-    /* FIX POSITION ICON SHOW/HIDE */
-    #togglePassword {
-      position: absolute;
-      right: 8px;
-      top: 8px;
-      cursor: pointer;
-      z-index: 99;
-      background: white;
-      padding-left: 4px;
-    }
-  </style>
+    </style>
 </head>
 
-<body>
-  <div class="section"></div>
-  <main>
-    <center>
-      <div class="section"></div>
+<body class="min-h-screen text-slate-800 relative overflow-hidden
+  bg-[url('<?= base_url('assets/images/gedung/tsu-front.png') ?>')]
+  bg-cover bg-center bg-no-repeat bg-fixed">
 
-      <div class="container">
+    <!-- overlay biar background lembut -->
+    <div class="absolute inset-0 bg-black/35"></div>
+    <div
+        class="pointer-events-none absolute -top-40 -left-40 h-[520px] w-[520px] rounded-full bg-emerald-200/25 blur-3xl">
+    </div>
+    <div
+        class="pointer-events-none absolute -bottom-40 -right-40 h-[520px] w-[520px] rounded-full bg-sky-200/25 blur-3xl">
+    </div>
 
-        <div class="z-depth-1 grey lighten-4 row"
-          style="display: inline-block; padding: 32px 70px 20px 70px; border: 1px solid #EEE; border-radius:12px;">
+    <main class="relative min-h-screen flex items-center justify-center px-4 py-10">
+        <div class="w-full max-w-[460px]">
 
-          <!-- LOGO -->
-          <img src="<?= base_url('assets/login/LogoTSNew.png') ?>" class="login-logo">
+            <!-- CARD -->
+            <div
+                class="rounded-3xl bg-white/85 backdrop-blur-xl shadow-[0_20px_60px_-20px_rgba(0,0,0,0.45)] border border-white/60 overflow-hidden">
 
-          <?php echo form_open('admin/login/is_sign_in'); ?>
+                <!-- TOP STRIP -->
+                <div class="h-2 w-full" style="background:linear-gradient(90deg,var(--ts-main),#2fb6a3,#79c6f2)"></div>
 
-          <h5 class="indigo-text">ADMIN SMART OFFICE </h5>
+                <div class="p-8 sm:p-10">
 
-          <div class='row'>
-            <div class='input-field col s12'>
-              <input class='validate' type='text' name='username' id='email' />
-              <label for='email'>USERNAME</label>
-            </div>
-          </div>
+                    <!-- LOGO + TITLE -->
+                    <div class="flex flex-col items-center text-center">
+                        <div
+                            class="h-16 w-16 rounded-2xl bg-white shadow-sm border border-black/5 flex items-center justify-center">
+                            <img src="<?= base_url('assets/login/LogoTSNew.png') ?>" alt="Logo"
+                                class="h-12 w-12 object-contain">
+                        </div>
 
-          <!-- PASSWORD FIELD -->
-          <div class='row'>
-            <div class='input-field col s12' style="position:relative;">
+                        <h1 class="mt-5 text-xl sm:text-2xl font-extrabold tracking-wide" style="color:var(--ts-main);">
+                            ADMIN SMART OFFICE
+                        </h1>
+                        <p class="mt-1 text-sm text-slate-500">
+                            Silakan masuk untuk melanjutkan
+                        </p>
+                    </div>
 
-              <input class='validate' type='password' name='password' id='password' />
-              <label for='password'>PASSWORD</label>
+                    <!-- ERROR -->
+                    <?php if (trim($errorText) !== ''): ?>
+                    <div class="mt-6 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+                        <div class="font-semibold mb-0.5">Login gagal</div>
+                        <div><?= htmlspecialchars($errorText, ENT_QUOTES, 'UTF-8'); ?></div>
+                    </div>
+                    <?php endif; ?>
 
-              <!-- ICON SHOW/HIDE -->
-              <span id="togglePassword">
-                <i class="material-icons" id="eyeIcon" style="color:#2A7C80;">visibility_off</i>
-              </span>
-              <?php if (isset($error)): ?>
-                <div style="color:#C62828; font-weight:600; margin-top:5px; font-size:13px;">
-                  <?= $error; ?>
+                    <!-- FORM -->
+                    <?= form_open('admin/login/is_sign_in', ['class' => 'mt-6 space-y-4']); ?>
+
+                    <!-- USERNAME -->
+                    <div>
+                        <label for="username" class="block text-[11px] font-bold tracking-widest text-slate-600 mb-2">
+                            USERNAME
+                        </label>
+                        <div class="relative">
+                            <input id="username" name="username" type="text" autocomplete="username" required class="w-full rounded-2xl border border-slate-200 bg-white/80 px-4 py-3 text-sm
+                         outline-none transition
+                         focus:border-emerald-300 focus:ring-4 focus:ring-emerald-100"
+                                placeholder="Masukkan username" />
+                        </div>
+                    </div>
+
+                    <!-- PASSWORD -->
+                    <div>
+                        <label for="password" class="block text-[11px] font-bold tracking-widest text-slate-600 mb-2">
+                            PASSWORD
+                        </label>
+
+                        <div class="relative">
+                            <input id="password" name="password" type="password" autocomplete="current-password"
+                                required class="w-full rounded-2xl border border-slate-200 bg-white/80 px-4 py-3 pr-12 text-sm
+                         outline-none transition
+                         focus:border-emerald-300 focus:ring-4 focus:ring-emerald-100"
+                                placeholder="Masukkan password" />
+
+                            <!-- toggle -->
+                            <button type="button" id="togglePassword" class="absolute right-3 top-1/2 -translate-y-1/2
+                         inline-flex items-center justify-center
+                         h-9 w-9 rounded-xl border border-slate-200 bg-white/90
+                         hover:bg-slate-50 active:scale-[0.98] transition" aria-label="Tampilkan/Sembunyikan password">
+                                <span id="eyeIcon"
+                                    class="material-icons text-slate-600 text-[20px]">visibility_off</span>
+                            </button>
+                        </div>
+
+                        <div class="mt-2 text-xs text-slate-500">
+                            Tips: Pastikan Caps Lock tidak aktif.
+                        </div>
+                    </div>
+
+                    <!-- BUTTON -->
+                    <button type="submit" class="w-full mt-2 rounded-2xl px-4 py-3 font-semibold text-white shadow-lg
+                     hover:shadow-xl active:scale-[0.99] transition
+                     focus:outline-none focus:ring-4 focus:ring-emerald-200" style="background:var(--ts-main);">
+                        LOGIN
+                    </button>
+
+                    <?= form_close(); ?>
+
+                    <!-- FOOTER MINI -->
+                    <div class="mt-6 text-center text-xs text-slate-500">
+                        © <?= date('Y'); ?> Tiga Serangkai Smart Office
+                    </div>
                 </div>
-              <?php endif; ?>
             </div>
-          </div>
-
-          <br />
-
-          <center>
-            <div class='row'>
-              <button type='submit' name='submit'
-                class='col s12 btn btn-large waves-effect btn-login'>
-                Login
-              </button>
-            </div>
-          </center>
-
-          <?php echo form_close(); ?>
-
         </div>
+    </main>
 
-      </div>
-    </center>
+    <script>
+    (function() {
+        var toggle = document.getElementById("togglePassword");
+        var passField = document.getElementById("password");
+        var eye = document.getElementById("eyeIcon");
 
-    <div class="section"></div>
-    <div class="section"></div>
-  </main>
+        if (!toggle || !passField || !eye) return;
 
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
-
-  <!-- SCRIPT FIX -->
-  <script>
-    $(document).ready(function() {
-
-      const toggle = document.getElementById("togglePassword");
-      const passField = document.getElementById("password");
-      const eye = document.getElementById("eyeIcon");
-
-      toggle.addEventListener("click", function() {
-        const type = passField.getAttribute("type") === "password" ? "text" : "password";
-        passField.setAttribute("type", type);
-
-        // ubah icon
-        eye.textContent = type === "password" ? "visibility_off" : "visibility";
-      });
-
-    });
-  </script>
+        toggle.addEventListener("click", function() {
+            var type = passField.getAttribute("type") === "password" ? "text" : "password";
+            passField.setAttribute("type", type);
+            eye.textContent = (type === "password") ? "visibility_off" : "visibility";
+        });
+    })();
+    </script>
 
 </body>
 

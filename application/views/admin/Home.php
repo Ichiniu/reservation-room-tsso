@@ -261,7 +261,8 @@ if (isset($recent_invoices) && is_array($recent_invoices)) {
 
             <!-- TABLE -->
             <div class="px-5 pb-5">
-                <div id="tableScroll" class="overflow-x-auto max-h-[420px] overflow-y-auto relative border border-slate-200 rounded-xl">
+                <div id="tableScroll"
+                    class="overflow-x-auto max-h-[420px] overflow-y-auto relative border border-slate-200 rounded-xl">
                     <table class="w-full text-sm bg-white">
                         <thead class="sticky top-0 z-20 bg-slate-100 shadow-sm">
                             <tr class="border-b border-slate-200">
@@ -277,8 +278,8 @@ if (isset($recent_invoices) && is_array($recent_invoices)) {
 
                         <tbody id="tableBody">
                             <?php if (!empty($front_data)): ?>
-                                <?php foreach ($front_data as $data): ?>
-                                    <?php
+                            <?php foreach ($front_data as $data): ?>
+                            <?php
                                     // AMAN: jangan panggil properti sebagai function
                                     $rawId = isset($data->ID_PEMESANAN) ? $data->ID_PEMESANAN : '';
                                     $idNum = (int)preg_replace('/\D+/', '', (string)$rawId);
@@ -341,50 +342,49 @@ if (isset($recent_invoices) && is_array($recent_invoices)) {
                                     }
                                     ?>
 
-                                    <tr class="table-row hover:bg-slate-50"
-                                        data-idnum="<?= (int)$idNum; ?>"
-                                        data-kode="<?= htmlspecialchars($invoice, ENT_QUOTES, 'UTF-8'); ?>"
-                                        data-user="<?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8'); ?>">
-                                        <td class="px-4 py-3 text-center cell-no">1</td>
+                            <tr class="table-row hover:bg-slate-50" data-idnum="<?= (int)$idNum; ?>"
+                                data-kode="<?= htmlspecialchars($invoice, ENT_QUOTES, 'UTF-8'); ?>"
+                                data-user="<?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8'); ?>">
+                                <td class="px-4 py-3 text-center cell-no">1</td>
 
-                                        <td class="px-4 py-3 text-center font-semibold cell-kode">
-                                            <?= htmlspecialchars($invoice, ENT_QUOTES, 'UTF-8'); ?>
-                                        </td>
+                                <td class="px-4 py-3 text-center font-semibold cell-kode">
+                                    <?= htmlspecialchars($invoice, ENT_QUOTES, 'UTF-8'); ?>
+                                </td>
 
-                                        <td class="px-4 py-3 text-center">
-                                            <?= htmlspecialchars($namaGedung, ENT_QUOTES, 'UTF-8'); ?>
-                                        </td>
+                                <td class="px-4 py-3 text-center">
+                                    <?= htmlspecialchars($namaGedung, ENT_QUOTES, 'UTF-8'); ?>
+                                </td>
 
-                                        <td class="px-4 py-3 text-center cell-user">
-                                            <?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8'); ?>
-                                        </td>
+                                <td class="px-4 py-3 text-center cell-user">
+                                    <?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8'); ?>
+                                </td>
 
-                                        <td class="px-4 py-3 text-center">
-                                            <?= htmlspecialchars($tglIndo, ENT_QUOTES, 'UTF-8'); ?>
-                                        </td>
+                                <td class="px-4 py-3 text-center">
+                                    <?= htmlspecialchars($tglIndo, ENT_QUOTES, 'UTF-8'); ?>
+                                </td>
 
-                                        <td class="px-4 py-3 text-center">
-                                            <?= htmlspecialchars($jamFix, ENT_QUOTES, 'UTF-8'); ?>
-                                        </td>
+                                <td class="px-4 py-3 text-center">
+                                    <?= htmlspecialchars($jamFix, ENT_QUOTES, 'UTF-8'); ?>
+                                </td>
 
-                                        <td class="px-4 py-3 text-center">
-                                            <?php if ($idNum > 0): ?>
-                                                <a href="<?= site_url('admin/detail_pemesanan/' . $idNum); ?>"
-                                                    class="inline-flex items-center justify-center px-3 py-1.5 bg-blue-600 text-white text-xs rounded hover:bg-blue-700">
-                                                    Detail
-                                                </a>
-                                            <?php else: ?>
-                                                <span class="text-xs text-slate-400">-</span>
-                                            <?php endif; ?>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
+                                <td class="px-4 py-3 text-center">
+                                    <?php if ($idNum > 0): ?>
+                                    <a href="<?= site_url('admin/detail_pemesanan/' . $idNum); ?>"
+                                        class="inline-flex items-center justify-center px-3 py-1.5 bg-blue-600 text-white text-xs rounded hover:bg-blue-700">
+                                        Detail
+                                    </a>
+                                    <?php else: ?>
+                                    <span class="text-xs text-slate-400">-</span>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
                             <?php else: ?>
-                                <tr>
-                                    <td colspan="7" class="px-4 py-6 text-center text-slate-500">
-                                        Belum ada jadwal terbooking (SUBMITTED).
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td colspan="7" class="px-4 py-6 text-center text-slate-500">
+                                    Belum ada jadwal terbooking (SUBMITTED).
+                                </td>
+                            </tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
@@ -421,155 +421,156 @@ if (isset($recent_invoices) && is_array($recent_invoices)) {
         </div>
 
         <script>
-            (function() {
-                var tbody = document.getElementById('tableBody');
-                if (!tbody) return;
+        (function() {
+            var tbody = document.getElementById('tableBody');
+            if (!tbody) return;
 
-                var allRows = Array.prototype.slice.call(document.querySelectorAll('.table-row'));
-                var rowsPerPageSelect = document.getElementById('rowsPerPage');
-                var pageInfo = document.getElementById('pageInfo');
-                var prevBtn = document.getElementById('prevBtn');
-                var nextBtn = document.getElementById('nextBtn');
-                var scrollBox = document.getElementById('tableScroll');
+            var allRows = Array.prototype.slice.call(document.querySelectorAll('.table-row'));
+            var rowsPerPageSelect = document.getElementById('rowsPerPage');
+            var pageInfo = document.getElementById('pageInfo');
+            var prevBtn = document.getElementById('prevBtn');
+            var nextBtn = document.getElementById('nextBtn');
+            var scrollBox = document.getElementById('tableScroll');
 
-                var filterKode = document.getElementById('filterKode');
-                var filterUser = document.getElementById('filterUser');
-                var resetFilterBtn = document.getElementById('resetFilter');
+            var filterKode = document.getElementById('filterKode');
+            var filterUser = document.getElementById('filterUser');
+            var resetFilterBtn = document.getElementById('resetFilter');
 
-                if (!allRows.length) return;
+            if (!allRows.length) return;
 
-                var currentPage = 1;
-                var rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
-                var activeRows = allRows.slice();
+            var currentPage = 1;
+            var rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
+            var activeRows = allRows.slice();
 
-                // SORT by invoice numeric DESC (terbaru dulu)
-                function sortRowsByIdDesc() {
-                    allRows.sort(function(a, b) {
-                        var ida = parseInt(a.getAttribute('data-idnum') || '0', 10);
-                        var idb = parseInt(b.getAttribute('data-idnum') || '0', 10);
-                        return idb - ida;
-                    });
-
-                    // urutkan DOM sesuai sort
-                    allRows.forEach(function(r) {
-                        tbody.appendChild(r);
-                    });
-                }
-
-                function buildUserDropdown() {
-                    var users = {};
-                    allRows.forEach(function(r) {
-                        var u = (r.getAttribute('data-user') || '').trim();
-                        if (u && u !== '-') users[u] = true;
-                    });
-
-                    var keys = Object.keys(users).sort(function(a, b) {
-                        return a.localeCompare(b);
-                    });
-                    filterUser.innerHTML = '<option value="">Semua User</option>';
-                    keys.forEach(function(u) {
-                        var opt = document.createElement('option');
-                        opt.value = u;
-                        opt.textContent = u;
-                        filterUser.appendChild(opt);
-                    });
-                }
-
-                function normalize(s) {
-                    return (s || '').toString().trim().toLowerCase().replace(/\s+/g, '');
-                }
-
-                function applyFilter() {
-                    var kodeVal = normalize(filterKode.value); // bisa PMSN00094 atau 94
-                    var userVal = (filterUser.value || '').trim();
-
-                    activeRows = allRows.filter(function(row) {
-                        var kode = normalize(row.getAttribute('data-kode'));
-                        var user = (row.getAttribute('data-user') || '').trim();
-
-                        var okKode = !kodeVal ? true : (kode.indexOf(kodeVal) !== -1);
-                        var okUser = !userVal ? true : (user === userVal);
-
-                        return okKode && okUser;
-                    });
-
-                    currentPage = 1;
-                    renderTable();
-                }
-
-                function resetFilter() {
-                    filterKode.value = '';
-                    filterUser.value = '';
-                    activeRows = allRows.slice();
-                    currentPage = 1;
-                    renderTable();
-                }
-
-                function renderTable() {
-                    var total = activeRows.length;
-                    var totalPages = Math.max(1, Math.ceil(total / rowsPerPage));
-                    if (currentPage > totalPages) currentPage = totalPages;
-
-                    // hide all
-                    allRows.forEach(function(r) {
-                        r.style.display = 'none';
-                    });
-
-                    var start = (currentPage - 1) * rowsPerPage;
-                    var end = start + rowsPerPage;
-
-                    // show active in page
-                    var visibleNo = start + 1;
-                    activeRows.forEach(function(row, idx) {
-                        if (idx >= start && idx < end) {
-                            row.style.display = '';
-                            var cell = row.querySelector('.cell-no');
-                            if (cell) cell.textContent = visibleNo++;
-                        }
-                    });
-
-                    prevBtn.disabled = (currentPage === 1);
-                    nextBtn.disabled = (currentPage === totalPages);
-
-                    var showingFrom = (total === 0) ? 0 : (start + 1);
-                    var showingTo = Math.min(end, total);
-                    pageInfo.textContent = 'Page ' + currentPage + ' of ' + totalPages + ' • Showing ' + showingFrom + '-' + showingTo + ' of ' + total;
-
-                    if (scrollBox) scrollBox.scrollTop = 0;
-                }
-
-                // events
-                filterKode.addEventListener('input', applyFilter);
-                filterUser.addEventListener('change', applyFilter);
-                resetFilterBtn.addEventListener('click', resetFilter);
-
-                rowsPerPageSelect.addEventListener('change', function() {
-                    rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
-                    currentPage = 1;
-                    renderTable();
+            // SORT by invoice numeric DESC (terbaru dulu)
+            function sortRowsByIdDesc() {
+                allRows.sort(function(a, b) {
+                    var ida = parseInt(a.getAttribute('data-idnum') || '0', 10);
+                    var idb = parseInt(b.getAttribute('data-idnum') || '0', 10);
+                    return idb - ida;
                 });
 
-                prevBtn.addEventListener('click', function() {
-                    if (currentPage > 1) {
-                        currentPage--;
-                        renderTable();
-                    }
+                // urutkan DOM sesuai sort
+                allRows.forEach(function(r) {
+                    tbody.appendChild(r);
+                });
+            }
+
+            function buildUserDropdown() {
+                var users = {};
+                allRows.forEach(function(r) {
+                    var u = (r.getAttribute('data-user') || '').trim();
+                    if (u && u !== '-') users[u] = true;
                 });
 
-                nextBtn.addEventListener('click', function() {
-                    var totalPages = Math.max(1, Math.ceil(activeRows.length / rowsPerPage));
-                    if (currentPage < totalPages) {
-                        currentPage++;
-                        renderTable();
-                    }
+                var keys = Object.keys(users).sort(function(a, b) {
+                    return a.localeCompare(b);
+                });
+                filterUser.innerHTML = '<option value="">Semua User</option>';
+                keys.forEach(function(u) {
+                    var opt = document.createElement('option');
+                    opt.value = u;
+                    opt.textContent = u;
+                    filterUser.appendChild(opt);
+                });
+            }
+
+            function normalize(s) {
+                return (s || '').toString().trim().toLowerCase().replace(/\s+/g, '');
+            }
+
+            function applyFilter() {
+                var kodeVal = normalize(filterKode.value); // bisa PMSN00094 atau 94
+                var userVal = (filterUser.value || '').trim();
+
+                activeRows = allRows.filter(function(row) {
+                    var kode = normalize(row.getAttribute('data-kode'));
+                    var user = (row.getAttribute('data-user') || '').trim();
+
+                    var okKode = !kodeVal ? true : (kode.indexOf(kodeVal) !== -1);
+                    var okUser = !userVal ? true : (user === userVal);
+
+                    return okKode && okUser;
                 });
 
-                // init
-                sortRowsByIdDesc();
-                buildUserDropdown();
-                activeRows = allRows.slice();
+                currentPage = 1;
                 renderTable();
-            })();
+            }
+
+            function resetFilter() {
+                filterKode.value = '';
+                filterUser.value = '';
+                activeRows = allRows.slice();
+                currentPage = 1;
+                renderTable();
+            }
+
+            function renderTable() {
+                var total = activeRows.length;
+                var totalPages = Math.max(1, Math.ceil(total / rowsPerPage));
+                if (currentPage > totalPages) currentPage = totalPages;
+
+                // hide all
+                allRows.forEach(function(r) {
+                    r.style.display = 'none';
+                });
+
+                var start = (currentPage - 1) * rowsPerPage;
+                var end = start + rowsPerPage;
+
+                // show active in page
+                var visibleNo = start + 1;
+                activeRows.forEach(function(row, idx) {
+                    if (idx >= start && idx < end) {
+                        row.style.display = '';
+                        var cell = row.querySelector('.cell-no');
+                        if (cell) cell.textContent = visibleNo++;
+                    }
+                });
+
+                prevBtn.disabled = (currentPage === 1);
+                nextBtn.disabled = (currentPage === totalPages);
+
+                var showingFrom = (total === 0) ? 0 : (start + 1);
+                var showingTo = Math.min(end, total);
+                pageInfo.textContent = 'Page ' + currentPage + ' of ' + totalPages + ' • Showing ' + showingFrom +
+                    '-' + showingTo + ' of ' + total;
+
+                if (scrollBox) scrollBox.scrollTop = 0;
+            }
+
+            // events
+            filterKode.addEventListener('input', applyFilter);
+            filterUser.addEventListener('change', applyFilter);
+            resetFilterBtn.addEventListener('click', resetFilter);
+
+            rowsPerPageSelect.addEventListener('change', function() {
+                rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
+                currentPage = 1;
+                renderTable();
+            });
+
+            prevBtn.addEventListener('click', function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderTable();
+                }
+            });
+
+            nextBtn.addEventListener('click', function() {
+                var totalPages = Math.max(1, Math.ceil(activeRows.length / rowsPerPage));
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderTable();
+                }
+            });
+
+            // init
+            sortRowsByIdDesc();
+            buildUserDropdown();
+            activeRows = allRows.slice();
+            renderTable();
+        })();
         </script>
 
 
