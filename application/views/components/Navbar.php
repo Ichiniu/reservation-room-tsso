@@ -183,316 +183,223 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
     </audio>
 
     <script>
-        /* =========================================================
-   REMINDER SCRIPT (POPUP MUNCUL BERKALI-KALI)
-   - Poll badge tiap 5 detik
-   - Reminder popup tiap 30 detik SELAMA flag > 0
-   - Popup pemesanan & transaksi TERPISAH
-   - Tag UNIK agar tidak ketimpa
-   - Auto close notif agar tidak numpuk kebanyakan
-========================================================= */
+        (function() {
+            const USERNAME = "<?= addslashes(strtolower((string)$username)) ?>"; // opsional: normalize
+            const POLL_URL_BASE = "<?= site_url('home/notif_poll_v2') ?>"; // ✅ include index.php
+            const SITE_URL = "<?= rtrim(site_url(), '/') ?>"; // ✅ untuk redirect notif
 
-        /* =========================
-           Permission button
-        ========================= */
-        async function aktifkanNotif() {
-            if (!("Notification" in window)) {
-                alert("Browser kamu tidak mendukung notifikasi.");
-                return;
-            }
 
-            if (Notification.permission === "denied") {
-                alert(
-                    "Notifikasi diblokir.\n\n" +
-                    "Klik ikon (i) di sebelah URL → Site settings → Notifications → Allow,\n" +
-                    "lalu refresh halaman."
-                );
-                updateNotifUI();
-                return;
-            }
+            // key dibuat per user biar nggak tabrakan kalau login akun lain
+            const KEY_LAST_P = "bm_last_user_p_id_" + USERNAME;
+            const KEY_LAST_T = "bm_last_user_t_id_" + USERNAME;
 
-            const permission = await Notification.requestPermission();
-            if (permission === "granted") {
+            // lock untuk cegah dobel notif kalau buka banyak tab
+            const LOCK_KEY = "bm_notif_lock_user_" + USERNAME;
+            const TAB_ID = Date.now() + "_" + Math.random().toString(16).slice(2);
+
+            const getNum = k => parseInt(localStorage.getItem(k) || "0", 10) || 0;
+            const setNum = (k, v) => localStorage.setItem(k, String(v || 0));
+
+            function isLeaderTab() {
+                const now = Date.now();
+                let lock = null;
                 try {
-                    const n = new Notification("Notifikasi aktif ✅", {
-                        body: "Sekarang kamu akan dapat pemberitahuan saat ada update."
-                    });
-                    setTimeout(() => {
-                        try {
-                            n.close();
-                        } catch (e) {}
-                    }, 4000);
-                } catch (e) {}
-                localStorage.setItem("notifJustEnabled", "1");
-            } else {
-                alert("Notifikasi belum diizinkan. Silakan pilih 'Allow'.");
-            }
+                    lock = JSON.parse(localStorage.getItem(LOCK_KEY) || "null");
+                } catch (e) {
+                    lock = null;
+                }
 
-            updateNotifUI();
-        }
-
-        function updateNotifUI() {
-            var dot = document.getElementById("notifDot");
-            var txt = document.getElementById("notifStatusText");
-            if (!dot || !txt) return;
-
-            if (!("Notification" in window)) {
-                dot.className = "inline-block w-2 h-2 rounded-full bg-slate-300";
-                txt.textContent = "Notifikasi: tidak didukung";
-                return;
-            }
-
-            if (Notification.permission === "granted") {
-                dot.className = "inline-block w-2 h-2 rounded-full bg-emerald-500";
-                txt.textContent = "Notifikasi: aktif";
-            } else if (Notification.permission === "denied") {
-                dot.className = "inline-block w-2 h-2 rounded-full bg-red-500";
-                txt.textContent = "Notifikasi: diblokir";
-            } else {
-                dot.className = "inline-block w-2 h-2 rounded-full bg-amber-500";
-                txt.textContent = "Notifikasi: belum diizinkan";
-            }
-        }
-
-        /* =========================
-           Badge helper
-        ========================= */
-        function setBadge(el, count) {
-            if (!el) return;
-            count = parseInt(count || 0, 10);
-            if (isNaN(count)) count = 0;
-
-            el.dataset.count = String(count);
-
-            if (count > 0) {
-                el.classList.remove("hidden");
-                el.textContent = String(count);
-            } else {
-                el.classList.add("hidden");
-                el.textContent = "";
-            }
-        }
-
-        /* =========================
-           Format list ID untuk popup
-        ========================= */
-        function formatIds(ids, prefix, padLen) {
-            if (!ids || !Array.isArray(ids) || ids.length === 0) return "-";
-            var shown = ids.slice(0, 5).map(function(x) {
-                x = parseInt(x, 10);
-                if (isNaN(x)) return prefix + String(x);
-                if (padLen && padLen > 0) return prefix + String(x).padStart(padLen, "0");
-                return prefix + String(x);
-            });
-            var more = (ids.length > 5) ? (" +" + (ids.length - 5) + " lainnya") : "";
-            return shown.join(", ") + more;
-        }
-
-        /* =========================
-           Notification creator (TAG UNIK + AUTO CLOSE)
-        ========================= */
-        async function showDesktopNotif(title, body, type) {
-            if (!("Notification" in window)) return false;
-
-            // agar tidak silent fail
-            if (Notification.permission === "default") {
-                // browser tidak akan auto-allow tanpa gesture user
-                // jadi jangan spam request di background
-                console.log("[notif] permission masih default. Klik 'Aktifkan Notifikasi' dulu.");
+                // kalau kosong / expired 15 detik -> ambil lock
+                if (!lock || (now - lock.ts) > 15000) {
+                    localStorage.setItem(LOCK_KEY, JSON.stringify({
+                        id: TAB_ID,
+                        ts: now
+                    }));
+                    return true;
+                }
+                // kalau lock milik tab ini -> refresh ts
+                if (lock.id === TAB_ID) {
+                    localStorage.setItem(LOCK_KEY, JSON.stringify({
+                        id: TAB_ID,
+                        ts: now
+                    }));
+                    return true;
+                }
                 return false;
             }
 
-            if (Notification.permission !== "granted") return false;
+            // ====== Badge updater (desktop + mobile) ======
+            function setBadge(el, count) {
+                if (!el) return;
+                el.dataset.count = count;
+                if (count > 0) {
+                    el.classList.remove('hidden');
+                    el.textContent = count;
+                } else {
+                    el.classList.add('hidden');
+                    el.textContent = '';
+                }
+            }
 
-            try {
-                const tagUnique = (type || "sireru") + "-" + Date.now() + "-" + Math.random().toString(16).slice(2);
-                const n = new Notification(title, {
-                    body,
-                    tag: tagUnique
+            function updateBadges(counts) {
+                const p = counts && counts.pemesanan ? parseInt(counts.pemesanan, 10) : 0;
+                const t = counts && counts.transaksi ? parseInt(counts.transaksi, 10) : 0;
+
+                setBadge(document.getElementById('notifBadge'), p);
+                setBadge(document.getElementById('notifBadgeMobile'), p);
+
+                setBadge(document.getElementById('trxBadge'), t);
+                setBadge(document.getElementById('trxBadgeMobile'), t);
+            }
+
+            // ====== Notification permission via tombol ======
+            window.aktifkanNotif = async function() {
+                if (!("Notification" in window)) {
+                    alert("Browser tidak mendukung notifikasi.");
+                    return;
+                }
+                const perm = await Notification.requestPermission();
+                const dot = document.getElementById('notifDot');
+                const txt = document.getElementById('notifStatusText');
+
+                if (perm === "granted") {
+                    if (dot) dot.className = "inline-block w-2 h-2 rounded-full bg-green-500";
+                    if (txt) txt.textContent = "Notifikasi: aktif";
+                    localStorage.setItem("bm_notif_enabled_" + USERNAME, "1");
+                } else {
+                    if (dot) dot.className = "inline-block w-2 h-2 rounded-full bg-red-500";
+                    if (txt) txt.textContent = "Notifikasi: diblokir";
+                    localStorage.setItem("bm_notif_enabled_" + USERNAME, "0");
+                }
+            }
+
+            function notifEnabled() {
+                return localStorage.getItem("bm_notif_enabled_" + USERNAME) === "1";
+            }
+
+            // ====== Device notification ======
+            function showNotif(n) {
+                if (!("Notification" in window)) return;
+                if (Notification.permission !== "granted") return;
+                if (!notifEnabled()) return;
+
+                const tag = "bm_" + (n.type || "x") + "_" + (n.id || "0");
+
+                try {
+                    const notif = new Notification(n.title || "Notifikasi", {
+                        body: n.message || "",
+                        tag: tag,
+                        renotify: false,
+                        silent: false
+                    });
+
+                    // optional: bunyi
+                    const audio = document.getElementById('notifSound');
+                    if (audio) {
+                        try {
+                            audio.currentTime = 0;
+                            audio.play().catch(() => {});
+                        } catch (e) {}
+                    }
+
+                    notif.onclick = () => {
+                        window.focus();
+                        if (n.url) window.location.href = SITE_URL + "/" + String(n.url).replace(/^\/+/, '');
+                        notif.close();
+                    };
+                } catch (e) {}
+            }
+
+            function handle(list, key) {
+                const last = getNum(key);
+                let max = last;
+
+                // list dari backend sudah ASC, tapi tetap aman
+                (list || []).forEach(n => {
+                    const id = parseInt(n.id, 10) || 0;
+                    if (id > last) {
+                        showNotif(n);
+                        if (id > max) max = id;
+                    }
                 });
 
-                // auto-close supaya notif lama tidak numpuk terlalu banyak
-                setTimeout(() => {
-                    try {
-                        n.close();
-                    } catch (e) {}
-                }, 6000);
-
-                return true;
-            } catch (e) {
-                console.log("[notif] create error:", e);
-                return false;
+                if (max > last) setNum(key, max);
+                return max;
             }
-        }
 
-        /* =========================
-           Audio unlock + play
-        ========================= */
-        function setupSoundUnlock(soundEl) {
-            if (!soundEl) return () => {};
-            let unlocked = false;
+            async function poll() {
+                if (!isLeaderTab()) return; // cegah dobel multi-tab
 
-            function unlock() {
-                if (unlocked) return;
-                unlocked = true;
-                soundEl.play().then(() => {
-                    soundEl.pause();
-                    soundEl.currentTime = 0;
-                }).catch(() => {});
-            }
-            document.addEventListener("click", unlock, {
-                once: true
-            });
-            document.addEventListener("keydown", unlock, {
-                once: true
-            });
+                const lastP = getNum(KEY_LAST_P);
+                const lastT = getNum(KEY_LAST_T);
 
-            return function playSound() {
+                const url = POLL_URL_BASE + "?since_p=" + encodeURIComponent(lastP) + "&since_t=" + encodeURIComponent(lastT);
+
                 try {
-                    soundEl.currentTime = 0;
-                    soundEl.play().catch(() => {});
-                } catch (e) {}
-            };
-        }
-
-        /* =========================================================
-           MAIN
-        ========================================================= */
-        document.addEventListener("DOMContentLoaded", function() {
-            var soundEl = document.getElementById("notifSound");
-            var playSound = setupSoundUnlock(soundEl);
-
-            var badgePDesktop = document.getElementById("notifBadge");
-            var badgePMobile = document.getElementById("notifBadgeMobile");
-            var badgeTDesktop = document.getElementById("trxBadge");
-            var badgeTMobile = document.getElementById("trxBadgeMobile");
-
-            // state terbaru dari server
-            var state = {
-                pemCount: parseInt((badgePDesktop && badgePDesktop.dataset.count) ? badgePDesktop.dataset.count : "0", 10) || 0,
-                trxCount: parseInt((badgeTDesktop && badgeTDesktop.dataset.count) ? badgeTDesktop.dataset.count : "0", 10) || 0,
-                pemIds: [],
-                trxIds: []
-            };
-
-            // config
-            var POLL_MS = 5000; // update badge dari server
-            var REMIND_MS = 30000; // popup berulang selama ada notif
-            var ONLY_WHEN_TAB_ACTIVE = false; // kalau mau hanya muncul saat tab aktif -> true
-
-            // helper: apakah boleh popup?
-            function canPopupNow() {
-                if (ONLY_WHEN_TAB_ACTIVE && document.hidden) return false;
-                return true;
-            }
-
-            // ====== REMINDER LOOP ======
-            async function remindLoop() {
-                if (!canPopupNow()) return;
-
-                // PEMESANAN reminder
-                if (state.pemCount > 0) {
-                    const msg =
-                        "Kamu punya update pemesanan (" + state.pemCount + ").\n" +
-                        "ID: " + formatIds(state.pemIds, "PMSN000", 3);
-                    const ok = await showDesktopNotif("Reminder pemesanan", msg, "pemesanan");
-                    if (ok) playSound();
-                }
-
-                // TRANSAKSI reminder
-                if (state.trxCount > 0) {
-                    const msg =
-                        "Kamu punya update transaksi (" + state.trxCount + ").\n" +
-                        "ID: " + formatIds(state.trxIds, "TRX-", 0);
-                    const ok = await showDesktopNotif("Reminder transaksi", msg, "transaksi");
-                    if (ok) playSound();
-                }
-            }
-
-            // ====== POLLING LOOP ======
-            async function pollNotif() {
-                try {
-                    const res = await fetch("<?= site_url('home/notif_poll') ?>", {
+                    const res = await fetch(url, {
                         headers: {
-                            "X-Requested-With": "XMLHttpRequest"
-                        },
-                        credentials: "same-origin"
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
                     });
-                    if (!res.ok) return;
-
                     const data = await res.json();
                     if (!data || !data.ok) return;
 
-                    var newP = parseInt(data.flag || 0, 10);
-                    if (isNaN(newP)) newP = 0;
+                    // update badge dari counts
+                    updateBadges(data.counts);
 
-                    var newT = parseInt(data.trx_flag || 0, 10);
-                    if (isNaN(newT)) newT = 0;
+                    // tampilkan notif device hanya yang baru
+                    const newMaxP = handle(data.items && data.items.pemesanan ? data.items.pemesanan : [], KEY_LAST_P);
+                    const newMaxT = handle(data.items && data.items.transaksi ? data.items.transaksi : [], KEY_LAST_T);
 
-                    // ids (opsional tapi kamu minta ditampilkan)
-                    var pemIds = Array.isArray(data.pemesanan_ids) ? data.pemesanan_ids : [];
-                    var trxIds = Array.isArray(data.trx_ids) ? data.trx_ids : [];
+                    // (opsional) kalau notif belum diaktifkan, kamu masih tetap dapat badge saja.
+                } catch (e) {}
+            }
+            const MARK_READ_URL = "<?= site_url('api/notif/mark-read') ?>";
 
-                    // update badge UI
-                    setBadge(badgePDesktop, newP);
-                    setBadge(badgePMobile, newP);
-                    setBadge(badgeTDesktop, newT);
-                    setBadge(badgeTMobile, newT);
-
-                    // kalau count NAIK, munculkan popup "langsung" sekali (instant)
-                    // (di luar reminder 30 detik)
-                    if (newP > state.pemCount && canPopupNow()) {
-                        const msg =
-                            "Kamu punya update pemesanan (" + newP + ").\n" +
-                            "ID: " + formatIds(pemIds, "PMSN000", 3);
-                        const ok = await showDesktopNotif("Notifikasi pemesanan", msg, "pemesanan");
-                        if (ok) playSound();
-                    }
-
-                    if (newT > state.trxCount && canPopupNow()) {
-                        const msg =
-                            "Kamu punya update transaksi (" + newT + ").\n" +
-                            "ID: " + formatIds(trxIds, "TRX-", 0);
-                        const ok = await showDesktopNotif("Notifikasi transaksi", msg, "transaksi");
-                        if (ok) playSound();
-                    }
-
-                    // simpan state terbaru
-                    state.pemCount = newP;
-                    state.trxCount = newT;
-                    state.pemIds = pemIds;
-                    state.trxIds = trxIds;
-
-                    // simpan juga (optional)
-                    localStorage.setItem("lastFlagPemesanan", String(newP));
-                    localStorage.setItem("lastFlagTransaksi", String(newT));
-                } catch (e) {
-                    // console.log(e);
-                }
+            async function markRead(type) {
+                try {
+                    const body = "type=" + encodeURIComponent(type);
+                    const res = await fetch(MARK_READ_URL, {
+                        method: "POST",
+                        headers: {
+                            "X-Requested-With": "XMLHttpRequest",
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        body
+                    });
+                    await res.json().catch(() => null);
+                } catch (e) {}
             }
 
-            // pertama kali load
-            updateNotifUI();
-
-            // kalau user baru enable notif, kasih 1 popup ringkas
-            var justEnabled = localStorage.getItem("notifJustEnabled") === "1";
-            if (justEnabled && Notification.permission === "granted") {
-                if (state.pemCount > 0) showDesktopNotif("Notifikasi pemesanan", "Kamu punya update pemesanan (" + state.pemCount + ").", "pemesanan");
-                if (state.trxCount > 0) showDesktopNotif("Notifikasi transaksi", "Kamu punya update transaksi (" + state.trxCount + ").", "transaksi");
-                localStorage.removeItem("notifJustEnabled");
-            }
-
-            // start loops
-            pollNotif();
-            setInterval(pollNotif, POLL_MS);
-
-            // reminder popup berkala
-            setInterval(remindLoop, REMIND_MS);
-
-            // (opsional) ketika tab balik aktif, langsung remind sekali
-            document.addEventListener("visibilitychange", function() {
-                if (!document.hidden) remindLoop();
-            });
+            // run
+            poll();
+            setInterval(poll, 8000); // 8 detik lebih stabil (nggak gampang di-throttle)
+        })(); <
+        />
+        document.getElementById('pemesananLinkDesktop')?.addEventListener('click', () => {
+            markRead('pemesanan');
+            setBadge(document.getElementById('notifBadge'), 0);
+            setBadge(document.getElementById('notifBadgeMobile'), 0);
         });
-    </script>
-</body>
+
+        document.getElementById('pemesananLinkMobile')?.addEventListener('click', () => {
+            markRead('pemesanan');
+            setBadge(document.getElementById('notifBadge'), 0);
+            setBadge(document.getElementById('notifBadgeMobile'), 0);
+        });
+
+        document.getElementById('transaksiLinkDesktop')?.addEventListener('click', () => {
+            markRead('transaksi');
+            setBadge(document.getElementById('trxBadge'), 0);
+            setBadge(document.getElementById('trxBadgeMobile'), 0);
+        });
+
+        document.getElementById('transaksiLinkMobile')?.addEventListener('click', () => {
+            markRead('transaksi');
+            setBadge(document.getElementById('trxBadge'), 0);
+            setBadge(document.getElementById('trxBadgeMobile'), 0);
+        });
+
+
+        <
+        /body>
