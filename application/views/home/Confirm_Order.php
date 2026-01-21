@@ -53,7 +53,7 @@ $id_gedung = $this->uri->segment(4);
             <!-- Title -->
             <div class="mb-5">
                 <h1 class="text-xl sm:text-2xl font-semibold text-slate-900">Validasi Data</h1>
-                <p class="mt-1 text-sm text-slate-600">Periksa kembali detail pemesanan sebelum submit proposal.</p>
+                <p class="mt-1 text-sm text-slate-600">Periksa kembali detail pemesanan sebelum submit.</p>
             </div>
 
             <!-- Card -->
@@ -66,7 +66,7 @@ $id_gedung = $this->uri->segment(4);
                         </div>
                         <span
                             class="inline-flex items-center rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-semibold text-slate-700">
-                            Tahap: Upload Proposal
+                            Tahap: Check Data
                         </span>
                     </div>
                 </div>
@@ -187,48 +187,27 @@ $id_gedung = $this->uri->segment(4);
                                 <p class="mt-2 text-xs text-slate-500">Maks 200 karakter.</p>
                             </div>
 
-                            <div class="hidden">
-                                <label class="block text-xs font-semibold tracking-widest text-slate-600">UPLOAD PROPOSAL</label>
+                            <div class="mt-5 flex flex-col sm:flex-row gap-3 sm:justify-end">
+                                <a href="<?php echo site_url('home/pemesanan'); ?>"
+                                    class="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-50">
+                                    Batal
+                                </a>
 
-                                <div class="file-field input-field" style="margin-top:8px;">
-                                    <div class="btn" style="background: #fafafa;border-radius:12px;text-transform:none;">
-                                        <span>Pilih File</span>
-
-                                        <!-- optional: tidak ada required -->
-                                        <input type="file" name="proposal" id="proposal" accept=".pdf,.doc,.docx">
-                                    </div>
-
-                                    <div class="file-path-wrapper">
-                                        <input class="file-path validate" type="text" placeholder="Upload file PDF/DOCX"
-                                            style="border-bottom:1px solid #cbd5e1; box-shadow:none;">
-                                    </div>
-                                </div>
-
-                                <p class="text-xs text-slate-500">Disarankan PDF/DOCX. Pastikan file bisa dibaca.</p>
+                                <button
+                                    class="inline-flex items-center justify-center rounded-lg bg-blue-700 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-800 active:bg-blue-900"
+                                    type="submit" name="action">
+                                    Submit
+                                </button>
                             </div>
+
+                            <?php echo form_close(); ?>
                         </div>
 
-                        <div class="mt-5 flex flex-col sm:flex-row gap-3 sm:justify-end">
-                            <a href="<?php echo site_url('home/pemesanan'); ?>"
-                                class="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-50">
-                                Batal
-                            </a>
-
-                            <button
-                                class="inline-flex items-center justify-center rounded-lg bg-blue-700 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-800 active:bg-blue-900"
-                                type="submit" name="action">
-                                Submit Proposal
-                            </button>
-                        </div>
-
-                        <?php echo form_close(); ?>
                     </div>
-
                 </div>
-            </div>
 
-            <p class="mt-6 text-center text-xs text-slate-500">© <?php echo date('Y'); ?> Smart Office</p>
-        </div>
+                <p class="mt-6 text-center text-xs text-slate-500">© <?php echo date('Y'); ?> Smart Office</p>
+            </div>
     </main>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
