@@ -470,12 +470,12 @@ class Home extends CI_Controller
 
 		// =========================
 		// EKSTERNAL: normal (menunggu admin)
-		// ✅ di sinilah admin perlu notif inbox PROCESS
+		// di sinilah admin perlu notif inbox PROCESS
 		// =========================
 		$this->load->library('notification_service');
 
 		$this->notification_service->notifyAdmin(
-			'ADMIN_INBOX', // ✅ WAJIB ini
+			'ADMIN_INBOX', 
 			'Pesanan masuk (PROCESS)',
 			'Ada pesanan/proposal baru PMSN000' . $id . ' dari user ' . $username . '.',
 			'admin/pemesanan.php',
@@ -715,7 +715,7 @@ class Home extends CI_Controller
 			'ID_GEDUNG'         => $id_gedung,
 			'ID_CATERING'       => $id_catering_final,
 			'JUMLAH_CATERING'   => $jumlah_porsi_final,
-			'STATUS'            => 0,
+			'STATUS' => (int)$status_awal,
 			'REQUEST_ID'        => $request_id,
 			'MENU_PILIHAN_JSON' => $menu_pilihan_json, // boleh NULL untuk sekarang
 			'MENU_INPUT_JSON'   => $menu_input_json,

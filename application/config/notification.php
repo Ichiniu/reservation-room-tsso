@@ -24,3 +24,7 @@ $config['smtp'] = [
     'crlf'        => "\r\n",
     'smtp_timeout' => 30,
 ];
+$config['payment_bank_name']    = 'BCA';
+$config['payment_bank_account'] = '62954742756724';
+$config['payment_bank_holder']  = 'PAK EKO TIGA SERANGKAI';
+$config['payment_due_days']     = 7; // optional

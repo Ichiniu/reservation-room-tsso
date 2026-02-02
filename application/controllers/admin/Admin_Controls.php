@@ -307,14 +307,7 @@ class Admin_Controls extends CI_Controller
 
 				// notif + email user
 				if (!empty($username_user)) {
-					$this->notification_service->notifyUser(
-						$username_user,
-						'USER_PEMESANAN',
-						'Proposal disetujui',
-						'Proposal untuk pesanan PMSN000' . $temp_id . ' telah disetujui. Silakan lanjut ke transaksi/pembayaran.',
-						$detailUrl,
-						true
-					);
+					$this->notification_service->notifyProposalApproved($username_user, $temp_id, true);
 				}
 
 				redirect('admin/transaksi');
@@ -333,14 +326,7 @@ class Admin_Controls extends CI_Controller
 				$this->gedung_model->mark_flag_unread('PMSN000' . $temp_id);
 
 				if (!empty($username_user)) {
-					$this->notification_service->notifyUser(
-						$username_user,
-						'USER_PEMESANAN',
-						'Proposal ditolak',
-						'Proposal untuk pesanan PMSN000' . $temp_id . ' ditolak. Catatan: ' . $remarks,
-						$detailUrl,
-						true
-					);
+					$this->notification_service->notifyProposalRejected($username_user, $temp_id, $remarks, true);
 				}
 
 				redirect('admin/transaksi');
@@ -688,61 +674,13 @@ class Admin_Controls extends CI_Controller
 
 		// notif + email setelah commit
 		if ($action === 'confirm') {
-			$this->notification_service->notifyUser(
-				$username_user,
-				'USER_TRANSAKSI',
-				'Pembayaran dikonfirmasi',
-				'Pembayaran untuk pesanan PMSN000' . $id_pemesanan . ' telah dikonfirmasi.',
-				$detailUrl,
-				true
-			);
+			$this->notification_service->notifyPaymentConfirmed($username_user, $id_pemesanan, $catatan, true);
 		} else {
-			$this->notification_service->notifyUser(
-				$username_user,
-				'USER_TRANSAKSI',
-				'Pembayaran ditolak',
-				'Pembayaran untuk pesanan PMSN000' . $id_pemesanan . ' ditolak. Catatan: ' . $catatan,
-				$detailUrl,
-				true
-			);
+			$this->notification_service->notifyPaymentRejected($username_user, $id_pemesanan, $catatan, true);
 		}
 
 		redirect('admin/pembayaran');
 	}
-
-	// =====================================================================
-	// ✅ ADDED: Endpoint polling untuk desktop notification (browser)
-	// Tujuan: JS di halaman admin akan memanggil endpoint ini tiap beberapa detik.
-	// Output: JSON { ok: true, count: <jumlah unread> }
-	// =====================================================================
-	// public function notif_unread_count()
-	// {
-	// 	if ($this->session->userdata('admin_logged_in') !== TRUE) {
-	// 		$this->output
-	// 			->set_status_header(401)
-	// 			->set_content_type('application/json')
-	// 			->set_output(json_encode([
-	// 				'ok' => false,
-	// 				'message' => 'unauthorized'
-	// 			]));
-	// 		return;
-	// 	}
-
-	// 	$this->load->model('gedung/gedung_model');
-	// 	$unread = $this->gedung_model->get_unread_transaction();
-
-	// 	if (is_array($unread)) $count = count($unread);
-	// 	elseif (is_numeric($unread)) $count = (int)$unread;
-	// 	else $count = 0;
-
-	// 	$this->output
-	// 		->set_content_type('application/json')
-	// 		->set_output(json_encode([
-	// 			'ok'    => true,
-	// 			'count' => $count,
-	// 			'ts'    => date('Y-m-d H:i:s')
-	// 		]));
-	// }
 	public function notif_poll_v2()
 	{
 		if (!$this->input->is_ajax_request()) show_404();
@@ -772,42 +710,41 @@ class Admin_Controls extends CI_Controller
 	}
 
 	public function notif_counter()
-{
-    // keamanan: pastikan admin login
-    if ($this->session->userdata('admin_logged_in') !== TRUE) {
-        return $this->output
-            ->set_status_header(401)
-            ->set_content_type('application/json')
-            ->set_output(json_encode([
-                'ok' => false,
-                'message' => 'unauthorized'
-            ]));
-    }
+	{
+		// keamanan: pastikan admin login
+		if ($this->session->userdata('admin_logged_in') !== TRUE) {
+			return $this->output
+				->set_status_header(401)
+				->set_content_type('application/json')
+				->set_output(json_encode([
+					'ok' => false,
+					'message' => 'unauthorized'
+				]));
+		}
 
-    $this->load->model('gedung/gedung_model');
+		$this->load->model('gedung/gedung_model');
 
-    // =============================
-    // INBOX: pending pemesanan (proposal masuk)
-    // kamu sudah pakai: get_pending_transaction()
-    // =============================
-    $inboxRaw = $this->gedung_model->get_pending_transaction();
-    $inboxCount = is_array($inboxRaw) ? count($inboxRaw) : (is_numeric($inboxRaw) ? (int)$inboxRaw : 0);
+		// =============================
+		// INBOX: pending pemesanan (proposal masuk)
+		// kamu sudah pakai: get_pending_transaction()
+		// =============================
+		$inboxRaw = $this->gedung_model->get_pending_transaction();
+		$inboxCount = is_array($inboxRaw) ? count($inboxRaw) : (is_numeric($inboxRaw) ? (int)$inboxRaw : 0);
 
-    // =============================
-    // TRANSAKSI: unread pembayaran
-    // kamu sudah pakai: get_unread_transaction()
-    // =============================
-    $trxRaw = $this->gedung_model->get_unread_transaction();
-    $trxCount = is_array($trxRaw) ? count($trxRaw) : (is_numeric($trxRaw) ? (int)$trxRaw : 0);
+		// =============================
+		// TRANSAKSI: unread pembayaran
+		// kamu sudah pakai: get_unread_transaction()
+		// =============================
+		$trxRaw = $this->gedung_model->get_unread_transaction();
+		$trxCount = is_array($trxRaw) ? count($trxRaw) : (is_numeric($trxRaw) ? (int)$trxRaw : 0);
 
-    return $this->output
-        ->set_content_type('application/json')
-        ->set_output(json_encode([
-            'ok' => true,
-            'inbox' => $inboxCount,
-            'transaksi' => $trxCount,
-            'ts' => date('Y-m-d H:i:s')
-        ]));
-}
-
+		return $this->output
+			->set_content_type('application/json')
+			->set_output(json_encode([
+				'ok' => true,
+				'inbox' => $inboxCount,
+				'transaksi' => $trxCount,
+				'ts' => date('Y-m-d H:i:s')
+			]));
+	}
 }
