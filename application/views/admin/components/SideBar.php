@@ -428,6 +428,118 @@ $jumlah_trx   = (int)$get_transaction;
 
     setInterval(pollNotif, 2000);
     </script>
+    <script>
+        (function() {
+            const POLL_URL = "<?= base_url('admin/admin_controls/notif_poll_v2') ?>";
+            const KEY_LAST_INBOX = "bm_last_admin_inbox_id";
+            const KEY_LAST_TRX = "bm_last_admin_trx_id";
+            const LOCK_KEY = "bm_notif_lock_admin";
+            const TAB_ID = Date.now() + "_" + Math.random().toString(16).slice(2);
+
+            function getNum(k) {
+                return parseInt(localStorage.getItem(k) || "0", 10) || 0;
+            }
+
+            function setNum(k, v) {
+                localStorage.setItem(k, String(v || 0));
+            }
+
+            function isLeader() {
+                const now = Date.now();
+                const raw = localStorage.getItem(LOCK_KEY);
+                let lock = null;
+                try {
+                    lock = raw ? JSON.parse(raw) : null;
+                } catch (e) {
+                    lock = null;
+                }
+                if (!lock || (now - lock.ts) > 15000) {
+                    localStorage.setItem(LOCK_KEY, JSON.stringify({
+                        id: TAB_ID,
+                        ts: now
+                    }));
+                    return true;
+                }
+                if (lock.id === TAB_ID) {
+                    localStorage.setItem(LOCK_KEY, JSON.stringify({
+                        id: TAB_ID,
+                        ts: now
+                    }));
+                    return true;
+                }
+                return false;
+            }
+
+            function ensurePermission() {
+                if (!("Notification" in window)) return;
+                if (Notification.permission === "default") {
+                    window.addEventListener("click", function req() {
+                        Notification.requestPermission();
+                        window.removeEventListener("click", req);
+                    }, {
+                        once: true
+                    });
+                }
+            }
+
+            function showDeviceNotif(n) {
+                if (!("Notification" in window)) return;
+                if (Notification.permission !== "granted") return;
+                const tag = "bm_admin_" + n.type + "_" + n.id;
+
+                try {
+                    const notif = new Notification(n.title || "Notifikasi Admin", {
+                        body: n.message || "",
+                        tag: tag,
+                        renotify: false,
+                        silent: false
+                    });
+
+                    notif.onclick = function() {
+                        window.focus();
+                        if (n.url) window.location.href = "<?= base_url() ?>" + n.url.replace(/^\/+/, '');
+                        notif.close();
+                    };
+                } catch (e) {}
+            }
+
+            function handleList(list, keyLast) {
+                const lastId = getNum(keyLast);
+                const sorted = (list || []).slice().sort((a, b) => (a.id || 0) - (b.id || 0));
+                let maxId = lastId;
+
+                sorted.forEach(n => {
+                    const id = parseInt(n.id, 10) || 0;
+                    if (id > lastId) {
+                        showDeviceNotif(n);
+                        if (id > maxId) maxId = id;
+                    }
+                });
+
+                if (maxId > lastId) setNum(keyLast, maxId);
+            }
+
+            async function poll() {
+                if (!isLeader()) return;
+                try {
+                    const res = await fetch(POLL_URL, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+                    const data = await res.json();
+                    if (!data || !data.ok) return;
+
+                    handleList(data.items?.inbox, KEY_LAST_INBOX);
+                    handleList(data.items?.transaksi, KEY_LAST_TRX);
+                } catch (e) {}
+            }
+
+            ensurePermission();
+            poll();
+            setInterval(poll, 8000);
+        })();
+    </script>
 
 </body>
 

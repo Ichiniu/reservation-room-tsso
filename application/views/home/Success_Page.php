@@ -19,7 +19,8 @@ $redirectUrl = site_url('home/pemesanan');
   <style>
     /* ===== BACKGROUND ===== */
     body {
-      background: #0d47a1;
+      background: rgb(243, 244, 246);
+
       height: 100vh;
       margin: 0;
       display: flex;
@@ -67,14 +68,14 @@ $redirectUrl = site_url('home/pemesanan');
     h4 {
       margin-top: 12px;
       font-weight: 600;
-      color: #fff;
+
     }
 
     p {
       font-size: 16px;
       line-height: 1.6;
       margin-bottom: 24px;
-      color: #fff;
+
     }
 
     /* ===== BUTTON ===== */

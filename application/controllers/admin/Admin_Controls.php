@@ -204,6 +204,15 @@ class Admin_Controls extends CI_Controller
 		$data['result'] = $this->gedung_model->get_pending_transaction();
 		$data['get_transaction'] = $this->gedung_model->get_unread_transaction();
 		$data['pembayaran'] = $this->gedung_model->get_all_pembayaran();
+		$data['notifs_admin_trx'] = $this->db->order_by('id', 'DESC')
+			->limit(10)
+			->like('type', 'ADMIN_TRANSAKSI_', 'after')
+			->get_where('notifications', [
+				'username' => 'admin',
+				'read_at'  => null
+			])
+			->result_array();
+
 		$this->load->view('admin/pembayaran', $data);
 	}
 
@@ -253,34 +262,87 @@ class Admin_Controls extends CI_Controller
 		$data['pemesanan'] = $this->gedung_model->get_all_pending_transaction();
 		$data['get_transaction'] = $this->gedung_model->get_unread_transaction();
 		$data['result'] = $this->gedung_model->get_pending_transaction();
+		$data['notifs_admin_inbox'] = $this->db->order_by('id', 'DESC')
+			->limit(10)
+			->like('type', 'ADMIN_INBOX_', 'after')
+			->get_where('notifications', [
+				'username' => 'admin',
+				'read_at'  => null
+			])
+			->result_array();
+
 		$this->load->view('admin/pemesanan', $data);
 	}
 
-	function detail_transaksi($id_pemesanan)
+	public function detail_transaksi($id_pemesanan)
 	{
 		$this->load->helper('date');
-		$tanggal_approval = '%Y-%m-%d';
 		$this->load->model('gedung/gedung_model');
+		$this->load->library('notification_service');
 
-		$temp_id = (int) preg_replace('/\D+/', '', (string)$id_pemesanan); // ambil angka saja
-		if ($temp_id <= 0) show_404();
+		$temp_id = (int) preg_replace('/\D+/', '', (string) $id_pemesanan);
+		if ($temp_id <= 0) {
+			show_404();
+			return;
+		}
 
+		// ambil pemesan (untuk notif user)
+		$ps = $this->db->get_where('pemesanan', array('ID_PEMESANAN' => $temp_id))->row_array();
+		$username_user = (!empty($ps) && isset($ps['USERNAME'])) ? $ps['USERNAME'] : null;
 
 		// === PROSES POST DULU ===
 		if ($this->input->method(TRUE) === 'POST') {
-			$status  = (int)$this->input->post('status-proposal');
-			$remarks = $this->input->post('remarks', TRUE);
+			$status  = (int) $this->input->post('status-proposal');
+			$remarks = trim((string) $this->input->post('remarks', TRUE));
 
+			// URL langsung ke detail pemesanan
+			$detailUrl = 'home/pemesanan/details/PMSN000' . $temp_id;
+
+			// TERIMA PROPOSAL -> PROPOSAL APPROVE (1)
 			if ($status === 1) {
-				// TERIMA PROPOSAL -> PROPOSAL APPROVE (1)
 				$this->gedung_model->update_transaksi($temp_id, 1, '');
+
+				// badge lama user
+				$this->gedung_model->mark_flag_unread('PMSN000' . $temp_id);
+
+				// notif + email user
+				if (!empty($username_user)) {
+					$this->notification_service->notifyUser(
+						$username_user,
+						'USER_PEMESANAN',
+						'Proposal disetujui',
+						'Proposal untuk pesanan PMSN000' . $temp_id . ' telah disetujui. Silakan lanjut ke transaksi/pembayaran.',
+						$detailUrl,
+						true
+					);
+				}
+
 				redirect('admin/transaksi');
 				return;
 			}
 
+			// TOLAK PROPOSAL -> REJECTED (4)
 			if ($status === 4) {
-				// TOLAK PROPOSAL -> REJECTED (4)
+				if ($remarks === '') {
+					show_error('Catatan/remarks wajib diisi saat menolak proposal.');
+					return;
+				}
+
 				$this->gedung_model->update_transaksi($temp_id, 4, $remarks);
+
+				$this->gedung_model->mark_flag_unread('PMSN000' . $temp_id);
+
+				if (!empty($username_user)) {
+					$this->notification_service->notifyUser(
+						$username_user,
+						'USER_PEMESANAN',
+						'Proposal ditolak',
+						'Proposal untuk pesanan PMSN000' . $temp_id . ' ditolak. Catatan: ' . $remarks,
+						$detailUrl,
+						true
+					);
+				}
+
 				redirect('admin/transaksi');
 				return;
 			}
@@ -289,7 +351,8 @@ class Admin_Controls extends CI_Controller
 			return;
 		}
 
-		// === BARU LOAD DATA UNTUK VIEW ===
+		// === BARU LOAD DATA UNTUK VIEW (GET) ===
+		$data = array();
 		$data['details'] = $this->gedung_model->get_proposal_by_id($temp_id);
 		$data['hasil']   = $this->gedung_model->get_detail_pesanan($id_pemesanan);
 		$data['result']  = $this->gedung_model->get_pending_transaction();
@@ -302,14 +365,14 @@ class Admin_Controls extends CI_Controller
 	{
 		$from_email = "Admin Pembayaran";
 		$this->load->library('email');
-		$this->email->from($from_email, 'admin@reservasigedung.com');
+		$this->email->from('no-reply@domain.com', 'Booking Smarts');
 		$this->email->to($to_email);
 		$this->email->subject('Deadline Pembayaran Reservasi Gedung');
 		$this->email->set_mailtype('html');
 		$this->email->message($pesan);
 		$this->email->send();
 		if (!$this->email->send()) {
-			$this->email->print_debugger();
+			echo $this->email->print_debugger();
 		}
 	}
 
@@ -463,18 +526,6 @@ class Admin_Controls extends CI_Controller
 		generate_pdf($object, $filename, true);
 	}
 
-	function perawatan_export_pdf($start_date, $end_date)
-	{
-		$this->load->model('gedung/gedung_model');
-		$this->load->helper('warsito_pdf_helper');
-		$data['start_date'] = $start_date;
-		$data['end_date'] = $end_date;
-		$data['report'] = $this->gedung_model->laporan_perawatan_periodic($start_date, $end_date);
-		$object = $this->load->view('admin/pdf_report_perawatan', $data, true);
-		$filename = "Report Perawatan.pdf";
-		generate_pdf($object, $filename, true);
-	}
-
 	function dashboard()
 	{
 		$admin_logged_in = $this->session->userdata('admin_logged_in');
@@ -549,171 +600,80 @@ class Admin_Controls extends CI_Controller
 	public function verify_pembayaran($id_pembayaran, $action)
 	{
 		$this->load->model('gedung/gedung_model');
-		$id_pembayaran = (int) $id_pembayaran;
-		$action        = strtolower(trim((string)$action));
+		$this->load->library('notification_service');
 
-		// =========================
-		// Validasi input dasar
-		// =========================
+		$id_pembayaran = (int)$id_pembayaran;
+		$action = strtolower(trim((string)$action));
+
 		if ($id_pembayaran <= 0) {
 			show_error('ID pembayaran tidak valid');
 			return;
 		}
 
-		// Ambil data pembayaran
-		$p = $this->db->get_where('pembayaran', [
-			'ID_PEMBAYARAN' => $id_pembayaran
-		])->row_array();
-
+		$p = $this->db->get_where('pembayaran', ['ID_PEMBAYARAN' => $id_pembayaran])->row_array();
 		if (!$p) {
 			show_error('Data pembayaran tidak ditemukan');
 			return;
 		}
 
-		// Pastikan field ID_PEMESANAN_RAW ada & valid
 		if (empty($p['ID_PEMESANAN_RAW'])) {
-			show_error('ID pemesanan pada data pembayaran tidak ditemukan (ID_PEMESANAN_RAW kosong).');
+			show_error('ID_PEMESANAN_RAW kosong.');
 			return;
 		}
 
-		$id_pemesanan = (int) $p['ID_PEMESANAN_RAW'];
+		$id_pemesanan = (int)$p['ID_PEMESANAN_RAW'];
 		if ($id_pemesanan <= 0) {
 			show_error('ID pemesanan tidak valid');
 			return;
 		}
 
-		// Catatan admin (dibutuhkan saat reject)
-		$catatan = trim((string) $this->input->post('catatan_admin', TRUE));
+		$catatan = trim((string)$this->input->post('catatan_admin', TRUE));
 
-		// =========================
-		// Mulai transaksi database
-		// =========================
-
+		$ps = $this->db->get_where('pemesanan', ['ID_PEMESANAN' => $id_pemesanan])->row_array();
+		if (!$ps) {
+			show_error('Data pemesanan tidak ditemukan.');
+			return;
+		}
+		$username_user = $ps['USERNAME'];
 
 		$this->db->trans_begin();
 
-		// =========================
-		// Aksi CONFIRM
-		// =========================
 		if ($action === 'confirm') {
 
-			// 1) Update pembayaran
-			$this->db->where('ID_PEMBAYARAN', $id_pembayaran);
-			$this->db->update('pembayaran', [
+			$this->db->where('ID_PEMBAYARAN', $id_pembayaran)->update('pembayaran', [
 				'STATUS_VERIF'  => 'CONFIRMED',
-				'CATATAN_ADMIN' => $catatan, // boleh kosong saat confirm
+				'CATATAN_ADMIN' => $catatan,
 				'CONFIRMED_AT'  => date('Y-m-d H:i:s')
 			]);
 
-			// 2) Update status pemesanan -> 3 (misal: confirmed/paid)
-			$this->db->where('ID_PEMESANAN', $id_pemesanan);
-			$this->db->update('pemesanan', ['STATUS' => 3]);
+			$this->db->where('ID_PEMESANAN', $id_pemesanan)->update('pemesanan', ['STATUS' => 3]);
+
 			$this->gedung_model->mark_flag_unread('PMSN000' . $id_pemesanan);
-
-
-			// 3) Ambil data pemesanan untuk isi fix detail
-			$ps = $this->db->get_where('pemesanan', [
-				'ID_PEMESANAN' => $id_pemesanan
-			])->row_array();
-
-			if (!$ps) {
-				$this->db->trans_rollback();
-				show_error('Data pemesanan tidak ditemukan.');
-				return;
-			}
-
-			// 4) Pastikan jam mulai tidak NULL
-			$jam_mulai = !empty($ps['JAM_PEMESANAN']) ? $ps['JAM_PEMESANAN'] : '08:00:00';
-
-			// 5) Jam selesai fallback kalau kosong
-			$jam_selesai = !empty($ps['JAM_SELESAI']) ? $ps['JAM_SELESAI'] : '';
-			if ($jam_selesai === '') {
-
-				$tipe_jam = !empty($ps['TIPE_JAM']) ? $ps['TIPE_JAM'] : 'CUSTOM';
-
-				// Durasi default: CUSTOM 1 jam
-				$durasi_jam = 1;
-				if ($tipe_jam === 'HALF_DAY') {
-					$durasi_jam = 4;
-				} elseif ($tipe_jam === 'FULL_DAY') {
-					$durasi_jam = 8;
-				}
-
-				$jam_selesai = date('H:i:s', strtotime($jam_mulai . " +{$durasi_jam} hours"));
-			}
-
-			// 6) Deadline (hindari kasus strtotime gagal -> 1970-01-01)
-			$tanggal_deadline = date('Y-m-d'); // fallback: hari ini
-			if (!empty($ps['TANGGAL_PEMESANAN'])) {
-				$ts_deadline = strtotime($ps['TANGGAL_PEMESANAN'] . ' -1 day');
-				if ($ts_deadline !== false) {
-					$tanggal_deadline = date('Y-m-d', $ts_deadline);
-				}
-			}
-
-			// 7) Data fix detail (sesuai struktur pemesanan_fix_detail)
-			$fix = [
-				'ID_PEMESANAN'            => (int) $ps['ID_PEMESANAN'],
-				'ID_GEDUNG'               => (int) $ps['ID_GEDUNG'],
-				'USERNAME'                => $ps['USERNAME'],
-				'TANGGAL_APPROVAL'        => date('Y-m-d'),
-				'TANGGAL_FINAL_PEMESANAN' => $ps['TANGGAL_PEMESANAN'],
-				'JAM_MULAI'               => $jam_mulai,
-				'JAM_SELESAI'             => $jam_selesai,
-				'TANGGAL_DEADLINE'        => $tanggal_deadline,
-				'FINAL_STATUS'            => 1
-			];
-
-			// 8) UPSERT ke pemesanan_fix_detail
-			$exist = $this->db->get_where('pemesanan_fix_detail', [
-				'ID_PEMESANAN' => $id_pemesanan
-			])->row_array();
-
-			if ($exist) {
-				$this->db->where('ID_PEMESANAN', $id_pemesanan);
-				$this->db->update('pemesanan_fix_detail', $fix);
-			} else {
-				$this->db->insert('pemesanan_fix_detail', $fix);
-			}
-
-			// =========================
-			// Aksi REJECT
-			// =========================
 		} elseif ($action === 'reject') {
 
-			// Catatan wajib di reject
 			if ($catatan === '') {
 				$this->db->trans_rollback();
 				show_error('Catatan admin wajib diisi saat menolak pembayaran.');
 				return;
 			}
 
-			// 1) Update pembayaran jadi REJECTED
-			$this->db->where('ID_PEMBAYARAN', $id_pembayaran);
-			$this->db->update('pembayaran', [
+			$this->db->where('ID_PEMBAYARAN', $id_pembayaran)->update('pembayaran', [
 				'STATUS_VERIF'  => 'REJECTED',
 				'CATATAN_ADMIN' => $catatan,
 				'CONFIRMED_AT'  => null
 			]);
 
-			// 2) Update status pemesanan -> 4 (misal: rejected)
-			$this->db->where('ID_PEMESANAN', $id_pemesanan);
-			$this->db->update('pemesanan', ['STATUS' => 4]);
+			$this->db->where('ID_PEMESANAN', $id_pemesanan)->update('pemesanan', ['STATUS' => 4]);
+
 			$this->gedung_model->mark_flag_unread('PMSN000' . $id_pemesanan);
 
-
-			// 3) OPTIONAL: kalau sudah pernah masuk fix, matikan
-			$this->db->where('ID_PEMESANAN', $id_pemesanan);
-			$this->db->update('pemesanan_fix_detail', ['FINAL_STATUS' => 0]);
+			$this->db->where('ID_PEMESANAN', $id_pemesanan)->update('pemesanan_fix_detail', ['FINAL_STATUS' => 0]);
 		} else {
 			$this->db->trans_rollback();
 			show_error('Aksi tidak dikenali');
 			return;
 		}
 
-		// =========================
-		// Cek transaksi
-		// =========================
 		if ($this->db->trans_status() === FALSE) {
 			$this->db->trans_rollback();
 			$err = $this->db->error();
@@ -722,45 +682,93 @@ class Admin_Controls extends CI_Controller
 		}
 
 		$this->db->trans_commit();
+
+		// URL notif (opsional: arahkan ke detail pemesanan biar jelas)
+		$detailUrl = 'home/pemesanan/details/PMSN000' . $id_pemesanan;
+
+		// notif + email setelah commit
+		if ($action === 'confirm') {
+			$this->notification_service->notifyUser(
+				$username_user,
+				'USER_TRANSAKSI',
+				'Pembayaran dikonfirmasi',
+				'Pembayaran untuk pesanan PMSN000' . $id_pemesanan . ' telah dikonfirmasi.',
+				$detailUrl,
+				true
+			);
+		} else {
+			$this->notification_service->notifyUser(
+				$username_user,
+				'USER_TRANSAKSI',
+				'Pembayaran ditolak',
+				'Pembayaran untuk pesanan PMSN000' . $id_pemesanan . ' ditolak. Catatan: ' . $catatan,
+				$detailUrl,
+				true
+			);
+		}
+
 		redirect('admin/pembayaran');
 	}
-
 
 	// =====================================================================
 	// ✅ ADDED: Endpoint polling untuk desktop notification (browser)
 	// Tujuan: JS di halaman admin akan memanggil endpoint ini tiap beberapa detik.
 	// Output: JSON { ok: true, count: <jumlah unread> }
 	// =====================================================================
-	public function notif_unread_count()
+	// public function notif_unread_count()
+	// {
+	// 	if ($this->session->userdata('admin_logged_in') !== TRUE) {
+	// 		$this->output
+	// 			->set_status_header(401)
+	// 			->set_content_type('application/json')
+	// 			->set_output(json_encode([
+	// 				'ok' => false,
+	// 				'message' => 'unauthorized'
+	// 			]));
+	// 		return;
+	// 	}
+
+	// 	$this->load->model('gedung/gedung_model');
+	// 	$unread = $this->gedung_model->get_unread_transaction();
+
+	// 	if (is_array($unread)) $count = count($unread);
+	// 	elseif (is_numeric($unread)) $count = (int)$unread;
+	// 	else $count = 0;
+
+	// 	$this->output
+	// 		->set_content_type('application/json')
+	// 		->set_output(json_encode([
+	// 			'ok'    => true,
+	// 			'count' => $count,
+	// 			'ts'    => date('Y-m-d H:i:s')
+	// 		]));
+	// }
+	public function notif_poll_v2()
 	{
-		// keamanan: pastikan admin login
-		if ($this->session->userdata('admin_logged_in') !== TRUE) {
-			$this->output
-				->set_status_header(401)
-				->set_content_type('application/json')
-				->set_output(json_encode([
-					'ok' => false,
-					'message' => 'unauthorized'
-				]));
+		if (!$this->input->is_ajax_request()) show_404();
+
+		$admin = $this->session->userdata('admin_username');
+		if (!$admin) {
+			echo json_encode(['ok' => false, 'msg' => 'no-admin-session']);
 			return;
 		}
 
-		// pakai model yang sudah kamu gunakan di file ini
-		$this->load->model('gedung/gedung_model');
+		$this->load->model('Notification_model', 'notif');
 
-		// get_unread_transaction() kamu sudah dipakai di banyak view admin
-		$unread = $this->gedung_model->get_unread_transaction();
+		$inbox    = $this->notif->get_unread('admin', ['ADMIN_INBOX'], 5);
+		$transaksi = $this->notif->get_unread('admin', ['ADMIN_TRANSAKSI'], 5);
 
-		// aman: kalau array -> count, kalau bukan -> 0
-		$count = is_array($unread) ? count($unread) : 0;
-
-		$this->output
-			->set_content_type('application/json')
-			->set_output(json_encode([
-				'ok'    => true,
-				'count' => $count,
-				'ts'    => date('Y-m-d H:i:s')
-			]));
+		echo json_encode([
+			'ok' => true,
+			'counts' => [
+				'inbox'    => $this->notif->count_unread('admin', ['ADMIN_INBOX']),
+				'transaksi' => $this->notif->count_unread('admin', ['ADMIN_TRANSAKSI']),
+			],
+			'items' => [
+				'inbox'    => $inbox,
+				'transaksi' => $transaksi
+			]
+		]);
 	}
 
 	public function notif_counter()

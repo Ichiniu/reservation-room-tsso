@@ -77,6 +77,20 @@ $this->load->helper('text');
                 <!-- ================= TABLE (scroll hanya tabel) ================= -->
                 <div class="border border-slate-200 rounded-xl overflow-hidden">
                     <div id="tableScroll" class="max-h-[420px] overflow-auto">
+                        <?php if (!empty($notifs_admin_trx)): ?>
+                            <div class="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
+                                <div class="font-semibold mb-2">Notifikasi</div>
+                                <ul class="list-disc pl-5">
+                                    <?php foreach ($notifs_admin_trx as $n): ?>
+                                        <li>
+                                            <span class="font-semibold"><?= htmlspecialchars($n['title']) ?></span>
+                                            - <?= htmlspecialchars($n['message']) ?>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
+
                         <table class="w-full text-sm bg-white">
                             <thead class="sticky top-0 z-10 bg-slate-100 border-b border-slate-200">
                                 <tr class="text-center font-semibold text-slate-700">
@@ -92,8 +106,8 @@ $this->load->helper('text');
 
                             <tbody id="tableBody" class="divide-y divide-slate-200">
                                 <?php if (!empty($pembayaran)): ?>
-                                <?php foreach ($pembayaran as $row): ?>
-                                <?php
+                                    <?php foreach ($pembayaran as $row): ?>
+                                        <?php
                                         $kodeTransaksi = 'PB' . str_pad($row['ID_PEMBAYARAN'], 6, '0', STR_PAD_LEFT);
                                         $kodePemesanan = $row['KODE_PEMESANAN'] . $row['ID_PEMESANAN_RAW'];
                                         $nama = !empty($row['NAMA_LENGKAP']) ? $row['NAMA_LENGKAP'] : $row['ATAS_NAMA_PENGIRIM'];
@@ -106,50 +120,50 @@ $this->load->helper('text');
                                         else if ($status === 'REJECTED') $badge = 'bg-red-100 text-red-700';
                                         else if ($status === 'PENDING') $badge = 'bg-yellow-100 text-yellow-800';
                                         ?>
-                                <tr class="table-row text-center hover:bg-slate-50"
-                                    data-text="<?= htmlspecialchars(strtolower($kodeTransaksi . ' ' . $kodePemesanan . ' ' . $nama), ENT_QUOTES, 'UTF-8'); ?>"
-                                    data-status="<?= htmlspecialchars($status, ENT_QUOTES, 'UTF-8'); ?>"
-                                    data-nominal="<?= htmlspecialchars($nominal, ENT_QUOTES, 'UTF-8'); ?>">
+                                        <tr class="table-row text-center hover:bg-slate-50"
+                                            data-text="<?= htmlspecialchars(strtolower($kodeTransaksi . ' ' . $kodePemesanan . ' ' . $nama), ENT_QUOTES, 'UTF-8'); ?>"
+                                            data-status="<?= htmlspecialchars($status, ENT_QUOTES, 'UTF-8'); ?>"
+                                            data-nominal="<?= htmlspecialchars($nominal, ENT_QUOTES, 'UTF-8'); ?>">
 
-                                    <td class="px-4 py-3 cell-no"></td>
+                                            <td class="px-4 py-3 cell-no"></td>
 
-                                    <td class="px-4 py-3 font-medium text-slate-800">
-                                        <?= htmlspecialchars($kodeTransaksi, ENT_QUOTES, 'UTF-8'); ?>
-                                    </td>
+                                            <td class="px-4 py-3 font-medium text-slate-800">
+                                                <?= htmlspecialchars($kodeTransaksi, ENT_QUOTES, 'UTF-8'); ?>
+                                            </td>
 
-                                    <td class="px-4 py-3 text-slate-700">
-                                        <?= htmlspecialchars($kodePemesanan, ENT_QUOTES, 'UTF-8'); ?>
-                                    </td>
+                                            <td class="px-4 py-3 text-slate-700">
+                                                <?= htmlspecialchars($kodePemesanan, ENT_QUOTES, 'UTF-8'); ?>
+                                            </td>
 
-                                    <td class="px-4 py-3 text-slate-700">
-                                        <?= htmlspecialchars($nama, ENT_QUOTES, 'UTF-8'); ?>
-                                    </td>
+                                            <td class="px-4 py-3 text-slate-700">
+                                                <?= htmlspecialchars($nama, ENT_QUOTES, 'UTF-8'); ?>
+                                            </td>
 
-                                    <td class="px-4 py-3 text-right font-semibold text-green-700">
-                                        Rp <?= number_format($nominal, 0, ',', '.'); ?>
-                                    </td>
+                                            <td class="px-4 py-3 text-right font-semibold text-green-700">
+                                                Rp <?= number_format($nominal, 0, ',', '.'); ?>
+                                            </td>
 
-                                    <td class="px-4 py-3">
-                                        <span
-                                            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold <?= $badge; ?>">
-                                            <?= htmlspecialchars($status, ENT_QUOTES, 'UTF-8'); ?>
-                                        </span>
-                                    </td>
+                                            <td class="px-4 py-3">
+                                                <span
+                                                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold <?= $badge; ?>">
+                                                    <?= htmlspecialchars($status, ENT_QUOTES, 'UTF-8'); ?>
+                                                </span>
+                                            </td>
 
-                                    <td class="px-4 py-3">
-                                        <a href="<?= site_url('admin/admin_controls/read_transaction/'.$row['ID_PEMBAYARAN']) ?>"
-                                            class="inline-flex items-center justify-center w-9 h-9 rounded-lg hover:bg-blue-50 text-blue-600 hover:text-blue-800">
-                                            <i class="material-icons text-base">open_in_new</i>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <?php endforeach; ?>
+                                            <td class="px-4 py-3">
+                                                <a href="<?= site_url('admin/admin_controls/read_transaction/' . $row['ID_PEMBAYARAN']) ?>"
+                                                    class="inline-flex items-center justify-center w-9 h-9 rounded-lg hover:bg-blue-50 text-blue-600 hover:text-blue-800">
+                                                    <i class="material-icons text-base">open_in_new</i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
                                 <?php else: ?>
-                                <tr>
-                                    <td colspan="7" class="px-4 py-8 text-center text-slate-500">
-                                        Data pembayaran belum tersedia
-                                    </td>
-                                </tr>
+                                    <tr>
+                                        <td colspan="7" class="px-4 py-8 text-center text-slate-500">
+                                            Data pembayaran belum tersedia
+                                        </td>
+                                    </tr>
                                 <?php endif; ?>
                             </tbody>
                         </table>
@@ -195,116 +209,116 @@ $this->load->helper('text');
     </main>
 
     <script>
-    (function() {
-        const allRows = Array.from(document.querySelectorAll(".table-row"));
-        let filteredRows = [...allRows];
+        (function() {
+            const allRows = Array.from(document.querySelectorAll(".table-row"));
+            let filteredRows = [...allRows];
 
-        const filterText = document.getElementById("filterText");
-        const filterStatus = document.getElementById("filterStatus");
-        const resetBtn = document.getElementById("resetFilter");
+            const filterText = document.getElementById("filterText");
+            const filterStatus = document.getElementById("filterStatus");
+            const resetBtn = document.getElementById("resetFilter");
 
-        const rowsPerPageSelect = document.getElementById("rowsPerPage");
-        const pageInfo = document.getElementById("pageInfo");
-        const prevBtn = document.getElementById("prevBtn");
-        const nextBtn = document.getElementById("nextBtn");
-        const totalAmount = document.getElementById("totalAmount");
-        const scrollBox = document.getElementById("tableScroll");
+            const rowsPerPageSelect = document.getElementById("rowsPerPage");
+            const pageInfo = document.getElementById("pageInfo");
+            const prevBtn = document.getElementById("prevBtn");
+            const nextBtn = document.getElementById("nextBtn");
+            const totalAmount = document.getElementById("totalAmount");
+            const scrollBox = document.getElementById("tableScroll");
 
-        let currentPage = 1;
-        let rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
+            let currentPage = 1;
+            let rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
 
-        function applyFilter() {
-            const text = (filterText.value || "").toLowerCase().trim();
-            const status = (filterStatus.value || "").toUpperCase().trim();
+            function applyFilter() {
+                const text = (filterText.value || "").toLowerCase().trim();
+                const status = (filterStatus.value || "").toUpperCase().trim();
 
-            filteredRows = allRows.filter(r => {
-                const okText = (r.dataset.text || "").includes(text);
-                const okStatus = !status || (r.dataset.status || "") === status;
-                return okText && okStatus;
+                filteredRows = allRows.filter(r => {
+                    const okText = (r.dataset.text || "").includes(text);
+                    const okStatus = !status || (r.dataset.status || "") === status;
+                    return okText && okStatus;
+                });
+
+                currentPage = 1;
+                render();
+            }
+
+            function render() {
+                // hide all
+                allRows.forEach(r => r.style.display = "none");
+
+                const totalRows = filteredRows.length;
+                const totalPages = Math.max(1, Math.ceil(totalRows / rowsPerPage));
+                if (currentPage > totalPages) currentPage = totalPages;
+
+                const start = (currentPage - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+
+                // show current page
+                filteredRows.forEach((r, i) => {
+                    if (i >= start && i < end) r.style.display = "";
+                });
+
+                // renumber No for visible
+                let no = start + 1;
+                filteredRows.forEach((r, i) => {
+                    if (i >= start && i < end) {
+                        const cell = r.querySelector(".cell-no");
+                        if (cell) cell.textContent = no++;
+                    }
+                });
+
+                // update total (sesuai filter)
+                let total = 0;
+                filteredRows.forEach(r => {
+                    total += parseFloat(r.dataset.nominal || "0");
+                });
+                totalAmount.textContent = "Rp " + total.toLocaleString("id-ID");
+
+                // page info
+                const showingFrom = totalRows === 0 ? 0 : start + 1;
+                const showingTo = Math.min(end, totalRows);
+                pageInfo.textContent =
+                    `Page ${currentPage} of ${totalPages} • Showing ${showingFrom}-${showingTo} of ${totalRows}`;
+
+                prevBtn.disabled = currentPage <= 1;
+                nextBtn.disabled = currentPage >= totalPages;
+
+                if (scrollBox) scrollBox.scrollTop = 0;
+            }
+
+            // events
+            filterText.addEventListener("input", applyFilter);
+            filterStatus.addEventListener("change", applyFilter);
+
+            resetBtn.addEventListener("click", function() {
+                filterText.value = "";
+                filterStatus.value = "";
+                applyFilter();
             });
 
-            currentPage = 1;
-            render();
-        }
-
-        function render() {
-            // hide all
-            allRows.forEach(r => r.style.display = "none");
-
-            const totalRows = filteredRows.length;
-            const totalPages = Math.max(1, Math.ceil(totalRows / rowsPerPage));
-            if (currentPage > totalPages) currentPage = totalPages;
-
-            const start = (currentPage - 1) * rowsPerPage;
-            const end = start + rowsPerPage;
-
-            // show current page
-            filteredRows.forEach((r, i) => {
-                if (i >= start && i < end) r.style.display = "";
+            rowsPerPageSelect.addEventListener("change", function() {
+                rowsPerPage = parseInt(this.value, 10) || 10;
+                currentPage = 1;
+                render();
             });
 
-            // renumber No for visible
-            let no = start + 1;
-            filteredRows.forEach((r, i) => {
-                if (i >= start && i < end) {
-                    const cell = r.querySelector(".cell-no");
-                    if (cell) cell.textContent = no++;
+            prevBtn.addEventListener("click", function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    render();
                 }
             });
 
-            // update total (sesuai filter)
-            let total = 0;
-            filteredRows.forEach(r => {
-                total += parseFloat(r.dataset.nominal || "0");
+            nextBtn.addEventListener("click", function() {
+                const totalPages = Math.max(1, Math.ceil(filteredRows.length / rowsPerPage));
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    render();
+                }
             });
-            totalAmount.textContent = "Rp " + total.toLocaleString("id-ID");
 
-            // page info
-            const showingFrom = totalRows === 0 ? 0 : start + 1;
-            const showingTo = Math.min(end, totalRows);
-            pageInfo.textContent =
-                `Page ${currentPage} of ${totalPages} • Showing ${showingFrom}-${showingTo} of ${totalRows}`;
-
-            prevBtn.disabled = currentPage <= 1;
-            nextBtn.disabled = currentPage >= totalPages;
-
-            if (scrollBox) scrollBox.scrollTop = 0;
-        }
-
-        // events
-        filterText.addEventListener("input", applyFilter);
-        filterStatus.addEventListener("change", applyFilter);
-
-        resetBtn.addEventListener("click", function() {
-            filterText.value = "";
-            filterStatus.value = "";
-            applyFilter();
-        });
-
-        rowsPerPageSelect.addEventListener("change", function() {
-            rowsPerPage = parseInt(this.value, 10) || 10;
-            currentPage = 1;
-            render();
-        });
-
-        prevBtn.addEventListener("click", function() {
-            if (currentPage > 1) {
-                currentPage--;
-                render();
-            }
-        });
-
-        nextBtn.addEventListener("click", function() {
-            const totalPages = Math.max(1, Math.ceil(filteredRows.length / rowsPerPage));
-            if (currentPage < totalPages) {
-                currentPage++;
-                render();
-            }
-        });
-
-        // init
-        applyFilter(); // biar total + nomor langsung valid
-    })();
+            // init
+            applyFilter(); // biar total + nomor langsung valid
+        })();
     </script>
 
 </body>

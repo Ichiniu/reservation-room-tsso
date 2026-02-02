@@ -1,12 +1,27 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 class Notifications extends CI_Controller
 {
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('Notification_model');
+        // pakai alias biar jelas & gak salah kapital
+        $this->load->model('notification/notification_model', 'notif');
+    }
+
+    /**
+     * Map query "type" dari frontend -> daftar tipe notifikasi yang disimpan di DB
+     * type frontend: pemesanan | transaksi | all
+     */
+    private function mapTypes($type)
+    {
+        $type = strtolower(trim((string)$type));
+        if ($type === 'pemesanan') return ['USER_PEMESANAN'];
+        if ($type === 'transaksi') return ['USER_TRANSAKSI'];
+        if ($type === 'all' || $type === '') return ['USER_PEMESANAN', 'USER_TRANSAKSI'];
+        if (preg_match('/^USER_/i', $type)) return [$type];
+        return ['USER_PEMESANAN', 'USER_TRANSAKSI'];
     }
 
     public function unread_count()
@@ -14,15 +29,18 @@ class Notifications extends CI_Controller
         $username = $this->session->userdata('username');
         if (!$username) show_error('Unauthorized', 401);
 
-        $type = $this->input->get('type', true); // contoh: pemesanan
-        $count = $this->Notification_model->count_unread($username, $type);
-        $latest = $this->Notification_model->latest_unread($username, $type, 1);
+        $typeParam = $this->input->get('type', true); // pemesanan | transaksi | all
+        $types     = $this->mapTypes($typeParam);
+
+        // asumsi model kamu mendukung parameter array types (sesuai Notification_service)
+        $count  = $this->notif->count_unread($username, $types);
+        $latest = $this->notif->latest_unread($username, $types, 1);
 
         $this->output
             ->set_content_type('application/json')
             ->set_output(json_encode([
-                'count' => $count,
-                'latest' => $latest ? $latest[0] : null,
+                'count'  => (int)$count,
+                'latest' => !empty($latest) ? $latest[0] : null,
             ]));
     }
 
@@ -31,8 +49,10 @@ class Notifications extends CI_Controller
         $username = $this->session->userdata('username');
         if (!$username) show_error('Unauthorized', 401);
 
-        $type = $this->input->post('type', true); // 'pemesanan'
-        $this->Notification_model->mark_read($username, $type);
+        $typeParam = $this->input->post('type', true); // pemesanan | transaksi | all
+        $types     = $this->mapTypes($typeParam);
+
+        $this->notif->mark_read($username, $types);
 
         $this->output
             ->set_content_type('application/json')

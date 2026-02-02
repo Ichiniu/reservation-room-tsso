@@ -62,6 +62,17 @@ class Pembayaran extends CI_Controller
 
         // ===== AUTO CONFIRM kalau total tagihan 0 =====
         if ($total_tagihan === 0) {
+            $this->load->library('notification_service');
+
+            // ✅ user transaksi confirmed (sesuai kebutuhan user: confirmed di halaman transaksi)
+            $this->notifier->notifyUser(
+                $pesanan->USERNAME,
+                'USER_TRANSAKSI_CONFIRMED',
+                'Pembayaran dikonfirmasi',
+                'Pemesanan PMSN000' . $id_pemesanan_raw . ' otomatis CONFIRMED (tagihan 0).',
+                'home/pembayaran',
+                true
+            );
 
             // cegah dobel insert
             $exists = $this->db->select('ID_PEMBAYARAN')
@@ -208,6 +219,29 @@ class Pembayaran extends CI_Controller
         }
 
         $this->db->trans_commit();
+
+        $this->load->library('notification_service');
+        $orderNo = 'PMSN000' . $id_pemesanan_raw;
+
+        // ✅ Admin transaksi pending (pop-up Windows admin)
+        $this->notification_service->notifyAdmin(
+            'ADMIN_TRANSAKSI', // ✅ WAJIB ini
+            'Pembayaran baru menunggu verifikasi',
+            'Ada pembayaran baru (' . $orderNo . ') menunggu verifikasi.',
+            'admin/pembayaran',
+            true
+        );
+
+        // ✅ User transaksi pending (pop-up Windows user)
+        $this->notification_service->notifyUser(
+            $pesanan->USERNAME,
+            'USER_TRANSAKSI', // ✅ WAJIB ini
+            'Pembayaran menunggu verifikasi',
+            'Bukti pembayaran untuk ' . $orderNo . ' berhasil dikirim dan menunggu verifikasi admin.',
+            'home/pembayaran',
+            true
+        );
+
         redirect('home/pemesanan');
     }
 }
