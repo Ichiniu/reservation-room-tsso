@@ -1,6 +1,7 @@
 <?php
 $username   = $this->session->userdata('username');
 $session_id = $this->session->userdata('username');
+$foto_profil = $this->session->userdata('foto_profil'); // ✅ dipakai desktop + mobile
 
 $flag     = isset($flag) ? (int)$flag : 0;         // badge PEMESANAN
 $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
@@ -58,23 +59,26 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
                 </a>
             </nav>
 
-            <!-- RIGHT -->
-            <div class="flex items-center gap-3">
-                <button id="mobileMenuBtn"
-                    class="md:hidden inline-flex items-center justify-center rounded-lg border border-black/10 p-2 hover:bg-slate-100 transition">
-                    <i class="bi bi-list text-xl"></i>
-                </button>
+                <!-- RIGHT -->
+                <div class="flex items-center gap-3">
+                    <button id="mobileMenuBtn"
+                        class="md:hidden inline-flex items-center justify-center rounded-lg border border-black/10 p-2 hover:bg-slate-100 transition">
+                        <i class="bi bi-list text-xl"></i>
+                    </button>
 
-                <!-- PROFILE DROPDOWN -->
-                <div class="relative hidden md:block">
-                    <button type="button" id="profileToggle"
-                        class="flex items-center gap-2 px-3 py-1 rounded-full bg-white hover:bg-slate-100 border border-black/10 transition">
-                        <?php $foto_profil = $this->session->userdata('foto_profil'); ?>
-                        <?php if (!empty($foto_profil)): ?>
-                            <img src="<?= base_url($foto_profil); ?>" class="h-7 w-7 rounded-full object-cover" alt="Foto Profil">
-                        <?php else: ?>
-                            <i class="bi bi-person-circle text-slate-700"></i>
-                        <?php endif; ?>
+                    <!-- PROFILE (DESKTOP) -->
+                    <div class="relative hidden md:block">
+                        <button type="button"
+                            class="profile-toggle flex items-center gap-2 px-3 py-1 rounded-full bg-white hover:bg-slate-100 border border-black/10 transition">
+
+                            <?php $foto_profil = $this->session->userdata('foto_profil'); ?>
+
+                            <?php if (!empty($foto_profil)): ?>
+                                <img src="<?= base_url($foto_profil); ?>" class="h-7 w-7 rounded-full object-cover"
+                                    alt="Foto Profil">
+                            <?php else: ?>
+                                <i class="bi bi-person-circle text-slate-700"></i>
+                            <?php endif; ?>
 
                         <span class="text-xs font-medium text-slate-700">
                             <?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8'); ?>
@@ -82,23 +86,32 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
                         <i class="bi bi-chevron-down text-xs text-slate-600"></i>
                     </button>
 
-                    <div id="profileMenu"
-                        class="hidden absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-md border border-black/10 text-sm overflow-hidden">
-                        <a href="<?= site_url('edit_data/' . $username); ?>"
-                            class="flex items-center gap-2 px-4 py-2 hover:bg-slate-100">
-                            <i class="bi bi-pencil-square"></i> Edit Data Diri
-                        </a>
+                        <div
+                            class="profile-menu hidden absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-md border border-black/10 text-sm overflow-hidden">
+                            <a href="<?= site_url('edit_data/' . $username); ?>"
+                                class="flex items-center gap-2 px-4 py-2 hover:bg-slate-100">
+                                <i class="bi bi-pencil-square"></i> Edit Data Diri
+                            </a>
 
                         <a href="<?= site_url('edit_foto/' . $username); ?>"
                             class="flex items-center gap-2 px-4 py-2 hover:bg-slate-100">
                             <i class="bi bi-camera"></i> Edit Foto Profil
                         </a>
 
-                        <div class="border-t border-black/5">
-                            <button type="button" onclick="aktifkanNotif()"
-                                class="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-slate-100">
-                                <i class="bi bi-bell"></i> Aktifkan Notifikasi
-                            </button>
+                            <div class="border-t border-black/5">
+                                <button type="button" onclick="aktifkanNotif()"
+                                    class="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-slate-100">
+                                    <i class="bi bi-bell"></i> Aktifkan Notifikasi
+                                </button>
+
+                                <button id="testSound"
+                                    class="ml-2 px-3 py-1 rounded-md text-xs border bg-slate-950 border-gray-300 hover:bg-gray-50">
+                                    Test Sound
+                                </button>
+                                <button id="testDesktop"
+                                    class="ml-2 px-3 py-1 rounded-md text-xs border bg-slate-950 border-gray-300 hover:bg-gray-50">
+                                    Test Desktop
+                                </button>
 
                             <div class="px-4 pb-2 text-[11px] text-slate-500 flex items-center gap-2">
                                 <span id="notifDot" class="inline-block w-2 h-2 rounded-full bg-slate-300"></span>
@@ -153,9 +166,9 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
             <div class="border-t border-black/10 pt-3 mt-2">
                 <div class="text-xs text-slate-500 mb-2">Akun</div>
 
-                <a href="<?= site_url('edit_data/' . $username); ?>" class="flex items-center gap-2">
-                    <i class="bi bi-pencil-square"></i> Edit Data
-                </a>
+                    <a href="<?= site_url('edit_data/' . $username); ?>" class="flex items-center gap-2">
+                        <i class="bi bi-pencil-square"></i> Edit Data
+                    </a>
 
                 <button type="button" onclick="aktifkanNotif()"
                     class="flex items-center gap-2 text-left w-full hover:text-slate-900">
@@ -227,74 +240,74 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
         var KEY_LAST_P = "bm_last_user_p_id_" + USERNAME;
         var KEY_LAST_T = "bm_last_user_t_id_" + USERNAME;
 
-        var LOCK_KEY = "bm_notif_lock_user_" + USERNAME;
-        var TAB_ID = Date.now() + "_" + Math.random().toString(16).slice(2);
+            // lock untuk cegah dobel notif kalau buka banyak tab
+            const LOCK_KEY = "bm_notif_lock_user_" + USERNAME;
+            const TAB_ID = Date.now() + "_" + Math.random().toString(16).slice(2);
 
-        function getNum(k) {
-            return parseInt(localStorage.getItem(k) || "0", 10) || 0;
-        }
+            const getNum = k => parseInt(localStorage.getItem(k) || "0", 10) || 0;
+            const setNum = (k, v) => localStorage.setItem(k, String(v || 0));
 
-        function setNum(k, v) {
-            localStorage.setItem(k, String(v || 0));
-        }
+            function isLeaderTab() {
+                const now = Date.now();
+                let lock = null;
+                try {
+                    lock = JSON.parse(localStorage.getItem(LOCK_KEY) || "null");
+                } catch (e) {
+                    lock = null;
+                }
 
-        function isLeaderTab() {
-            var now = Date.now();
-            var lock = null;
-            try {
-                lock = JSON.parse(localStorage.getItem(LOCK_KEY) || "null");
-            } catch (e) {
-                lock = null;
+                // kalau kosong / expired 15 detik -> ambil lock
+                if (!lock || (now - lock.ts) > 15000) {
+                    localStorage.setItem(LOCK_KEY, JSON.stringify({
+                        id: TAB_ID,
+                        ts: now
+                    }));
+                    return true;
+                }
+                // kalau lock milik tab ini -> refresh ts
+                if (lock.id === TAB_ID) {
+                    localStorage.setItem(LOCK_KEY, JSON.stringify({
+                        id: TAB_ID,
+                        ts: now
+                    }));
+                    return true;
+                }
+                return false;
             }
 
-            if (!lock || (now - lock.ts) > 15000) {
-                localStorage.setItem(LOCK_KEY, JSON.stringify({
-                    id: TAB_ID,
-                    ts: now
-                }));
-                return true;
+            // ====== Badge updater (desktop + mobile) ======
+            function setBadge(el, count) {
+                if (!el) return;
+                el.dataset.count = count;
+                if (count > 0) {
+                    el.classList.remove('hidden');
+                    el.textContent = count;
+                } else {
+                    el.classList.add('hidden');
+                    el.textContent = '';
+                }
             }
-            if (lock.id === TAB_ID) {
-                localStorage.setItem(LOCK_KEY, JSON.stringify({
-                    id: TAB_ID,
-                    ts: now
-                }));
-                return true;
+
+            function updateBadges(counts) {
+                const p = counts && counts.pemesanan ? parseInt(counts.pemesanan, 10) : 0;
+                const t = counts && counts.transaksi ? parseInt(counts.transaksi, 10) : 0;
+
+                setBadge(document.getElementById('notifBadge'), p);
+                setBadge(document.getElementById('notifBadgeMobile'), p);
+
+                setBadge(document.getElementById('trxBadge'), t);
+                setBadge(document.getElementById('trxBadgeMobile'), t);
             }
-            return false;
-        }
 
-        function setBadge(el, count) {
-            if (!el) return;
-            el.dataset.count = count;
-            if (count > 0) {
-                el.classList.remove('hidden');
-                el.textContent = count;
-            } else {
-                el.classList.add('hidden');
-                el.textContent = '';
-            }
-        }
-
-        function updateBadges(counts) {
-            var p = counts && counts.pemesanan ? parseInt(counts.pemesanan, 10) : 0;
-            var t = counts && counts.transaksi ? parseInt(counts.transaksi, 10) : 0;
-
-            setBadge(document.getElementById('notifBadge'), p);
-            setBadge(document.getElementById('notifBadgeMobile'), p);
-
-            setBadge(document.getElementById('trxBadge'), t);
-            setBadge(document.getElementById('trxBadgeMobile'), t);
-        }
-
-        window.aktifkanNotif = async function() {
-            if (!("Notification" in window)) {
-                alert("Browser tidak mendukung notifikasi.");
-                return;
-            }
-            var perm = await Notification.requestPermission();
-            var dot = document.getElementById('notifDot');
-            var txt = document.getElementById('notifStatusText');
+            // ====== Notification permission via tombol ======
+            window.aktifkanNotif = async function() {
+                if (!("Notification" in window)) {
+                    alert("Browser tidak mendukung notifikasi.");
+                    return;
+                }
+                const perm = await Notification.requestPermission();
+                const dot = document.getElementById('notifDot');
+                const txt = document.getElementById('notifStatusText');
 
             if (perm === "granted") {
                 if (dot) dot.className = "inline-block w-2 h-2 rounded-full bg-green-500";
@@ -311,79 +324,129 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
             return localStorage.getItem("bm_notif_enabled_" + USERNAME) === "1";
         }
 
-        function showNotif(n) {
-            if (!("Notification" in window)) return;
-            if (Notification.permission !== "granted") return;
-            if (!notifEnabled()) return;
+            // ====== Device notification ======
+            function showNotif(n) {
+                if (!("Notification" in window)) return;
+                if (Notification.permission !== "granted") return;
+                if (!notifEnabled()) return;
 
-            var tag = "bm_" + (n.type || "x") + "_" + (n.id || "0");
+                const tag = "bm_" + (n.type || "x") + "_" + (n.id || "0");
 
-            try {
-                var notif = new Notification(n.title || "Notifikasi", {
-                    body: n.message || "",
-                    tag: tag,
-                    renotify: false,
-                    silent: false
-                });
+                try {
+                    const notif = new Notification(n.title || "Notifikasi", {
+                        body: n.message || "",
+                        tag: tag,
+                        renotify: false,
+                        silent: false
+                    });
 
-                var audio = document.getElementById('notifSound');
-                if (audio) {
-                    try {
-                        audio.currentTime = 0;
-                        audio.play().catch(function() {});
-                    } catch (e) {}
-                }
+                    // optional: bunyi
+                    const audio = document.getElementById('notifSound');
+                    if (audio) {
+                        try {
+                            audio.currentTime = 0;
+                            audio.play().catch(() => {});
+                        } catch (e) {}
+                    }
 
-                notif.onclick = function() {
-                    window.focus();
-                    if (n.url) window.location.href = SITE_URL + "/" + String(n.url).replace(/^\/+/, '');
-                    notif.close();
-                };
-            } catch (e) {}
-        }
+                    notif.onclick = () => {
+                        window.focus();
+                        if (n.url) window.location.href = SITE_URL + "/" + String(n.url).replace(/^\/+/, '');
+                        notif.close();
+                    };
+                } catch (e) {}
+            }
 
-        function handle(list, key) {
-            var last = getNum(key);
-            var max = last;
+            function handle(list, key) {
+                const last = getNum(key);
+                let max = last;
 
-            (list || []).forEach(function(n) {
-                var id = parseInt(n.id, 10) || 0;
-                if (id > last) {
-                    showNotif(n);
-                    if (id > max) max = id;
-                }
-            });
-
-            if (max > last) setNum(key, max);
-            return max;
-        }
-
-        async function poll() {
-            if (!isLeaderTab()) return;
-
-            var lastP = getNum(KEY_LAST_P);
-            var lastT = getNum(KEY_LAST_T);
-
-            var url = POLL_URL_BASE + "?since_p=" + encodeURIComponent(lastP) + "&since_t=" + encodeURIComponent(lastT);
-
-            try {
-                var res = await fetch(url, {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
+                // list dari backend sudah ASC, tapi tetap aman
+                (list || []).forEach(n => {
+                    const id = parseInt(n.id, 10) || 0;
+                    if (id > last) {
+                        showNotif(n);
+                        if (id > max) max = id;
                     }
                 });
-                var data = await res.json();
-                if (!data || !data.ok) return;
 
-                updateBadges(data.counts);
+                if (max > last) setNum(key, max);
+                return max;
+            }
 
-                handle(data.items && data.items.pemesanan ? data.items.pemesanan : [], KEY_LAST_P);
-                handle(data.items && data.items.transaksi ? data.items.transaksi : [], KEY_LAST_T);
+            async function poll() {
+                if (!isLeaderTab()) return; // cegah dobel multi-tab
 
-            } catch (e) {}
-        }
+                const lastP = getNum(KEY_LAST_P);
+                const lastT = getNum(KEY_LAST_T);
 
-        poll();
-        setInterval(poll, 8000);
-    })();
-</script>
+                const url = POLL_URL_BASE + "?since_p=" + encodeURIComponent(lastP) + "&since_t=" + encodeURIComponent(lastT);
+
+                try {
+                    const res = await fetch(url, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+                    const data = await res.json();
+                    if (!data || !data.ok) return;
+
+                    // update badge dari counts
+                    updateBadges(data.counts);
+
+                    // tampilkan notif device hanya yang baru
+                    const newMaxP = handle(data.items && data.items.pemesanan ? data.items.pemesanan : [], KEY_LAST_P);
+                    const newMaxT = handle(data.items && data.items.transaksi ? data.items.transaksi : [], KEY_LAST_T);
+
+                    // (opsional) kalau notif belum diaktifkan, kamu masih tetap dapat badge saja.
+                } catch (e) {}
+            }
+            const MARK_READ_URL = "<?= site_url('api/notif/mark-read') ?>";
+
+            async function markRead(type) {
+                try {
+                    const body = "type=" + encodeURIComponent(type);
+                    const res = await fetch(MARK_READ_URL, {
+                        method: "POST",
+                        headers: {
+                            "X-Requested-With": "XMLHttpRequest",
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        body
+                    });
+                    await res.json().catch(() => null);
+                } catch (e) {}
+            }
+
+            // run
+            poll();
+            setInterval(poll, 8000); // 8 detik lebih stabil (nggak gampang di-throttle)
+        })(); <
+        />
+        document.getElementById('pemesananLinkDesktop')?.addEventListener('click', () => {
+            markRead('pemesanan');
+            setBadge(document.getElementById('notifBadge'), 0);
+            setBadge(document.getElementById('notifBadgeMobile'), 0);
+        });
+
+        document.getElementById('pemesananLinkMobile')?.addEventListener('click', () => {
+            markRead('pemesanan');
+            setBadge(document.getElementById('notifBadge'), 0);
+            setBadge(document.getElementById('notifBadgeMobile'), 0);
+        });
+
+        document.getElementById('transaksiLinkDesktop')?.addEventListener('click', () => {
+            markRead('transaksi');
+            setBadge(document.getElementById('trxBadge'), 0);
+            setBadge(document.getElementById('trxBadgeMobile'), 0);
+        });
+
+        document.getElementById('transaksiLinkMobile')?.addEventListener('click', () => {
+            markRead('transaksi');
+            setBadge(document.getElementById('trxBadge'), 0);
+            setBadge(document.getElementById('trxBadgeMobile'), 0);
+        });
+
+
+        <
+        /body>

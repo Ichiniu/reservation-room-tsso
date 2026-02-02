@@ -27,51 +27,211 @@ class Home extends CI_Controller
 		}
 	}
 
-	public function index()
-	{
-		$username = $this->session->userdata('username');
-		$this->load->model('gedung/gedung_model');
+// 	public function index()
+// 	{
+// 		$username = $this->session->userdata('username');
+// 		$this->load->model('gedung/gedung_model');
 
-		// --- 1. Ambil data dasar seperti biasa ---
-		$data['flag']     = $this->gedung_model->get_pemesanan_flag($username);
-		$data['trx_flag'] = $this->gedung_model->get_transaksi_flag($username);
+// 		// --- 1. Ambil data dasar seperti biasa ---
+// 		$data['flag']     = $this->gedung_model->get_pemesanan_flag($username);
+// $data['trx_flag'] = $this->gedung_model->get_transaksi_flag($username);
 
-		$data['res']  = $this->gedung_model->get_all();
+// 		$data['res']  = $this->gedung_model->get_all();
 
-		// --- 2. Ambil filter tanggal & jam dari QUERY STRING (GET) ---
-		// contoh URL: /home?tanggal=2025-01-10&jam=09:00
-		$tanggal = $this->input->get('tanggal');
-		$jam     = $this->input->get('jam');
+// 		// --- 2. Ambil filter tanggal & jam dari QUERY STRING (GET) ---
+// 		// contoh URL: /home?tanggal=2025-01-10&jam=09:00
+// 		$tanggal = $this->input->get('tanggal');
+// 		$jam     = $this->input->get('jam');
 
-		$data['tanggal_filter'] = $tanggal;
-		$data['jam_filter']     = $jam;
+// 		$data['tanggal_filter'] = $tanggal;
+// 		$data['jam_filter']     = $jam;
 
-		// --- 3. Hitung ketersediaan per gedung ---
-		// Pakai fungsi check_date() yang sudah ada (cek apakah tanggal tsb sudah dibooking)
-		$availability = [];
+// 		// --- 3. Hitung ketersediaan per gedung ---
+// 		// Pakai fungsi check_date() yang sudah ada (cek apakah tanggal tsb sudah dibooking)
+// 		$availability = [];
 
-		if (!empty($tanggal)) {
-			// kalau ada filter tanggal (jam opsional dulu), cek satu-satu
-			foreach ($data['res'] as $row) {
-				// get_all() kamu mengembalikan array, jadi akses pakai $row['ID_GEDUNG']
-				$id_gedung = $row['ID_GEDUNG'];
+// 		if (!empty($tanggal)) {
+// 			// kalau ada filter tanggal (jam opsional dulu), cek satu-satu
+// 			foreach ($data['res'] as $row) {
+// 				// get_all() kamu mengembalikan array, jadi akses pakai $row['ID_GEDUNG']
+// 				$id_gedung = $row['ID_GEDUNG'];
 
-				// check_date() akan mengembalikan jumlah booking di tanggal tsb
-				// kalau > 0 berarti SUDAH dibooking (tidak available)
-				$exist = $this->check_date($tanggal, $id_gedung);
+// 				// check_date() akan mengembalikan jumlah booking di tanggal tsb
+// 				// kalau > 0 berarti SUDAH dibooking (tidak available)
+// 				$exist = $this->check_date($tanggal, $id_gedung);
 
-				// true  => tersedia
-				// false => sudah dibooking
-				$availability[$id_gedung] = ($exist == 0);
-			}
-		}
+// 				// true  => tersedia
+// 				// false => sudah dibooking
+// 				$availability[$id_gedung] = ($exist == 0);
+// 			}
+// 		}
 
-		$data['availability'] = $availability;
+// 		$data['availability'] = $availability;
 
-		// --- 4. Kirim ke view ---
-		$this->load->view('/home/home_screen', $data);
-	}
-	// batas gpt
+// 		// --- 4. Kirim ke view ---
+// 		$this->load->view('/home/home_screen', $data);
+// 	}
+
+public function index()
+{
+    $username = (string)$this->session->userdata('username');
+
+    // ===== LOAD MODEL =====
+    $this->load->model('gedung/gedung_model');
+    $this->load->model('Ulasan/Ulasan_Model', 'Ulasan_model');
+
+    // ===== Helper tanggal Indo: 07 januari 2026 =====
+    $tgl_indo = function ($tgl) {
+        $tgl = trim((string)$tgl);
+        if ($tgl === '') return '-';
+
+        $bulan = array(
+            1 => 'januari', 'februari', 'maret', 'april', 'mei', 'juni',
+            'juli', 'agustus', 'september', 'oktober', 'november', 'desember'
+        );
+
+        $ts = strtotime($tgl);
+        if (!$ts) return $tgl;
+
+        $d = date('d', $ts);       // 01..31 (2 digit)
+        $m = (int)date('n', $ts);  // 1..12
+        $y = date('Y', $ts);
+
+        return $d . ' ' . (isset($bulan[$m]) ? $bulan[$m] : '') . ' ' . $y;
+    };
+
+    // ===== Helper jam HH:MM =====
+    $time_hm = function ($t) {
+        $t = trim((string)$t);
+        if ($t === '') return '';
+        return (strlen($t) >= 5) ? substr($t, 0, 5) : $t;
+    };
+
+    // ===== Helper jam dot: 08:00 -> 08.00 =====
+    $jam_dot = function ($hm) {
+        $hm = trim((string)$hm);
+        if ($hm === '') return '';
+        $hm = (strlen($hm) >= 5) ? substr($hm, 0, 5) : $hm;
+        return str_replace(':', '.', $hm);
+    };
+
+    // ===== Parse title "Ruangan - 2026-01-07 (08:00 - 12:00)" => 3 baris =====
+    $title_3baris = function ($title) use ($tgl_indo, $jam_dot) {
+        $title = trim((string)$title);
+        if ($title === '') return '';
+
+        $m = array();
+        if (preg_match('/^\s*(.*?)\s*-\s*([0-9]{4}-[0-9]{2}-[0-9]{2})\s*\((.*?)\)\s*$/', $title, $m)) {
+            $room = trim($m[1]);
+            $tgl  = trim($m[2]);
+            $rng  = trim($m[3]); // "08:00 - 12:00" atau "08:00"
+
+            $rng = preg_replace('/\s+/', ' ', $rng);
+
+            if (strpos($rng, '-') !== false) {
+                $p = explode('-', $rng);
+                $a = isset($p[0]) ? $jam_dot(trim($p[0])) : '';
+                $b = isset($p[1]) ? $jam_dot(trim($p[1])) : '';
+                $rng = ($a && $b) ? ($a . ' - ' . $b . ' wib') : (($a ?: $b) . ' wib');
+            } else {
+                $rng = $jam_dot($rng) . ' wib';
+            }
+
+            return $room . "\n" . $tgl_indo($tgl) . "\n" . $rng;
+        }
+
+        // fallback jika format berbeda
+        return $title;
+    };
+
+    // ===== 1) DATA DASAR =====
+    $data = array();
+    $data['flag']     = (int)$this->gedung_model->get_pemesanan_flag($username);
+    $data['trx_flag'] = (int)$this->gedung_model->get_transaksi_flag($username);
+
+    $res = $this->gedung_model->get_all();
+    $data['res'] = (is_array($res)) ? $res : array();
+
+    // ===== 2) FILTER (GET) =====
+    $tanggal     = trim((string)$this->input->get('tanggal', TRUE));
+    $jam_legacy  = trim((string)$this->input->get('jam', TRUE));
+
+    $jam_mulai   = trim((string)$this->input->get('jam_mulai', TRUE));
+    $jam_selesai = trim((string)$this->input->get('jam_selesai', TRUE));
+
+    if ($jam_mulai === '' && $jam_legacy !== '') {
+        $jam_mulai = $jam_legacy;
+    }
+
+    $data['tanggal_filter'] = $tanggal;
+    $data['jam_filter']     = $jam_mulai;
+    $data['jam_mulai']      = $jam_mulai;
+    $data['jam_selesai']    = $jam_selesai;
+
+    // ===== 3) HITUNG KETERSEDIAAN =====
+    $availability = array();
+
+    if ($tanggal !== '' && !empty($data['res'])) {
+
+        $use_time_check = ($jam_mulai !== '' && $jam_selesai !== '');
+
+        foreach ($data['res'] as $row) {
+            $id_gedung = isset($row['ID_GEDUNG']) ? (int)$row['ID_GEDUNG'] : 0;
+            if ($id_gedung <= 0) continue;
+
+            if ($use_time_check) {
+                $exist = $this->check_date($tanggal, $id_gedung, $jam_mulai, $jam_selesai);
+            } else {
+                $exist = $this->check_date($tanggal, $id_gedung);
+            }
+
+            $availability[$id_gedung] = ((int)$exist === 0);
+        }
+    }
+
+    $data['availability'] = $availability;
+
+    // ===== 4) ULASAN (SPILL DI HOME) =====
+    $data['ulasan_summary'] = $this->Ulasan_model->get_summary_approved();
+
+    $rows_ul = $this->Ulasan_model->get_approved(3);
+
+    $ulasan_home = array();
+    if (!empty($rows_ul) && is_array($rows_ul)) {
+        foreach ($rows_ul as $r) {
+
+            $name = !empty($r['USERNAME']) ? $r['USERNAME'] : 'Customer';
+
+            $rating = isset($r['RATING']) ? (int)$r['RATING'] : 5;
+            if ($rating < 1) $rating = 1;
+            if ($rating > 5) $rating = 5;
+
+            // ✅ tanggal ulasan (created_at) format indo
+            $date_disp = '-';
+            if (!empty($r['CREATED_AT'])) {
+                $date_disp = $tgl_indo($r['CREATED_AT']);
+            }
+
+            // ✅ title jadi 3 baris kalau formatnya cocok
+            $title_disp = isset($r['TITLE']) ? $title_3baris($r['TITLE']) : '';
+
+            $ulasan_home[] = array(
+                'name'    => $name,
+                'rating'  => $rating,
+                'date'    => $date_disp,
+                'title'   => $title_disp,
+                'comment' => isset($r['COMMENT']) ? $r['COMMENT'] : '',
+            );
+        }
+    }
+
+    $data['ulasan_home'] = $ulasan_home;
+
+    // ===== 5) KIRIM KE VIEW =====
+    $this->load->view('home/home_screen', $data);
+}
+
+
 
 	public function cancel_order($id_pemesanan)
 	{
@@ -882,89 +1042,246 @@ class Home extends CI_Controller
 
 		$this->load->view('home/location', $data);
 	}
+	// public function ulasan()
+	// {
+	// 	$this->load->model('Ulasan/Ulasan_Model', 'Ulasan_model');
+	// 	$this->load->model('pemesanan/Pemesanan_Model', 'Pemesanan_model');
+
+	// 	// ambil ulasan APPROVED
+	// 	$rows = $this->Ulasan_model->get_approved(30);
+
+	// 	// mapping biar cocok ke view (name/rating/date/title/comment)
+	// 	$reviews = array();
+	// 	foreach ($rows as $r) {
+	// 		$reviews[] = array(
+	// 			'name'    => isset($r['USERNAME']) ? $r['USERNAME'] : '',
+	// 			'rating'  => isset($r['RATING']) ? (int)$r['RATING'] : 0,
+	// 			'date'    => isset($r['CREATED_AT']) ? date('Y-m-d', strtotime($r['CREATED_AT'])) : '',
+	// 			'title'   => isset($r['TITLE']) ? $r['TITLE'] : '',
+	// 			'comment' => isset($r['COMMENT']) ? $r['COMMENT'] : ''
+	// 		);
+	// 	}
+
+	// 	// summary akurat (berdasarkan semua APPROVED)
+	// 	$data['summary'] = $this->Ulasan_model->get_summary_approved();
+
+	// 	// helper format jam HH:MM
+	// 	$time_hm = function ($t) {
+	// 		$t = trim((string)$t);
+	// 		if ($t === '') return '';
+	// 		return (strlen($t) >= 5) ? substr($t, 0, 5) : $t;
+	// 	};
+
+	// 	// dropdown pemesanan: hanya STATUS=3 (submitted) dan belum pernah diulas
+	// 	$username = $this->session->userdata('username');
+	// 	$reservasi_list = array();
+
+	// 	if (!empty($username)) {
+	// 		$orders = $this->Pemesanan_model->get_submitted_by_username($username);
+
+	// 		// filter agar yang sudah diulas tidak muncul
+	// 		$has_id_pemesanan_col = $this->db->field_exists('ID_PEMESANAN', 'ulasan');
+	// 		$reviewed_ids = $has_id_pemesanan_col ? $this->Ulasan_model->get_reviewed_id_pemesanan_by_username($username) : array();
+	// 		$reviewed_titles = !$has_id_pemesanan_col ? $this->Ulasan_model->get_reviewed_titles_by_username($username) : array();
+
+	// 		$reviewed_ids_map = array();
+	// 		foreach ($reviewed_ids as $rid) $reviewed_ids_map[(int)$rid] = true;
+
+	// 		$reviewed_titles_map = array();
+	// 		foreach ($reviewed_titles as $t) $reviewed_titles_map[$t] = true;
+
+	// 		foreach ($orders as $o) {
+	// 			$id = (int)$o['ID_PEMESANAN'];
+
+	// 			$nama_gedung = isset($o['NAMA_GEDUNG']) ? trim((string)$o['NAMA_GEDUNG']) : '';
+	// 			$tanggal     = isset($o['TANGGAL_PEMESANAN']) ? trim((string)$o['TANGGAL_PEMESANAN']) : '';
+
+	// 			$jam_mulai_disp   = $time_hm(isset($o['JAM_PEMESANAN']) ? $o['JAM_PEMESANAN'] : '');
+	// 			$jam_selesai_disp = $time_hm(isset($o['JAM_SELESAI']) ? $o['JAM_SELESAI'] : '');
+
+	// 			if ($jam_selesai_disp === '00:00') $jam_selesai_disp = '';
+
+	// 			$range = $jam_selesai_disp ? ($jam_mulai_disp . ' - ' . $jam_selesai_disp) : $jam_mulai_disp;
+
+	// 			// label untuk dropdown + kunci untuk cek sudah diulas
+	// 			$title_key = $nama_gedung . ' - ' . $tanggal . ' (' . $range . ')';
+
+	// 			if ($has_id_pemesanan_col) {
+	// 				if (isset($reviewed_ids_map[$id])) continue;
+	// 			} else {
+	// 				if (isset($reviewed_titles_map[$title_key])) continue;
+	// 			}
+
+	// 			$reservasi_list[] = array(
+	// 				'ID_PEMESANAN' => $id,
+	// 				'label'        => $title_key,
+	// 				'title_key'    => $title_key,
+	// 			);
+	// 		}
+	// 	}
+
+	// 	$data['reviews'] = $reviews;
+	// 	$data['reservasi_list'] = $reservasi_list;
+
+	// 	$this->load->view('home/ulasan', $data);
+	// }
+
 	public function ulasan()
-	{
-		$this->load->model('Ulasan/Ulasan_Model', 'Ulasan_model');
-		$this->load->model('pemesanan/Pemesanan_Model', 'Pemesanan_model');
+{
+    $this->load->model('Ulasan/Ulasan_Model', 'Ulasan_model');
+    $this->load->model('pemesanan/Pemesanan_Model', 'Pemesanan_model');
 
-		// ambil ulasan APPROVED
-		$rows = $this->Ulasan_model->get_approved(30);
+    // ===== helper format tanggal indo: 07 januari 2026 =====
+    $tgl_indo = function ($tgl) {
+        $tgl = trim((string)$tgl);
+        if ($tgl === '') return '';
 
-		// mapping biar cocok ke view (name/rating/date/title/comment)
-		$reviews = array();
-		foreach ($rows as $r) {
-			$reviews[] = array(
-				'name'    => isset($r['USERNAME']) ? $r['USERNAME'] : '',
-				'rating'  => isset($r['RATING']) ? (int)$r['RATING'] : 0,
-				'date'    => isset($r['CREATED_AT']) ? date('Y-m-d', strtotime($r['CREATED_AT'])) : '',
-				'title'   => isset($r['TITLE']) ? $r['TITLE'] : '',
-				'comment' => isset($r['COMMENT']) ? $r['COMMENT'] : ''
-			);
-		}
+        $bulan = array(
+            1 => 'januari', 'februari', 'maret', 'april', 'mei', 'juni',
+            'juli', 'agustus', 'september', 'oktober', 'november', 'desember'
+        );
 
-		// summary akurat (berdasarkan semua APPROVED)
-		$data['summary'] = $this->Ulasan_model->get_summary_approved();
+        $ts = strtotime($tgl);
+        if (!$ts) return $tgl;
 
-		// helper format jam HH:MM
-		$time_hm = function ($t) {
-			$t = trim((string)$t);
-			if ($t === '') return '';
-			return (strlen($t) >= 5) ? substr($t, 0, 5) : $t;
-		};
+        $d = date('d', $ts);
+        $m = (int)date('n', $ts);
+        $y = date('Y', $ts);
 
-		// dropdown pemesanan: hanya STATUS=3 (submitted) dan belum pernah diulas
-		$username = $this->session->userdata('username');
-		$reservasi_list = array();
+        return $d . ' ' . (isset($bulan[$m]) ? $bulan[$m] : '') . ' ' . $y;
+    };
 
-		if (!empty($username)) {
-			$orders = $this->Pemesanan_model->get_submitted_by_username($username);
+    // ===== helper jam HH:MM =====
+    $time_hm = function ($t) {
+        $t = trim((string)$t);
+        if ($t === '') return '';
+        return (strlen($t) >= 5) ? substr($t, 0, 5) : $t;
+    };
 
-			// filter agar yang sudah diulas tidak muncul
-			$has_id_pemesanan_col = $this->db->field_exists('ID_PEMESANAN', 'ulasan');
-			$reviewed_ids = $has_id_pemesanan_col ? $this->Ulasan_model->get_reviewed_id_pemesanan_by_username($username) : array();
-			$reviewed_titles = !$has_id_pemesanan_col ? $this->Ulasan_model->get_reviewed_titles_by_username($username) : array();
+    // ===== helper jam jadi 08.00 =====
+    $jam_dot = function ($hm) {
+        $hm = trim((string)$hm);
+        if ($hm === '') return '';
+        $hm = (strlen($hm) >= 5) ? substr($hm, 0, 5) : $hm;
+        return str_replace(':', '.', $hm);
+    };
 
-			$reviewed_ids_map = array();
-			foreach ($reviewed_ids as $rid) $reviewed_ids_map[(int)$rid] = true;
+    // ===== 1) Ambil ulasan APPROVED =====
+    $rows = $this->Ulasan_model->get_approved(30);
 
-			$reviewed_titles_map = array();
-			foreach ($reviewed_titles as $t) $reviewed_titles_map[$t] = true;
+    // mapping biar cocok ke view (name/rating/date/title/comment)
+    $reviews = array();
+    foreach ($rows as $r) {
+        $created_at = isset($r['CREATED_AT']) ? (string)$r['CREATED_AT'] : '';
+        $created_at_indo = $created_at ? $tgl_indo($created_at) : '';
 
-			foreach ($orders as $o) {
-				$id = (int)$o['ID_PEMESANAN'];
+        // Jika TITLE berisi "Nama - 2026-01-07 (08:00 - 12:00)" -> ubah jadi 3 baris
+        // Kita ubah title jadi ada \n agar di view bisa ditampilkan per baris (atau kamu split)
+        $title_raw = isset($r['TITLE']) ? (string)$r['TITLE'] : '';
+        $title_pretty = $title_raw;
 
-				$nama_gedung = isset($o['NAMA_GEDUNG']) ? trim((string)$o['NAMA_GEDUNG']) : '';
-				$tanggal     = isset($o['TANGGAL_PEMESANAN']) ? trim((string)$o['TANGGAL_PEMESANAN']) : '';
+        // coba parse format title lama
+        $m = array();
+        if (preg_match('/^\s*(.*?)\s*-\s*([0-9]{4}-[0-9]{2}-[0-9]{2})\s*\((.*?)\)\s*$/', $title_raw, $m)) {
+            $room = trim($m[1]);
+            $tgl  = trim($m[2]);
+            $rng  = trim($m[3]); // "08:00 - 12:00"
 
-				$jam_mulai_disp   = $time_hm(isset($o['JAM_PEMESANAN']) ? $o['JAM_PEMESANAN'] : '');
-				$jam_selesai_disp = $time_hm(isset($o['JAM_SELESAI']) ? $o['JAM_SELESAI'] : '');
+            // ubah jam
+            $rng = preg_replace('/\s+/', ' ', $rng);
+            if (strpos($rng, '-') !== false) {
+                $p = explode('-', $rng);
+                $a = isset($p[0]) ? $jam_dot(trim($p[0])) : '';
+                $b = isset($p[1]) ? $jam_dot(trim($p[1])) : '';
+                $rng = ($a && $b) ? ($a . ' - ' . $b . ' wib') : (($a ?: $b) . ' wib');
+            } else {
+                $rng = $jam_dot($rng) . ' wib';
+            }
 
-				if ($jam_selesai_disp === '00:00') $jam_selesai_disp = '';
+            // jadikan 3 baris (pakai \n)
+            $title_pretty = $room . "\n" . $tgl_indo($tgl) . "\n" . $rng;
+        }
 
-				$range = $jam_selesai_disp ? ($jam_mulai_disp . ' - ' . $jam_selesai_disp) : $jam_mulai_disp;
+        $reviews[] = array(
+            'name'    => isset($r['USERNAME']) ? $r['USERNAME'] : '',
+            'rating'  => isset($r['RATING']) ? (int)$r['RATING'] : 0,
+            // ✅ tanggal ulasan sudah Indo
+            'date'    => $created_at_indo,
+            // ✅ title sudah 3 baris (atau tetap raw kalau formatnya beda)
+            'title'   => $title_pretty,
+            'comment' => isset($r['COMMENT']) ? $r['COMMENT'] : ''
+        );
+    }
 
-				// label untuk dropdown + kunci untuk cek sudah diulas
-				$title_key = $nama_gedung . ' - ' . $tanggal . ' (' . $range . ')';
+    // ===== 2) summary akurat (berdasarkan semua APPROVED) =====
+    $data['summary'] = $this->Ulasan_model->get_summary_approved();
 
-				if ($has_id_pemesanan_col) {
-					if (isset($reviewed_ids_map[$id])) continue;
-				} else {
-					if (isset($reviewed_titles_map[$title_key])) continue;
-				}
+    // ===== 3) dropdown pemesanan (STATUS=3) yang belum pernah diulas =====
+    $username = $this->session->userdata('username');
+    $reservasi_list = array();
 
-				$reservasi_list[] = array(
-					'ID_PEMESANAN' => $id,
-					'label'        => $title_key,
-					'title_key'    => $title_key,
-				);
-			}
-		}
+    if (!empty($username)) {
+        $orders = $this->Pemesanan_model->get_submitted_by_username($username);
 
-		$data['reviews'] = $reviews;
-		$data['reservasi_list'] = $reservasi_list;
+        // filter agar yang sudah diulas tidak muncul
+        $has_id_pemesanan_col = $this->db->field_exists('ID_PEMESANAN', 'ulasan');
+        $reviewed_ids = $has_id_pemesanan_col ? $this->Ulasan_model->get_reviewed_id_pemesanan_by_username($username) : array();
+        $reviewed_titles = !$has_id_pemesanan_col ? $this->Ulasan_model->get_reviewed_titles_by_username($username) : array();
 
-		$this->load->view('home/ulasan', $data);
-	}
+        $reviewed_ids_map = array();
+        foreach ($reviewed_ids as $rid) $reviewed_ids_map[(int)$rid] = true;
+
+        $reviewed_titles_map = array();
+        foreach ($reviewed_titles as $t) $reviewed_titles_map[$t] = true;
+
+        foreach ($orders as $o) {
+            $id = (int)$o['ID_PEMESANAN'];
+
+            $nama_gedung = isset($o['NAMA_GEDUNG']) ? trim((string)$o['NAMA_GEDUNG']) : '';
+            $tanggal_raw = isset($o['TANGGAL_PEMESANAN']) ? trim((string)$o['TANGGAL_PEMESANAN']) : '';
+            $tanggal_indo = $tgl_indo($tanggal_raw);
+
+            $jam_mulai_disp   = $time_hm(isset($o['JAM_PEMESANAN']) ? $o['JAM_PEMESANAN'] : '');
+            $jam_selesai_disp = $time_hm(isset($o['JAM_SELESAI']) ? $o['JAM_SELESAI'] : '');
+
+            if ($jam_selesai_disp === '00:00') $jam_selesai_disp = '';
+
+            // ubah jadi dot + WIB
+            $mulai = $jam_dot($jam_mulai_disp);
+            $selesai = $jam_dot($jam_selesai_disp);
+
+            $range = $selesai ? ($mulai . ' - ' . $selesai . ' wib') : ($mulai . ' wib');
+
+            // ✅ label yang disimpan ke TITLE (sekalian jadi kunci cek sudah diulas)
+            $title_key = $nama_gedung . ' - ' . $tanggal_raw . ' (' . $jam_mulai_disp . ($jam_selesai_disp ? ' - ' . $jam_selesai_disp : '') . ')';
+
+            // ✅ label display 3 baris untuk dipakai di view (preview)
+            $label_3baris = $nama_gedung . "\n" . $tanggal_indo . "\n" . $range;
+
+            if ($has_id_pemesanan_col) {
+                if (isset($reviewed_ids_map[$id])) continue;
+            } else {
+                if (isset($reviewed_titles_map[$title_key])) continue;
+            }
+
+            $reservasi_list[] = array(
+                'ID_PEMESANAN' => $id,
+                // simpan raw key untuk logika existing (tetap aman)
+                'title_key'    => $title_key,
+                // label yang dipakai view: sudah 3 baris + tanggal indo
+                'label'        => $label_3baris,
+                // kalau butuh juga versi raw:
+                'label_raw'    => $title_key,
+            );
+        }
+    }
+
+    $data['reviews'] = $reviews;
+    $data['reservasi_list'] = $reservasi_list;
+
+    $this->load->view('home/ulasan', $data);
+}
+
 
 	public function submit_ulasan()
 	{
@@ -1297,7 +1614,25 @@ class Home extends CI_Controller
 		$this->load->model('gedung/gedung_model');
 		$this->gedung_model->clear_transaksi_flag($username);
 
-		$this->output->set_content_type('application/json')
-			->set_output(json_encode(['ok' => true, 'trx_flag' => 0]));
-	}
+    $this->output->set_content_type('application/json')
+        ->set_output(json_encode(['ok' => true, 'trx_flag' => 0]));
+}
+
+public function how_to_order()
+{
+    $username = (string)$this->session->userdata('username');
+
+    $data = array(
+        'flag' => 0,
+        'trx_flag' => 0
+    );
+
+    $this->load->model('gedung/gedung_model');
+    $data['flag']     = (int)$this->gedung_model->get_pemesanan_flag($username);
+    $data['trx_flag'] = (int)$this->gedung_model->get_transaksi_flag($username);
+
+    $this->load->view('home/how_to_order', $data);
+}
+
+
 }
