@@ -236,225 +236,227 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
     </audio>
 
     <!-- SCRIPT dropdown profil + mobile menu -->
+    <!-- SCRIPT dropdown profil + mobile menu + notif polling -->
     <script>
-        (function() {
-            const USERNAME = "<?= addslashes(strtolower((string)$username)) ?>"; // opsional: normalize
-            const POLL_URL_BASE = "<?= site_url('home/notif_poll_v2') ?>"; // ✅ include index.php
-            const SITE_URL = "<?= rtrim(site_url(), '/') ?>"; // ✅ untuk redirect notif
+    (function() {
+        // ==== Safe embed dari PHP ke JS ====
+        const USERNAME = <?= json_encode(strtolower((string)$username)) ?>;
+        const POLL_URL_BASE = <?= json_encode(site_url('home/notif_poll_v2')) ?>;
+        const SITE_URL = <?= json_encode(rtrim(site_url(), '/')) ?>;
+        const MARK_READ_URL = <?= json_encode(site_url('api/notif/mark-read')) ?>;
 
+        // key dibuat per user biar nggak tabrakan kalau login akun lain
+        const KEY_LAST_P = "bm_last_user_p_id_" + USERNAME;
+        const KEY_LAST_T = "bm_last_user_t_id_" + USERNAME;
 
-            // key dibuat per user biar nggak tabrakan kalau login akun lain
-            const KEY_LAST_P = "bm_last_user_p_id_" + USERNAME;
-            const KEY_LAST_T = "bm_last_user_t_id_" + USERNAME;
+        // lock untuk cegah dobel notif kalau buka banyak tab
+        const LOCK_KEY = "bm_notif_lock_user_" + USERNAME;
+        const TAB_ID = Date.now() + "_" + Math.random().toString(16).slice(2);
 
-            // lock untuk cegah dobel notif kalau buka banyak tab
-            const LOCK_KEY = "bm_notif_lock_user_" + USERNAME;
-            const TAB_ID = Date.now() + "_" + Math.random().toString(16).slice(2);
+        const getNum = (k) => parseInt(localStorage.getItem(k) || "0", 10) || 0;
+        const setNum = (k, v) => localStorage.setItem(k, String(v || 0));
 
-            const getNum = k => parseInt(localStorage.getItem(k) || "0", 10) || 0;
-            const setNum = (k, v) => localStorage.setItem(k, String(v || 0));
+        function isLeaderTab() {
+            const now = Date.now();
+            let lock = null;
 
-            function isLeaderTab() {
-                const now = Date.now();
-                let lock = null;
-                try {
-                    lock = JSON.parse(localStorage.getItem(LOCK_KEY) || "null");
-                } catch (e) {
-                    lock = null;
-                }
-
-                // kalau kosong / expired 15 detik -> ambil lock
-                if (!lock || (now - lock.ts) > 15000) {
-                    localStorage.setItem(LOCK_KEY, JSON.stringify({
-                        id: TAB_ID,
-                        ts: now
-                    }));
-                    return true;
-                }
-                // kalau lock milik tab ini -> refresh ts
-                if (lock.id === TAB_ID) {
-                    localStorage.setItem(LOCK_KEY, JSON.stringify({
-                        id: TAB_ID,
-                        ts: now
-                    }));
-                    return true;
-                }
-                return false;
+            try {
+                lock = JSON.parse(localStorage.getItem(LOCK_KEY) || "null");
+            } catch (e) {
+                lock = null;
             }
 
-            // ====== Badge updater (desktop + mobile) ======
-            function setBadge(el, count) {
-                if (!el) return;
-                el.dataset.count = count;
-                if (count > 0) {
-                    el.classList.remove('hidden');
-                    el.textContent = count;
-                } else {
-                    el.classList.add('hidden');
-                    el.textContent = '';
-                }
+            // kalau kosong / expired 15 detik -> ambil lock
+            if (!lock || (now - lock.ts) > 15000) {
+                localStorage.setItem(LOCK_KEY, JSON.stringify({
+                    id: TAB_ID,
+                    ts: now
+                }));
+                return true;
             }
 
-            function updateBadges(counts) {
-                const p = counts && counts.pemesanan ? parseInt(counts.pemesanan, 10) : 0;
-                const t = counts && counts.transaksi ? parseInt(counts.transaksi, 10) : 0;
-
-                setBadge(document.getElementById('notifBadge'), p);
-                setBadge(document.getElementById('notifBadgeMobile'), p);
-
-                setBadge(document.getElementById('trxBadge'), t);
-                setBadge(document.getElementById('trxBadgeMobile'), t);
+            // kalau lock milik tab ini -> refresh ts
+            if (lock.id === TAB_ID) {
+                localStorage.setItem(LOCK_KEY, JSON.stringify({
+                    id: TAB_ID,
+                    ts: now
+                }));
+                return true;
             }
 
-            // ====== Notification permission via tombol ======
-            window.aktifkanNotif = async function() {
-                if (!("Notification" in window)) {
-                    alert("Browser tidak mendukung notifikasi.");
-                    return;
-                }
-                const perm = await Notification.requestPermission();
-                const dot = document.getElementById('notifDot');
-                const txt = document.getElementById('notifStatusText');
+            return false;
+        }
 
-                if (perm === "granted") {
-                    if (dot) dot.className = "inline-block w-2 h-2 rounded-full bg-green-500";
-                    if (txt) txt.textContent = "Notifikasi: aktif";
-                    localStorage.setItem("bm_notif_enabled_" + USERNAME, "1");
-                } else {
-                    if (dot) dot.className = "inline-block w-2 h-2 rounded-full bg-red-500";
-                    if (txt) txt.textContent = "Notifikasi: diblokir";
-                    localStorage.setItem("bm_notif_enabled_" + USERNAME, "0");
-                }
+        // ====== Badge updater (desktop + mobile) ======
+        function setBadge(el, count) {
+            if (!el) return;
+            const c = parseInt(count, 10) || 0;
+
+            el.dataset.count = String(c);
+            if (c > 0) {
+                el.classList.remove("hidden");
+                el.textContent = String(c);
+            } else {
+                el.classList.add("hidden");
+                el.textContent = "";
+            }
+        }
+
+        function updateBadges(counts) {
+            const p = counts && counts.pemesanan ? parseInt(counts.pemesanan, 10) : 0;
+            const t = counts && counts.transaksi ? parseInt(counts.transaksi, 10) : 0;
+
+            setBadge(document.getElementById("notifBadge"), p);
+            setBadge(document.getElementById("notifBadgeMobile"), p);
+
+            setBadge(document.getElementById("trxBadge"), t);
+            setBadge(document.getElementById("trxBadgeMobile"), t);
+        }
+
+        // ====== Notification permission via tombol ======
+        window.aktifkanNotif = async function() {
+            if (!("Notification" in window)) {
+                alert("Browser tidak mendukung notifikasi.");
+                return;
             }
 
-            function notifEnabled() {
-                return localStorage.getItem("bm_notif_enabled_" + USERNAME) === "1";
+            const perm = await Notification.requestPermission();
+            const dot = document.getElementById("notifDot");
+            const txt = document.getElementById("notifStatusText");
+
+            if (perm === "granted") {
+                if (dot) dot.className = "inline-block w-2 h-2 rounded-full bg-green-500";
+                if (txt) txt.textContent = "Notifikasi: aktif";
+                localStorage.setItem("bm_notif_enabled_" + USERNAME, "1");
+            } else {
+                if (dot) dot.className = "inline-block w-2 h-2 rounded-full bg-red-500";
+                if (txt) txt.textContent = "Notifikasi: diblokir";
+                localStorage.setItem("bm_notif_enabled_" + USERNAME, "0");
             }
+        };
 
-            // ====== Device notification ======
-            function showNotif(n) {
-                if (!("Notification" in window)) return;
-                if (Notification.permission !== "granted") return;
-                if (!notifEnabled()) return;
+        function notifEnabled() {
+            return localStorage.getItem("bm_notif_enabled_" + USERNAME) === "1";
+        }
 
-                const tag = "bm_" + (n.type || "x") + "_" + (n.id || "0");
+        // ====== Device notification ======
+        function showNotif(n) {
+            if (!("Notification" in window)) return;
+            if (Notification.permission !== "granted") return;
+            if (!notifEnabled()) return;
 
-                try {
-                    const notif = new Notification(n.title || "Notifikasi", {
-                        body: n.message || "",
-                        tag: tag,
-                        renotify: false,
-                        silent: false
-                    });
+            const tag = "bm_" + (n.type || "x") + "_" + (n.id || "0");
 
-                    // optional: bunyi
-                    const audio = document.getElementById('notifSound');
-                    if (audio) {
-                        try {
-                            audio.currentTime = 0;
-                            audio.play().catch(() => {});
-                        } catch (e) {}
-                    }
-
-                    notif.onclick = () => {
-                        window.focus();
-                        if (n.url) window.location.href = SITE_URL + "/" + String(n.url).replace(/^\/+/, '');
-                        notif.close();
-                    };
-                } catch (e) {}
-            }
-
-            function handle(list, key) {
-                const last = getNum(key);
-                let max = last;
-
-                // list dari backend sudah ASC, tapi tetap aman
-                (list || []).forEach(n => {
-                    const id = parseInt(n.id, 10) || 0;
-                    if (id > last) {
-                        showNotif(n);
-                        if (id > max) max = id;
-                    }
+            try {
+                const notif = new Notification(n.title || "Notifikasi", {
+                    body: n.message || "",
+                    tag,
+                    renotify: false,
+                    silent: false,
                 });
+
+                // bunyi
+                const audio = document.getElementById("notifSound");
+                if (audio) {
+                    try {
+                        audio.currentTime = 0;
+                        audio.play().catch(() => {});
+                    } catch (e) {}
+                }
+
+                notif.onclick = () => {
+                    window.focus();
+                    if (n.url) {
+                        const clean = String(n.url).replace(/^\/+/, "");
+                        window.location.href = SITE_URL + "/" + clean;
+                    }
+                    notif.close();
+                };
+            } catch (e) {}
+        }
+
+        // tampilkan notif baru dan update last id
+        function handle(list, key) {
+            const last = getNum(key);
+            let max = last;
+
+            (list || []).forEach((n) => {
+                const id = parseInt(n.id, 10) || 0;
+                if (id > last) {
+                    showNotif(n);
+                    if (id > max) max = id;
+                }
             });
 
-                if (max > last) setNum(key, max);
-                return max;
-            }
+            if (max > last) setNum(key, max);
+            return max;
+        }
 
-            async function poll() {
-                if (!isLeaderTab()) return; // cegah dobel multi-tab
+        async function markRead(type) {
+            try {
+                const body = "type=" + encodeURIComponent(type || "");
+                const res = await fetch(MARK_READ_URL, {
+                    method: "POST",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    body,
+                });
+                await res.json().catch(() => null);
+            } catch (e) {}
+        }
 
-                const lastP = getNum(KEY_LAST_P);
-                const lastT = getNum(KEY_LAST_T);
+        async function poll() {
+            if (!isLeaderTab()) return; // cegah dobel multi-tab
 
-                const url = POLL_URL_BASE + "?since_p=" + encodeURIComponent(lastP) + "&since_t=" + encodeURIComponent(lastT);
+            const lastP = getNum(KEY_LAST_P);
+            const lastT = getNum(KEY_LAST_T);
 
-                try {
-                    const res = await fetch(url, {
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    });
-                    const data = await res.json();
-                    if (!data || !data.ok) return;
+            const url =
+                POLL_URL_BASE +
+                "?since_p=" + encodeURIComponent(lastP) +
+                "&since_t=" + encodeURIComponent(lastT);
 
-                    // update badge dari counts
-                    updateBadges(data.counts);
+            try {
+                const res = await fetch(url, {
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    },
+                });
 
-                    // tampilkan notif device hanya yang baru
-                    const newMaxP = handle(data.items && data.items.pemesanan ? data.items.pemesanan : [], KEY_LAST_P);
-                    const newMaxT = handle(data.items && data.items.transaksi ? data.items.transaksi : [], KEY_LAST_T);
+                const data = await res.json().catch(() => null);
+                if (!data || !data.ok) return;
 
-                    // (opsional) kalau notif belum diaktifkan, kamu masih tetap dapat badge saja.
-                } catch (e) {}
-            }
-            const MARK_READ_URL = "<?= site_url('api/notif/mark-read') ?>";
+                // update badge
+                updateBadges(data.counts);
 
-            async function markRead(type) {
-                try {
-                    const body = "type=" + encodeURIComponent(type);
-                    const res = await fetch(MARK_READ_URL, {
-                        method: "POST",
-                        headers: {
-                            "X-Requested-With": "XMLHttpRequest",
-                            "Content-Type": "application/x-www-form-urlencoded"
-                        },
-                        body
-                    });
-                    await res.json().catch(() => null);
-                } catch (e) {}
-            }
+                // notif device yg baru
+                handle(data.items && data.items.pemesanan ? data.items.pemesanan : [], KEY_LAST_P);
+                handle(data.items && data.items.transaksi ? data.items.transaksi : [], KEY_LAST_T);
+            } catch (e) {}
+        }
 
-            // run
-            poll();
-            setInterval(poll, 8000); // 8 detik lebih stabil (nggak gampang di-throttle)
-        })(); <
-        />
-        document.getElementById('pemesananLinkDesktop')?.addEventListener('click', () => {
-            markRead('pemesanan');
-            setBadge(document.getElementById('notifBadge'), 0);
-            setBadge(document.getElementById('notifBadgeMobile'), 0);
-        });
+        // helper: click -> markRead + reset badge
+        function wireClick(linkId, type, badgeIds) {
+            const el = document.getElementById(linkId);
+            if (!el) return;
 
-        document.getElementById('pemesananLinkMobile')?.addEventListener('click', () => {
-            markRead('pemesanan');
-            setBadge(document.getElementById('notifBadge'), 0);
-            setBadge(document.getElementById('notifBadgeMobile'), 0);
-        });
+            el.addEventListener("click", () => {
+                markRead(type);
+                (badgeIds || []).forEach((id) => setBadge(document.getElementById(id), 0));
+            });
+        }
 
-        document.getElementById('transaksiLinkDesktop')?.addEventListener('click', () => {
-            markRead('transaksi');
-            setBadge(document.getElementById('trxBadge'), 0);
-            setBadge(document.getElementById('trxBadgeMobile'), 0);
-        });
+        // ====== RUN ======
+        poll();
+        setInterval(poll, 8000);
 
-        document.getElementById('transaksiLinkMobile')?.addEventListener('click', () => {
-            markRead('transaksi');
-            setBadge(document.getElementById('trxBadge'), 0);
-            setBadge(document.getElementById('trxBadgeMobile'), 0);
-        });
+        wireClick("pemesananLinkDesktop", "pemesanan", ["notifBadge", "notifBadgeMobile"]);
+        wireClick("pemesananLinkMobile", "pemesanan", ["notifBadge", "notifBadgeMobile"]);
+        wireClick("transaksiLinkDesktop", "transaksi", ["trxBadge", "trxBadgeMobile"]);
+        wireClick("transaksiLinkMobile", "transaksi", ["trxBadge", "trxBadgeMobile"]);
+    })();
+    </script>
 
-
-        <
-        /body>
+    /body>
