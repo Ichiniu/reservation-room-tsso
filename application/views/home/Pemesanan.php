@@ -48,9 +48,9 @@ $id_gedung = $this->uri->segment(3);
                         <h1 class="mt-3 text-2xl md:text-3xl font-extrabold tracking-tight">
                             Daftar Pemesanan
                         </h1>
-                        <p class="mt-2 text-sm md:text-base text-slate-600">
+                        <!-- <p class="mt-2 text-sm md:text-base text-slate-600">
                             Filter berdasarkan ID pemesanan dan status. Data diurutkan dari yang terbaru.
-                        </p>
+                        </p> -->
                     </div>
 
                     <div

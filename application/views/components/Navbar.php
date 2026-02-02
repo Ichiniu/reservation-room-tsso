@@ -1,8 +1,9 @@
 <?php
 $username   = $this->session->userdata('username');
 $session_id = $this->session->userdata('username');
+$foto_profil = $this->session->userdata('foto_profil'); // ✅ dipakai desktop + mobile
 
-$flag     = isset($flag) ? (int)$flag : 0;        // badge PEMESANAN
+$flag     = isset($flag) ? (int)$flag : 0;         // badge PEMESANAN
 $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
 ?>
 
@@ -67,24 +68,60 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
 
                 <!-- RIGHT -->
                 <div class="flex items-center gap-3">
+
+                    <!-- ✅ MOBILE: PROFIL DI HEADER (foto + nama kecil) -->
+                    <div class="md:hidden flex items-center gap-2 max-w-[55vw]">
+                        <span class="relative inline-flex shrink-0">
+                            <?php if (!empty($foto_profil)): ?>
+                            <img src="<?= base_url($foto_profil); ?>"
+                                class="h-9 w-9 rounded-full object-cover border border-black/10" alt="Foto Profil">
+                            <?php else: ?>
+                            <span
+                                class="h-9 w-9 rounded-full grid place-items-center bg-slate-100 border border-black/10">
+                                <i class="bi bi-person-circle text-slate-700 text-lg"></i>
+                            </span>
+                            <?php endif; ?>
+
+                            <!-- indikator online -->
+                            <span
+                                class="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-white"></span>
+                        </span>
+
+                        <div class="min-w-0">
+                            <div class="text-[10px] text-slate-500 leading-none">Hi,</div>
+                            <div class="text-xs font-semibold text-slate-800 truncate">
+                                <?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8'); ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MOBILE BUTTON -->
                     <button id="mobileMenuBtn"
-                        class="md:hidden inline-flex items-center justify-center rounded-lg border border-black/10 p-2 hover:bg-slate-100 transition">
+                        class="md:hidden inline-flex items-center justify-center rounded-lg border border-black/10 p-2 hover:bg-slate-100 transition"
+                        aria-expanded="false" aria-controls="mobileMenu">
                         <i class="bi bi-list text-xl"></i>
                     </button>
 
                     <!-- PROFILE (DESKTOP) -->
                     <div class="relative hidden md:block">
-                        <button type="button"
-                            class="profile-toggle flex items-center gap-2 px-3 py-1 rounded-full bg-white hover:bg-slate-100 border border-black/10 transition">
+                        <button id="profileToggle" type="button"
+                            class="profile-toggle flex items-center gap-2 px-3 py-1 rounded-full bg-white hover:bg-slate-100 border border-black/10 transition"
+                            aria-haspopup="menu" aria-expanded="false">
 
-                            <?php $foto_profil = $this->session->userdata('foto_profil'); ?>
-
-                            <?php if (!empty($foto_profil)): ?>
+                            <span class="relative inline-flex">
+                                <?php if (!empty($foto_profil)): ?>
                                 <img src="<?= base_url($foto_profil); ?>" class="h-7 w-7 rounded-full object-cover"
                                     alt="Foto Profil">
-                            <?php else: ?>
-                                <i class="bi bi-person-circle text-slate-700"></i>
-                            <?php endif; ?>
+                                <?php else: ?>
+                                <span
+                                    class="h-7 w-7 rounded-full grid place-items-center bg-slate-100 border border-black/10">
+                                    <i class="bi bi-person-circle text-slate-700"></i>
+                                </span>
+                                <?php endif; ?>
+
+                                <span
+                                    class="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white"></span>
+                            </span>
 
                             <span class="text-xs font-medium text-slate-700">
                                 <?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8'); ?>
@@ -92,7 +129,7 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
                             <i class="bi bi-chevron-down text-xs text-slate-600"></i>
                         </button>
 
-                        <div
+                        <div id="profileMenu"
                             class="profile-menu hidden absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-md border border-black/10 text-sm overflow-hidden">
                             <a href="<?= site_url('edit_data/' . $username); ?>"
                                 class="flex items-center gap-2 px-4 py-2 hover:bg-slate-100">
@@ -111,11 +148,11 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
                                 </button>
 
                                 <button id="testSound"
-                                    class="ml-2 px-3 py-1 rounded-md text-xs border bg-slate-950 border-gray-300 hover:bg-gray-50">
+                                    class="ml-2 my-2 px-3 py-1 rounded-md text-xs border border-black/10 bg-slate-900 text-white hover:bg-slate-800">
                                     Test Sound
                                 </button>
                                 <button id="testDesktop"
-                                    class="ml-2 px-3 py-1 rounded-md text-xs border bg-slate-950 border-gray-300 hover:bg-gray-50">
+                                    class="ml-2 my-2 px-3 py-1 rounded-md text-xs border border-black/10 bg-slate-900 text-white hover:bg-slate-800">
                                     Test Desktop
                                 </button>
 
@@ -176,6 +213,10 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
                         <i class="bi bi-pencil-square"></i> Edit Data
                     </a>
 
+                    <a href="<?= site_url('edit_foto/' . $username); ?>" class="flex items-center gap-2">
+                        <i class="bi bi-camera"></i> Edit Foto Profil
+                    </a>
+
                     <button type="button" onclick="aktifkanNotif()"
                         class="flex items-center gap-2 text-left w-full hover:text-slate-900">
                         <i class="bi bi-bell"></i> Aktifkan Notifikasi
@@ -194,317 +235,82 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
         <source src="<?= base_url('assets/nada_notifikasi1.mp3'); ?>" type="audio/mpeg">
     </audio>
 
+    <!-- SCRIPT dropdown profil + mobile menu -->
     <script>
-        /* =========================================================
-   REMINDER SCRIPT (POPUP MUNCUL BERKALI-KALI)
-   - Poll badge tiap 5 detik
-   - Reminder popup tiap 30 detik SELAMA flag > 0
-   - Popup pemesanan & transaksi TERPISAH
-   - Tag UNIK agar tidak ketimpa
-   - Auto close notif agar tidak numpuk kebanyakan
-========================================================= */
+    document.addEventListener("DOMContentLoaded", function() {
+        // ===== MOBILE MENU TOGGLE =====
+        const mobileBtn = document.getElementById("mobileMenuBtn");
+        const mobileMenu = document.getElementById("mobileMenu");
 
-        /* =========================
-           Permission button
-        ========================= */
-        async function aktifkanNotif() {
-            if (!("Notification" in window)) {
-                alert("Browser kamu tidak mendukung notifikasi.");
-                return;
-            }
+        if (mobileBtn && mobileMenu) {
+            mobileBtn.addEventListener("click", function(e) {
+                e.stopPropagation();
+                mobileMenu.classList.toggle("hidden");
 
-            if (Notification.permission === "denied") {
-                alert(
-                    "Notifikasi diblokir.\n\n" +
-                    "Klik ikon (i) di sebelah URL → Site settings → Notifications → Allow,\n" +
-                    "lalu refresh halaman."
-                );
-                updateNotifUI();
-                return;
-            }
-
-            const permission = await Notification.requestPermission();
-            if (permission === "granted") {
-                try {
-                    const n = new Notification("Notifikasi aktif ✅", {
-                        body: "Sekarang kamu akan dapat pemberitahuan saat ada update."
-                    });
-                    setTimeout(() => {
-                        try {
-                            n.close();
-                        } catch (e) {}
-                    }, 4000);
-                } catch (e) {}
-                localStorage.setItem("notifJustEnabled", "1");
-            } else {
-                alert("Notifikasi belum diizinkan. Silakan pilih 'Allow'.");
-            }
-
-            updateNotifUI();
-        }
-
-        function updateNotifUI() {
-            var dot = document.getElementById("notifDot");
-            var txt = document.getElementById("notifStatusText");
-            if (!dot || !txt) return;
-
-            if (!("Notification" in window)) {
-                dot.className = "inline-block w-2 h-2 rounded-full bg-slate-300";
-                txt.textContent = "Notifikasi: tidak didukung";
-                return;
-            }
-
-            if (Notification.permission === "granted") {
-                dot.className = "inline-block w-2 h-2 rounded-full bg-emerald-500";
-                txt.textContent = "Notifikasi: aktif";
-            } else if (Notification.permission === "denied") {
-                dot.className = "inline-block w-2 h-2 rounded-full bg-red-500";
-                txt.textContent = "Notifikasi: diblokir";
-            } else {
-                dot.className = "inline-block w-2 h-2 rounded-full bg-amber-500";
-                txt.textContent = "Notifikasi: belum diizinkan";
-            }
-        }
-
-        /* =========================
-           Badge helper
-        ========================= */
-        function setBadge(el, count) {
-            if (!el) return;
-            count = parseInt(count || 0, 10);
-            if (isNaN(count)) count = 0;
-
-            el.dataset.count = String(count);
-
-            if (count > 0) {
-                el.classList.remove("hidden");
-                el.textContent = String(count);
-            } else {
-                el.classList.add("hidden");
-                el.textContent = "";
-            }
-        }
-
-        /* =========================
-           Format list ID untuk popup
-        ========================= */
-        function formatIds(ids, prefix, padLen) {
-            if (!ids || !Array.isArray(ids) || ids.length === 0) return "-";
-            var shown = ids.slice(0, 5).map(function(x) {
-                x = parseInt(x, 10);
-                if (isNaN(x)) return prefix + String(x);
-                if (padLen && padLen > 0) return prefix + String(x).padStart(padLen, "0");
-                return prefix + String(x);
+                const expanded = !mobileMenu.classList.contains("hidden");
+                mobileBtn.setAttribute("aria-expanded", expanded ? "true" : "false");
             });
-            var more = (ids.length > 5) ? (" +" + (ids.length - 5) + " lainnya") : "";
-            return shown.join(", ") + more;
-        }
 
-        /* =========================
-           Notification creator (TAG UNIK + AUTO CLOSE)
-        ========================= */
-        async function showDesktopNotif(title, body, type) {
-            if (!("Notification" in window)) return false;
-
-            // agar tidak silent fail
-            if (Notification.permission === "default") {
-                // browser tidak akan auto-allow tanpa gesture user
-                // jadi jangan spam request di background
-                console.log("[notif] permission masih default. Klik 'Aktifkan Notifikasi' dulu.");
-                return false;
-            }
-
-            if (Notification.permission !== "granted") return false;
-
-            try {
-                const tagUnique = (type || "sireru") + "-" + Date.now() + "-" + Math.random().toString(16).slice(2);
-                const n = new Notification(title, {
-                    body,
-                    tag: tagUnique
+            // klik link di mobile -> tutup menu
+            mobileMenu.querySelectorAll("a,button").forEach(el => {
+                el.addEventListener("click", () => {
+                    mobileMenu.classList.add("hidden");
+                    mobileBtn.setAttribute("aria-expanded", "false");
                 });
+            });
 
-                // auto-close supaya notif lama tidak numpuk terlalu banyak
-                setTimeout(() => {
-                    try {
-                        n.close();
-                    } catch (e) {}
-                }, 6000);
-
-                return true;
-            } catch (e) {
-                console.log("[notif] create error:", e);
-                return false;
-            }
+            // klik luar -> tutup menu
+            document.addEventListener("click", function(e) {
+                if (!mobileMenu.classList.contains("hidden") && !mobileMenu.contains(e.target) && !
+                    mobileBtn.contains(e.target)) {
+                    mobileMenu.classList.add("hidden");
+                    mobileBtn.setAttribute("aria-expanded", "false");
+                }
+            });
         }
 
-        /* =========================
-           Audio unlock + play
-        ========================= */
-        function setupSoundUnlock(soundEl) {
-            if (!soundEl) return () => {};
-            let unlocked = false;
+        // ===== PROFILE DROPDOWN (DESKTOP) =====
+        const profileToggle = document.getElementById("profileToggle");
+        const profileMenu = document.getElementById("profileMenu");
 
-            function unlock() {
-                if (unlocked) return;
-                unlocked = true;
-                soundEl.play().then(() => {
-                    soundEl.pause();
-                    soundEl.currentTime = 0;
-                }).catch(() => {});
-            }
-            document.addEventListener("click", unlock, {
-                once: true
-            });
-            document.addEventListener("keydown", unlock, {
-                once: true
-            });
-
-            return function playSound() {
-                try {
-                    soundEl.currentTime = 0;
-                    soundEl.play().catch(() => {});
-                } catch (e) {}
-            };
+        function closeProfile() {
+            if (!profileMenu || !profileToggle) return;
+            profileMenu.classList.add("hidden");
+            profileToggle.setAttribute("aria-expanded", "false");
         }
 
-        /* =========================================================
-           MAIN
-        ========================================================= */
-        document.addEventListener("DOMContentLoaded", function() {
-            var soundEl = document.getElementById("notifSound");
-            var playSound = setupSoundUnlock(soundEl);
+        if (profileToggle && profileMenu) {
+            profileToggle.addEventListener("click", function(e) {
+                e.stopPropagation();
+                profileMenu.classList.toggle("hidden");
 
-            var badgePDesktop = document.getElementById("notifBadge");
-            var badgePMobile = document.getElementById("notifBadgeMobile");
-            var badgeTDesktop = document.getElementById("trxBadge");
-            var badgeTMobile = document.getElementById("trxBadgeMobile");
-
-            // state terbaru dari server
-            var state = {
-                pemCount: parseInt((badgePDesktop && badgePDesktop.dataset.count) ? badgePDesktop.dataset.count : "0", 10) || 0,
-                trxCount: parseInt((badgeTDesktop && badgeTDesktop.dataset.count) ? badgeTDesktop.dataset.count : "0", 10) || 0,
-                pemIds: [],
-                trxIds: []
-            };
-
-            // config
-            var POLL_MS = 5000; // update badge dari server
-            var REMIND_MS = 30000; // popup berulang selama ada notif
-            var ONLY_WHEN_TAB_ACTIVE = false; // kalau mau hanya muncul saat tab aktif -> true
-
-            // helper: apakah boleh popup?
-            function canPopupNow() {
-                if (ONLY_WHEN_TAB_ACTIVE && document.hidden) return false;
-                return true;
-            }
-
-            // ====== REMINDER LOOP ======
-            async function remindLoop() {
-                if (!canPopupNow()) return;
-
-                // PEMESANAN reminder
-                if (state.pemCount > 0) {
-                    const msg =
-                        "Kamu punya update pemesanan (" + state.pemCount + ").\n" +
-                        "ID: " + formatIds(state.pemIds, "PMSN000", 3);
-                    const ok = await showDesktopNotif("Reminder pemesanan", msg, "pemesanan");
-                    if (ok) playSound();
-                }
-
-                // TRANSAKSI reminder
-                if (state.trxCount > 0) {
-                    const msg =
-                        "Kamu punya update transaksi (" + state.trxCount + ").\n" +
-                        "ID: " + formatIds(state.trxIds, "TRX-", 0);
-                    const ok = await showDesktopNotif("Reminder transaksi", msg, "transaksi");
-                    if (ok) playSound();
-                }
-            }
-
-            // ====== POLLING LOOP ======
-            async function pollNotif() {
-                try {
-                    const res = await fetch("<?= site_url('home/notif_poll') ?>", {
-                        headers: {
-                            "X-Requested-With": "XMLHttpRequest"
-                        },
-                        credentials: "same-origin"
-                    });
-                    if (!res.ok) return;
-
-                    const data = await res.json();
-                    if (!data || !data.ok) return;
-
-                    var newP = parseInt(data.flag || 0, 10);
-                    if (isNaN(newP)) newP = 0;
-
-                    var newT = parseInt(data.trx_flag || 0, 10);
-                    if (isNaN(newT)) newT = 0;
-
-                    // ids (opsional tapi kamu minta ditampilkan)
-                    var pemIds = Array.isArray(data.pemesanan_ids) ? data.pemesanan_ids : [];
-                    var trxIds = Array.isArray(data.trx_ids) ? data.trx_ids : [];
-
-                    // update badge UI
-                    setBadge(badgePDesktop, newP);
-                    setBadge(badgePMobile, newP);
-                    setBadge(badgeTDesktop, newT);
-                    setBadge(badgeTMobile, newT);
-
-                    // kalau count NAIK, munculkan popup "langsung" sekali (instant)
-                    // (di luar reminder 30 detik)
-                    if (newP > state.pemCount && canPopupNow()) {
-                        const msg =
-                            "Kamu punya update pemesanan (" + newP + ").\n" +
-                            "ID: " + formatIds(pemIds, "PMSN000", 3);
-                        const ok = await showDesktopNotif("Notifikasi pemesanan", msg, "pemesanan");
-                        if (ok) playSound();
-                    }
-
-                    if (newT > state.trxCount && canPopupNow()) {
-                        const msg =
-                            "Kamu punya update transaksi (" + newT + ").\n" +
-                            "ID: " + formatIds(trxIds, "TRX-", 0);
-                        const ok = await showDesktopNotif("Notifikasi transaksi", msg, "transaksi");
-                        if (ok) playSound();
-                    }
-
-                    // simpan state terbaru
-                    state.pemCount = newP;
-                    state.trxCount = newT;
-                    state.pemIds = pemIds;
-                    state.trxIds = trxIds;
-
-                    // simpan juga (optional)
-                    localStorage.setItem("lastFlagPemesanan", String(newP));
-                    localStorage.setItem("lastFlagTransaksi", String(newT));
-                } catch (e) {
-                    // console.log(e);
-                }
-            }
-
-            // pertama kali load
-            updateNotifUI();
-
-            // kalau user baru enable notif, kasih 1 popup ringkas
-            var justEnabled = localStorage.getItem("notifJustEnabled") === "1";
-            if (justEnabled && Notification.permission === "granted") {
-                if (state.pemCount > 0) showDesktopNotif("Notifikasi pemesanan", "Kamu punya update pemesanan (" + state.pemCount + ").", "pemesanan");
-                if (state.trxCount > 0) showDesktopNotif("Notifikasi transaksi", "Kamu punya update transaksi (" + state.trxCount + ").", "transaksi");
-                localStorage.removeItem("notifJustEnabled");
-            }
-
-            // start loops
-            pollNotif();
-            setInterval(pollNotif, POLL_MS);
-
-            // reminder popup berkala
-            setInterval(remindLoop, REMIND_MS);
-
-            // (opsional) ketika tab balik aktif, langsung remind sekali
-            document.addEventListener("visibilitychange", function() {
-                if (!document.hidden) remindLoop();
+                const expanded = !profileMenu.classList.contains("hidden");
+                profileToggle.setAttribute("aria-expanded", expanded ? "true" : "false");
             });
-        });
+
+            // klik di luar -> tutup
+            document.addEventListener("click", function(e) {
+                if (!profileMenu.classList.contains("hidden")) {
+                    if (!profileMenu.contains(e.target) && !profileToggle.contains(e.target)) {
+                        closeProfile();
+                    }
+                }
+            });
+
+            // ESC -> tutup
+            document.addEventListener("keydown", function(e) {
+                if (e.key === "Escape") closeProfile();
+            });
+        }
+    });
     </script>
+
+    <!-- ====== SCRIPT NOTIF KAMU (tempel di sini) ====== -->
+    <script>
+    /* =========================================================
+       REMINDER SCRIPT (POPUP MUNCUL BERKALI-KALI)
+       tempel script notif kamu di sini
+       ========================================================= */
+    </script>
+
 </body>

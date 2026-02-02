@@ -6,7 +6,164 @@ $user  = $this->uri->segment(2);
 $total = (isset($res) && is_array($res)) ? count($res) : 0;
 
 function e($v){ return html_escape((string)$v); }
+
+/* ===== Format tanggal Indo: 01 januari 2001 ===== */
+if (!function_exists('formatTanggalIndo')) {
+    function formatTanggalIndo($tgl)
+    {
+        $tgl = trim((string)$tgl);
+        if ($tgl === '') return '-';
+
+        $bulan = array(
+            1=>'januari','februari','maret','april','mei','juni',
+            'juli','agustus','september','oktober','november','desember'
+        );
+
+        $ts = strtotime($tgl);
+        if (!$ts) return $tgl;
+
+        $d = date('d', $ts);
+        $m = (int)date('n', $ts);
+        $y = date('Y', $ts);
+
+        $namaBulan = isset($bulan[$m]) ? $bulan[$m] : '';
+        return $d . ' ' . $namaBulan . ' ' . $y;
+    }
+}
+
+/* ===== Konversi nama bulan Indo/Eng -> angka ===== */
+if (!function_exists('bulanKeAngka')) {
+    function bulanKeAngka($nama)
+    {
+        $nama = strtolower(trim((string)$nama));
+        $map = array(
+            'januari'=>1,'jan'=>1,
+            'februari'=>2,'feb'=>2,
+            'maret'=>3,'mar'=>3,
+            'april'=>4,'apr'=>4,
+            'mei'=>5,'may'=>5,
+            'juni'=>6,'jun'=>6,
+            'juli'=>7,'jul'=>7,
+            'agustus'=>8,'agu'=>8,'aug'=>8,
+            'september'=>9,'sep'=>9,
+            'oktober'=>10,'okt'=>10,'oct'=>10,
+            'november'=>11,'nov'=>11,
+            'desember'=>12,'des'=>12,'dec'=>12,
+        );
+        return isset($map[$nama]) ? (int)$map[$nama] : 0;
+    }
+}
+
+/* ===== Pecah title jadi 3 baris (TOLERAN) ===== */
+if (!function_exists('parse_title_3lines')) {
+    function parse_title_3lines($title)
+    {
+        $t = trim((string)$title);
+        if ($t === '') return null;
+
+        $original = $t;
+
+        // date
+        $dateRawYmd = '';
+        $dateTextInTitle = '';
+
+        if (preg_match('/\b(\d{4}-\d{2}-\d{2})\b/', $t, $m)) {
+            $dateRawYmd = $m[1];
+            $dateTextInTitle = $m[1];
+        } elseif (preg_match('/\b(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})\b/u', $t, $m2)) {
+            $d = (int)$m2[1];
+            $mon = bulanKeAngka($m2[2]);
+            $y = (int)$m2[3];
+            if ($mon >= 1 && $mon <= 12 && $d >= 1 && $d <= 31) {
+                $dateRawYmd = sprintf('%04d-%02d-%02d', $y, $mon, $d);
+                $dateTextInTitle = $m2[0];
+            }
+        }
+
+        // time
+        $timeRaw = '';
+        if (preg_match('/\(([^)]*)\)/', $t, $mt)) {
+            $timeRaw = trim($mt[1]);
+        }
+        if ($timeRaw === '') {
+            if (preg_match('/\b(\d{1,2}[:.]\d{2})\s*-\s*(\d{1,2}[:.]\d{2})\b/i', $t, $tm)) {
+                $timeRaw = trim($tm[1]) . ' - ' . trim($tm[2]);
+            }
+        }
+
+        if ($dateRawYmd === '' && $timeRaw === '') return null;
+
+        // normalize jam
+        $jam = ($timeRaw !== '') ? $timeRaw : '-';
+        if ($jam !== '-') {
+            $jam = str_replace(':', '.', $jam);
+            $jam = preg_replace('/\s*-\s*/', ' - ', $jam);
+
+            if (stripos($jam, 'wib') === false) $jam .= ' wib';
+            $jam = preg_replace('/\s*wib\s*/i', ' wib', $jam);
+            $jam = trim($jam);
+        }
+
+        // nama
+        $nama = $t;
+        $nama = preg_replace('/\([^)]*\)/', '', $nama);
+        if ($dateTextInTitle !== '') $nama = str_replace($dateTextInTitle, '', $nama);
+
+        $nama = preg_replace('/\b\d{1,2}[:.]\d{2}\s*-\s*\d{1,2}[:.]\d{2}\b/i', '', $nama);
+        $nama = preg_replace('/\s*wib\b/i', '', $nama);
+
+        $nama = preg_replace('/\s+/', ' ', $nama);
+        $nama = trim($nama);
+        $nama = rtrim($nama, '-');
+        $nama = trim($nama);
+
+        if ($nama === '') $nama = $original;
+
+        $tgl = ($dateRawYmd !== '') ? formatTanggalIndo($dateRawYmd) : '-';
+
+        return array(
+            'nama' => $nama,
+            'tgl'  => $tgl,
+            'jam'  => $jam,
+        );
+    }
+}
+
+/* ===== Bintang rapi (Material Icons) ===== */
+if (!function_exists('stars_html')) {
+    function stars_html($rating)
+    {
+        $rating = (int)$rating;
+        if ($rating < 1) $rating = 1;
+        if ($rating > 5) $rating = 5;
+
+        $out = '<div class="inline-flex items-center gap-0.5 leading-none">';
+        for ($i = 1; $i <= 5; $i++) {
+            if ($i <= $rating) {
+                $out .= '<span class="material-icons text-[18px] text-amber-500 align-middle leading-none">star</span>';
+            } else {
+                $out .= '<span class="material-icons text-[18px] text-slate-300 align-middle leading-none">star_border</span>';
+            }
+        }
+        $out .= '</div>';
+        return $out;
+    }
+}
+
+/* ===== Data ulasan (dari controller) ===== */
+$ul_total = 0;
+$ul_avg   = 0;
+
+if (isset($ulasan_summary) && is_array($ulasan_summary)) {
+    if (isset($ulasan_summary['total'])) $ul_total = (int)$ulasan_summary['total'];
+    if (isset($ulasan_summary['avg']))   $ul_avg   = (float)$ulasan_summary['avg'];
+}
+$ul_avgRounded = (int)round($ul_avg);
+
+$ulasan_home = (isset($ulasan_home) && is_array($ulasan_home)) ? $ulasan_home : array();
+$ulasan_count = is_array($ulasan_home) ? count($ulasan_home) : 0;
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -17,6 +174,30 @@ function e($v){ return html_escape((string)$v); }
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+    /* ===== marquee animation (loop ke kanan terus) ===== */
+    @keyframes review-marquee {
+        0% {
+            transform: translateX(0);
+        }
+
+        100% {
+            transform: translateX(-50%);
+        }
+
+        /* karena track digandakan */
+    }
+
+    .marquee-track {
+        animation: review-marquee linear infinite;
+        will-change: transform;
+    }
+
+    /* pause saat hover (opsional, hapus kalau tidak perlu) */
+    .marquee-wrap:hover .marquee-track {
+        animation-play-state: paused;
+    }
+    </style>
 </head>
 
 <body class="min-h-screen text-slate-900 bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200">
@@ -208,12 +389,166 @@ function e($v){ return html_escape((string)$v); }
                     <?php endif; ?>
 
                 </div>
+                <section
+                    class="relative overflow-hidden rounded-3xl border border-slate-200 bg-white/70 backdrop-blur shadow-sm mt-12">
+                    <div class="absolute inset-0 pointer-events-none">
+                        <div class="absolute -top-24 -left-24 h-64 w-64 rounded-full bg-amber-200/35 blur-3xl"></div>
+                        <div class="absolute -bottom-24 -right-24 h-64 w-64 rounded-full bg-sky-200/35 blur-3xl"></div>
+                    </div>
+
+                    <div class="relative p-6 md:p-8">
+                        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+                            <div>
+                                <div
+                                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 text-white text-xs font-semibold">
+                                    <span class="material-icons text-sm">rate_review</span>
+                                    Ulasan Terbaru
+                                </div>
+                                <h3 class="mt-4 text-xl md:text-2xl font-extrabold tracking-tight">
+                                    Spill sedikit pengalaman customer
+                                </h3>
+                                <p class="mt-1 text-sm text-slate-600">Biar kamu makin yakin sebelum booking.</p>
+                            </div>
+
+                            <div class="flex items-center gap-3">
+                                <div class="hidden sm:flex flex-col items-end">
+                                    <p class="text-xs text-slate-500">Rata-rata</p>
+                                    <div class="flex items-center gap-2">
+                                        <p class="text-lg font-extrabold"><?= number_format($ul_avg, 1); ?></p>
+                                        <?= stars_html($ul_avgRounded); ?>
+                                    </div>
+                                    <p class="text-xs text-slate-500"><?= (int)$ul_total; ?> ulasan</p>
+                                </div>
+
+                                <a href="<?= site_url('home/ulasan'); ?>" class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-900 text-white text-sm font-semibold
+                                      hover:bg-slate-800 active:scale-[0.99] transition shadow-sm
+                                      focus:outline-none focus:ring-4 focus:ring-slate-200">
+                                    Lihat semua
+                                    <span class="material-icons text-base">arrow_forward</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="mt-6">
+                            <?php if (!empty($ulasan_home) && $ulasan_count > 0): ?>
+
+                            <!-- wrapper -->
+                            <div id="reviewMarquee" class="marquee-wrap overflow-hidden">
+                                <!-- track: kita gandakan isi 2x supaya loop mulus -->
+                                <div id="reviewTrack" class="marquee-track flex gap-6 py-1"
+                                    style="animation-duration: 18s;">
+                                    <?php for ($loop = 0; $loop < 2; $loop++): ?>
+                                    <?php foreach ($ulasan_home as $r): ?>
+                                    <?php
+                                                $nm = isset($r['name']) ? $r['name'] : 'Customer';
+                                                $dt_raw = isset($r['date']) ? $r['date'] : '';
+                                                $dt = formatTanggalIndo($dt_raw);
+
+                                                $rt = isset($r['rating']) ? (int)$r['rating'] : 5;
+                                                if ($rt < 1) $rt = 1;
+                                                if ($rt > 5) $rt = 5;
+
+                                                $tt = isset($r['title']) ? $r['title'] : '';
+                                                $cm = isset($r['comment']) ? $r['comment'] : '';
+
+                                                $inisial = strtoupper(substr((string)$nm, 0, 1));
+                                                if ($inisial === '') $inisial = 'U';
+
+                                                $parts = parse_title_3lines($tt);
+                                            ?>
+
+                                    <!-- slide item: card kecil, bukan w-full -->
+                                    <article
+                                        class="w-[320px] md:w-[380px] flex-none bg-white rounded-3xl border border-slate-200 shadow-sm p-5">
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div class="flex items-center gap-3 min-w-0">
+                                                <div
+                                                    class="h-11 w-11 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center font-extrabold text-slate-700">
+                                                    <?= e($inisial); ?>
+                                                </div>
+                                                <div class="min-w-0">
+                                                    <p class="text-sm font-bold truncate"><?= e($nm); ?></p>
+                                                    <p class="text-xs text-slate-500"><?= e($dt); ?></p>
+                                                </div>
+                                            </div>
+
+                                            <?= stars_html($rt); ?>
+                                        </div>
+
+                                        <?php if (!empty($tt)): ?>
+                                        <?php if ($parts): ?>
+                                        <div class="mt-3 space-y-0.5 leading-snug">
+                                            <p class="text-sm font-semibold text-slate-900 truncate">
+                                                <?= e($parts['nama']); ?></p>
+                                            <p class="text-xs text-slate-600"><?= e($parts['tgl']); ?></p>
+                                            <p class="text-xs text-slate-600"><?= e($parts['jam']); ?></p>
+                                        </div>
+                                        <?php else: ?>
+                                        <div
+                                            class="mt-3 text-sm font-semibold text-slate-900 whitespace-normal break-words">
+                                            <?= e($tt); ?>
+                                        </div>
+                                        <?php endif; ?>
+                                        <?php endif; ?>
+
+                                        <p class="mt-3 text-sm text-slate-600 leading-relaxed">
+                                            <?= e(word_limiter(strip_tags((string)$cm), 32)); ?>
+                                        </p>
+
+                                        <div class="mt-4 flex items-center justify-between">
+                                            <div class="flex items-center gap-2 text-xs text-slate-500">
+                                                <span class="material-icons text-base">verified</span>
+                                                Approved
+                                            </div>
+
+                                            <a href="<?= site_url('home/ulasan'); ?>"
+                                                class="inline-flex items-center gap-2 text-sm font-semibold text-sky-700 hover:text-sky-800">
+                                                Baca
+                                                <span class="material-icons text-base">arrow_forward</span>
+                                            </a>
+                                        </div>
+                                    </article>
+
+                                    <?php endforeach; ?>
+                                    <?php endfor; ?>
+                                </div>
+                            </div>
+
+                            <?php else: ?>
+                            <div class="rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+                                <div
+                                    class="mx-auto h-12 w-12 rounded-2xl bg-slate-100 flex items-center justify-center">
+                                    <span class="material-icons text-slate-500">rate_review</span>
+                                </div>
+                                <h4 class="mt-4 text-lg font-bold">Belum ada ulasan</h4>
+                                <p class="mt-1 text-sm text-slate-600">Ulasan akan tampil setelah ada ulasan APPROVED.
+                                </p>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </section>
             </section>
 
         </div>
     </main>
 
     <?php $this->load->view('components/Footer'); ?>
+    <!-- ===== Opsional: set kecepatan otomatis berdasarkan jumlah data ===== -->
+    <script>
+    (function() {
+        var track = document.getElementById('reviewTrack');
+        var wrap = document.getElementById('reviewMarquee');
+        if (!track || !wrap) return;
+
+        // kalau item sedikit, pelankan biar enak
+        var itemCount = <?= (int)$ulasan_count; ?>;
+        // base 12s, tambah 2s per item (max 40s)
+        var dur = 12 + (itemCount * 2);
+        if (dur > 40) dur = 40;
+        track.style.animationDuration = dur + 's';
+    })();
+    </script>
 </body>
 
 </html>

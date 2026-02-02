@@ -31,6 +31,8 @@ $route['edit_foto'] = 'home/home/edit_foto';
 $route['edit_foto/(:any)'] = 'home/home/edit_foto/$1';
 $route['home/trx_mark_read/(:any)'] = 'home/home/trx_mark_read/$1';
 $route['home/trx_mark_all_read'] = 'home/home/trx_mark_all_read';
+$route['how-to-order'] = 'home/home/how_to_order';
+
 
 
 

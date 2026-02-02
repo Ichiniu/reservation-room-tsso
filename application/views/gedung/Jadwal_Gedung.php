@@ -39,9 +39,9 @@ $this->load->helper('text');
                     <h1 class="mt-3 text-2xl md:text-3xl font-extrabold tracking-tight">
                         Jadwal Penggunaan Ruangan
                     </h1>
-                    <p class="mt-2 text-sm md:text-base text-slate-600">
+                    <!-- <p class="mt-2 text-sm md:text-base text-slate-600">
                         Menampilkan jadwal dari hari ini dan seterusnya. Gunakan filter untuk bulan & tahun.
-                    </p>
+                    </p> -->
                 </div>
 
                 <div class="flex items-center gap-3">
@@ -125,11 +125,11 @@ $this->load->helper('text');
                     <table class="min-w-full text-sm">
                         <thead class="sticky top-0 z-10 bg-slate-50 border-b border-slate-200">
                             <tr class="text-xs text-slate-700">
-                                <th class="px-4 py-3 text-left font-semibold">NO</th>
-                                <th class="px-4 py-3 text-left font-semibold">TANGGAL</th>
-                                <th class="px-4 py-3 text-left font-semibold">JAM</th>
-                                <th class="px-4 py-3 text-left font-semibold">RUANGAN</th>
-                                <th class="px-4 py-3 text-left font-semibold">DESKRIPSI</th>
+                                <th class="px-4 py-3 text-center font-semibold">NO</th>
+                                <th class="px-4 py-3 text-center font-semibold">TANGGAL</th>
+                                <th class="px-4 py-3 text-center font-semibold">JAM</th>
+                                <th class="px-4 py-3 text-center font-semibold">RUANGAN</th>
+                                <th class="px-4 py-3 text-center font-semibold">DESKRIPSI</th>
                             </tr>
                         </thead>
 
@@ -152,22 +152,22 @@ $this->load->helper('text');
                             <tr data-date="<?= $tglFinal ?>" class="hover:bg-slate-50 transition">
                                 <td class="px-4 py-3">
                                     <span
-                                        class="inline-flex items-center justify-center h-7 min-w-[28px] px-2 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
+                                        class="inline-flex items-center text-center justify-center h-7 min-w-[28px] px-2 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
                                         <?= $no++ ?>
                                     </span>
                                 </td>
 
-                                <td class="px-4 py-3">
+                                <td class="px-4 py-3 text-center">
                                     <div class="font-semibold text-slate-900">
                                         <?= date('d M Y', strtotime($row['TANGGAL_FINAL_PEMESANAN'])) ?>
                                     </div>
-                                    <div class="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
+                                    <div class="text-xs text-slate-500 flex justify-center items-center gap-1 mt-0.5">
                                         <span class="material-icons text-[14px]">event_available</span>
                                         Jadwal
                                     </div>
                                 </td>
 
-                                <td class="px-4 py-3 text-slate-700">
+                                <td class="px-4 py-3 text-slate-700 text-center">
                                     <span
                                         class="inline-flex items-center gap-1 rounded-full bg-sky-50 text-sky-800 px-3 py-1 text-xs font-semibold">
                                         <span class="material-icons text-[16px]">schedule</span>
@@ -175,12 +175,12 @@ $this->load->helper('text');
                                     </span>
                                 </td>
 
-                                <td class="px-4 py-3">
+                                <td class="px-4 py-3 text-center">
                                     <div class="font-bold text-slate-900"><?= $row['NAMA_GEDUNG'] ?></div>
                                     <div class="text-xs text-slate-500 mt-0.5">Ruangan</div>
                                 </td>
 
-                                <td class="px-4 py-3 text-slate-700">
+                                <td class="px-4 py-3 text-slate-700 text-center">
                                     <div
                                         class="[display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] overflow-hidden">
                                         <?= $row['DESKRIPSI_ACARA'] ?>
