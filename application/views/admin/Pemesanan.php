@@ -50,7 +50,7 @@ function formatTanggalIndo($tgl)
         <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-sm border border-slate-200 p-6">
 
             <!-- ================= FILTER (AUTO) ================= -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 items-end">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6 items-end">
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1">Cari ID Pemesanan</label>
                     <input type="text" id="filterId" placeholder="Cari ID Pemesanan"
@@ -73,12 +73,69 @@ function formatTanggalIndo($tgl)
                         class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300">
                 </div>
 
+                <!-- ✅ SORT BY BUTTON (seperti gambar) -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Urutkan</label>
+
+                    <div class="relative inline-block w-full">
+                        <button id="sortBtn" type="button"
+                            class="w-full flex items-center justify-between gap-2 border border-gray-300 bg-white rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-300">
+                            <span class="flex items-center gap-2">
+                                <!-- icon filter (funnel) -->
+                                <svg class="w-4 h-4 text-gray-600" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                    <path d="M3 5H21L14 13V19L10 21V13L3 5Z" stroke="currentColor" stroke-width="1.6"
+                                        stroke-linejoin="round" />
+                                </svg>
+                                <span class="font-medium">Sort By</span>
+                            </span>
+
+                            <!-- chevron down -->
+                            <svg class="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="1.8"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </button>
+
+                        <!-- Dropdown menu -->
+                        <div id="sortMenu"
+                            class="hidden absolute z-30 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                            <button type="button" data-sort="new"
+                                class="sortItem w-full flex items-center justify-between px-3 py-2 text-sm hover:bg-gray-50">
+                                <span>Terbaru</span>
+                                <span class="check hidden text-teal-600">
+                                    <!-- check icon -->
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                        <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2.2"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </span>
+                            </button>
+
+                            <button type="button" data-sort="old"
+                                class="sortItem w-full flex items-center justify-between px-3 py-2 text-sm hover:bg-gray-50">
+                                <span>Terlama</span>
+                                <span class="check hidden text-teal-600">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                        <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2.2"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <div>
                     <button id="resetFilter" class="w-full bg-gray-200 hover:bg-gray-300 rounded-lg px-4 py-2 text-sm">
                         Reset
                     </button>
                 </div>
             </div>
+
             <div class="text-xs text-gray-500 mb-4">
                 * Filter berjalan otomatis saat mengetik / memilih status / memilih tanggal. Pagination mengikuti hasil
                 filter.
@@ -123,7 +180,7 @@ function formatTanggalIndo($tgl)
                                             $jamText = date('H:i', strtotime($row['JAM_PEMESANAN'])) . ' - ' . date('H:i', strtotime($row['JAM_SELESAI'])) . ' WIB';
                                         }
 
-                                        // badge status (sesuaikan)
+                                        // badge status
                                         $badge = 'bg-slate-100 text-slate-700';
                                         if ($statusUpper === 'PROPOSAL APPROVE') $badge = 'bg-lime-100 text-lime-700';
                                         else if ($statusUpper === 'PROCESS') $badge = 'bg-yellow-100 text-yellow-700';
@@ -166,7 +223,7 @@ function formatTanggalIndo($tgl)
                                 <td class="px-4 py-3">
                                     <a href="<?= site_url('admin/detail_transaksi/' . $row['ID_PEMESANAN']); ?>"
                                         class="inline-flex items-center justify-center w-9 h-9 rounded-lg hover:bg-blue-50 text-blue-600">
-                                        <i class="material-icons">open_in_new</i>
+                                        <span class="text-xs font-semibold">Detail</span>
                                     </a>
                                 </td>
                             </tr>
@@ -212,7 +269,7 @@ function formatTanggalIndo($tgl)
         </div>
     </main>
 
-    <!-- ================= SCRIPT (AUTO FILTER + PAGINATION) ================= -->
+    <!-- ================= SCRIPT (AUTO FILTER + SORT BUTTON + PAGINATION) ================= -->
     <script>
     (function() {
         const rows = Array.from(document.querySelectorAll(".table-row"));
@@ -228,11 +285,46 @@ function formatTanggalIndo($tgl)
         const prevBtn = document.getElementById("prevBtn");
         const nextBtn = document.getElementById("nextBtn");
 
+        // Sort UI
+        const sortBtn = document.getElementById("sortBtn");
+        const sortMenu = document.getElementById("sortMenu");
+        const sortItems = Array.from(document.querySelectorAll(".sortItem"));
+
         let currentPage = 1;
         let rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
 
+        // default sort: terbaru
+        let sortMode = "new"; // "new" | "old"
+
         function norm(s) {
             return (s || "").toString().trim().toLowerCase().replace(/\s+/g, "");
+        }
+
+        function setSortCheck() {
+            sortItems.forEach(btn => {
+                const check = btn.querySelector(".check");
+                if (!check) return;
+                if (btn.dataset.sort === sortMode) check.classList.remove("hidden");
+                else check.classList.add("hidden");
+            });
+        }
+
+        function sortFilteredRows() {
+            filteredRows.sort((a, b) => {
+                const da = (a.dataset.date || "").trim(); // yyyy-mm-dd
+                const db = (b.dataset.date || "").trim();
+
+                // sort tanggal dulu
+                if (da !== db) {
+                    return sortMode === "new" ? db.localeCompare(da) : da.localeCompare(db);
+                }
+
+                // tie breaker by ID (angka)
+                const ia = parseInt(a.dataset.id || "0", 10) || 0;
+                const ib = parseInt(b.dataset.id || "0", 10) || 0;
+
+                return sortMode === "new" ? (ib - ia) : (ia - ib);
+            });
         }
 
         function renderTable() {
@@ -269,11 +361,51 @@ function formatTanggalIndo($tgl)
                 return okId && okStatus && okTgl;
             });
 
+            sortFilteredRows();
             currentPage = 1;
             renderTable();
         }
 
-        // auto filter
+        // ===== SORT DROPDOWN BEHAVIOR =====
+        function openSortMenu() {
+            if (!sortMenu) return;
+            sortMenu.classList.remove("hidden");
+        }
+
+        function closeSortMenu() {
+            if (!sortMenu) return;
+            sortMenu.classList.add("hidden");
+        }
+
+        if (sortBtn && sortMenu) {
+            sortBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                sortMenu.classList.toggle("hidden");
+            });
+
+            // klik di luar => tutup
+            document.addEventListener("click", () => closeSortMenu());
+
+            // ESC => tutup
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "Escape") closeSortMenu();
+            });
+        }
+
+        // klik item sort
+        sortItems.forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                e.preventDefault();
+                sortMode = btn.dataset.sort || "new";
+                setSortCheck();
+                closeSortMenu();
+                sortFilteredRows();
+                currentPage = 1;
+                renderTable();
+            });
+        });
+
+        // ===== events filter =====
         filterId.addEventListener("input", applyFilter);
         filterStatus.addEventListener("change", applyFilter);
         filterTanggal.addEventListener("change", applyFilter);
@@ -282,7 +414,12 @@ function formatTanggalIndo($tgl)
             filterId.value = "";
             filterStatus.value = "";
             filterTanggal.value = "";
+
+            sortMode = "new";
+            setSortCheck();
+
             filteredRows = [...rows];
+            sortFilteredRows();
             currentPage = 1;
             renderTable();
         });
@@ -308,6 +445,9 @@ function formatTanggalIndo($tgl)
             }
         });
 
+        // init
+        setSortCheck();
+        sortFilteredRows();
         renderTable();
     })();
     </script>
