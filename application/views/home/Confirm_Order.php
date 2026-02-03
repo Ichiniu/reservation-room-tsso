@@ -88,16 +88,30 @@ $id_gedung = $this->uri->segment(4);
 
                                     $mulai   = (isset($order['JAM_PEMESANAN']) ? $order['JAM_PEMESANAN'] : '');
                                     $selesai = (isset($order['JAM_SELESAI']) ? $order['JAM_SELESAI'] : '');
+
+                                    // Format times to hours:minutes (HH:MM) — hide seconds
+                                    $mulai_fmt = '';
+                                    $selesai_fmt = '';
+                                    if ($mulai !== '') {
+                                        $t = strtotime($mulai);
+                                        if ($t !== false) $mulai_fmt = date('H:i', $t);
+                                        else $mulai_fmt = $mulai;
+                                    }
+                                    if ($selesai !== '') {
+                                        $t2 = strtotime($selesai);
+                                        if ($t2 !== false) $selesai_fmt = date('H:i', $t2);
+                                        else $selesai_fmt = $selesai;
+                                    }
                                     $tipe    = (isset($order['TIPE_JAM']) ? $order['TIPE_JAM'] : 'CUSTOM');
 
                                     if ($tipe === 'HALF_DAY_PAGI') {
-                                        $jam_tampil = "HALF DAY PAGI ($mulai - $selesai)";
+                                        $jam_tampil = "HALF DAY PAGI ($mulai_fmt - $selesai_fmt)";
                                     } elseif ($tipe === 'HALF_DAY_SIANG') {
-                                        $jam_tampil = "HALF DAY SIANG ($mulai - $selesai)";
+                                        $jam_tampil = "HALF DAY SIANG ($mulai_fmt - $selesai_fmt)";
                                     } elseif ($tipe === 'FULL_DAY') {
-                                        $jam_tampil = "FULL DAY ($mulai - $selesai)";
+                                        $jam_tampil = "FULL DAY ($mulai_fmt - $selesai_fmt)";
                                     } else {
-                                        $jam_tampil = $mulai . " - " . $selesai;
+                                        $jam_tampil = $mulai_fmt . " - " . $selesai_fmt;
                                     }
                                 ?>
 
@@ -134,12 +148,6 @@ $id_gedung = $this->uri->segment(4);
                                         <td class="w-48 px-4 py-3 font-semibold text-slate-700">Nama Ruangan</td>
                                         <td class="px-2 py-3 text-slate-400">:</td>
                                         <td class="px-4 py-3 text-slate-900"><?php echo $order['NAMA_GEDUNG']; ?></td>
-                                    </tr>
-
-                                    <tr class="bg-white">
-                                        <td class="w-48 px-4 py-3 font-semibold text-slate-700">Nama Catering</td>
-                                        <td class="px-2 py-3 text-slate-400">:</td>
-                                        <td class="px-4 py-3 text-slate-900"><?php echo $order['NAMA_PAKET']; ?></td>
                                     </tr>
 
                                     <tr class="bg-white">

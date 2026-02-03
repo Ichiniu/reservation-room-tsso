@@ -94,7 +94,7 @@ class Registration extends CI_Controller
 		}
 
 		// phone: must be digits only and have 11-13 digits
-		if (!preg_match('/^\d{11,13}$/', $no_telepon)) {
+		if (!preg_match('/^\d{11,14}$/', $no_telepon)) {
 			echo "No telepon harus 11 sampai 13 digit angka (hanya angka diperbolehkan)";
 			$this->output->set_header('refresh:2; url=' . site_url("/registration"));
 			return;
@@ -102,14 +102,13 @@ class Registration extends CI_Controller
 		// normalize phone in data (safe)
 		$data['NO_TELEPON'] = $no_telepon;
 
-		// dob: verify age >= 20
 		if (!empty($dob)) {
 			try {
 				$birth = new DateTime($dob);
 				$now = new DateTime();
 				$age = $now->diff($birth)->y;
-				if ($age < 20) {
-					echo "Usia minimal 20 tahun";
+				if ($age < 18) {
+					echo "Usia minimal 18 tahun";
 					$this->output->set_header('refresh:2; url=' . site_url("/registration"));
 					return;
 				}

@@ -28,71 +28,71 @@ $total_transaksi = (int) $hasil->TOTAL_KESELURUHAN;
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-    .hint {
-        font-size: 12px;
-        color: #6b7280;
-        margin-top: 6px;
-    }
+        .hint {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 6px;
+        }
 
-    input.validate,
-    input[type="text"] {
-        border-bottom: 1px solid #e5e7eb !important;
-        box-shadow: none !important;
-    }
+        input.validate,
+        input[type="text"] {
+            border-bottom: 1px solid #e5e7eb !important;
+            box-shadow: none !important;
+        }
 
-    input.validate:focus,
-    input[type="text"]:focus {
-        border-bottom: 2px solid #1d4ed8 !important;
-        box-shadow: 0 1px 0 0 #1d4ed8 !important;
-    }
+        input.validate:focus,
+        input[type="text"]:focus {
+            border-bottom: 2px solid #1d4ed8 !important;
+            box-shadow: 0 1px 0 0 #1d4ed8 !important;
+        }
 
-    table.bordered td,
-    table.bordered th {
-        padding: 10px 12px;
-    }
+        table.bordered td,
+        table.bordered th {
+            padding: 10px 12px;
+        }
 
-    table.bordered tr {
-        border-bottom: 1px solid #e5e7eb;
-    }
+        table.bordered tr {
+            border-bottom: 1px solid #e5e7eb;
+        }
 
-    table.bordered {
-        margin: 0;
-    }
+        table.bordered {
+            margin: 0;
+        }
 
-    .btn-blue700 {
-        background: #1d4ed8 !important;
-        border-radius: 12px !important;
-    }
+        .btn-blue700 {
+            background: #1d4ed8 !important;
+            border-radius: 12px !important;
+        }
 
-    .btn-blue700:hover {
-        filter: brightness(0.95);
-    }
+        .btn-blue700:hover {
+            filter: brightness(0.95);
+        }
 
-    .link-file {
-        color: #111827;
-        text-decoration: underline;
-    }
+        .link-file {
+            color: #111827;
+            text-decoration: underline;
+        }
 
-    .link-file:hover {
-        color: #1d4ed8;
-    }
+        .link-file:hover {
+            color: #1d4ed8;
+        }
 
-    .cardbox {
-        background: #fff;
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
-    }
+        .cardbox {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
+        }
 
-    .cardhead {
-        padding: 16px 18px;
-        border-bottom: 1px solid #e5e7eb;
-    }
+        .cardhead {
+            padding: 16px 18px;
+            border-bottom: 1px solid #e5e7eb;
+        }
 
-    .cardbody {
-        padding: 16px 18px;
-    }
+        .cardbody {
+            padding: 16px 18px;
+        }
     </style>
 </head>
 
@@ -220,7 +220,7 @@ $total_transaksi = (int) $hasil->TOTAL_KESELURUHAN;
                                             <td><?php echo $hasil->EMAIL; ?></td>
                                         </tr>
                                         <tr>
-                                            <td><b>GEDUNG</b></td>
+                                            <td><b>Ruangan</b></td>
                                             <td>:</td>
                                             <td><?php echo $hasil->NAMA_GEDUNG; ?></td>
                                         </tr>
@@ -240,20 +240,16 @@ $total_transaksi = (int) $hasil->TOTAL_KESELURUHAN;
                                             <td>Rp. <?php echo number_format($hasil->TOTAL_HARGA); ?></td>
                                         </tr>
                                         <tr>
-                                            <td><b>HARGA GEDUNG</b></td>
+                                            <td><b>HARGA SEWA RUANGAN</b></td>
                                             <td>:</td>
                                             <td>Rp. <?php echo number_format($hasil->HARGA_SEWA); ?></td>
                                         </tr>
-                                        <tr>
-                                            <td><b>TOTAL HARGA GEDUNG + CATERING</b></td>
-                                            <td>:</td>
-                                            <td>Rp. <?php echo number_format($hasil->TOTAL_KESELURUHAN); ?></td>
-                                        </tr>
+                                        <!-- Combined total removed per request -->
 
                                         <!-- PAJAK DIHAPUS -->
 
                                         <tr>
-                                            <td><b>TOTAL KESELURUHAN (CATERING + GEDUNG)</b></td>
+                                            <td><b>TOTAL KESELURUHAN (CATERING + RUANGAN)</b></td>
                                             <td><b>:</b></td>
                                             <td><b>Rp. <?php echo number_format($total_transaksi); ?></b></td>
                                         </tr>
@@ -275,80 +271,82 @@ $total_transaksi = (int) $hasil->TOTAL_KESELURUHAN;
                     <div class="cardbox" style="margin-top:14px;">
                         <div class="cardhead">
                             <div class="font-semibold text-gray-900 flex items-center gap-2">
-                                <i class="material-icons text-gray-700 text-base">gavel</i>
-                                Verify Kegiatan
+                                <i class="material-icons text-gray-700 text-base">account_circle</i>
+                                Keputusan Admin
                             </div>
                             <div class="hint">Remarks muncul hanya jika menolak.</div>
                         </div>
-
-                        <div class="cardbody">
-                            <p style="margin:0;">
-                                <input class="with-gap" name="status-proposal" type="radio" id="ya" value="1"
-                                    onclick="return showInput();" />
-                                <label for="ya">TERIMA KEGIATAN</label>
-                            </p>
-
-                            <div style="height:10px;"></div>
-
-                            <p style="margin:0;">
-                                <input class="with-gap" name="status-proposal" type="radio" id="tidak" value="4"
-                                    onclick="return showInput();" />
-                                <label for="tidak">TOLAK KEGIATAN</label>
-                            </p>
-
-                            <div style="height:14px;"></div>
-
-                            <div id="title" hidden class="text-sm font-semibold text-gray-900">Remarks</div>
-                            <div id="colon" hidden class="text-xs text-gray-500">:</div>
-                            <input type="text" name="remarks" id="remarks" hidden class="validate"
-                                placeholder="Masukkan alasan penolakan...">
-
-                            <div class="hint mt-2">Pastikan pilihan sudah benar sebelum submit.</div>
-                        </div>
                     </div>
 
-                    <!-- Footer tombol (HANYA DI BAWAH) -->
-                    <div class="mt-6 pt-4 border-t border-slate-200">
-                        <div class="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-end">
 
-                            <!-- Tombol Batal -->
-                            <a href="<?= site_url('admin/transaksi'); ?>" class="inline-flex items-center justify-center gap-2
+                    <div class="cardbody">
+                        <p style="margin:0;">
+                            <input class="with-gap" name="status-proposal" type="radio" id="ya" value="1"
+                                onclick="return showInput();" />
+                            <label for="ya">Confirm</label>
+                        </p>
+
+                        <div style="height:10px;"></div>
+
+                        <p style="margin:0;">
+                            <input class="with-gap" name="status-proposal" type="radio" id="tidak" value="4"
+                                onclick="return showInput();" />
+                            <label for="tidak">Reject</label>
+                        </p>
+
+                        <div style="height:14px;"></div>
+
+                        <div id="title" hidden class="text-sm font-semibold text-gray-900">Catatan (Agar User tahu kenapa ditolak)</div>
+                        <div id="colon" hidden class="text-xs text-gray-500">:</div>
+                        <input type="text" name="remarks" id="remarks" hidden class="validate"
+                            placeholder="Masukkan alasan penolakan...">
+
+                        <div class="hint mt-2">Pastikan pilihan sudah benar sebelum submit.</div>
+                    </div>
+                </div>
+
+                <!-- Footer tombol (HANYA DI BAWAH) -->
+                <div class="mt-6 pt-4 border-t border-slate-200">
+                    <div class="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-end">
+
+                        <!-- Tombol Batal -->
+                        <a href="<?= site_url('admin/transaksi'); ?>" class="inline-flex items-center justify-center gap-2
               px-5 py-2.5 rounded-xl
               bg-white border border-slate-300
               text-slate-700 text-sm font-semibold
               hover:bg-slate-100 hover:border-slate-400
               transition">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                                Batal
-                            </a>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            Batal
+                        </a>
 
-                            <!-- Tombol Submit -->
-                            <button type="submit" name="submit" onclick="return dialog();" class="inline-flex items-center justify-center gap-2
+                        <!-- Tombol Submit -->
+                        <button type="submit" name="submit" onclick="return dialog();" class="inline-flex items-center justify-center gap-2
                    px-6 py-2.5 rounded-xl
                    bg-blue-700 text-white text-sm font-semibold
                    hover:bg-blue-800
                    focus:ring-2 focus:ring-blue-300
                    transition shadow-sm">
 
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7" />
-                                </svg>
-                                Simpan
-                            </button>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>
+                            Simpan
+                        </button>
 
-                        </div>
                     </div>
-
-
-                    <?php echo form_close(); ?>
                 </div>
+
+
+                <?php echo form_close(); ?>
             </div>
+        </div>
 
         </div>
     </main>
@@ -359,74 +357,74 @@ $total_transaksi = (int) $hasil->TOTAL_KESELURUHAN;
     <script src="<?php echo base_url(); ?>assets/home/index.js"></script>
 
     <script type="text/javascript">
-    function dialog() {
-        if (confirm("Lanjutkan? ")) {
-            return true;
-        } else {
-            return false;
+        function dialog() {
+            if (confirm("Lanjutkan? ")) {
+                return true;
+            } else {
+                return false;
+            }
         }
-    }
 
-    function showInput() {
-        var tolak = document.getElementById("tidak").checked;
-        var terima = document.getElementById("ya").checked;
-        if (tolak == true) {
-            document.getElementById("title").hidden = false;
-            document.getElementById("colon").hidden = false;
-            document.getElementById("remarks").hidden = false;
-        } else if (terima == true) {
-            document.getElementById("title").hidden = true;
-            document.getElementById("colon").hidden = true;
-            document.getElementById("remarks").hidden = true;
+        function showInput() {
+            var tolak = document.getElementById("tidak").checked;
+            var terima = document.getElementById("ya").checked;
+            if (tolak == true) {
+                document.getElementById("title").hidden = false;
+                document.getElementById("colon").hidden = false;
+                document.getElementById("remarks").hidden = false;
+            } else if (terima == true) {
+                document.getElementById("title").hidden = true;
+                document.getElementById("colon").hidden = true;
+                document.getElementById("remarks").hidden = true;
+            }
         }
-    }
     </script>
 
     <!-- Sidebar toggle -->
     <script>
-    (function() {
-        var sidebar = document.getElementById('sidebar');
-        var overlay = document.getElementById('sidebarOverlay');
-        var btn = document.getElementById('sidebarToggle');
-        if (!sidebar) return;
+        (function() {
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            var btn = document.getElementById('sidebarToggle');
+            if (!sidebar) return;
 
-        function openSidebar() {
-            sidebar.classList.remove('-translate-x-full');
-            if (overlay) overlay.classList.remove('hidden');
-            document.body.classList.add('overflow-hidden');
-        }
-
-        function closeSidebar() {
-            sidebar.classList.add('-translate-x-full');
-            if (overlay) overlay.classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
-        }
-
-        if (btn) {
-            btn.addEventListener('click', function() {
-                var isClosed = sidebar.classList.contains('-translate-x-full');
-                if (isClosed) openSidebar();
-                else closeSidebar();
-            });
-        }
-
-        if (overlay) overlay.addEventListener('click', closeSidebar);
-
-        window.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeSidebar();
-        });
-
-        var mq = window.matchMedia('(min-width: 768px)');
-        mq.addEventListener('change', function(e) {
-            if (e.matches) {
-                if (overlay) overlay.classList.add('hidden');
+            function openSidebar() {
                 sidebar.classList.remove('-translate-x-full');
-                document.body.classList.remove('overflow-hidden');
-            } else {
-                closeSidebar();
+                if (overlay) overlay.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
             }
-        });
-    })();
+
+            function closeSidebar() {
+                sidebar.classList.add('-translate-x-full');
+                if (overlay) overlay.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+
+            if (btn) {
+                btn.addEventListener('click', function() {
+                    var isClosed = sidebar.classList.contains('-translate-x-full');
+                    if (isClosed) openSidebar();
+                    else closeSidebar();
+                });
+            }
+
+            if (overlay) overlay.addEventListener('click', closeSidebar);
+
+            window.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeSidebar();
+            });
+
+            var mq = window.matchMedia('(min-width: 768px)');
+            mq.addEventListener('change', function(e) {
+                if (e.matches) {
+                    if (overlay) overlay.classList.add('hidden');
+                    sidebar.classList.remove('-translate-x-full');
+                    document.body.classList.remove('overflow-hidden');
+                } else {
+                    closeSidebar();
+                }
+            });
+        })();
     </script>
 
 </body>
