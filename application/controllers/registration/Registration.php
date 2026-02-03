@@ -80,6 +80,51 @@ class Registration extends CI_Controller
 			'TANGGAL_LAHIR'   => $dob,
 		);
 
+		// ===== server-side validation =====
+		// email must be valid and use gmail domain
+		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+			echo "Format email tidak valid";
+			$this->output->set_header('refresh:2; url=' . site_url("/registration"));
+			return;
+		}
+		if (!preg_match('/@gmail(\.[a-z]{2,})?$/i', $email)) {
+			echo "Email harus menggunakan domain @gmail";
+			$this->output->set_header('refresh:2; url=' . site_url("/registration"));
+			return;
+		}
+
+		// phone: keep digits only and require at least 11 digits
+		$digits = preg_replace('/\D+/', '', $no_telepon);
+		if (strlen($digits) < 11) {
+			echo "No telepon minimal 11 digit angka";
+			$this->output->set_header('refresh:2; url=' . site_url("/registration"));
+			return;
+		}
+		// normalize phone in data
+		$data['NO_TELEPON'] = $digits;
+
+		// dob: verify age >= 20
+		if (!empty($dob)) {
+			try {
+				$birth = new DateTime($dob);
+				$now = new DateTime();
+				$age = $now->diff($birth)->y;
+				if ($age < 20) {
+					echo "Usia minimal 20 tahun";
+					$this->output->set_header('refresh:2; url=' . site_url("/registration"));
+					return;
+				}
+			} catch (Exception $e) {
+				echo "Format tanggal lahir tidak valid";
+				$this->output->set_header('refresh:2; url=' . site_url("/registration"));
+				return;
+			}
+		} else {
+			echo "Tanggal lahir wajib diisi";
+			$this->output->set_header('refresh:2; url=' . site_url("/registration"));
+			return;
+		}
+
 		// cek username sudah ada
 		$this->db->select('USERNAME');
 		$this->db->where('USERNAME', $data['USERNAME']);
