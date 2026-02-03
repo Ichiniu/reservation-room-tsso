@@ -1634,5 +1634,77 @@ public function how_to_order()
     $this->load->view('home/how_to_order', $data);
 }
 
+public function jadwal_by_date($id_gedung)
+{
+    $this->output->set_content_type('application/json');
+    $this->db->db_debug = false;
+
+    $id_gedung = (int)$id_gedung;
+    $date = $this->input->get('date', true); // YYYY-MM-DD
+
+    // validasi
+    if (!$id_gedung || empty($date) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+        return $this->output
+            ->set_status_header(400)
+            ->set_output(json_encode(array(
+                'ok' => false,
+                'message' => 'Parameter tidak valid'
+            )));
+    }
+
+    $sql = "
+        SELECT
+            ps.ID_PEMESANAN,
+            ps.TANGGAL_PEMESANAN AS TANGGAL_FINAL_PEMESANAN,
+            DATE(p.CONFIRMED_AT) AS TANGGAL_APPROVAL,
+            g.NAMA_GEDUNG,
+            IFNULL(pd.DESKRIPSI_ACARA, '-') AS DESKRIPSI_ACARA,
+            1 AS FINAL_STATUS,
+            ps.USERNAME,
+            u.NAMA_LENGKAP,
+            TIME_FORMAT(ps.JAM_PEMESANAN, '%H:%i') AS JAM_MULAI,
+            TIME_FORMAT(ps.JAM_SELESAI,  '%H:%i') AS JAM_SELESAI,
+            ps.TIPE_JAM AS TIPE_JAM
+        FROM PEMBAYARAN p
+        JOIN PEMESANAN ps ON ps.ID_PEMESANAN = p.ID_PEMESANAN_RAW
+        LEFT JOIN USER u ON u.USERNAME = ps.USERNAME
+        LEFT JOIN GEDUNG g ON g.ID_GEDUNG = ps.ID_GEDUNG
+        LEFT JOIN PEMESANAN_DETAILS pd ON pd.ID_PEMESANAN = ps.ID_PEMESANAN
+        WHERE p.STATUS_VERIF = 'CONFIRMED'
+          AND ps.ID_GEDUNG = ?
+          AND ps.TANGGAL_PEMESANAN = ?
+        ORDER BY ps.JAM_PEMESANAN ASC, ps.ID_PEMESANAN ASC
+    ";
+
+    $q = $this->db->query($sql, array($id_gedung, $date));
+
+    if (!$q) {
+        $dbError = $this->db->error();
+        $msg  = isset($dbError['message']) ? $dbError['message'] : 'unknown';
+        $code = isset($dbError['code']) ? $dbError['code'] : 0;
+
+        return $this->output
+            ->set_status_header(500)
+            ->set_output(json_encode(array(
+                'ok' => false,
+                'message' => 'Database error: ' . $msg,
+                'code' => $code
+            )));
+    }
+
+    $rows = $q->result_array();
+
+    return $this->output
+        ->set_status_header(200)
+        ->set_output(json_encode(array(
+            'ok' => true,
+            'date' => $date,
+            'id_gedung' => $id_gedung,
+            'data' => $rows
+        )));
+}
+
+
+
 
 }

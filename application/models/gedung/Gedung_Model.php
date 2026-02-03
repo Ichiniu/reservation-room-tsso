@@ -123,6 +123,48 @@ public function clear_transaksi_flag($username)
 
 
 
+public function get_calendar_events($id_gedung, $start, $end)
+{
+    $id_gedung = (int)$id_gedung;
+
+    $this->db->select("
+        p.ID_PEMESANAN as id,
+        p.TANGGAL_PEMESANAN as tgl,
+        TIME_FORMAT(p.JAM_PEMESANAN, '%H:%i') as start,
+        TIME_FORMAT(p.JAM_SELESAI, '%H:%i') as end,
+        p.STATUS as status
+    ", false);
+
+    $this->db->from('pemesanan p');
+    $this->db->where('p.ID_GEDUNG', $id_gedung);
+    $this->db->where('p.TANGGAL_PEMESANAN >=', $start);
+    $this->db->where('p.TANGGAL_PEMESANAN <=', $end);
+
+    // status yang dianggap ngunci jadwal
+    $this->db->where_in('p.STATUS', array(0, 3));
+
+    $this->db->order_by('p.TANGGAL_PEMESANAN', 'ASC');
+    $this->db->order_by('p.JAM_PEMESANAN', 'ASC');
+
+    $rows = $this->db->get()->result_array();
+
+    $out = array();
+    foreach ($rows as $r) {
+        $out[] = array(
+            'id'     => (int)$r['id'],
+            'tgl'    => $r['tgl'],
+            'start'  => $r['start'],
+            'end'    => $r['end'],
+            'status' => (string)$r['status'],
+            'title'  => 'Booking Ruangan'
+        );
+    }
+
+    return $out;
+}
+
+
+
 
 
 	public function laporan_pembayaran_periodic($start_date, $end_date)
@@ -338,6 +380,9 @@ public function clear_transaksi_flag($username)
 
 		return $this->db->query($sql, $binds)->result_array();
 	}
+	 
+
+	
 
 
 

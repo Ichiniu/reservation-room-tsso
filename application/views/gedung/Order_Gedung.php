@@ -9,6 +9,9 @@ $allowed_tipe_jam = (isset($allowed_tipe_jam) && is_array($allowed_tipe_jam))
     : array('CUSTOM', 'HALF_DAY_PAGI', 'HALF_DAY_SIANG', 'FULL_DAY');
 
 $default_tipe_jam = isset($default_tipe_jam) ? $default_tipe_jam : $allowed_tipe_jam[0];
+
+// ✅ endpoint JSON jadwal by date (sesuaikan controller/method)
+$jadwalEndpoint = site_url('home/home/jadwal_by_date/' . $id_gedung);
 ?>
 <!doctype html>
 <html lang="id">
@@ -82,8 +85,10 @@ $default_tipe_jam = isset($default_tipe_jam) ? $default_tipe_jam : $allowed_tipe
                     </div>
                     <?php endif; ?>
 
-                    <form action="<?php echo site_url('home/order-gedung/validate/' . $id_gedung); ?>" method="post"
-                        class="mt-2">
+                    <!-- ✅ penting: jangan pakai .prevent agar submit normal -->
+                    <form id="orderFormEl" action="<?php echo site_url('home/order-gedung/validate/' . $id_gedung); ?>"
+                        method="post" class="mt-2" @submit="handleSubmit($event)">
+
                         <?php
                         // token stabil per browser
                         if (empty($_COOKIE['booking_client_id'])) {
@@ -105,7 +110,8 @@ $default_tipe_jam = isset($default_tipe_jam) ? $default_tipe_jam : $allowed_tipe
                                 <label class="block text-xs font-semibold tracking-widest text-slate-500">NAMA
                                     USER</label>
                                 <div class="mt-2 text-sm font-semibold text-slate-900">
-                                    <?php echo htmlspecialchars($session_id, ENT_QUOTES, 'UTF-8'); ?></div>
+                                    <?php echo htmlspecialchars($session_id, ENT_QUOTES, 'UTF-8'); ?>
+                                </div>
                             </div>
 
                             <!-- Nama Gedung -->
@@ -118,6 +124,7 @@ $default_tipe_jam = isset($default_tipe_jam) ? $default_tipe_jam : $allowed_tipe
                                     <?php endforeach; ?>
                                 </div>
                             </div>
+
                             <!-- Tanggal -->
                             <div class="rounded-xl border border-slate-300 bg-white p-5 ring-1 ring-slate-200">
                                 <label class="block text-xs font-semibold tracking-widest text-slate-500">
@@ -125,8 +132,9 @@ $default_tipe_jam = isset($default_tipe_jam) ? $default_tipe_jam : $allowed_tipe
                                 </label>
 
                                 <input type="date" name="tgl_pesan" id="tgl_pesan"
-                                    min="<?= htmlspecialchars($min_pesan, ENT_QUOTES, 'UTF-8'); ?>" required class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
-               focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40" />
+                                    min="<?php echo htmlspecialchars($min_pesan, ENT_QUOTES, 'UTF-8'); ?>" required
+                                    @change="onDatePicked($event.target.value)" class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
+                                    focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40" />
 
                                 <!-- ✅ HASIL FORMAT TANGGAL INDONESIA -->
                                 <div id="tgl-format-id" class="mt-2 text-sm font-semibold text-slate-700 hidden">
@@ -134,11 +142,34 @@ $default_tipe_jam = isset($default_tipe_jam) ? $default_tipe_jam : $allowed_tipe
                                 </div>
 
                                 <small class="mt-2 block text-xs text-slate-500">
-                                    *<?= htmlspecialchars($min_text, ENT_QUOTES, 'UTF-8'); ?>*
+                                    *<?php echo htmlspecialchars($min_text, ENT_QUOTES, 'UTF-8'); ?>*
                                 </small>
+
+                                <!-- ✅ BOX JADWAL (opsional, kalau endpoint sudah ada) -->
+                                <div class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                                    <div class="font-semibold mb-2">Jadwal pada tanggal ini</div>
+
+                                    <template x-if="jadwalLoading">
+                                        <div class="text-sm text-slate-500">Memuat...</div>
+                                    </template>
+
+                                    <template x-if="jadwalError">
+                                        <div class="text-sm text-red-600" x-text="jadwalError"></div>
+                                    </template>
+
+                                    <template x-if="!jadwalLoading && !jadwalError && jadwalItems.length === 0">
+                                        <div class="text-sm text-slate-500">Belum ada jadwal.</div>
+                                    </template>
+
+                                    <template x-for="it in jadwalItems" :key="it.ID_PEMESANAN">
+                                        <div class="py-2 border-t border-slate-200 first:border-t-0">
+                                            <div class="text-sm font-semibold"
+                                                x-text="it.JAM_MULAI + ' - ' + it.JAM_SELESAI"></div>
+                                            <div class="text-xs text-slate-600" x-text="it.DESKRIPSI_ACARA"></div>
+                                        </div>
+                                    </template>
+                                </div>
                             </div>
-
-
 
                             <!-- Pilihan Jam -->
                             <div class="rounded-xl border border-slate-300 bg-white p-5 ring-1 ring-slate-200">
@@ -147,7 +178,7 @@ $default_tipe_jam = isset($default_tipe_jam) ? $default_tipe_jam : $allowed_tipe
 
                                 <select name="tipe_jam" id="tipe_jam" required x-model="tipeJam" @change="applyJam()"
                                     class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
-                         focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40">
+                                    focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40">
                                     <?php
                                     $labels_tipe_jam = array(
                                         'CUSTOM'         => 'HH:MM - HH:MM (PER JAM)',
@@ -168,18 +199,26 @@ $default_tipe_jam = isset($default_tipe_jam) ? $default_tipe_jam : $allowed_tipe
                                     <span x-text="RULES[tipeJam] ? RULES[tipeJam].label : ''"></span>
                                 </div>
 
+                                <!-- CUSTOM TIME INPUT -->
                                 <div x-show="isCustom" x-transition class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div>
                                         <label class="block text-xs font-semibold text-slate-500">Jam Mulai</label>
                                         <input type="time" name="jam_pesan" id="jam_pesan" x-model="jamMulai"
-                                            :required="isCustom" class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
-                             focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40" />
+                                            :required="isCustom"
+                                            class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
+                                            focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40" />
                                     </div>
                                     <div>
                                         <label class="block text-xs font-semibold text-slate-500">Jam Selesai</label>
                                         <input type="time" name="jam_selesai" id="jam_selesai" x-model="jamSelesai"
-                                            :required="isCustom" class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
-                             focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40" />
+                                            :required="isCustom"
+                                            class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
+                                            focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40" />
+                                    </div>
+
+                                    <div class="sm:col-span-2">
+                                        <div x-show="customError" class="mt-2 text-sm text-red-600 font-semibold"
+                                            x-text="customError"></div>
                                     </div>
                                 </div>
 
@@ -199,7 +238,7 @@ $default_tipe_jam = isset($default_tipe_jam) ? $default_tipe_jam : $allowed_tipe
                                 <input type="email" name="email"
                                     value="<?php echo htmlspecialchars($email->EMAIL, ENT_QUOTES, 'UTF-8'); ?>" required
                                     class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
-                         focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40" />
+                                    focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40" />
                             </div>
 
                             <!-- Catering -->
@@ -238,18 +277,16 @@ $default_tipe_jam = isset($default_tipe_jam) ? $default_tipe_jam : $allowed_tipe
 
                             <!-- Paket Catering + Porsi + Input Kategori -->
                             <div class="rounded-xl border border-slate-300 bg-white p-5 ring-1 ring-slate-200">
-
                                 <label class="block text-xs font-semibold tracking-widest text-slate-500">PAKET
                                     CATERING</label>
 
                                 <select id="selected_catering" name="catering" :disabled="!cateringEnabled"
                                     :required="cateringEnabled" @change="onCateringChange($event)" class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
-                         focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40
-                         disabled:opacity-50 disabled:cursor-not-allowed">
+                                    focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40
+                                    disabled:opacity-50 disabled:cursor-not-allowed">
                                     <option value="">Pilih Paket</option>
 
                                     <?php
-                                    // grouping by JENIS biar rapi
                                     $groups = array();
                                     foreach ($res as $row) {
                                         $jenis = isset($row['JENIS']) ? $row['JENIS'] : 'LAINNYA';
@@ -269,7 +306,6 @@ $default_tipe_jam = isset($default_tipe_jam) ? $default_tipe_jam : $allowed_tipe
                                                 if ($minp < 1) $minp = 1;
 
                                                 $menujson = isset($row['MENU_JSON']) ? trim($row['MENU_JSON']) : '';
-                                                // amanin buat attribute (hapus newline)
                                                 $menujson_attr = str_replace(array("\r", "\n"), ' ', $menujson);
                                                 ?>
                                         <option value="<?php echo $id; ?>" data-harga="<?php echo $harga; ?>"
@@ -290,14 +326,13 @@ $default_tipe_jam = isset($default_tipe_jam) ? $default_tipe_jam : $allowed_tipe
                                 <input type="number" name="jumlah-porsi" id="jumlah-porsi" x-model="jumlahPorsi"
                                     :min="selectedMinPax" :disabled="!cateringEnabled" :required="cateringEnabled"
                                     placeholder="Masukkan jumlah porsi" class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400
-                         focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40
-                         disabled:opacity-50 disabled:cursor-not-allowed" />
+                                    focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40
+                                    disabled:opacity-50 disabled:cursor-not-allowed" />
 
                                 <!-- Kategori Menu -->
                                 <div x-show="cateringEnabled && categories.length" x-transition
                                     class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
-                                    <div class="text-sm font-semibold text-slate-900 mb-2">
-                                        Isi Pilihan Menu per Kategori
+                                    <div class="text-sm font-semibold text-slate-900 mb-2">Isi Pilihan Menu per Kategori
                                     </div>
 
                                     <template x-for="cat in categories" :key="cat.key">
@@ -307,8 +342,9 @@ $default_tipe_jam = isset($default_tipe_jam) ? $default_tipe_jam : $allowed_tipe
                                                 <div class="text-xs text-slate-500" x-text="cat.noteText"></div>
                                             </div>
 
-                                            <textarea class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400
-                               focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40"
+                                            <textarea
+                                                class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400
+                                                focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40"
                                                 rows="2" :name="'menu_input[' + cat.key + ']'"
                                                 :placeholder="cat.placeholder"></textarea>
 
@@ -335,9 +371,10 @@ $default_tipe_jam = isset($default_tipe_jam) ? $default_tipe_jam : $allowed_tipe
 
                                                 <div class="text-xs text-slate-500 mt-1" x-text="a.note"></div>
 
-                                                <textarea x-show="a.enabled" class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400
-                                 focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40"
-                                                    rows="2" :name="'addon_input[' + a.key + ']'"
+                                                <textarea x-show="a.enabled"
+                                                    class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400
+                                                    focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40" rows="2"
+                                                    :name="'addon_input[' + a.key + ']'"
                                                     :placeholder="a.placeholder"></textarea>
                                             </div>
                                         </template>
@@ -366,14 +403,14 @@ $default_tipe_jam = isset($default_tipe_jam) ? $default_tipe_jam : $allowed_tipe
                                         *Estimasi = (harga * porsi) + add-on (jika dicentang, dihitung per pax).*
                                     </div>
                                 </div>
-
                             </div>
                         </div>
 
                         <!-- Warning + Submit -->
                         <div class="mt-6 rounded-xl border border-slate-300 bg-slate-50 p-5 ring-1 ring-slate-200">
-                            <p class="text-sm text-slate-700">*Pastikan semua field benar terisi, aksi ini tidak bisa
-                                dibatalkan.*</p>
+                            <p class="text-sm text-slate-700">
+                                *Pastikan semua field benar terisi, aksi ini tidak bisa dibatalkan.*
+                            </p>
 
                             <div class="mt-5 flex items-center justify-end">
                                 <button type="submit" name="submit" id="submit"
@@ -399,9 +436,8 @@ $default_tipe_jam = isset($default_tipe_jam) ? $default_tipe_jam : $allowed_tipe
         const tglText = document.getElementById('tgl-text');
 
         function formatTanggalIndonesia(dateStr) {
-            const months = [
-                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+            const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus',
+                'September', 'Oktober', 'November', 'Desember'
             ];
             const parts = dateStr.split('-');
             if (parts.length !== 3) return '';
@@ -421,7 +457,6 @@ $default_tipe_jam = isset($default_tipe_jam) ? $default_tipe_jam : $allowed_tipe
             }
         });
 
-        // inisialisasi jika sudah ada value
         if (tglInput.value) {
             const formatted = formatTanggalIndonesia(tglInput.value);
             if (formatted) {
@@ -431,18 +466,6 @@ $default_tipe_jam = isset($default_tipe_jam) ? $default_tipe_jam : $allowed_tipe
         }
     });
 
-    // disable tombol saat submit
-    document.addEventListener('DOMContentLoaded', function() {
-        var form = document.querySelector('form');
-        var btn = document.querySelector('button[type="submit"], input[type="submit"]');
-        if (!form || !btn) return;
-        form.addEventListener('submit', function() {
-            btn.disabled = true;
-            btn.style.opacity = "0.7";
-        });
-    });
-
-    // ALPINE COMPONENT
     function orderForm() {
         return {
             // ==== state umum ====
@@ -467,9 +490,16 @@ $default_tipe_jam = isset($default_tipe_jam) ? $default_tipe_jam : $allowed_tipe
                     label: 'FULL DAY (08:00 - 17:00)'
                 }
             },
+
             jamMulai: '',
             jamSelesai: '',
             profileOpen: false,
+            customError: '',
+
+            // ==== jadwal by date ====
+            jadwalLoading: false,
+            jadwalError: '',
+            jadwalItems: [],
 
             // ==== catering state ====
             categories: [],
@@ -486,68 +516,165 @@ $default_tipe_jam = isset($default_tipe_jam) ? $default_tipe_jam : $allowed_tipe
                 return this.tipeJam === 'CUSTOM';
             },
 
-            init: function() {
-                this.jamMulai = '';
-                this.jamSelesai = '';
-
-                // ✅ guard: pastikan tipeJam valid sesuai allowed
+            init() {
+                // guard tipeJam
                 if (this.allowedTipeJam && this.allowedTipeJam.indexOf(this.tipeJam) === -1) {
                     this.tipeJam = this.defaultTipeJam;
                 }
 
-                // set default jam jika bukan CUSTOM
+                // set jam default jika bukan CUSTOM
                 if (!this.isCustom) this.applyJam();
 
-                var self = this;
-                this.$watch('catering', function(v) {
-                    if (v !== 'ya') self.resetCatering();
+                this.$watch('catering', (v) => {
+                    if (v !== 'ya') this.resetCatering();
+                });
+
+                this.$watch('tipeJam', () => {
+                    this.customError = '';
+                    if (!this.isCustom) this.applyJam();
+                });
+
+                // autofill date -> fetch jadwal (kalau ada value)
+                this.$nextTick(() => {
+                    const tgl = document.getElementById('tgl_pesan');
+                    if (tgl && tgl.value) this.onDatePicked(tgl.value);
                 });
             },
 
-            applyJam: function() {
-                // ✅ guard: pastikan tipeJam valid sesuai allowed
+            // ✅ submit handler yang bikin tombol "Lanjutkan" pasti jalan
+            handleSubmit(e) {
+                // validasi custom jam
+                if (!this.validateCustomTime()) {
+                    e.preventDefault();
+                    return;
+                }
+
+                // kalau valid -> disable tombol lalu submit berjalan normal
+                const btn = document.getElementById('submit');
+                if (btn) {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.7';
+                }
+            },
+
+            validateCustomTime() {
+                this.customError = '';
+                if (!this.isCustom) return true;
+
+                if (!this.jamMulai || !this.jamSelesai) {
+                    this.customError = 'Jam mulai dan jam selesai wajib diisi.';
+                    return false;
+                }
+
+                const a = this.timeToMinutes(this.jamMulai);
+                const b = this.timeToMinutes(this.jamSelesai);
+
+                if (a < 0 || b < 0) {
+                    this.customError = 'Format jam tidak valid.';
+                    return false;
+                }
+                if (b <= a) {
+                    this.customError = 'Jam selesai harus lebih besar dari jam mulai.';
+                    return false;
+                }
+                return true;
+            },
+
+            timeToMinutes(t) {
+                if (!t || !t.includes(':')) return -1;
+                const p = t.split(':');
+                const hh = parseInt(p[0], 10);
+                const mm = parseInt(p[1], 10);
+                if (isNaN(hh) || isNaN(mm)) return -1;
+                return (hh * 60) + mm;
+            },
+
+            applyJam() {
                 if (this.allowedTipeJam && this.allowedTipeJam.indexOf(this.tipeJam) === -1) {
                     this.tipeJam = this.defaultTipeJam;
                 }
-
                 if (this.isCustom) return;
 
-                if (!this.RULES[this.tipeJam]) return;
-                this.jamMulai = this.RULES[this.tipeJam].start;
-                this.jamSelesai = this.RULES[this.tipeJam].end;
+                const rule = this.RULES[this.tipeJam];
+                if (!rule) return;
+
+                this.jamMulai = rule.start;
+                this.jamSelesai = rule.end;
             },
 
-            resetCatering: function() {
+            // ✅ fetch jadwal by date (opsional)
+            async onDatePicked(dateStr) {
+                this.jadwalError = '';
+                this.jadwalItems = [];
+                if (!dateStr) return;
+
+                this.jadwalLoading = true;
+
+                try {
+                    const base = <?php echo json_encode($jadwalEndpoint); ?>;
+                    const url = base + '?date=' + encodeURIComponent(dateStr);
+
+                    const res = await fetch(url, {
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+                    const rawText = await res.text();
+
+                    let json = null;
+                    try {
+                        json = JSON.parse(rawText);
+                    } catch (e) {
+                        json = null;
+                    }
+
+                    if (!res.ok) {
+                        this.jadwalError = (json && json.message) ? json.message : ('Error ' + res.status);
+                        return;
+                    }
+                    if (!json || !json.ok) {
+                        this.jadwalError = (json && json.message) ? json.message : 'Gagal mengambil jadwal.';
+                        return;
+                    }
+                    this.jadwalItems = Array.isArray(json.data) ? json.data : [];
+                } catch (e) {
+                    this.jadwalError = 'Terjadi error saat mengambil jadwal.';
+                } finally {
+                    this.jadwalLoading = false;
+                }
+            },
+
+            // ===== catering (tetap) =====
+            resetCatering() {
                 this.selectedHarga = 0;
                 this.selectedMinPax = 1;
                 this.selectedNama = '';
                 this.jumlahPorsi = '';
                 this.categories = [];
                 this.addons = [];
-                var sel = document.getElementById('selected_catering');
+                const sel = document.getElementById('selected_catering');
                 if (sel) sel.value = '';
             },
 
-            onCateringChange: function(e) {
-                var opt = e.target.options[e.target.selectedIndex];
-
+            onCateringChange(e) {
+                const opt = e.target.options[e.target.selectedIndex];
                 this.selectedHarga = parseInt(opt.getAttribute('data-harga') || '0', 10);
                 this.selectedMinPax = parseInt(opt.getAttribute('data-minpax') || '1', 10);
                 this.selectedNama = opt.getAttribute('data-nama') || '';
 
-                var raw = opt.getAttribute('data-menujson') || '';
+                const raw = opt.getAttribute('data-menujson') || '';
                 this.parseMenuJson(raw);
 
-                var jp = parseInt(this.jumlahPorsi || '0', 10);
+                const jp = parseInt(this.jumlahPorsi || '0', 10);
                 if (!jp || jp < this.selectedMinPax) this.jumlahPorsi = this.selectedMinPax;
             },
 
-            parseMenuJson: function(raw) {
+            parseMenuJson(raw) {
                 this.categories = [];
                 this.addons = [];
                 if (!raw) return;
 
-                var obj = null;
+                let obj = null;
                 try {
                     obj = JSON.parse(raw);
                 } catch (e) {
@@ -555,72 +682,69 @@ $default_tipe_jam = isset($default_tipe_jam) ? $default_tipe_jam : $allowed_tipe
                 }
                 if (!obj) return;
 
-                // categories
                 if (obj.categories && Array.isArray(obj.categories)) {
-                    for (var i = 0; i < obj.categories.length; i++) {
-                        var c = obj.categories[i] || {};
-                        var key = c.key || ('cat_' + i);
-                        var label = c.label || ('Kategori ' + (i + 1));
-                        var pick = parseInt(c.pick || 0, 10);
-                        var note = c.note || '';
-                        var items = (c.items && Array.isArray(c.items)) ? c.items : [];
+                    for (let i = 0; i < obj.categories.length; i++) {
+                        const c = obj.categories[i] || {};
+                        const key = c.key || ('cat_' + i);
+                        const label = c.label || ('Kategori ' + (i + 1));
+                        const pick = parseInt(c.pick || 0, 10);
+                        const note = c.note || '';
+                        const items = (c.items && Array.isArray(c.items)) ? c.items : [];
 
-                        // sembunyikan yg "tidak termasuk" + kosong
-                        var exclude = false;
-                        if (items.length === 0 && note && note.toLowerCase().indexOf('tidak termasuk') !== -1)
-                            exclude = true;
+                        let exclude = false;
+                        if (items.length === 0 && note && note.toLowerCase().includes('tidak termasuk')) exclude = true;
 
-                        var noteText = '';
+                        let noteText = '';
                         if (pick > 0) noteText = 'Bebas memilih ' + pick + ' macam';
                         if (note) noteText = noteText ? (noteText + ' • ' + note) : note;
 
-                        var example = items.length ? items.slice(0, 2).join(', ') : 'Tulis pilihan kamu di sini';
+                        const example = items.length ? items.slice(0, 2).join(', ') : 'Tulis pilihan kamu di sini';
 
-                        var placeholder = '';
+                        let placeholder = '';
                         if (pick > 0) placeholder = 'Pilih maksimal ' + pick + ' (contoh: ' + example + ')';
                         else if (note) placeholder = note + ' (contoh: ' + example + ')';
                         else placeholder = 'Contoh: ' + example;
 
                         this.categories.push({
-                            key: key,
-                            label: label,
-                            pick: pick,
-                            note: note,
-                            noteText: noteText,
-                            items: items,
-                            example: example,
-                            placeholder: placeholder,
-                            exclude: exclude
+                            key,
+                            label,
+                            pick,
+                            note,
+                            noteText,
+                            items,
+                            example,
+                            placeholder,
+                            exclude
                         });
                     }
                 }
 
-                // addons
                 if (obj.addons && Array.isArray(obj.addons)) {
-                    for (var j = 0; j < obj.addons.length; j++) {
-                        var a = obj.addons[j] || {};
-                        var akey = a.key || ('addon_' + j);
-                        var alabel = a.label || ('Add-on ' + (j + 1));
-                        var apick = parseInt(a.pick || 0, 10);
-                        var aprice = parseInt(a.price || 0, 10);
-                        var anote = a.note || '';
-                        var aitems = (a.items && Array.isArray(a.items)) ? a.items : [];
+                    for (let j = 0; j < obj.addons.length; j++) {
+                        const a = obj.addons[j] || {};
+                        const key = a.key || ('addon_' + j);
+                        const label = a.label || ('Add-on ' + (j + 1));
+                        const pick = parseInt(a.pick || 0, 10);
+                        const price = parseInt(a.price || 0, 10);
+                        const note = a.note || '';
+                        const items = (a.items && Array.isArray(a.items)) ? a.items : [];
 
-                        var aexample = aitems.length ? aitems.slice(0, 2).join(', ') : 'Tulis pilihan add-on';
-                        var aplaceholder = '';
-                        if (apick > 0) aplaceholder = 'Pilih maksimal ' + apick + ' (contoh: ' + aexample + ')';
-                        else if (anote) aplaceholder = anote + ' (contoh: ' + aexample + ')';
-                        else aplaceholder = 'Contoh: ' + aexample;
+                        const example = items.length ? items.slice(0, 2).join(', ') : 'Tulis pilihan add-on';
+
+                        let placeholder = '';
+                        if (pick > 0) placeholder = 'Pilih maksimal ' + pick + ' (contoh: ' + example + ')';
+                        else if (note) placeholder = note + ' (contoh: ' + example + ')';
+                        else placeholder = 'Contoh: ' + example;
 
                         this.addons.push({
-                            key: akey,
-                            label: alabel,
-                            pick: apick,
-                            price: aprice,
-                            note: anote,
-                            items: aitems,
-                            example: aexample,
-                            placeholder: aplaceholder,
+                            key,
+                            label,
+                            pick,
+                            price,
+                            note,
+                            items,
+                            example,
+                            placeholder,
                             enabled: false
                         });
                     }
@@ -628,17 +752,16 @@ $default_tipe_jam = isset($default_tipe_jam) ? $default_tipe_jam : $allowed_tipe
             },
 
             get subtotal() {
-                var jp = parseInt(this.jumlahPorsi || '0', 10);
+                const jp = parseInt(this.jumlahPorsi || '0', 10);
                 if (!jp || !this.selectedHarga) return 0;
                 return jp * this.selectedHarga;
             },
 
             get addonsTotal() {
-                // dihitung per pax
-                var jp = parseInt(this.jumlahPorsi || '0', 10);
+                let jp = parseInt(this.jumlahPorsi || '0', 10);
                 if (!jp) jp = 0;
-                var total = 0;
-                for (var i = 0; i < this.addons.length; i++) {
+                let total = 0;
+                for (let i = 0; i < this.addons.length; i++) {
                     if (this.addons[i].enabled) total += (parseInt(this.addons[i].price || 0, 10) * jp);
                 }
                 return total;
@@ -650,6 +773,7 @@ $default_tipe_jam = isset($default_tipe_jam) ? $default_tipe_jam : $allowed_tipe
         }
     }
     </script>
+
 </body>
 
 </html>
