@@ -1,2 +1,3 @@
-license.txt
-Progress.txt
+# CodeIgniter logs
+application/logs/*
+!application/logs/index.html
