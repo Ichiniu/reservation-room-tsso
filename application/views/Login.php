@@ -9,7 +9,7 @@
     </head>
 
     <body class="min-h-screen text-white relative overflow-hidden
-    bg-[url('<?=base_url('assets/images/gedung/tsu-front.png')?>')]
+    bg-[url('<?=base_url('assets/login/login.png')?>')]
     bg-cover bg-center bg-no-repeat bg-fixed">
 
         <!-- Dark overlay (biar background lebih gelap) -->

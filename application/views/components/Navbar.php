@@ -421,32 +421,31 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
             // run
             poll();
             setInterval(poll, 8000); // 8 detik lebih stabil (nggak gampang di-throttle)
-        })(); <
-        />
-        document.getElementById('pemesananLinkDesktop')?.addEventListener('click', () => {
-            markRead('pemesanan');
-            setBadge(document.getElementById('notifBadge'), 0);
-            setBadge(document.getElementById('notifBadgeMobile'), 0);
-        });
 
-        document.getElementById('pemesananLinkMobile')?.addEventListener('click', () => {
-            markRead('pemesanan');
-            setBadge(document.getElementById('notifBadge'), 0);
-            setBadge(document.getElementById('notifBadgeMobile'), 0);
-        });
+            // ===== additional event listeners =====
+            document.getElementById('pemesananLinkDesktop')?.addEventListener('click', () => {
+                markRead('pemesanan');
+                setBadge(document.getElementById('notifBadge'), 0);
+                setBadge(document.getElementById('notifBadgeMobile'), 0);
+            });
 
-        document.getElementById('transaksiLinkDesktop')?.addEventListener('click', () => {
-            markRead('transaksi');
-            setBadge(document.getElementById('trxBadge'), 0);
-            setBadge(document.getElementById('trxBadgeMobile'), 0);
-        });
+            document.getElementById('pemesananLinkMobile')?.addEventListener('click', () => {
+                markRead('pemesanan');
+                setBadge(document.getElementById('notifBadge'), 0);
+                setBadge(document.getElementById('notifBadgeMobile'), 0);
+            });
 
-        document.getElementById('transaksiLinkMobile')?.addEventListener('click', () => {
-            markRead('transaksi');
-            setBadge(document.getElementById('trxBadge'), 0);
-            setBadge(document.getElementById('trxBadgeMobile'), 0);
-        });
+            document.getElementById('transaksiLinkDesktop')?.addEventListener('click', () => {
+                markRead('transaksi');
+                setBadge(document.getElementById('trxBadge'), 0);
+                setBadge(document.getElementById('trxBadgeMobile'), 0);
+            });
 
+            document.getElementById('transaksiLinkMobile')?.addEventListener('click', () => {
+                markRead('transaksi');
+                setBadge(document.getElementById('trxBadge'), 0);
+                setBadge(document.getElementById('trxBadgeMobile'), 0);
+            });
 
-        <
-        /body>
+        })();
+</script>
