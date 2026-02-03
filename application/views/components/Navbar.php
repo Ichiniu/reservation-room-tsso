@@ -26,7 +26,8 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
 
             <!-- DESKTOP MENU -->
             <nav class="hidden md:flex items-center gap-10 text-[11px] font-semibold tracking-widest text-slate-700">
-                <a href="<?= site_url('home/' . $session_id . '/'); ?>" class="flex items-center gap-2 hover:text-slate-900">
+                <a href="<?= site_url('home/' . $session_id . '/'); ?>"
+                    class="flex items-center gap-2 hover:text-slate-900">
                     <i class="bi bi-house-door"></i> HOME
                 </a>
 
@@ -59,26 +60,26 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
                 </a>
             </nav>
 
-                <!-- RIGHT -->
-                <div class="flex items-center gap-3">
-                    <button id="mobileMenuBtn"
-                        class="md:hidden inline-flex items-center justify-center rounded-lg border border-black/10 p-2 hover:bg-slate-100 transition">
-                        <i class="bi bi-list text-xl"></i>
-                    </button>
+            <!-- RIGHT -->
+            <div class="flex items-center gap-3">
+                <button id="mobileMenuBtn"
+                    class="md:hidden inline-flex items-center justify-center rounded-lg border border-black/10 p-2 hover:bg-slate-100 transition">
+                    <i class="bi bi-list text-xl"></i>
+                </button>
 
-                    <!-- PROFILE (DESKTOP) -->
-                    <div class="relative hidden md:block">
-                        <button type="button"
-                            class="profile-toggle flex items-center gap-2 px-3 py-1 rounded-full bg-white hover:bg-slate-100 border border-black/10 transition">
+                <!-- PROFILE (DESKTOP) -->
+                <div class="relative hidden md:block">
+                    <button type="button"
+                        class="profile-toggle flex items-center gap-2 px-3 py-1 rounded-full bg-white hover:bg-slate-100 border border-black/10 transition">
 
-                            <?php $foto_profil = $this->session->userdata('foto_profil'); ?>
+                        <?php $foto_profil = $this->session->userdata('foto_profil'); ?>
 
-                            <?php if (!empty($foto_profil)): ?>
-                                <img src="<?= base_url($foto_profil); ?>" class="h-7 w-7 rounded-full object-cover"
-                                    alt="Foto Profil">
-                            <?php else: ?>
-                                <i class="bi bi-person-circle text-slate-700"></i>
-                            <?php endif; ?>
+                        <?php if (!empty($foto_profil)): ?>
+                        <img src="<?= base_url($foto_profil); ?>" class="h-7 w-7 rounded-full object-cover"
+                            alt="Foto Profil">
+                        <?php else: ?>
+                        <i class="bi bi-person-circle text-slate-700"></i>
+                        <?php endif; ?>
 
                         <span class="text-xs font-medium text-slate-700">
                             <?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8'); ?>
@@ -86,32 +87,32 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
                         <i class="bi bi-chevron-down text-xs text-slate-600"></i>
                     </button>
 
-                        <div
-                            class="profile-menu hidden absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-md border border-black/10 text-sm overflow-hidden">
-                            <a href="<?= site_url('edit_data/' . $username); ?>"
-                                class="flex items-center gap-2 px-4 py-2 hover:bg-slate-100">
-                                <i class="bi bi-pencil-square"></i> Edit Data Diri
-                            </a>
+                    <div
+                        class="profile-menu hidden absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-md border border-black/10 text-sm overflow-hidden">
+                        <a href="<?= site_url('edit_data/' . $username); ?>"
+                            class="flex items-center gap-2 px-4 py-2 hover:bg-slate-100">
+                            <i class="bi bi-pencil-square"></i> Edit Data Diri
+                        </a>
 
                         <a href="<?= site_url('edit_foto/' . $username); ?>"
                             class="flex items-center gap-2 px-4 py-2 hover:bg-slate-100">
                             <i class="bi bi-camera"></i> Edit Foto Profil
                         </a>
 
-                            <div class="border-t border-black/5">
-                                <button type="button" onclick="aktifkanNotif()"
-                                    class="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-slate-100">
-                                    <i class="bi bi-bell"></i> Aktifkan Notifikasi
-                                </button>
+                        <div class="border-t border-black/5">
+                            <button type="button" onclick="aktifkanNotif()"
+                                class="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-slate-100">
+                                <i class="bi bi-bell"></i> Aktifkan Notifikasi
+                            </button>
 
-                                <button id="testSound"
-                                    class="ml-2 px-3 py-1 rounded-md text-xs border bg-slate-950 border-gray-300 hover:bg-gray-50">
-                                    Test Sound
-                                </button>
-                                <button id="testDesktop"
-                                    class="ml-2 px-3 py-1 rounded-md text-xs border bg-slate-950 border-gray-300 hover:bg-gray-50">
-                                    Test Desktop
-                                </button>
+                            <button id="testSound"
+                                class="ml-2 px-3 py-1 rounded-md text-xs border bg-slate-950 border-gray-300 hover:bg-gray-50">
+                                Test Sound
+                            </button>
+                            <button id="testDesktop"
+                                class="ml-2 px-3 py-1 rounded-md text-xs border bg-slate-950 border-gray-300 hover:bg-gray-50">
+                                Test Desktop
+                            </button>
 
                             <div class="px-4 pb-2 text-[11px] text-slate-500 flex items-center gap-2">
                                 <span id="notifDot" class="inline-block w-2 h-2 rounded-full bg-slate-300"></span>
@@ -166,9 +167,9 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
             <div class="border-t border-black/10 pt-3 mt-2">
                 <div class="text-xs text-slate-500 mb-2">Akun</div>
 
-                    <a href="<?= site_url('edit_data/' . $username); ?>" class="flex items-center gap-2">
-                        <i class="bi bi-pencil-square"></i> Edit Data
-                    </a>
+                <a href="<?= site_url('edit_data/' . $username); ?>" class="flex items-center gap-2">
+                    <i class="bi bi-pencil-square"></i> Edit Data
+                </a>
 
                 <button type="button" onclick="aktifkanNotif()"
                     class="flex items-center gap-2 text-left w-full hover:text-slate-900">
@@ -189,39 +190,39 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
 </audio>
 
 <script>
-    (function() {
-        // ===== MENU TOGGLES =====
-        var mobileBtn = document.getElementById('mobileMenuBtn');
-        var mobileMenu = document.getElementById('mobileMenu');
+(function() {
+    // ... script notif kamu tetap ...
 
-        if (mobileBtn && mobileMenu) {
-            mobileBtn.addEventListener('click', function() {
-                if (mobileMenu.classList.contains('hidden')) mobileMenu.classList.remove('hidden');
-                else mobileMenu.classList.add('hidden');
-            });
-        }
+    // ========= MOBILE MENU TOGGLE =========
+    const mobileBtn = document.getElementById("mobileMenuBtn");
+    const mobileMenu = document.getElementById("mobileMenu");
 
-        var profileToggle = document.getElementById('profileToggle');
-        var profileMenu = document.getElementById('profileMenu');
+    if (mobileBtn && mobileMenu) {
+        mobileBtn.addEventListener("click", () => {
+            const isOpen = !mobileMenu.classList.contains("hidden");
+            mobileMenu.classList.toggle("hidden");
+            mobileBtn.setAttribute("aria-expanded", String(!isOpen));
+        });
+    }
 
-        function closeProfile() {
-            if (profileMenu && !profileMenu.classList.contains('hidden')) {
-                profileMenu.classList.add('hidden');
-            }
-        }
+    // ========= PROFILE DROPDOWN TOGGLE (DESKTOP) =========
+    const profileToggle = document.getElementById("profileToggle");
+    const profileMenu = document.getElementById("profileMenu");
 
-        if (profileToggle && profileMenu) {
-            profileToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                if (profileMenu.classList.contains('hidden')) profileMenu.classList.remove('hidden');
-                else profileMenu.classList.add('hidden');
-            });
+    function closeProfileMenu() {
+        if (!profileMenu) return;
+        profileMenu.classList.add("hidden");
+        if (profileToggle) profileToggle.setAttribute("aria-expanded", "false");
+    }
 
-            document.addEventListener('click', function() {
-                closeProfile();
-            });
+    function toggleProfileMenu() {
+        if (!profileMenu) return;
+        const isHidden = profileMenu.classList.contains("hidden");
+        profileMenu.classList.toggle("hidden");
+        if (profileToggle) profileToggle.setAttribute("aria-expanded", String(isHidden));
+    }
 
+<<<<<<< HEAD
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') closeProfile();
             });
@@ -449,3 +450,36 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
 
         })();
 </script>
+=======
+    if (profileToggle && profileMenu) {
+        profileToggle.addEventListener("click", (e) => {
+            e.stopPropagation();
+            toggleProfileMenu();
+        });
+
+        // klik di luar => nutup
+        document.addEventListener("click", (e) => {
+            if (!profileMenu.contains(e.target) && !profileToggle.contains(e.target)) {
+                closeProfileMenu();
+            }
+        });
+
+        // tombol ESC => nutup
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") closeProfileMenu();
+        });
+    }
+
+    // ====== RUN (punya kamu) ======
+    poll();
+    setInterval(poll, 8000);
+
+    wireClick("pemesananLinkDesktop", "pemesanan", ["notifBadge", "notifBadgeMobile"]);
+    wireClick("pemesananLinkMobile", "pemesanan", ["notifBadge", "notifBadgeMobile"]);
+    wireClick("transaksiLinkDesktop", "transaksi", ["trxBadge", "trxBadgeMobile"]);
+    wireClick("transaksiLinkMobile", "transaksi", ["trxBadge", "trxBadgeMobile"]);
+})();
+</script>
+
+<!-- </body> -->
+>>>>>>> 240260d9902c29832776d32540c99bfc902626c0
