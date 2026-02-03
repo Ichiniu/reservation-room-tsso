@@ -2,8 +2,7 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 $config['admin_emails'] = [
-    '21530065.ikhsan@sinus.ac.id',
-    'ikhsanwahyu04 @gmail . com'
+    'bookingsmarts@gmail.com'
 ];
 
 // ⚠️ "from" harus email yang REAL dan sama dengan smtp_user (untuk Gmail SMTP)
@@ -13,8 +12,8 @@ $config['mail_from_name'] = 'Booking Smarts';
 $config['smtp'] = [
     'protocol'    => 'smtp',
     'smtp_host'   => 'smtp.gmail.com',
-    'smtp_user'   => 'ikhsanwahyu04@gmail.com',
-    'smtp_pass'   => 'blyebtsyrveyngib',
+    'smtp_user'   => 'bookingsmarts@gmail.com',
+    'smtp_pass'   => 'UNKONWNN', // ganti dengan app password Gmail Anda
     'smtp_port'   => 587,
     'smtp_crypto' => 'tls',
 
