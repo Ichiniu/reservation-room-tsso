@@ -93,15 +93,14 @@ class Registration extends CI_Controller
 			return;
 		}
 
-		// phone: keep digits only and require at least 11 digits
-		$digits = preg_replace('/\D+/', '', $no_telepon);
-		if (strlen($digits) < 11) {
-			echo "No telepon minimal 11 digit angka";
+		// phone: must be digits only and have 11-13 digits
+		if (!preg_match('/^\d{11,13}$/', $no_telepon)) {
+			echo "No telepon harus 11 sampai 13 digit angka (hanya angka diperbolehkan)";
 			$this->output->set_header('refresh:2; url=' . site_url("/registration"));
 			return;
 		}
-		// normalize phone in data
-		$data['NO_TELEPON'] = $digits;
+		// normalize phone in data (safe)
+		$data['NO_TELEPON'] = $no_telepon;
 
 		// dob: verify age >= 20
 		if (!empty($dob)) {

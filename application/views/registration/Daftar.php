@@ -76,7 +76,7 @@
                                 <!-- [CHANGED] Hapus text-black, option dibuat dark -->
                                 <option value="" selected class="bg-[#071A1A] text-white/60">-- Pilih Perusahaan --
                                 </option>
-
+                                <option value="INTERNAL" class="bg-[#071A1A] text-[#D7FFF8]">PT Tiga Serangkai Inti Corpora</option>
                                 <option value="INTERNAL" class="bg-[#071A1A] text-[#D7FFF8]">PT Tiga Serangkai Pustaka
                                     Mandiri</option>
                                 <option value="INTERNAL" class="bg-[#071A1A] text-[#D7FFF8]">PT Assalaam Niaga Utama
@@ -84,14 +84,15 @@
                                 <option value="INTERNAL" class="bg-[#071A1A] text-[#D7FFF8]">PT Wangsa Jatra Lestari
                                 </option>
                                 <option value="INTERNAL" class="bg-[#071A1A] text-[#D7FFF8]">PT K33 Distribusi</option>
-                                <option value="INTERNAL" class="bg-[#071A1A] text-[#D7FFF8]">Alfirdaus</option>
+                                <option value="INTERNAL" class="bg-[#071A1A] text-[#D7FFF8]">Al Firdaus</option>
+                                <option value="INTERNAL" class="bg-[#071A1A] text-[#D7FFF8]">Tiga Serangkai University
+                                </option>
                                 <option value="INTERNAL" class="bg-[#071A1A] text-[#D7FFF8]">Puspa Holistic Integrative
                                     Care</option>
                                 <option value="INTERNAL" class="bg-[#071A1A] text-[#D7FFF8]">Cerita Rasa Catering
                                 </option>
                                 <option value="INTERNAL" class="bg-[#071A1A] text-[#D7FFF8]">Montecarlo</option>
-                                <option value="INTERNAL" class="bg-[#071A1A] text-[#D7FFF8]">Tiga Serangkai University
-                                </option>
+
 
                                 <option value="EKSTERNAL" class="bg-[#071A1A] text-[#D7FFF8]">
                                     Perusahaan/Instansi/Kalangan Umum (Non TS Group)</option>
@@ -236,215 +237,242 @@
     </main>
 
     <script>
-    /* =========================
+        /* =========================
        [CHANGED] Helper: ambil elemen pesan & set error/ok pakai Tailwind classes
     ========================== */
-    function getMsgEl(input) {
-        const wrap = input.closest('[data-field]');
-        return wrap ? wrap.querySelector('.input-msg') : null;
-    }
-
-    function setError(input, message) {
-        const msg = getMsgEl(input);
-        if (msg) {
-            msg.textContent = message;
-            msg.classList.remove('hidden', 'text-emerald-200');
-            msg.classList.add('text-red-200');
+        function getMsgEl(input) {
+            const wrap = input.closest('[data-field]');
+            return wrap ? wrap.querySelector('.input-msg') : null;
         }
 
-        input.classList.add(
-            'border-red-300', 'ring-2', 'ring-red-300/20',
-            'focus:border-red-300', 'focus:ring-red-300/30'
-        );
-    }
-
-    function setOK(input, message = '') {
-        const msg = getMsgEl(input);
-        if (msg) {
-            if (message) {
+        function setError(input, message) {
+            const msg = getMsgEl(input);
+            if (msg) {
                 msg.textContent = message;
-                msg.classList.remove('hidden', 'text-red-200');
-                msg.classList.add('text-emerald-200');
+                msg.classList.remove('hidden', 'text-emerald-200');
+                msg.classList.add('text-red-200');
+            }
+
+            input.classList.add(
+                'border-red-300', 'ring-2', 'ring-red-300/20',
+                'focus:border-red-300', 'focus:ring-red-300/30'
+            );
+        }
+
+        function setOK(input, message = '') {
+            const msg = getMsgEl(input);
+            if (msg) {
+                if (message) {
+                    msg.textContent = message;
+                    msg.classList.remove('hidden', 'text-red-200');
+                    msg.classList.add('text-emerald-200');
+                } else {
+                    msg.textContent = '';
+                    msg.classList.add('hidden');
+                    msg.classList.remove('text-red-200', 'text-emerald-200');
+                }
+            }
+
+            input.classList.remove(
+                'border-red-300', 'ring-2', 'ring-red-300/20',
+                'focus:border-red-300', 'focus:ring-red-300/30'
+            );
+        }
+
+        function isEmailValid(v) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+        }
+
+        function isGmail(v) {
+            // Accept gmail.com and country variants like gmail.co.id
+            return /^[^\s@]+@gmail(\.[a-z]{2,})?(\.[a-z]{2,})?$/i.test(v) || /^[^\s@]+@gmail\.[a-z]{2,}$/i.test(v);
+        }
+
+        function calculateAge(dateString) {
+            if (!dateString) return 0;
+            const dob = new Date(dateString);
+            if (isNaN(dob.getTime())) return 0;
+            const now = new Date();
+            let age = now.getFullYear() - dob.getFullYear();
+            const m = now.getMonth() - dob.getMonth();
+            if (m < 0 || (m === 0 && now.getDate() < dob.getDate())) {
+                age--;
+            }
+            return age;
+        }
+
+        function onlyDigits(v) {
+            return v.replace(/[^\d]/g, '');
+        }
+
+        /* =========================
+           Toggle perusahaan fields
+        ========================== */
+        const perusahaan = document.getElementById('perusahaan');
+        const wrapDepartemen = document.getElementById('wrapDepartemen');
+        const wrapEksternal = document.getElementById('wrapEksternal');
+
+        // [CHANGED] warna teks select agar placeholder redup, kalau sudah pilih jadi putih
+        function syncSelectText() {
+            if (!perusahaan.value) {
+                perusahaan.classList.add('text-white/60');
+                perusahaan.classList.remove('text-white');
             } else {
-                msg.textContent = '';
-                msg.classList.add('hidden');
-                msg.classList.remove('text-red-200', 'text-emerald-200');
+                perusahaan.classList.add('text-white');
+                perusahaan.classList.remove('text-white/60');
             }
         }
 
-        input.classList.remove(
-            'border-red-300', 'ring-2', 'ring-red-300/20',
-            'focus:border-red-300', 'focus:ring-red-300/30'
-        );
-    }
-
-    function isEmailValid(v) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-    }
-
-    function onlyDigits(v) {
-        return v.replace(/[^\d]/g, '');
-    }
-
-    /* =========================
-       Toggle perusahaan fields
-    ========================== */
-    const perusahaan = document.getElementById('perusahaan');
-    const wrapDepartemen = document.getElementById('wrapDepartemen');
-    const wrapEksternal = document.getElementById('wrapEksternal');
-
-    // [CHANGED] warna teks select agar placeholder redup, kalau sudah pilih jadi putih
-    function syncSelectText() {
-        if (!perusahaan.value) {
-            perusahaan.classList.add('text-white/60');
-            perusahaan.classList.remove('text-white');
-        } else {
-            perusahaan.classList.add('text-white');
-            perusahaan.classList.remove('text-white/60');
+        function syncPerusahaanUI() {
+            if (perusahaan.value === 'INTERNAL') {
+                wrapDepartemen.classList.remove('hidden');
+                wrapEksternal.classList.add('hidden');
+            } else if (perusahaan.value === 'EKSTERNAL') {
+                wrapEksternal.classList.remove('hidden');
+                wrapDepartemen.classList.add('hidden');
+            } else {
+                wrapDepartemen.classList.add('hidden');
+                wrapEksternal.classList.add('hidden');
+            }
+            syncSelectText();
         }
-    }
 
-    function syncPerusahaanUI() {
-        if (perusahaan.value === 'INTERNAL') {
-            wrapDepartemen.classList.remove('hidden');
-            wrapEksternal.classList.add('hidden');
-        } else if (perusahaan.value === 'EKSTERNAL') {
-            wrapEksternal.classList.remove('hidden');
-            wrapDepartemen.classList.add('hidden');
-        } else {
-            wrapDepartemen.classList.add('hidden');
-            wrapEksternal.classList.add('hidden');
-        }
-        syncSelectText();
-    }
-
-    perusahaan.addEventListener('change', () => {
-        syncPerusahaanUI();
-        validateField(perusahaan);
-        validateField(document.getElementById('departemen'));
-        validateField(document.getElementById('nama_perusahaan'));
-    });
-
-    syncPerusahaanUI();
-
-    /* =========================
-       [CHANGED] Toggle password visibility + perbaikan icon (bi-eye / bi-eye-slash)
-    ========================== */
-    document.querySelectorAll('.pw-toggle').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const id = btn.getAttribute('data-target');
-            const input = document.getElementById(id);
-            const icon = btn.querySelector('i');
-
-            const isPassword = input.type === 'password';
-            input.type = isPassword ? 'text' : 'password';
-
-            icon.classList.toggle('bi-eye', isPassword);
-            icon.classList.toggle('bi-eye-slash', !isPassword);
-
-            btn.setAttribute('aria-label', isPassword ? 'Sembunyikan password' : 'Tampilkan password');
+        perusahaan.addEventListener('change', () => {
+            syncPerusahaanUI();
+            validateField(perusahaan);
+            validateField(document.getElementById('departemen'));
+            validateField(document.getElementById('nama_perusahaan'));
         });
-    });
 
-    /* =========================
-       Validation
-    ========================== */
-    function validateField(input) {
-        if (!input) return true;
-
-        const id = input.id;
-        const name = input.getAttribute('name');
-        const value = (input.value || '').trim();
-
-        // skip field sesuai perusahaan
-        if (name === 'nama_perusahaan') {
-            if (perusahaan.value !== 'EKSTERNAL') return (setOK(input), true);
-            if (!value) return (setError(input, 'Nama perusahaan wajib diisi.'), false);
-            return (setOK(input), true);
-        }
-
-        if (name === 'departemen') {
-            if (perusahaan.value !== 'INTERNAL') return (setOK(input), true);
-            if (!value) return (setError(input, 'Departemen wajib diisi.'), false);
-            return (setOK(input), true);
-        }
-
-        // required
-        if (input.hasAttribute('required') && !value) {
-            setError(input, 'Field ini wajib diisi.');
-            return false;
-        }
-
-        // rules
-        if (id === 'username' && value.length < 3) return (setError(input, 'Username minimal 3 karakter.'), false);
-        if (id === 'nama_lengkap' && value.length < 3) return (setError(input, 'Nama lengkap minimal 3 karakter.'),
-            false);
-
-        if (id === 'email' && value && !isEmailValid(value)) return (setError(input, 'Format email tidak valid.'),
-            false);
-
-        if (id === 'no_telepon') {
-            const digits = onlyDigits(value);
-            if (digits.length < 8) return (setError(input, 'No telepon minimal 8 digit angka.'), false);
-            input.value = digits;
-            return (setOK(input), true);
-        }
-
-        if (id === 'password') {
-            if (value.length < 6) return (setError(input, 'Password minimal 6 karakter.'), false);
-            const cp = document.getElementById('confirm_pass');
-            if ((cp.value || '').trim().length > 0) validateField(cp);
-            return (setOK(input), true);
-        }
-
-        if (id === 'confirm_pass') {
-            const p = (document.getElementById('password').value || '').trim();
-            if (value !== p) return (setError(input, 'Confirm password harus sama dengan password.'), false);
-            return (setOK(input), true);
-        }
-
-        if (id === 'perusahaan' && !value) return (setError(input, 'Perusahaan wajib dipilih.'), false);
-        if (id === 'dob' && !value) return (setError(input, 'Tanggal lahir wajib diisi.'), false);
-
-        return (setOK(input), true);
-    }
-
-    const fields = [
-        'username', 'nama_lengkap', 'perusahaan', 'nama_perusahaan', 'departemen',
-        'password', 'confirm_pass', 'email', 'alamat', 'no_telepon', 'dob'
-    ].map(id => document.getElementById(id)).filter(Boolean);
-
-    fields.forEach(el => {
-        el.addEventListener('input', () => validateField(el));
-        el.addEventListener('blur', () => validateField(el));
-    });
-
-    const form = document.getElementById('formReg');
-    form.addEventListener('submit', (e) => {
         syncPerusahaanUI();
 
-        let firstInvalid = null;
-        let ok = true;
+        /* =========================
+           [CHANGED] Toggle password visibility + perbaikan icon (bi-eye / bi-eye-slash)
+        ========================== */
+        document.querySelectorAll('.pw-toggle').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-target');
+                const input = document.getElementById(id);
+                const icon = btn.querySelector('i');
+
+                const isPassword = input.type === 'password';
+                input.type = isPassword ? 'text' : 'password';
+
+                icon.classList.toggle('bi-eye', isPassword);
+                icon.classList.toggle('bi-eye-slash', !isPassword);
+
+                btn.setAttribute('aria-label', isPassword ? 'Sembunyikan password' : 'Tampilkan password');
+            });
+        });
+
+        /* =========================
+           Validation
+        ========================== */
+        function validateField(input) {
+            if (!input) return true;
+
+            const id = input.id;
+            const name = input.getAttribute('name');
+            const value = (input.value || '').trim();
+
+            // skip field sesuai perusahaan
+            if (name === 'nama_perusahaan') {
+                if (perusahaan.value !== 'EKSTERNAL') return (setOK(input), true);
+                if (!value) return (setError(input, 'Nama perusahaan wajib diisi.'), false);
+                return (setOK(input), true);
+            }
+
+            if (name === 'departemen') {
+                if (perusahaan.value !== 'INTERNAL') return (setOK(input), true);
+                if (!value) return (setError(input, 'Departemen wajib diisi.'), false);
+                return (setOK(input), true);
+            }
+
+            // required
+            if (input.hasAttribute('required') && !value) {
+                setError(input, 'Field ini wajib diisi.');
+                return false;
+            }
+
+            // rules
+            if (id === 'username' && value.length < 3) return (setError(input, 'Username minimal 3 karakter.'), false);
+            if (id === 'nama_lengkap' && value.length < 3) return (setError(input, 'Nama lengkap minimal 3 karakter.'),
+                false);
+
+            if (id === 'email' && value) {
+                if (!isEmailValid(value)) return (setError(input, 'Format email tidak valid.'), false);
+                if (!isGmail(value)) return (setError(input, 'Email harus menggunakan domain @gmail.'), false);
+            }
+            if (id === 'no_telepon') {
+                const digits = onlyDigits(value);
+
+                // reject if user typed non-digit characters (letters, symbols)
+                if (value && /[A-Za-z]/.test(value)) return (setError(input, 'No telepon hanya boleh berisi angka.'), false);
+
+                if (digits.length < 11 || digits.length > 13) return (setError(input, 'No telepon harus 11 sampai 13 digit angka.'), false);
+                input.value = digits;
+                return (setOK(input), true);
+            }
+
+            if (id === 'password') {
+                if (value.length < 6) return (setError(input, 'Password minimal 6 karakter.'), false);
+                const cp = document.getElementById('confirm_pass');
+                if ((cp.value || '').trim().length > 0) validateField(cp);
+                return (setOK(input), true);
+            }
+
+            if (id === 'confirm_pass') {
+                const p = (document.getElementById('password').value || '').trim();
+                if (value !== p) return (setError(input, 'Confirm password harus sama dengan password.'), false);
+                return (setOK(input), true);
+            }
+
+            if (id === 'perusahaan' && !value) return (setError(input, 'Perusahaan wajib dipilih.'), false);
+            if (id === 'dob') {
+                if (!value) return (setError(input, 'Tanggal lahir wajib diisi.'), false);
+                const age = calculateAge(value);
+                if (age < 20) return (setError(input, 'Usia minimal 20 tahun.'), false);
+            }
+
+            return (setOK(input), true);
+        }
+
+        const fields = [
+            'username', 'nama_lengkap', 'perusahaan', 'nama_perusahaan', 'departemen',
+            'password', 'confirm_pass', 'email', 'alamat', 'no_telepon', 'dob'
+        ].map(id => document.getElementById(id)).filter(Boolean);
 
         fields.forEach(el => {
-            const valid = validateField(el);
-            if (!valid && !firstInvalid) firstInvalid = el;
-            ok = ok && valid;
+            el.addEventListener('input', () => validateField(el));
+            el.addEventListener('blur', () => validateField(el));
         });
 
-        if (!ok) {
-            e.preventDefault();
-            if (firstInvalid) {
-                firstInvalid.focus({
-                    preventScroll: false
-                });
-                firstInvalid.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center'
-                });
+        const form = document.getElementById('formReg');
+        form.addEventListener('submit', (e) => {
+            syncPerusahaanUI();
+
+            let firstInvalid = null;
+            let ok = true;
+
+            fields.forEach(el => {
+                const valid = validateField(el);
+                if (!valid && !firstInvalid) firstInvalid = el;
+                ok = ok && valid;
+            });
+
+            if (!ok) {
+                e.preventDefault();
+                if (firstInvalid) {
+                    firstInvalid.focus({
+                        preventScroll: false
+                    });
+                    firstInvalid.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                }
             }
-        }
-    });
+        });
     </script>
 
 </body>
