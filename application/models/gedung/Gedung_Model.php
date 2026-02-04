@@ -831,9 +831,17 @@ TIME_FORMAT(
 
 	public function get_gedung_img($id_gedung)
 	{
-		$query = "SELECT ID_GEDUNG, PATH, IMG_NAME FROM GEDUNG_IMG WHERE ID_GEDUNG = $id_gedung";
+		$query = "SELECT * FROM GEDUNG_IMG WHERE ID_GEDUNG = $id_gedung";
 		$sql = $this->db->query($query);
 		return $sql->result_array();
+	}
+
+	public function delete_gedung_img($id_gedung, $img_name)
+	{
+		$this->db->where('ID_GEDUNG', $id_gedung);
+		$this->db->where('IMG_NAME', $img_name);
+		$this->db->delete('gedung_img');
+		return $this->db->affected_rows() > 0;
 	}
 	public function get_order_by_id_user($id_pemesanan, $username)
 	{

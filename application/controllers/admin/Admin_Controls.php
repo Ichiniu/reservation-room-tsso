@@ -123,47 +123,13 @@ class Admin_Controls extends CI_Controller
 		$this->load->view('admin/rekap_aktivitas_det', $data);
 	}
 
-	function rekap_pembayaran()
-	{
-		$this->load->model('gedung/gedung_model');
-		$data['result'] = $this->gedung_model->get_pending_transaction();
-		$data['get_transaction'] = $this->gedung_model->get_unread_transaction();
-		$this->load->view('admin/rekap_pembayaran', $data);
-	}
 
-	function rekap_pembayaran_det($tanggal_awal, $tanggal_akhir)
-	{
-		$this->load->model('gedung/gedung_model');
-		$tanggal_awal = $this->input->get('start_date');
-		$tanggal_akhir = $this->input->get('end_date');
-		$data['start_date'] = $tanggal_awal;
-		$data['end_date'] = $tanggal_akhir;
-		$data['result'] = $this->gedung_model->get_pending_transaction();
-		$data['get_transaction'] = $this->gedung_model->get_unread_transaction();
-		$data['row'] = $this->gedung_model->laporan_perawatan_periodic($tanggal_awal, $tanggal_akhir);
-		$this->load->view('admin/rekap_pembayaran_det', $data);
-	}
+	/**
+	 * Hapus gambar gedung (DB + filesystem)
+	 * POST params: id_gedung, img_name
+	 */
 
-	function rekap_transaksi()
-	{
-		$this->load->model('gedung/gedung_model');
-		$data['result'] = $this->gedung_model->get_pending_transaction();
-		$data['get_transaction'] = $this->gedung_model->get_unread_transaction();
-		$this->load->view('admin/rekap_transaksi', $data);
-	}
 
-	function rekap_transaksi_det($tanggal_awal, $tanggal_akhir)
-	{
-		$this->load->model('gedung/gedung_model');
-		$tanggal_awal = $this->input->get('start_date');
-		$tanggal_akhir = $this->input->get('end_date');
-		$data['start_date'] = $tanggal_awal;
-		$data['end_date'] = $tanggal_akhir;
-		$data['result'] = $this->gedung_model->get_pending_transaction();
-		$data['get_transaction'] = $this->gedung_model->get_unread_transaction();
-		$data['row'] = $this->gedung_model->laporan_pembayaran_periodic($tanggal_awal, $tanggal_akhir);
-		$this->load->view('admin/rekap_transaksi_det', $data);
-	}
 
 	function transaksi_export_pdf($start_date, $end_date)
 	{
@@ -488,6 +454,57 @@ class Admin_Controls extends CI_Controller
 			);
 
 			$this->gedung_model->update_gedung((int)$id_gedung, $data);
+
+			// PROSES UPLOAD GAMBAR (opsional)
+			$path = "./assets/images/gedung/";
+			$config['upload_path']   = $path;
+			$config['allowed_types'] = 'jpg|jpeg|png';
+			$config['max_size']      = 2048; // 2MB
+			$config['max_width']     = 2000;
+			$config['max_height']    = 2000;
+
+			$this->load->library('upload');
+			$this->upload->initialize($config);
+
+			$base_url = base_url();
+			$img_path = $base_url . "assets/images/gedung/";
+
+			foreach ($_FILES as $field => $fileinfo) {
+				if (is_array($fileinfo['name'])) {
+					// multiple files input (images[])
+					$count = count($fileinfo['name']);
+					for ($i = 0; $i < $count; $i++) {
+						if (empty($fileinfo['name'][$i])) continue;
+						$_FILES['tmpfile']['name'] = $fileinfo['name'][$i];
+						$_FILES['tmpfile']['type'] = $fileinfo['type'][$i];
+						$_FILES['tmpfile']['tmp_name'] = $fileinfo['tmp_name'][$i];
+						$_FILES['tmpfile']['error'] = $fileinfo['error'][$i];
+						$_FILES['tmpfile']['size'] = $fileinfo['size'][$i];
+
+						if (!$this->upload->do_upload('tmpfile')) continue;
+						$files = $this->upload->data();
+						$img_data = array(
+							'ID_GEDUNG'   => (int)$id_gedung,
+							'NAMA_GEDUNG' => $this->input->post('nama_gedung'),
+							'PATH'        => $img_path,
+							'IMG_NAME'    => $files['file_name']
+						);
+						$this->gedung_model->insert_gedung_img($img_data);
+					}
+				} else {
+					if (empty($fileinfo['name'])) continue;
+					if (!$this->upload->do_upload($field)) continue;
+					$files = $this->upload->data();
+					$img_data = array(
+						'ID_GEDUNG'   => (int)$id_gedung,
+						'NAMA_GEDUNG' => $this->input->post('nama_gedung'),
+						'PATH'        => $img_path,
+						'IMG_NAME'    => $files['file_name']
+					);
+					$this->gedung_model->insert_gedung_img($img_data);
+				}
+			}
+
 			redirect('admin/gedung');
 			return;
 		}
@@ -495,6 +512,11 @@ class Admin_Controls extends CI_Controller
 		// 2) BARU LOAD DATA UNTUK VIEW
 		$details['res']    = $this->gedung_model->get_pending_transaction();
 		$details['result'] = $this->gedung_model->gedung_details((int)$id_gedung);
+		// ambil gambar gedung
+		$details['images'] = $this->gedung_model->get_gedung_img((int)$id_gedung);
+
+		// pastikan helper form ter-load agar form_open_multipart menyertakan CSRF jika aktif
+		$this->load->helper('form');
 
 		$this->load->view('admin/edit_gedung', $details);
 	}
@@ -511,9 +533,40 @@ class Admin_Controls extends CI_Controller
 		$filename = "Report Kegiatan.pdf";
 		generate_pdf($object, $filename, true);
 	}
-
 	function dashboard()
 	{
+
+
+		/**
+		 * Hapus gambar gedung (DB + filesystem)
+		 * POST params: id_gedung, img_name
+		 */
+		function delete_gedung_image()
+		{
+			$this->load->model('gedung/gedung_model');
+			$this->load->helper('url');
+
+			$id_gedung = (int)$this->input->post('id_gedung');
+			$img_name = $this->input->post('img_name');
+
+			if ($id_gedung <= 0 || empty($img_name)) {
+				$this->output->set_status_header(400);
+				echo "Parameter tidak lengkap";
+				return;
+			}
+
+			// hapus dari DB
+			$deleted = $this->gedung_model->delete_gedung_img($id_gedung, $img_name);
+
+			// hapus file jika ada
+			$file_path = FCPATH . 'assets/images/gedung/' . $img_name;
+			if (is_file($file_path)) {
+				@unlink($file_path);
+			}
+
+			// redirect kembali ke form edit
+			redirect('admin/edit/' . $id_gedung);
+		}
 		$admin_logged_in = $this->session->userdata('admin_logged_in');
 		$admin_username  = $this->session->userdata('admin_username');
 
@@ -675,6 +728,8 @@ class Admin_Controls extends CI_Controller
 		// notif + email setelah commit
 		if ($action === 'confirm') {
 			$this->notification_service->notifyPaymentConfirmed($username_user, $id_pemesanan, $catatan, true);
+			// minta user untuk mengisi ulasan (email + in-app notif)
+			$this->notification_service->notifyReviewRequest($username_user, $id_pemesanan);
 		} else {
 			$this->notification_service->notifyPaymentRejected($username_user, $id_pemesanan, $catatan, true);
 		}

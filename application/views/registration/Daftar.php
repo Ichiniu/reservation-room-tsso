@@ -87,11 +87,10 @@
                                 <option value="INTERNAL" class="bg-[#071A1A] text-[#D7FFF8]">Al Firdaus</option>
                                 <option value="INTERNAL" class="bg-[#071A1A] text-[#D7FFF8]">Tiga Serangkai University
                                 </option>
-                                <option value="INTERNAL" class="bg-[#071A1A] text-[#D7FFF8]">Puspa Holistic Integrative
-                                    Care</option>
-                                <option value="INTERNAL" class="bg-[#071A1A] text-[#D7FFF8]">Cerita Rasa Catering
-                                </option>
+                                <option value="INTERNAL" class="bg-[#071A1A] text-[#D7FFF8]">Puspa Holistic Integrative Care</option>
                                 <option value="INTERNAL" class="bg-[#071A1A] text-[#D7FFF8]">Montecarlo</option>
+                                <option value="INTERNAL" class="bg-[#071A1A] text-[#D7FFF8]">Cerita Rasa Catering</option>
+
 
 
                                 <option value="EKSTERNAL" class="bg-[#071A1A] text-[#D7FFF8]">
@@ -431,7 +430,7 @@
             if (id === 'dob') {
                 if (!value) return (setError(input, 'Tanggal lahir wajib diisi.'), false);
                 const age = calculateAge(value);
-                if (age < 20) return (setError(input, 'Usia minimal 20 tahun.'), false);
+                if (age < 18) return (setError(input, 'Usia minimal 18 tahun.'), false);
             }
 
             return (setOK(input), true);

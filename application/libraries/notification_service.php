@@ -126,7 +126,6 @@ class Notification_service
         'tanggal' => '-',
         'jam' => '-',
         'ruangan' => '-',
-        'nama_catering' => 'Tidak Ada',
         'jumlah_catering' => 'Tidak Ada',
         'harga_ruangan' => '-',
         'total_catering' => $this->rupiah(0),
@@ -225,10 +224,6 @@ class Notification_service
           <tr>
             <td style="padding:12px 14px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#6b7280;">Ruangan</td>
             <td style="padding:12px 14px;border-bottom:1px solid #e5e7eb;font-size:13px;">' . $esc($d['ruangan']) . '</td>
-          </tr>
-          <tr>
-            <td style="padding:12px 14px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#6b7280;">Nama Catering</td>
-            <td style="padding:12px 14px;border-bottom:1px solid #e5e7eb;font-size:13px;">' . $esc($d['nama_catering']) . '</td>
           </tr>
           <tr>
             <td style="padding:12px 14px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#6b7280;">Jumlah Catering</td>
@@ -390,6 +385,7 @@ class Notification_service
 
                 <div style="color:#111827;font-weight:bold;margin-top:12px;margin-bottom:6px;">Terima kasih,</div>
                 <div style="margin-bottom:2px;">Admin Booking Smart Office</div>
+                <div>085112345548</div> 
               </div>
             </div>
           </td>
@@ -440,6 +436,44 @@ class Notification_service
     if ($this->sendEmail($to, $title, $emailHtml)) {
       $this->markEmailed($notifId);
     }
+  }
+
+  /**
+   * Kirim permintaan review ke user setelah reservasi berstatus SUBMITTED (3).
+   * - memasukkan notification ke tabel notifications
+   * - mengirim email (jika email tersedia)
+   */
+  public function notifyReviewRequest($username, $id_pemesanan_raw)
+  {
+    $id = (int)$id_pemesanan_raw;
+    if ($id <= 0) return false;
+
+    $full_id = 'PMSN000' . $id;
+
+    // ambil rincian pemesanan untuk email/body
+    $r = $this->getRincianPemesananFromView($full_id, $username, null);
+
+    $title = 'Mohon Review Reservasi ' . $full_id;
+    $message = 'Halo ' . htmlspecialchars($r['username'], ENT_QUOTES, 'UTF-8') . "\n\n";
+    $message .= 'Terima kasih telah melakukan reservasi. Mohon luangkan waktu untuk menulis ulasan mengenai pengalaman Anda dengan pemesanan ' . $full_id . ".\n\n";
+    $message .= 'Jika Anda tidak mengisi ulasan dalam waktu 3 hari, sistem akan mengisi ulasan otomatis dengan rating 5 tanpa komentar.\n\n';
+    $message .= 'Klik untuk menulis ulasan: ' . site_url('home/ulasan') . '\n';
+
+    $notifId = $this->insertNotif($username, 'REVIEW_REQUEST', $title, $message, 'home/ulasan');
+
+    $to = $this->getUserEmail($username);
+    if ($to) {
+      $html = '<p>Halo ' . htmlspecialchars($r['username'], ENT_QUOTES, 'UTF-8') . ',</p>';
+      $html .= '<p>Terima kasih telah melakukan reservasi <strong>' . htmlspecialchars($full_id, ENT_QUOTES, 'UTF-8') . '</strong>.</p>';
+      $html .= '<p>Mohon luangkan waktu untuk menulis ulasan tentang pengalaman Anda. Jika Anda tidak mengisi ulasan dalam waktu 3 hari, sistem akan mengisi ulasan otomatis dengan rating <strong>5</strong> tanpa komentar.</p>';
+      $html .= '<p><a href="' . site_url('home/ulasan') . '">Tulis Ulasan</a></p>';
+      $html .= '<hr/>' . $this->buildRincianPemesananHtml($r);
+
+      $sent = $this->sendEmail($to, 'Mohon Tulis Ulasan untuk Reservasi ' . $full_id, $html);
+      if ($sent) $this->markEmailed($notifId);
+    }
+
+    return true;
   }
 
 
@@ -549,6 +583,7 @@ class Notification_service
             <div style="margin-bottom:10px;">Admin Booking Smart Office</div>
             Email ini dikirim otomatis oleh sistem Booking Smarts.
           </td>
+          <td> 085112345548</td>
         </tr>
       </table>
     </td></tr>
@@ -737,6 +772,7 @@ class Notification_service
           <td style="padding:14px 22px;background:#f9fafb;border-top:1px solid #e5e7eb;font-size:12px;color:#6b7280;">
             Email ini dikirim otomatis oleh sistem Booking Smarts.
           </td>
+          <td> 085112345548</td>
         </tr>
 
       </table>
@@ -894,6 +930,7 @@ class Notification_service
             <div style="margin-bottom:10px;">Admin Booking Smart Office</div>
             Email ini dikirim otomatis oleh sistem Booking Smarts.
           </td>
+          <td> 085112345548</td>
         </tr>
 
       </table>

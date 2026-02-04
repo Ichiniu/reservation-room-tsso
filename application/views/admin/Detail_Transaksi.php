@@ -180,24 +180,24 @@ $total_transaksi = (int) $hasil->TOTAL_KESELURUHAN;
                                 <table class="bordered">
                                     <tbody>
                                         <tr>
-                                            <td><b>ID PEMESANAN</b></td>
+                                            <td><b>Id Pemesan</b></td>
                                             <td>:</td>
                                             <td><b><?php echo $hasil->ID_PEMESANAN; ?></b></td>
                                         </tr>
                                         <tr>
-                                            <td><b>USERNAME</b></td>
+                                            <td><b>Username</b></td>
                                             <td>:</td>
                                             <td><?php echo $hasil->USERNAME; ?></td>
                                         </tr>
                                         <tr>
-                                            <td><b>TANGGAL PEMESANAN</b></td>
+                                            <td><b>Tanggal Kegiatan</b></td>
                                             <td>:</td>
                                             <td><?php $date = date_create($hasil->TANGGAL_PEMESANAN);
                                                 echo date_format($date, 'd F Y'); ?>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td><b>JAM PEMESANAN</b></td>
+                                            <td><b>Jam Pemesanan</b></td>
                                             <td>:</td>
                                             <td class="px-4 py-3">
                                                 <?php
@@ -215,7 +215,7 @@ $total_transaksi = (int) $hasil->TOTAL_KESELURUHAN;
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td><b>EMAIL</b></td>
+                                            <td><b>Email</b></td>
                                             <td>:</td>
                                             <td><?php echo $hasil->EMAIL; ?></td>
                                         </tr>
@@ -225,22 +225,22 @@ $total_transaksi = (int) $hasil->TOTAL_KESELURUHAN;
                                             <td><?php echo $hasil->NAMA_GEDUNG; ?></td>
                                         </tr>
                                         <tr>
-                                            <td><b>CATERING</b></td>
+                                            <td><b>Catering</b></td>
                                             <td>:</td>
                                             <td><?php echo $hasil->NAMA_PAKET; ?></td>
                                         </tr>
                                         <tr>
-                                            <td><b>JUMLAH PORSI CATERING</b></td>
+                                            <td><b>Jumlah Porsi Catering</b></td>
                                             <td>:</td>
                                             <td><?php echo $hasil->JUMLAH_CATERING; ?> Porsi</td>
                                         </tr>
                                         <tr>
-                                            <td><b>TOTAL HARGA CATERING</b></td>
+                                            <td><b>Total Harga Catering</b></td>
                                             <td>:</td>
                                             <td>Rp. <?php echo number_format($hasil->TOTAL_HARGA); ?></td>
                                         </tr>
                                         <tr>
-                                            <td><b>HARGA SEWA RUANGAN</b></td>
+                                            <td><b>Harga Sewa Ruangan</b></td>
                                             <td>:</td>
                                             <td>Rp. <?php echo number_format($hasil->HARGA_SEWA); ?></td>
                                         </tr>
@@ -249,13 +249,13 @@ $total_transaksi = (int) $hasil->TOTAL_KESELURUHAN;
                                         <!-- PAJAK DIHAPUS -->
 
                                         <tr>
-                                            <td><b>TOTAL KESELURUHAN (CATERING + RUANGAN)</b></td>
+                                            <td><b>Total Keseluruhan (Catering + Ruangan)</b></td>
                                             <td><b>:</b></td>
                                             <td><b>Rp. <?php echo number_format($total_transaksi); ?></b></td>
                                         </tr>
 
                                         <tr>
-                                            <td><b>DESKRIPSI KEGIATAN</b></td>
+                                            <td><b>Deskripsi Kegiatan</b></td>
                                             <td>:</td>
                                             <td><?php echo !empty($details) ? $details->DESKRIPSI_ACARA : '-'; ?></td>
                                         </tr>
@@ -283,7 +283,7 @@ $total_transaksi = (int) $hasil->TOTAL_KESELURUHAN;
                         <p style="margin:0;">
                             <input class="with-gap" name="status-proposal" type="radio" id="ya" value="1"
                                 onclick="return showInput();" />
-                            <label for="ya">Confirm</label>
+                            <label for="ya">Disetujui</label>
                         </p>
 
                         <div style="height:10px;"></div>
@@ -291,7 +291,7 @@ $total_transaksi = (int) $hasil->TOTAL_KESELURUHAN;
                         <p style="margin:0;">
                             <input class="with-gap" name="status-proposal" type="radio" id="tidak" value="4"
                                 onclick="return showInput();" />
-                            <label for="tidak">Reject</label>
+                            <label for="tidak">Ditolak</label>
                         </p>
 
                         <div style="height:14px;"></div>

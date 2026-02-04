@@ -27,44 +27,7 @@ $this->load->helper('text');
     <script src="https://cdn.tailwindcss.com"></script>
 
 
-    <style>
-        
-        .input-field {
-            margin-top: 14px;
-        }
-
-        .input-field label {
-            position: static !important;
-            transform: none !important;
-        }
-
-        .input-field input,
-        .input-field textarea {
-            margin-top: 8px;
-        }
-
-        input.validate,
-        textarea.materialize-textarea {
-            border-bottom: 1px solid #e5e7eb !important;
-            /* gray-200 */
-            box-shadow: none !important;
-        }
-
-        input.validate:focus,
-        textarea.materialize-textarea:focus {
-            border-bottom: 2px solid #1d4ed8 !important;
-            /* blue-700 */
-            box-shadow: 0 1px 0 0 #1d4ed8 !important;
-        }
-
-        .hint {
-            font-size: 12px;
-            color: #6b7280;
-            margin-top: 6px;
-        }
-
-        /* gray-500 */
-    </style>
+    <!-- clean, neutral form styling (use Tailwind classes on elements) -->
 </head>
 
 <body class="bg-gray-50 text-gray-900">
@@ -132,109 +95,153 @@ $this->load->helper('text');
                     </div>
                 </div>
 
+                <?php if ($this->session->flashdata('msg_success')): ?>
+                    <div class="p-4">
+                        <div class="text-sm text-green-700 bg-green-50 border border-green-100 rounded p-2">
+                            <?= $this->session->flashdata('msg_success') ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($this->session->flashdata('msg_error')): ?>
+                    <div class="p-4">
+                        <div class="text-sm text-red-700 bg-red-50 border border-red-100 rounded p-2">
+                            <?= $this->session->flashdata('msg_error') ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
                 <div class="p-4 md:p-6">
                     <?php foreach ($result as $row): ?>
 
-                        <form class="row" method="post" action="<?php site_url('admin/edit/' . $row['ID_GEDUNG'] . '') ?>">
+                        <?php echo form_open_multipart('admin/edit/' . $row['ID_GEDUNG']); ?>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-                                <!-- Nama Gedung -->
-                                <div class="border border-gray-200 rounded-xl p-4 bg-white">
-                                    <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                                        <i class="material-icons text-base text-gray-700">domain</i>
-                                        Nama Gedung
-                                    </div>
-                                    <div class="input-field">
-                                        <input placeholder="The Ritz Carlton" value="<?php echo $row['NAMA_GEDUNG'] ?>"
-                                            id="nama" name="nama_gedung" type="text" class="validate">
-                                        <div class="hint">Nama resmi gedung.</div>
-                                    </div>
+                            <!-- Nama Gedung -->
+                            <div class="border border-gray-200 rounded-xl p-4 bg-white">
+                                <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                                    <i class="material-icons text-base text-gray-700">domain</i>
+                                    Nama Gedung
                                 </div>
-
-                                <!-- Kapasitas -->
-                                <div class="border border-gray-200 rounded-xl p-4 bg-white">
-                                    <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                                        <i class="material-icons text-base text-gray-700">groups</i>
-                                        Kapasitas Gedung
-                                    </div>
-                                    <div class="input-field">
-                                        <input placeholder="150" id="kapasitas" value="<?php echo $row['KAPASITAS'] ?>"
-                                            name="kapasitas_gedung" type="text" class="validate">
-                                        <div class="hint">Jumlah maksimal orang.</div>
-                                    </div>
+                                <div>
+                                    <input placeholder="The Ritz Carlton" value="<?php echo htmlspecialchars($row['NAMA_GEDUNG'], ENT_QUOTES, 'UTF-8') ?>"
+                                        id="nama" name="nama_gedung" type="text" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
+                                    <div class="text-sm text-gray-500 mt-2">Nama resmi gedung.</div>
                                 </div>
-
-                                <!-- Harga Sewa -->
-                                <div class="border border-gray-200 rounded-xl p-4 bg-white">
-                                    <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                                        <i class="material-icons text-base text-gray-700">payments</i>
-                                        Harga Sewa
-                                    </div>
-                                    <div class="input-field">
-                                        <input placeholder="650000000" value="<?php echo $row['HARGA_SEWA'] ?>"
-                                            id="kapasitas" name="harga_sewa" type="text" class="validate">
-                                        <div class="hint">Isi angka saja jika memungkinkan (contoh: 650000000).</div>
-                                    </div>
-                                </div>
-
-                                <!-- Placeholder biar grid balance -->
-                                <div class="hidden md:block"></div>
-
-                                <!-- Alamat (full width) -->
-                                <div class="md:col-span-2 border border-gray-200 rounded-xl p-4 bg-white">
-                                    <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                                        <i class="material-icons text-base text-gray-700">location_on</i>
-                                        Alamat Gedung
-                                    </div>
-                                    <div class="input-field">
-                                        <textarea class="materialize-textarea"
-                                            name="alamat_gedung"><?php echo $row['ALAMAT'] ?></textarea>
-                                    </div>
-                                </div>
-
-                                <!-- Deskripsi (full width) -->
-                                <div class="md:col-span-2 border border-gray-200 rounded-xl p-4 bg-white">
-                                    <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                                        <i class="material-icons text-base text-gray-700">description</i>
-                                        Deskripsi Gedung
-                                    </div>
-                                    <div class="input-field">
-                                        <textarea class="materialize-textarea"
-                                            name="deskripsi_gedung"><?php echo $row['DESKRIPSI_GEDUNG'] ?></textarea>
-                                    </div>
-                                </div>
-                                <!-- Fasilitas (full width) -->
-                                <div class="md:col-span-2 border border-gray-200 rounded-xl p-4 bg-white">
-                                    <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
-                                        <i class="material-icons text-base text-gray-700">checklist</i>
-                                        Fasilitas Ruangan
-                                    </div>
-                                    <div class="input-field">
-                                        <textarea class="materialize-textarea" name="fasilitas_gedung" placeholder="Contoh: Proyektor, AC, Sound System, WiFi"><?php echo isset($row['fasilitas']) ? htmlspecialchars($row['fasilitas'], ENT_QUOTES, 'UTF-8') : ''; ?></textarea>
-                                        <div class="hint">Pisahkan dengan koma atau baris baru.</div>
-                                    </div>
-                                </div>
-
                             </div>
 
-                            <!-- Actions -->
-                            <div class="mt-6 flex items-center gap-3 justify-start">
-                                <button type="submit" name="submit" id="submit" tabindex="10" value="Simpan"
-                                    class="inline-flex h-10 items-center gap-2 rounded-lg bg-blue-700 px-4 text-sm font-semibold text-white hover:bg-blue-800 active:bg-blue-900">
-                                    <i class="material-icons text-[18px]">save</i>
-                                    Simpan
-                                </button>
-
-                                <a href="<?php echo site_url('admin/gedung'); ?>"
-                                    class="inline-flex h-10 items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 text-sm font-semibold text-gray-900 hover:bg-gray-50 active:bg-gray-100">
-                                    <i class="material-icons text-[18px]">close</i>
-                                    Batal
-                                </a>
+                            <!-- Kapasitas -->
+                            <div class="border border-gray-200 rounded-xl p-4 bg-white">
+                                <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                                    <i class="material-icons text-base text-gray-700">groups</i>
+                                    Kapasitas Gedung
+                                </div>
+                                <div>
+                                    <input placeholder="150" id="kapasitas" value="<?php echo htmlspecialchars($row['KAPASITAS'], ENT_QUOTES, 'UTF-8') ?>"
+                                        name="kapasitas_gedung" type="text" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
+                                    <div class="text-sm text-gray-500 mt-2">Jumlah maksimal orang.</div>
+                                </div>
                             </div>
 
+                            <!-- Harga Sewa -->
+                            <div class="border border-gray-200 rounded-xl p-4 bg-white">
+                                <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                                    <i class="material-icons text-base text-gray-700">payments</i>
+                                    Harga Sewa
+                                </div>
+                                <div>
+                                    <input placeholder="650000000" value="<?php echo htmlspecialchars($row['HARGA_SEWA'], ENT_QUOTES, 'UTF-8') ?>"
+                                        id="kapasitas" name="harga_sewa" type="text" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
+                                    <div class="text-sm text-gray-500 mt-2">Isi angka saja jika memungkinkan (contoh: 650000000).</div>
+                                </div>
+                            </div>
 
-                        </form>
+                            <!-- Placeholder biar grid balance -->
+                            <div class="hidden md:block"></div>
+
+                            <!-- Alamat (full width) -->
+                            <div class="md:col-span-2 border border-gray-200 rounded-xl p-4 bg-white">
+                                <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                                    <i class="material-icons text-base text-gray-700">location_on</i>
+                                    Alamat Gedung
+                                </div>
+                                <div>
+                                    <textarea name="alamat_gedung" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200"><?php echo htmlspecialchars($row['ALAMAT'], ENT_QUOTES, 'UTF-8') ?></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Deskripsi (full width) -->
+                            <div class="md:col-span-2 border border-gray-200 rounded-xl p-4 bg-white">
+                                <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                                    <i class="material-icons text-base text-gray-700">description</i>
+                                    Deskripsi Gedung
+                                </div>
+                                <div>
+                                    <textarea name="deskripsi_gedung" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200"><?php echo htmlspecialchars($row['DESKRIPSI_GEDUNG'], ENT_QUOTES, 'UTF-8') ?></textarea>
+                                </div>
+                            </div>
+                            <!-- Fasilitas (full width) -->
+                            <div class="md:col-span-2 border border-gray-200 rounded-xl p-4 bg-white">
+                                <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                                    <i class="material-icons text-base text-gray-700">checklist</i>
+                                    Fasilitas Ruangan
+                                </div>
+                                <div>
+                                    <textarea name="fasilitas_gedung" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200" placeholder="Contoh: Proyektor, AC, Sound System, WiFi"><?php echo isset($row['fasilitas']) ? htmlspecialchars($row['fasilitas'], ENT_QUOTES, 'UTF-8') : ''; ?></textarea>
+                                    <div class="text-sm text-gray-500 mt-2">Pisahkan dengan koma atau baris baru.</div>
+                                </div>
+                            </div>
+
+                            <!-- Gambar Gedung (upload & preview) -->
+                            <div class="md:col-span-2 border border-gray-200 rounded-xl p-4 bg-white">
+                                <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                                    <i class="material-icons text-base text-gray-700">photo</i>
+                                    Foto Ruangan
+                                </div>
+                                <div>
+                                    <?php if (!empty($images)): ?>
+                                        <div class="flex gap-3 mt-3 flex-wrap">
+                                            <?php foreach ($images as $img): ?>
+                                                <div class="w-40 h-28 rounded overflow-hidden border relative">
+                                                    <img src="<?= htmlspecialchars($img['PATH'] . $img['IMG_NAME'], ENT_QUOTES, 'UTF-8') ?>" alt="Foto" class="w-full h-full object-cover">
+                                                    <button type="button" data-img="<?= htmlspecialchars($img['IMG_NAME'], ENT_QUOTES, 'UTF-8') ?>" data-id="<?= (int)$row['ID_GEDUNG'] ?>" title="Hapus" class="delete-image-btn absolute top-1 right-1 bg-white/90 hover:bg-white text-red-600 rounded-full p-1 shadow z-50" style="pointer-events:auto;">
+                                                        <i class="material-icons text-xs">delete</i>
+                                                    </button>
+                                                    <div class="absolute left-1 bottom-1 bg-white/80 px-1 rounded text-xs text-gray-700"><?= htmlspecialchars($img['IMG_NAME'], ENT_QUOTES, 'UTF-8') ?></div>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php else: ?>
+                                        <div class="text-sm text-gray-500 mt-2">Belum ada foto untuk gedung ini.</div>
+                                    <?php endif; ?>
+
+                                    <div class="mt-4">
+                                        <input type="file" id="imagesInput" name="images[]" accept="image/*" multiple class="text-sm text-gray-700">
+                                        <div class="text-sm text-gray-500 mt-2">Pilih 1 atau beberapa foto (jpg/png). Upload akan menambahkan gambar baru.</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="mt-6 flex items-center gap-3 justify-start">
+                            <button type="submit" name="submit" id="submit" tabindex="10" value="Simpan"
+                                class="inline-flex h-10 items-center gap-2 rounded-lg bg-slate-700 px-4 text-sm font-semibold text-white hover:bg-slate-800 active:bg-slate-900">
+                                <i class="material-icons text-[18px]">save</i>
+                                Simpan
+                            </button>
+
+                            <a href="<?php echo site_url('admin/gedung'); ?>"
+                                class="inline-flex h-10 items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 text-sm font-semibold text-gray-900 hover:bg-gray-50 active:bg-gray-100">
+                                <i class="material-icons text-[18px]">close</i>
+                                Batal
+                            </a>
+                        </div>
+
+
+                        <?php echo form_close(); ?>
 
                     <?php endforeach; ?>
                 </div>
@@ -288,6 +295,40 @@ $this->load->helper('text');
                     document.body.classList.remove('overflow-hidden');
                 } else {
                     closeSidebar();
+                }
+            });
+        })();
+    </script>
+    <!-- Hidden delete form -->
+    <form id="deleteImageForm" method="post" action="<?= site_url('admin/gedung_image/delete') ?>" style="display:none;">
+        <input type="hidden" name="id_gedung" value="">
+        <input type="hidden" name="img_name" value="">
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.delete-image-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    if (!confirm('Hapus foto ini?')) return;
+                    var form = document.getElementById('deleteImageForm');
+                    form.querySelector('input[name="id_gedung"]').value = this.dataset.id || '';
+                    form.querySelector('input[name="img_name"]').value = this.dataset.img || '';
+                    form.submit();
+                });
+            });
+        });
+    </script>
+    <script>
+        // Ensure submit works even if other scripts prevent default
+        (function() {
+            var submitBtn = document.getElementById('submit');
+            if (!submitBtn) return;
+            submitBtn.addEventListener('click', function(e) {
+                try {
+                    var f = this.form;
+                    if (f) f.submit();
+                } catch (err) {
+                    console.error('Submit fallback error', err);
                 }
             });
         })();

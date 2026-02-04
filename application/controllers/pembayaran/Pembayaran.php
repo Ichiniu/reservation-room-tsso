@@ -129,6 +129,9 @@ class Pembayaran extends CI_Controller
                 }
 
                 $this->db->trans_commit();
+                // kirim permintaan review ke user (notifikasi + email)
+                $this->load->library('notification_service');
+                $this->notification_service->notifyReviewRequest($pesanan->USERNAME, $id_pemesanan_raw);
             }
 
             redirect('home/pemesanan');

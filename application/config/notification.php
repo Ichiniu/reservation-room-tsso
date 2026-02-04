@@ -28,3 +28,5 @@ $config['payment_bank_name']    = 'BCA';
 $config['payment_bank_account'] = '62954742756724';
 $config['payment_bank_holder']  = 'PAK EKO TIGA SERANGKAI';
 $config['payment_due_days']     = 7; // optional
+// secret key to allow web-trigger of auto-review cron (optional). Keep empty to allow CLI only.
+$config['auto_review_key'] = 'CHANGE_ME_SECRET_KEY';

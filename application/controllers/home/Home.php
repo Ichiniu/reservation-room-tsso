@@ -335,9 +335,9 @@ class Home extends CI_Controller
 
 		// toleran typo "Amphiater"/"Amphitheater" -> pakai kata kunci "amphi"
 		if (strpos($nama, 'amphi') !== false) {
-			$days = 1;
+			$days = 2;
 		} elseif (strpos($nama, 'smart office meeting room') !== false || strpos($nama, 'meeting room') !== false) {
-			$days = 1;
+			$days = 2;
 		} elseif (strpos($nama, 'smart office studio photo') !== false || strpos($nama, 'studio photo') !== false) {
 			$days = 3;
 		}
@@ -357,7 +357,7 @@ class Home extends CI_Controller
 
 		$gedung['hasil'] = $this->gedung_model->get_gedung_name($id_gedung);
 
-		// ✅ rule min booking berdasarkan gedung
+		
 		$rule = $this->_min_booking_rule($id_gedung);
 		$gedung['min_pesan'] = date('Y-m-d', strtotime('+' . $rule['days'] . ' day'));
 		$gedung['min_text']  = $rule['text'];
@@ -373,7 +373,6 @@ class Home extends CI_Controller
 		$data['flag']  = $this->gedung_model->get_pemesanan_flag($username);
 		$data['trx_flag'] = $this->gedung_model->get_transaksi_flag($username);
 
-		// ✅ TAMBAHAN: cek INTERNAL / EKSTERNAL + aturan pilihan jam per ruangan
 		$u = $this->db->select('perusahaan')
 			->from('user')
 			->where('USERNAME', $username)
@@ -682,6 +681,16 @@ class Home extends CI_Controller
 		$id_gedung     = (int) $this->uri->segment(4);
 		$username      = $this->session->userdata('username');
 
+		// ===== CEK USER INTERNAL / EKSTERNAL (dipakai untuk rule min booking & status awal) =====
+		$perusahaan = $this->db->select('perusahaan')
+			->from('user')
+			->where('USERNAME', $username)
+			->get()
+			->row('perusahaan');
+
+		$perusahaan  = strtoupper(trim((string)$perusahaan));
+		$is_internal = ($perusahaan === 'INTERNAL');
+
 		// ===== TIPE JAM (form) =====
 		$tipe_jam_form = $this->input->post('tipe_jam', TRUE);
 		if (empty($tipe_jam_form)) $tipe_jam_form = 'CUSTOM';
@@ -722,9 +731,51 @@ class Home extends CI_Controller
 			return;
 		}
 
-		// ===== MIN BOOKING (DINAMIS PER GEDUNG) =====
-		$rule = $this->_min_booking_rule($id_gedung);
-		$min_pesan = date('Y-m-d', strtotime('+' . $rule['days'] . ' day'));
+		// ===== MIN BOOKING (DINAMIS PER GEDUNG + OVERRIDE EKSTERNAL) =====
+		$rule = $this->_min_booking_rule($id_gedung); // default rule yang sudah kamu punya
+
+		// pastikan keys aman
+		if (!is_array($rule)) $rule = array();
+		if (!isset($rule['days'])) $rule['days'] = 0;
+		if (!isset($rule['text'])) $rule['text'] = 'Minimal booking';
+
+		// Override khusus USER EKSTERNAL:
+		// - Meeting room & amphitheater => H-2
+		// - Studio Podcast => H-3
+		if (!$is_internal) {
+
+			// Ambil nama gedung/ruangan untuk deteksi tipe
+			$g = $this->db->get_where('gedung', array('ID_GEDUNG' => $id_gedung))->row_array();
+
+			// PHP 5.6: tanpa null coalescing (??)
+			$nama = '';
+			if (is_array($g)) {
+				if (isset($g['NAMA_GEDUNG'])) $nama = $g['NAMA_GEDUNG'];
+				else if (isset($g['nama_gedung'])) $nama = $g['nama_gedung'];
+				else if (isset($g['NAMA'])) $nama = $g['NAMA'];
+				else if (isset($g['nama'])) $nama = $g['nama'];
+			}
+
+			$namaU = strtoupper(trim((string)$nama));
+
+			// Studio Podcast => H-3
+			if ($namaU !== '' && strpos($namaU, 'PODCAST') !== false) {
+				$rule = array('days' => 3, 'text' => 'H-3 (Studio Podcast)');
+			}
+			// Meeting room / Amphitheater => H-2
+			else if (
+				($namaU !== '' && strpos($namaU, 'MEETING') !== false) ||
+				($namaU !== '' && strpos($namaU, 'AMPHI') !== false) ||
+				($namaU !== '' && strpos($namaU, 'AMPHITHEATER') !== false) ||
+				($namaU !== '' && strpos($namaU, 'AMPITHEATER') !== false) ||  // antisipasi typo
+				($namaU !== '' && strpos($namaU, 'AMPHITEATER') !== false)      // antisipasi typo lain
+			) {
+				$rule = array('days' => 2, 'text' => 'H-2 (Meeting Room/Amphitheater)');
+			}
+			// kalau nama kosong / tidak match -> pakai default $rule dari _min_booking_rule()
+		}
+
+		$min_pesan = date('Y-m-d', strtotime('+' . (int)$rule['days'] . ' day'));
 
 		if (strtotime($tanggal_pesan) < strtotime($min_pesan)) {
 			$this->load->view('errors/pemesanan_alert', array(
@@ -735,7 +786,6 @@ class Home extends CI_Controller
 			));
 			return;
 		}
-
 
 		// ===== CEK BENTROK (LOCKED) =====
 		if ($this->gedung_model->has_locked_conflict($id_gedung, $tanggal_pesan, $jam_mulai, $jam_selesai)) {
@@ -778,9 +828,9 @@ class Home extends CI_Controller
 		$jumlah_porsi_final = null;
 
 		// JSON columns
-		$menu_pilihan_json = null; // untuk pilihan terstruktur (kalau nanti ada checkbox/select)
-		$menu_input_json   = null; // dari textarea per kategori
-		$addon_input_json  = null; // dari addon yang dicentang
+		$menu_pilihan_json = null;
+		$menu_input_json   = null;
+		$addon_input_json  = null;
 
 		if ($catering_choice === 'ya') {
 
@@ -856,21 +906,11 @@ class Home extends CI_Controller
 			$menu_input_json    = null;
 			$addon_input_json   = null;
 		}
+
 		// ===== STATUS AWAL (INTERNAL vs EKSTERNAL) =====
-		$perusahaan = $this->db->select('perusahaan')
-			->from('user')
-			->where('USERNAME', $username)
-			->get()
-			->row('perusahaan');
-
-		$perusahaan = strtoupper(trim((string)$perusahaan));
-
-		// default: eksternal / tidak ketemu -> PROCESS (0)
-		$status_awal = 0;
-
-		// internal -> SUBMITTED (3)
-		if ($perusahaan === 'INTERNAL') {
-			$status_awal = 3;
+		$status_awal = 0; // eksternal
+		if ($is_internal) {
+			$status_awal = 3; // internal
 		}
 
 		// ===== INSERT PEMESANAN =====
@@ -879,15 +919,15 @@ class Home extends CI_Controller
 			'TANGGAL_PEMESANAN' => $tanggal_pesan,
 			'JAM_PEMESANAN'     => $jam_mulai,
 			'JAM_SELESAI'       => $jam_selesai,
-			'TIPE_JAM'          => $tipe_jam_db, // <-- penting: sesuai enum DB
+			'TIPE_JAM'          => $tipe_jam_db,
 			'EMAIL'             => $this->input->post('email', TRUE),
 
 			'ID_GEDUNG'         => $id_gedung,
 			'ID_CATERING'       => $id_catering_final,
 			'JUMLAH_CATERING'   => $jumlah_porsi_final,
-			'STATUS' => (int)$status_awal,
+			'STATUS'            => (int)$status_awal,
 			'REQUEST_ID'        => $request_id,
-			'MENU_PILIHAN_JSON' => $menu_pilihan_json, // boleh NULL untuk sekarang
+			'MENU_PILIHAN_JSON' => $menu_pilihan_json,
 			'MENU_INPUT_JSON'   => $menu_input_json,
 			'ADDON_INPUT_JSON'  => $addon_input_json,
 		);
@@ -906,6 +946,8 @@ class Home extends CI_Controller
 
 		redirect('home/confirm-order/' . (int) $id_pemesanan);
 	}
+
+
 	public function edit_data($user = null)
 	{
 		$this->load->model('user/user_model');
