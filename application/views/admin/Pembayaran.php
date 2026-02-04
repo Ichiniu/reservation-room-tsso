@@ -15,8 +15,6 @@ $notifCount = !empty($notifs_admin_trx) ? count($notifs_admin_trx) : 0;
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- (opsional) kalau sidebar kamu masih pakai materialize -->
-    <link href="<?= base_url('assets/home/materialize/css/materialize.css') ?>" rel="stylesheet">
 </head>
 
 <body class="bg-slate-200 min-h-screen">

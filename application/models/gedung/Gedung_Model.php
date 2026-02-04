@@ -18,25 +18,25 @@ class Gedung_Model extends CI_Model
 		return $query->num_rows();
 	}
 
-// 	public function get_transaksi_flag($username)
-// {
-//     $sql = "
-//         SELECT COUNT(*) AS jml
-//         FROM pembayaran pb
-//         JOIN pemesanan p 
-//           ON p.ID_PEMESANAN = pb.ID_PEMESANAN_RAW
-//         WHERE LOWER(p.USERNAME) = LOWER(?)
-//            AND pb.STATUS_VERIF IN ('PENDING','CONFIRMED','REJECTED')
-//     ";
+	// 	public function get_transaksi_flag($username)
+	// {
+	//     $sql = "
+	//         SELECT COUNT(*) AS jml
+	//         FROM pembayaran pb
+	//         JOIN pemesanan p 
+	//           ON p.ID_PEMESANAN = pb.ID_PEMESANAN_RAW
+	//         WHERE LOWER(p.USERNAME) = LOWER(?)
+	//            AND pb.STATUS_VERIF IN ('PENDING','CONFIRMED','REJECTED')
+	//     ";
 
-//     $row = $this->db->query($sql, [$username])->row();
-//     return $row ? (int)$row->jml : 0;
-// }
+	//     $row = $this->db->query($sql, [$username])->row();
+	//     return $row ? (int)$row->jml : 0;
+	// }
 
-// ambil pemesanan yang masih "unread" (misal FLAG = 1 atau 3)
-public function get_pemesanan_unread_ids($username, $limit = 5)
-{
-    $sql = "
+	// ambil pemesanan yang masih "unread" (misal FLAG = 1 atau 3)
+	public function get_pemesanan_unread_ids($username, $limit = 5)
+	{
+		$sql = "
         SELECT DISTINCT p.ID_PEMESANAN AS id
         FROM v_pemesanan v
         JOIN pemesanan p
@@ -46,24 +46,24 @@ public function get_pemesanan_unread_ids($username, $limit = 5)
                     ELSE CAST(v.ID_PEMESANAN AS UNSIGNED)
                 END
           )
-        WHERE LOWER(v.USERNAME)=LOWER(?)
-          AND v.STATUS IN ('PROPOSAL APPROVE','SUBMITED')
+				WHERE LOWER(v.USERNAME)=LOWER(?)
+					AND v.STATUS IN ('PROPOSAL APPROVE','SUBMITED','PROCESS')
           AND p.FLAG IN (1,3)
         ORDER BY p.ID_PEMESANAN DESC
         LIMIT ?
     ";
-    $rows = $this->db->query($sql, [$username, (int)$limit])->result_array();
-    $ids = [];
-    foreach ($rows as $r) $ids[] = (int)$r['id'];
-    return $ids;
-}
+		$rows = $this->db->query($sql, [$username, (int)$limit])->result_array();
+		$ids = [];
+		foreach ($rows as $r) $ids[] = (int)$r['id'];
+		return $ids;
+	}
 
-// ambil transaksi yang masih "unread"
-// NOTE: kamu tadi error karena kolom FLAG_TRX belum ada.
-// Jadi sementara pakai kondisi STATUS_VERIF saja (PENDING/REJECTED/CONFIRMED) atau buat kolom FLAG_TRX dulu.
-public function get_transaksi_unread_ids($username, $limit = 5)
-{
-    $sql = "
+	// ambil transaksi yang masih "unread"
+	// NOTE: kamu tadi error karena kolom FLAG_TRX belum ada.
+	// Jadi sementara pakai kondisi STATUS_VERIF saja (PENDING/REJECTED/CONFIRMED) atau buat kolom FLAG_TRX dulu.
+	public function get_transaksi_unread_ids($username, $limit = 5)
+	{
+		$sql = "
         SELECT pb.ID_PEMBAYARAN AS id
         FROM pembayaran pb
         JOIN pemesanan p ON p.ID_PEMESANAN = pb.ID_PEMESANAN_RAW
@@ -72,16 +72,16 @@ public function get_transaksi_unread_ids($username, $limit = 5)
         ORDER BY pb.ID_PEMBAYARAN DESC
         LIMIT ?
     ";
-    $rows = $this->db->query($sql, [$username, (int)$limit])->result_array();
-    $ids = [];
-    foreach ($rows as $r) $ids[] = (int)$r['id'];
-    return $ids;
-}
+		$rows = $this->db->query($sql, [$username, (int)$limit])->result_array();
+		$ids = [];
+		foreach ($rows as $r) $ids[] = (int)$r['id'];
+		return $ids;
+	}
 
 
-public function get_transaksi_flag($username)
-{
-    $sql = "
+	public function get_transaksi_flag($username)
+	{
+		$sql = "
         SELECT COUNT(*) AS jml
         FROM pembayaran pb
         JOIN pemesanan p ON p.ID_PEMESANAN = pb.ID_PEMESANAN_RAW
@@ -89,28 +89,28 @@ public function get_transaksi_flag($username)
           AND pb.FLAG_TRX = 1
           AND pb.STATUS_VERIF IN ('PENDING','CONFIRMED','REJECTED')
     ";
-    $row = $this->db->query($sql, [$username])->row();
-    return $row ? (int)$row->jml : 0;
-}
+		$row = $this->db->query($sql, [$username])->row();
+		return $row ? (int)$row->jml : 0;
+	}
 
-public function mark_trx_read($id_pembayaran, $username)
-{
-    $id_pembayaran = (int)$id_pembayaran;
+	public function mark_trx_read($id_pembayaran, $username)
+	{
+		$id_pembayaran = (int)$id_pembayaran;
 
-    $sql = "
+		$sql = "
         UPDATE pembayaran pb
         JOIN pemesanan p ON p.ID_PEMESANAN = pb.ID_PEMESANAN_RAW
         SET pb.FLAG_TRX = 2
         WHERE pb.ID_PEMBAYARAN = ?
           AND LOWER(p.USERNAME) = LOWER(?)
     ";
-    return $this->db->query($sql, [$id_pembayaran, $username]);
-}
+		return $this->db->query($sql, [$id_pembayaran, $username]);
+	}
 
 
-public function clear_transaksi_flag($username)
-{
-    $sql = "
+	public function clear_transaksi_flag($username)
+	{
+		$sql = "
         UPDATE pembayaran pb
         JOIN pemesanan p ON p.ID_PEMESANAN = pb.ID_PEMESANAN_RAW
         SET pb.FLAG_TRX = 2
@@ -118,16 +118,16 @@ public function clear_transaksi_flag($username)
           AND pb.FLAG_TRX = 1
           AND pb.STATUS_VERIF IN ('PENDING','CONFIRMED','REJECTED')
     ";
-    return $this->db->query($sql, [$username]);
-}
+		return $this->db->query($sql, [$username]);
+	}
 
 
 
-public function get_calendar_events($id_gedung, $start, $end)
-{
-    $id_gedung = (int)$id_gedung;
+	public function get_calendar_events($id_gedung, $start, $end)
+	{
+		$id_gedung = (int)$id_gedung;
 
-    $this->db->select("
+		$this->db->select("
         p.ID_PEMESANAN as id,
         p.TANGGAL_PEMESANAN as tgl,
         TIME_FORMAT(p.JAM_PEMESANAN, '%H:%i') as start,
@@ -135,33 +135,33 @@ public function get_calendar_events($id_gedung, $start, $end)
         p.STATUS as status
     ", false);
 
-    $this->db->from('pemesanan p');
-    $this->db->where('p.ID_GEDUNG', $id_gedung);
-    $this->db->where('p.TANGGAL_PEMESANAN >=', $start);
-    $this->db->where('p.TANGGAL_PEMESANAN <=', $end);
+		$this->db->from('pemesanan p');
+		$this->db->where('p.ID_GEDUNG', $id_gedung);
+		$this->db->where('p.TANGGAL_PEMESANAN >=', $start);
+		$this->db->where('p.TANGGAL_PEMESANAN <=', $end);
 
-    // status yang dianggap ngunci jadwal
-    $this->db->where_in('p.STATUS', array(0, 3));
+		// status yang dianggap ngunci jadwal
+		$this->db->where_in('p.STATUS', array(0, 3));
 
-    $this->db->order_by('p.TANGGAL_PEMESANAN', 'ASC');
-    $this->db->order_by('p.JAM_PEMESANAN', 'ASC');
+		$this->db->order_by('p.TANGGAL_PEMESANAN', 'ASC');
+		$this->db->order_by('p.JAM_PEMESANAN', 'ASC');
 
-    $rows = $this->db->get()->result_array();
+		$rows = $this->db->get()->result_array();
 
-    $out = array();
-    foreach ($rows as $r) {
-        $out[] = array(
-            'id'     => (int)$r['id'],
-            'tgl'    => $r['tgl'],
-            'start'  => $r['start'],
-            'end'    => $r['end'],
-            'status' => (string)$r['status'],
-            'title'  => 'Booking Ruangan'
-        );
-    }
+		$out = array();
+		foreach ($rows as $r) {
+			$out[] = array(
+				'id'     => (int)$r['id'],
+				'tgl'    => $r['tgl'],
+				'start'  => $r['start'],
+				'end'    => $r['end'],
+				'status' => (string)$r['status'],
+				'title'  => 'Booking Ruangan'
+			);
+		}
 
-    return $out;
-}
+		return $out;
+	}
 
 
 
@@ -279,8 +279,8 @@ public function get_calendar_events($id_gedung, $start, $end)
               ELSE CAST(v.ID_PEMESANAN AS UNSIGNED)
             END
           )
-        WHERE LOWER(v.USERNAME) = LOWER(?)
-          AND v.STATUS IN ('PROPOSAL APPROVE','SUBMITED','REJECTED')
+				WHERE LOWER(v.USERNAME) = LOWER(?)
+					AND v.STATUS IN ('PROPOSAL APPROVE','SUBMITED','REJECTED','PROCESS')
           AND p.FLAG = 1
     ";
 
@@ -321,9 +321,9 @@ public function get_calendar_events($id_gedung, $start, $end)
             END
           )
         SET p.FLAG = 2
-        WHERE LOWER(v.USERNAME) = LOWER(?)
-          AND p.FLAG = 1
-          AND v.STATUS IN ('PROPOSAL APPROVE','SUBMITED','REJECTED')
+				WHERE LOWER(v.USERNAME) = LOWER(?)
+					AND p.FLAG = 1
+					AND v.STATUS IN ('PROPOSAL APPROVE','SUBMITED','REJECTED','PROCESS')
     ";
 
 		return $this->db->query($sql, [$username]);
@@ -380,9 +380,9 @@ public function get_calendar_events($id_gedung, $start, $end)
 
 		return $this->db->query($sql, $binds)->result_array();
 	}
-	 
 
-	
+
+
 
 
 
@@ -538,9 +538,12 @@ TIME_FORMAT(
 	public function get_pending_transaction()
 	{
 		$sql = "SELECT vp.ID_PEMESANAN
-    FROM V_PEMESANAN vp
-    JOIN pemesanan_details pd ON pd.ID_PEMESANAN = vp.ID_PEMESANAN
-    WHERE vp.STATUS = 'PROCESS'";
+	FROM V_PEMESANAN vp
+	JOIN pemesanan_details pd ON pd.ID_PEMESANAN = vp.ID_PEMESANAN
+	WHERE vp.STATUS = 'PROCESS'";
+		$q = $this->db->query($sql);
+		if (!$q) return [];
+		return $q->result_array();
 	}
 	public function get_all_pemesanan()
 	{

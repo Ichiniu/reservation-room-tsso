@@ -31,8 +31,6 @@ function formatTanggalIndo($tgl)
     <title>Riwayat Pemesanan</title>
     <link rel="icon" href="<?= base_url('assets/home/assets/img/favicon/favicon-32x32.png') ?>" sizes="32x32">
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="<?= base_url('assets/home/materialize/css/materialize.css') ?>" rel="stylesheet">
 </head>
 
 <body class="bg-gray-100 text-gray-800">

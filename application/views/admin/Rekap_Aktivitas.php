@@ -13,8 +13,7 @@ $this->load->helper('text');
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Materialize (table & grid only) -->
-    <link href="<?= base_url('assets/home/materialize/css/materialize.css') ?>" rel="stylesheet">
+
 </head>
 
 <body class="bg-gray-100">

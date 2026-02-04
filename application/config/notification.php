@@ -4,16 +4,17 @@ defined('BASEPATH') or exit('No direct script access allowed');
 $config['admin_emails'] = [
     'bookingsmarts@gmail.com'
 ];
-
-// ⚠️ "from" harus email yang REAL dan sama dengan smtp_user (untuk Gmail SMTP)
-$config['mail_from']      = 'ikhsanwahyu04@gmail.com';
+$config['smtp']['smtp_auth'] = true;
+$config['smtp']['useragent'] = 'CodeIgniter';
+$config['mail_from']      = 'bookingsmarts@gmail.com';
 $config['mail_from_name'] = 'Booking Smarts';
+
 
 $config['smtp'] = [
     'protocol'    => 'smtp',
     'smtp_host'   => 'smtp.gmail.com',
     'smtp_user'   => 'bookingsmarts@gmail.com',
-    'smtp_pass'   => 'UNKONWNN', // ganti dengan app password Gmail Anda
+    'smtp_pass'   => 'lwmkpwviazobsgkc',
     'smtp_port'   => 587,
     'smtp_crypto' => 'tls',
 

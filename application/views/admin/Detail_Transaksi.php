@@ -351,11 +351,6 @@ $total_transaksi = (int) $hasil->TOTAL_KESELURUHAN;
         </div>
     </main>
 
-    <!-- JS -->
-    <script src="<?php echo base_url(); ?>assets/home/assets/js/jquery.min.js"></script>
-    <script src="<?php echo base_url(); ?>assets/home/materialize/js/materialize.js"></script>
-    <script src="<?php echo base_url(); ?>assets/home/index.js"></script>
-
     <script type="text/javascript">
         function dialog() {
             if (confirm("Lanjutkan? ")) {

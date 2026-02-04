@@ -27,209 +27,219 @@ class Home extends CI_Controller
 		}
 	}
 
-// 	public function index()
-// 	{
-// 		$username = $this->session->userdata('username');
-// 		$this->load->model('gedung/gedung_model');
+	// 	public function index()
+	// 	{
+	// 		$username = $this->session->userdata('username');
+	// 		$this->load->model('gedung/gedung_model');
 
-// 		// --- 1. Ambil data dasar seperti biasa ---
-// 		$data['flag']     = $this->gedung_model->get_pemesanan_flag($username);
-// $data['trx_flag'] = $this->gedung_model->get_transaksi_flag($username);
+	// 		// --- 1. Ambil data dasar seperti biasa ---
+	// 		$data['flag']     = $this->gedung_model->get_pemesanan_flag($username);
+	// $data['trx_flag'] = $this->gedung_model->get_transaksi_flag($username);
 
-// 		$data['res']  = $this->gedung_model->get_all();
+	// 		$data['res']  = $this->gedung_model->get_all();
 
-// 		// --- 2. Ambil filter tanggal & jam dari QUERY STRING (GET) ---
-// 		// contoh URL: /home?tanggal=2025-01-10&jam=09:00
-// 		$tanggal = $this->input->get('tanggal');
-// 		$jam     = $this->input->get('jam');
+	// 		// --- 2. Ambil filter tanggal & jam dari QUERY STRING (GET) ---
+	// 		// contoh URL: /home?tanggal=2025-01-10&jam=09:00
+	// 		$tanggal = $this->input->get('tanggal');
+	// 		$jam     = $this->input->get('jam');
 
-// 		$data['tanggal_filter'] = $tanggal;
-// 		$data['jam_filter']     = $jam;
+	// 		$data['tanggal_filter'] = $tanggal;
+	// 		$data['jam_filter']     = $jam;
 
-// 		// --- 3. Hitung ketersediaan per gedung ---
-// 		// Pakai fungsi check_date() yang sudah ada (cek apakah tanggal tsb sudah dibooking)
-// 		$availability = [];
+	// 		// --- 3. Hitung ketersediaan per gedung ---
+	// 		// Pakai fungsi check_date() yang sudah ada (cek apakah tanggal tsb sudah dibooking)
+	// 		$availability = [];
 
-// 		if (!empty($tanggal)) {
-// 			// kalau ada filter tanggal (jam opsional dulu), cek satu-satu
-// 			foreach ($data['res'] as $row) {
-// 				// get_all() kamu mengembalikan array, jadi akses pakai $row['ID_GEDUNG']
-// 				$id_gedung = $row['ID_GEDUNG'];
+	// 		if (!empty($tanggal)) {
+	// 			// kalau ada filter tanggal (jam opsional dulu), cek satu-satu
+	// 			foreach ($data['res'] as $row) {
+	// 				// get_all() kamu mengembalikan array, jadi akses pakai $row['ID_GEDUNG']
+	// 				$id_gedung = $row['ID_GEDUNG'];
 
-// 				// check_date() akan mengembalikan jumlah booking di tanggal tsb
-// 				// kalau > 0 berarti SUDAH dibooking (tidak available)
-// 				$exist = $this->check_date($tanggal, $id_gedung);
+	// 				// check_date() akan mengembalikan jumlah booking di tanggal tsb
+	// 				// kalau > 0 berarti SUDAH dibooking (tidak available)
+	// 				$exist = $this->check_date($tanggal, $id_gedung);
 
-// 				// true  => tersedia
-// 				// false => sudah dibooking
-// 				$availability[$id_gedung] = ($exist == 0);
-// 			}
-// 		}
+	// 				// true  => tersedia
+	// 				// false => sudah dibooking
+	// 				$availability[$id_gedung] = ($exist == 0);
+	// 			}
+	// 		}
 
-// 		$data['availability'] = $availability;
+	// 		$data['availability'] = $availability;
 
-// 		// --- 4. Kirim ke view ---
-// 		$this->load->view('/home/home_screen', $data);
-// 	}
+	// 		// --- 4. Kirim ke view ---
+	// 		$this->load->view('/home/home_screen', $data);
+	// 	}
 
-public function index()
-{
-    $username = (string)$this->session->userdata('username');
+	public function index()
+	{
+		$username = (string)$this->session->userdata('username');
 
-    // ===== LOAD MODEL =====
-    $this->load->model('gedung/gedung_model');
-    $this->load->model('Ulasan/Ulasan_Model', 'Ulasan_model');
+		// ===== LOAD MODEL =====
+		$this->load->model('gedung/gedung_model');
+		$this->load->model('Ulasan/Ulasan_Model', 'Ulasan_model');
 
-    // ===== Helper tanggal Indo: 07 januari 2026 =====
-    $tgl_indo = function ($tgl) {
-        $tgl = trim((string)$tgl);
-        if ($tgl === '') return '-';
+		// ===== Helper tanggal Indo: 07 januari 2026 =====
+		$tgl_indo = function ($tgl) {
+			$tgl = trim((string)$tgl);
+			if ($tgl === '') return '-';
 
-        $bulan = array(
-            1 => 'januari', 'februari', 'maret', 'april', 'mei', 'juni',
-            'juli', 'agustus', 'september', 'oktober', 'november', 'desember'
-        );
+			$bulan = array(
+				1 => 'januari',
+				'februari',
+				'maret',
+				'april',
+				'mei',
+				'juni',
+				'juli',
+				'agustus',
+				'september',
+				'oktober',
+				'november',
+				'desember'
+			);
 
-        $ts = strtotime($tgl);
-        if (!$ts) return $tgl;
+			$ts = strtotime($tgl);
+			if (!$ts) return $tgl;
 
-        $d = date('d', $ts);       // 01..31 (2 digit)
-        $m = (int)date('n', $ts);  // 1..12
-        $y = date('Y', $ts);
+			$d = date('d', $ts);       // 01..31 (2 digit)
+			$m = (int)date('n', $ts);  // 1..12
+			$y = date('Y', $ts);
 
-        return $d . ' ' . (isset($bulan[$m]) ? $bulan[$m] : '') . ' ' . $y;
-    };
+			return $d . ' ' . (isset($bulan[$m]) ? $bulan[$m] : '') . ' ' . $y;
+		};
 
-    // ===== Helper jam HH:MM =====
-    $time_hm = function ($t) {
-        $t = trim((string)$t);
-        if ($t === '') return '';
-        return (strlen($t) >= 5) ? substr($t, 0, 5) : $t;
-    };
+		// ===== Helper jam HH:MM =====
+		$time_hm = function ($t) {
+			$t = trim((string)$t);
+			if ($t === '') return '';
+			return (strlen($t) >= 5) ? substr($t, 0, 5) : $t;
+		};
 
-    // ===== Helper jam dot: 08:00 -> 08.00 =====
-    $jam_dot = function ($hm) {
-        $hm = trim((string)$hm);
-        if ($hm === '') return '';
-        $hm = (strlen($hm) >= 5) ? substr($hm, 0, 5) : $hm;
-        return str_replace(':', '.', $hm);
-    };
+		// ===== Helper jam dot: 08:00 -> 08.00 =====
+		$jam_dot = function ($hm) {
+			$hm = trim((string)$hm);
+			if ($hm === '') return '';
+			$hm = (strlen($hm) >= 5) ? substr($hm, 0, 5) : $hm;
+			return str_replace(':', '.', $hm);
+		};
 
-    // ===== Parse title "Ruangan - 2026-01-07 (08:00 - 12:00)" => 3 baris =====
-    $title_3baris = function ($title) use ($tgl_indo, $jam_dot) {
-        $title = trim((string)$title);
-        if ($title === '') return '';
+		// ===== Parse title "Ruangan - 2026-01-07 (08:00 - 12:00)" => 3 baris =====
+		$title_3baris = function ($title) use ($tgl_indo, $jam_dot) {
+			$title = trim((string)$title);
+			if ($title === '') return '';
 
-        $m = array();
-        if (preg_match('/^\s*(.*?)\s*-\s*([0-9]{4}-[0-9]{2}-[0-9]{2})\s*\((.*?)\)\s*$/', $title, $m)) {
-            $room = trim($m[1]);
-            $tgl  = trim($m[2]);
-            $rng  = trim($m[3]); // "08:00 - 12:00" atau "08:00"
+			$m = array();
+			if (preg_match('/^\s*(.*?)\s*-\s*([0-9]{4}-[0-9]{2}-[0-9]{2})\s*\((.*?)\)\s*$/', $title, $m)) {
+				$room = trim($m[1]);
+				$tgl  = trim($m[2]);
+				$rng  = trim($m[3]); // "08:00 - 12:00" atau "08:00"
 
-            $rng = preg_replace('/\s+/', ' ', $rng);
+				$rng = preg_replace('/\s+/', ' ', $rng);
 
-            if (strpos($rng, '-') !== false) {
-                $p = explode('-', $rng);
-                $a = isset($p[0]) ? $jam_dot(trim($p[0])) : '';
-                $b = isset($p[1]) ? $jam_dot(trim($p[1])) : '';
-                $rng = ($a && $b) ? ($a . ' - ' . $b . ' wib') : (($a ?: $b) . ' wib');
-            } else {
-                $rng = $jam_dot($rng) . ' wib';
-            }
+				if (strpos($rng, '-') !== false) {
+					$p = explode('-', $rng);
+					$a = isset($p[0]) ? $jam_dot(trim($p[0])) : '';
+					$b = isset($p[1]) ? $jam_dot(trim($p[1])) : '';
+					$rng = ($a && $b) ? ($a . ' - ' . $b . ' wib') : (($a ?: $b) . ' wib');
+				} else {
+					$rng = $jam_dot($rng) . ' wib';
+				}
 
-            return $room . "\n" . $tgl_indo($tgl) . "\n" . $rng;
-        }
+				return $room . "\n" . $tgl_indo($tgl) . "\n" . $rng;
+			}
 
-        // fallback jika format berbeda
-        return $title;
-    };
+			// fallback jika format berbeda
+			return $title;
+		};
 
-    // ===== 1) DATA DASAR =====
-    $data = array();
-    $data['flag']     = (int)$this->gedung_model->get_pemesanan_flag($username);
-    $data['trx_flag'] = (int)$this->gedung_model->get_transaksi_flag($username);
+		// ===== 1) DATA DASAR =====
+		$data = array();
+		$data['flag']     = (int)$this->gedung_model->get_pemesanan_flag($username);
+		$data['trx_flag'] = (int)$this->gedung_model->get_transaksi_flag($username);
 
-    $res = $this->gedung_model->get_all();
-    $data['res'] = (is_array($res)) ? $res : array();
+		$res = $this->gedung_model->get_all();
+		$data['res'] = (is_array($res)) ? $res : array();
 
-    // ===== 2) FILTER (GET) =====
-    $tanggal     = trim((string)$this->input->get('tanggal', TRUE));
-    $jam_legacy  = trim((string)$this->input->get('jam', TRUE));
+		// ===== 2) FILTER (GET) =====
+		$tanggal     = trim((string)$this->input->get('tanggal', TRUE));
+		$jam_legacy  = trim((string)$this->input->get('jam', TRUE));
 
-    $jam_mulai   = trim((string)$this->input->get('jam_mulai', TRUE));
-    $jam_selesai = trim((string)$this->input->get('jam_selesai', TRUE));
+		$jam_mulai   = trim((string)$this->input->get('jam_mulai', TRUE));
+		$jam_selesai = trim((string)$this->input->get('jam_selesai', TRUE));
 
-    if ($jam_mulai === '' && $jam_legacy !== '') {
-        $jam_mulai = $jam_legacy;
-    }
+		if ($jam_mulai === '' && $jam_legacy !== '') {
+			$jam_mulai = $jam_legacy;
+		}
 
-    $data['tanggal_filter'] = $tanggal;
-    $data['jam_filter']     = $jam_mulai;
-    $data['jam_mulai']      = $jam_mulai;
-    $data['jam_selesai']    = $jam_selesai;
+		$data['tanggal_filter'] = $tanggal;
+		$data['jam_filter']     = $jam_mulai;
+		$data['jam_mulai']      = $jam_mulai;
+		$data['jam_selesai']    = $jam_selesai;
 
-    // ===== 3) HITUNG KETERSEDIAAN =====
-    $availability = array();
+		// ===== 3) HITUNG KETERSEDIAAN =====
+		$availability = array();
 
-    if ($tanggal !== '' && !empty($data['res'])) {
+		if ($tanggal !== '' && !empty($data['res'])) {
 
-        $use_time_check = ($jam_mulai !== '' && $jam_selesai !== '');
+			$use_time_check = ($jam_mulai !== '' && $jam_selesai !== '');
 
-        foreach ($data['res'] as $row) {
-            $id_gedung = isset($row['ID_GEDUNG']) ? (int)$row['ID_GEDUNG'] : 0;
-            if ($id_gedung <= 0) continue;
+			foreach ($data['res'] as $row) {
+				$id_gedung = isset($row['ID_GEDUNG']) ? (int)$row['ID_GEDUNG'] : 0;
+				if ($id_gedung <= 0) continue;
 
-            if ($use_time_check) {
-                $exist = $this->check_date($tanggal, $id_gedung, $jam_mulai, $jam_selesai);
-            } else {
-                $exist = $this->check_date($tanggal, $id_gedung);
-            }
+				if ($use_time_check) {
+					$exist = $this->check_date($tanggal, $id_gedung, $jam_mulai, $jam_selesai);
+				} else {
+					$exist = $this->check_date($tanggal, $id_gedung);
+				}
 
-            $availability[$id_gedung] = ((int)$exist === 0);
-        }
-    }
+				$availability[$id_gedung] = ((int)$exist === 0);
+			}
+		}
 
-    $data['availability'] = $availability;
+		$data['availability'] = $availability;
 
-    // ===== 4) ULASAN (SPILL DI HOME) =====
-    $data['ulasan_summary'] = $this->Ulasan_model->get_summary_approved();
+		// ===== 4) ULASAN (SPILL DI HOME) =====
+		$data['ulasan_summary'] = $this->Ulasan_model->get_summary_approved();
 
-    $rows_ul = $this->Ulasan_model->get_approved(3);
+		$rows_ul = $this->Ulasan_model->get_approved(3);
 
-    $ulasan_home = array();
-    if (!empty($rows_ul) && is_array($rows_ul)) {
-        foreach ($rows_ul as $r) {
+		$ulasan_home = array();
+		if (!empty($rows_ul) && is_array($rows_ul)) {
+			foreach ($rows_ul as $r) {
 
-            $name = !empty($r['USERNAME']) ? $r['USERNAME'] : 'Customer';
+				$name = !empty($r['USERNAME']) ? $r['USERNAME'] : 'Customer';
 
-            $rating = isset($r['RATING']) ? (int)$r['RATING'] : 5;
-            if ($rating < 1) $rating = 1;
-            if ($rating > 5) $rating = 5;
+				$rating = isset($r['RATING']) ? (int)$r['RATING'] : 5;
+				if ($rating < 1) $rating = 1;
+				if ($rating > 5) $rating = 5;
 
-            // ✅ tanggal ulasan (created_at) format indo
-            $date_disp = '-';
-            if (!empty($r['CREATED_AT'])) {
-                $date_disp = $tgl_indo($r['CREATED_AT']);
-            }
+				// ✅ tanggal ulasan (created_at) format indo
+				$date_disp = '-';
+				if (!empty($r['CREATED_AT'])) {
+					$date_disp = $tgl_indo($r['CREATED_AT']);
+				}
 
-            // ✅ title jadi 3 baris kalau formatnya cocok
-            $title_disp = isset($r['TITLE']) ? $title_3baris($r['TITLE']) : '';
+				// ✅ title jadi 3 baris kalau formatnya cocok
+				$title_disp = isset($r['TITLE']) ? $title_3baris($r['TITLE']) : '';
 
-            $ulasan_home[] = array(
-                'name'    => $name,
-                'rating'  => $rating,
-                'date'    => $date_disp,
-                'title'   => $title_disp,
-                'comment' => isset($r['COMMENT']) ? $r['COMMENT'] : '',
-            );
-        }
-    }
+				$ulasan_home[] = array(
+					'name'    => $name,
+					'rating'  => $rating,
+					'date'    => $date_disp,
+					'title'   => $title_disp,
+					'comment' => isset($r['COMMENT']) ? $r['COMMENT'] : '',
+				);
+			}
+		}
 
-    $data['ulasan_home'] = $ulasan_home;
+		$data['ulasan_home'] = $ulasan_home;
 
-    // ===== 5) KIRIM KE VIEW =====
-    $this->load->view('home/home_screen', $data);
-}
+		// ===== 5) KIRIM KE VIEW =====
+		$this->load->view('home/home_screen', $data);
+	}
 
 
 
@@ -635,7 +645,7 @@ public function index()
 		$this->load->library('notification_service');
 
 		$this->notification_service->notifyAdmin(
-			'ADMIN_INBOX', 
+			'ADMIN_INBOX',
 			'Pesanan masuk (PROCESS)',
 			'Ada pesanan/proposal baru PMSN000' . $id . ' dari user ' . $username . '.',
 			'admin/pemesanan.php',
@@ -1127,160 +1137,170 @@ public function index()
 	// }
 
 	public function ulasan()
-{
-    $this->load->model('Ulasan/Ulasan_Model', 'Ulasan_model');
-    $this->load->model('pemesanan/Pemesanan_Model', 'Pemesanan_model');
+	{
+		$this->load->model('Ulasan/Ulasan_Model', 'Ulasan_model');
+		$this->load->model('pemesanan/Pemesanan_Model', 'Pemesanan_model');
 
-    // ===== helper format tanggal indo: 07 januari 2026 =====
-    $tgl_indo = function ($tgl) {
-        $tgl = trim((string)$tgl);
-        if ($tgl === '') return '';
+		// ===== helper format tanggal indo: 07 januari 2026 =====
+		$tgl_indo = function ($tgl) {
+			$tgl = trim((string)$tgl);
+			if ($tgl === '') return '';
 
-        $bulan = array(
-            1 => 'januari', 'februari', 'maret', 'april', 'mei', 'juni',
-            'juli', 'agustus', 'september', 'oktober', 'november', 'desember'
-        );
+			$bulan = array(
+				1 => 'januari',
+				'februari',
+				'maret',
+				'april',
+				'mei',
+				'juni',
+				'juli',
+				'agustus',
+				'september',
+				'oktober',
+				'november',
+				'desember'
+			);
 
-        $ts = strtotime($tgl);
-        if (!$ts) return $tgl;
+			$ts = strtotime($tgl);
+			if (!$ts) return $tgl;
 
-        $d = date('d', $ts);
-        $m = (int)date('n', $ts);
-        $y = date('Y', $ts);
+			$d = date('d', $ts);
+			$m = (int)date('n', $ts);
+			$y = date('Y', $ts);
 
-        return $d . ' ' . (isset($bulan[$m]) ? $bulan[$m] : '') . ' ' . $y;
-    };
+			return $d . ' ' . (isset($bulan[$m]) ? $bulan[$m] : '') . ' ' . $y;
+		};
 
-    // ===== helper jam HH:MM =====
-    $time_hm = function ($t) {
-        $t = trim((string)$t);
-        if ($t === '') return '';
-        return (strlen($t) >= 5) ? substr($t, 0, 5) : $t;
-    };
+		// ===== helper jam HH:MM =====
+		$time_hm = function ($t) {
+			$t = trim((string)$t);
+			if ($t === '') return '';
+			return (strlen($t) >= 5) ? substr($t, 0, 5) : $t;
+		};
 
-    // ===== helper jam jadi 08.00 =====
-    $jam_dot = function ($hm) {
-        $hm = trim((string)$hm);
-        if ($hm === '') return '';
-        $hm = (strlen($hm) >= 5) ? substr($hm, 0, 5) : $hm;
-        return str_replace(':', '.', $hm);
-    };
+		// ===== helper jam jadi 08.00 =====
+		$jam_dot = function ($hm) {
+			$hm = trim((string)$hm);
+			if ($hm === '') return '';
+			$hm = (strlen($hm) >= 5) ? substr($hm, 0, 5) : $hm;
+			return str_replace(':', '.', $hm);
+		};
 
-    // ===== 1) Ambil ulasan APPROVED =====
-    $rows = $this->Ulasan_model->get_approved(30);
+		// ===== 1) Ambil ulasan APPROVED =====
+		$rows = $this->Ulasan_model->get_approved(30);
 
-    // mapping biar cocok ke view (name/rating/date/title/comment)
-    $reviews = array();
-    foreach ($rows as $r) {
-        $created_at = isset($r['CREATED_AT']) ? (string)$r['CREATED_AT'] : '';
-        $created_at_indo = $created_at ? $tgl_indo($created_at) : '';
+		// mapping biar cocok ke view (name/rating/date/title/comment)
+		$reviews = array();
+		foreach ($rows as $r) {
+			$created_at = isset($r['CREATED_AT']) ? (string)$r['CREATED_AT'] : '';
+			$created_at_indo = $created_at ? $tgl_indo($created_at) : '';
 
-        // Jika TITLE berisi "Nama - 2026-01-07 (08:00 - 12:00)" -> ubah jadi 3 baris
-        // Kita ubah title jadi ada \n agar di view bisa ditampilkan per baris (atau kamu split)
-        $title_raw = isset($r['TITLE']) ? (string)$r['TITLE'] : '';
-        $title_pretty = $title_raw;
+			// Jika TITLE berisi "Nama - 2026-01-07 (08:00 - 12:00)" -> ubah jadi 3 baris
+			// Kita ubah title jadi ada \n agar di view bisa ditampilkan per baris (atau kamu split)
+			$title_raw = isset($r['TITLE']) ? (string)$r['TITLE'] : '';
+			$title_pretty = $title_raw;
 
-        // coba parse format title lama
-        $m = array();
-        if (preg_match('/^\s*(.*?)\s*-\s*([0-9]{4}-[0-9]{2}-[0-9]{2})\s*\((.*?)\)\s*$/', $title_raw, $m)) {
-            $room = trim($m[1]);
-            $tgl  = trim($m[2]);
-            $rng  = trim($m[3]); // "08:00 - 12:00"
+			// coba parse format title lama
+			$m = array();
+			if (preg_match('/^\s*(.*?)\s*-\s*([0-9]{4}-[0-9]{2}-[0-9]{2})\s*\((.*?)\)\s*$/', $title_raw, $m)) {
+				$room = trim($m[1]);
+				$tgl  = trim($m[2]);
+				$rng  = trim($m[3]); // "08:00 - 12:00"
 
-            // ubah jam
-            $rng = preg_replace('/\s+/', ' ', $rng);
-            if (strpos($rng, '-') !== false) {
-                $p = explode('-', $rng);
-                $a = isset($p[0]) ? $jam_dot(trim($p[0])) : '';
-                $b = isset($p[1]) ? $jam_dot(trim($p[1])) : '';
-                $rng = ($a && $b) ? ($a . ' - ' . $b . ' wib') : (($a ?: $b) . ' wib');
-            } else {
-                $rng = $jam_dot($rng) . ' wib';
-            }
+				// ubah jam
+				$rng = preg_replace('/\s+/', ' ', $rng);
+				if (strpos($rng, '-') !== false) {
+					$p = explode('-', $rng);
+					$a = isset($p[0]) ? $jam_dot(trim($p[0])) : '';
+					$b = isset($p[1]) ? $jam_dot(trim($p[1])) : '';
+					$rng = ($a && $b) ? ($a . ' - ' . $b . ' wib') : (($a ?: $b) . ' wib');
+				} else {
+					$rng = $jam_dot($rng) . ' wib';
+				}
 
-            // jadikan 3 baris (pakai \n)
-            $title_pretty = $room . "\n" . $tgl_indo($tgl) . "\n" . $rng;
-        }
+				// jadikan 3 baris (pakai \n)
+				$title_pretty = $room . "\n" . $tgl_indo($tgl) . "\n" . $rng;
+			}
 
-        $reviews[] = array(
-            'name'    => isset($r['USERNAME']) ? $r['USERNAME'] : '',
-            'rating'  => isset($r['RATING']) ? (int)$r['RATING'] : 0,
-            // ✅ tanggal ulasan sudah Indo
-            'date'    => $created_at_indo,
-            // ✅ title sudah 3 baris (atau tetap raw kalau formatnya beda)
-            'title'   => $title_pretty,
-            'comment' => isset($r['COMMENT']) ? $r['COMMENT'] : ''
-        );
-    }
+			$reviews[] = array(
+				'name'    => isset($r['USERNAME']) ? $r['USERNAME'] : '',
+				'rating'  => isset($r['RATING']) ? (int)$r['RATING'] : 0,
+				// ✅ tanggal ulasan sudah Indo
+				'date'    => $created_at_indo,
+				// ✅ title sudah 3 baris (atau tetap raw kalau formatnya beda)
+				'title'   => $title_pretty,
+				'comment' => isset($r['COMMENT']) ? $r['COMMENT'] : ''
+			);
+		}
 
-    // ===== 2) summary akurat (berdasarkan semua APPROVED) =====
-    $data['summary'] = $this->Ulasan_model->get_summary_approved();
+		// ===== 2) summary akurat (berdasarkan semua APPROVED) =====
+		$data['summary'] = $this->Ulasan_model->get_summary_approved();
 
-    // ===== 3) dropdown pemesanan (STATUS=3) yang belum pernah diulas =====
-    $username = $this->session->userdata('username');
-    $reservasi_list = array();
+		// ===== 3) dropdown pemesanan (STATUS=3) yang belum pernah diulas =====
+		$username = $this->session->userdata('username');
+		$reservasi_list = array();
 
-    if (!empty($username)) {
-        $orders = $this->Pemesanan_model->get_submitted_by_username($username);
+		if (!empty($username)) {
+			$orders = $this->Pemesanan_model->get_submitted_by_username($username);
 
-        // filter agar yang sudah diulas tidak muncul
-        $has_id_pemesanan_col = $this->db->field_exists('ID_PEMESANAN', 'ulasan');
-        $reviewed_ids = $has_id_pemesanan_col ? $this->Ulasan_model->get_reviewed_id_pemesanan_by_username($username) : array();
-        $reviewed_titles = !$has_id_pemesanan_col ? $this->Ulasan_model->get_reviewed_titles_by_username($username) : array();
+			// filter agar yang sudah diulas tidak muncul
+			$has_id_pemesanan_col = $this->db->field_exists('ID_PEMESANAN', 'ulasan');
+			$reviewed_ids = $has_id_pemesanan_col ? $this->Ulasan_model->get_reviewed_id_pemesanan_by_username($username) : array();
+			$reviewed_titles = !$has_id_pemesanan_col ? $this->Ulasan_model->get_reviewed_titles_by_username($username) : array();
 
-        $reviewed_ids_map = array();
-        foreach ($reviewed_ids as $rid) $reviewed_ids_map[(int)$rid] = true;
+			$reviewed_ids_map = array();
+			foreach ($reviewed_ids as $rid) $reviewed_ids_map[(int)$rid] = true;
 
-        $reviewed_titles_map = array();
-        foreach ($reviewed_titles as $t) $reviewed_titles_map[$t] = true;
+			$reviewed_titles_map = array();
+			foreach ($reviewed_titles as $t) $reviewed_titles_map[$t] = true;
 
-        foreach ($orders as $o) {
-            $id = (int)$o['ID_PEMESANAN'];
+			foreach ($orders as $o) {
+				$id = (int)$o['ID_PEMESANAN'];
 
-            $nama_gedung = isset($o['NAMA_GEDUNG']) ? trim((string)$o['NAMA_GEDUNG']) : '';
-            $tanggal_raw = isset($o['TANGGAL_PEMESANAN']) ? trim((string)$o['TANGGAL_PEMESANAN']) : '';
-            $tanggal_indo = $tgl_indo($tanggal_raw);
+				$nama_gedung = isset($o['NAMA_GEDUNG']) ? trim((string)$o['NAMA_GEDUNG']) : '';
+				$tanggal_raw = isset($o['TANGGAL_PEMESANAN']) ? trim((string)$o['TANGGAL_PEMESANAN']) : '';
+				$tanggal_indo = $tgl_indo($tanggal_raw);
 
-            $jam_mulai_disp   = $time_hm(isset($o['JAM_PEMESANAN']) ? $o['JAM_PEMESANAN'] : '');
-            $jam_selesai_disp = $time_hm(isset($o['JAM_SELESAI']) ? $o['JAM_SELESAI'] : '');
+				$jam_mulai_disp   = $time_hm(isset($o['JAM_PEMESANAN']) ? $o['JAM_PEMESANAN'] : '');
+				$jam_selesai_disp = $time_hm(isset($o['JAM_SELESAI']) ? $o['JAM_SELESAI'] : '');
 
-            if ($jam_selesai_disp === '00:00') $jam_selesai_disp = '';
+				if ($jam_selesai_disp === '00:00') $jam_selesai_disp = '';
 
-            // ubah jadi dot + WIB
-            $mulai = $jam_dot($jam_mulai_disp);
-            $selesai = $jam_dot($jam_selesai_disp);
+				// ubah jadi dot + WIB
+				$mulai = $jam_dot($jam_mulai_disp);
+				$selesai = $jam_dot($jam_selesai_disp);
 
-            $range = $selesai ? ($mulai . ' - ' . $selesai . ' wib') : ($mulai . ' wib');
+				$range = $selesai ? ($mulai . ' - ' . $selesai . ' wib') : ($mulai . ' wib');
 
-            // ✅ label yang disimpan ke TITLE (sekalian jadi kunci cek sudah diulas)
-            $title_key = $nama_gedung . ' - ' . $tanggal_raw . ' (' . $jam_mulai_disp . ($jam_selesai_disp ? ' - ' . $jam_selesai_disp : '') . ')';
+				// ✅ label yang disimpan ke TITLE (sekalian jadi kunci cek sudah diulas)
+				$title_key = $nama_gedung . ' - ' . $tanggal_raw . ' (' . $jam_mulai_disp . ($jam_selesai_disp ? ' - ' . $jam_selesai_disp : '') . ')';
 
-            // ✅ label display 3 baris untuk dipakai di view (preview)
-            $label_3baris = $nama_gedung . "\n" . $tanggal_indo . "\n" . $range;
+				// ✅ label display 3 baris untuk dipakai di view (preview)
+				$label_3baris = $nama_gedung . "\n" . $tanggal_indo . "\n" . $range;
 
-            if ($has_id_pemesanan_col) {
-                if (isset($reviewed_ids_map[$id])) continue;
-            } else {
-                if (isset($reviewed_titles_map[$title_key])) continue;
-            }
+				if ($has_id_pemesanan_col) {
+					if (isset($reviewed_ids_map[$id])) continue;
+				} else {
+					if (isset($reviewed_titles_map[$title_key])) continue;
+				}
 
-            $reservasi_list[] = array(
-                'ID_PEMESANAN' => $id,
-                // simpan raw key untuk logika existing (tetap aman)
-                'title_key'    => $title_key,
-                // label yang dipakai view: sudah 3 baris + tanggal indo
-                'label'        => $label_3baris,
-                // kalau butuh juga versi raw:
-                'label_raw'    => $title_key,
-            );
-        }
-    }
+				$reservasi_list[] = array(
+					'ID_PEMESANAN' => $id,
+					// simpan raw key untuk logika existing (tetap aman)
+					'title_key'    => $title_key,
+					// label yang dipakai view: sudah 3 baris + tanggal indo
+					'label'        => $label_3baris,
+					// kalau butuh juga versi raw:
+					'label_raw'    => $title_key,
+				);
+			}
+		}
 
-    $data['reviews'] = $reviews;
-    $data['reservasi_list'] = $reservasi_list;
+		$data['reviews'] = $reviews;
+		$data['reservasi_list'] = $reservasi_list;
 
-    $this->load->view('home/ulasan', $data);
-}
+		$this->load->view('home/ulasan', $data);
+	}
 
 
 	public function submit_ulasan()
@@ -1388,73 +1408,70 @@ public function index()
 			->set_content_type('application/json')
 			->set_output(json_encode($rows));
 	}
-	// public function notif_poll()
-	// {
-	// 	$username = $this->session->userdata('username');
-
-	// 	// keamanan: kalau belum login jangan kasih data
-	// 	if (!$username) {
-	// 		$this->output
-	// 			->set_status_header(401)
-	// 			->set_content_type('application/json')
-	// 			->set_output(json_encode([
-	// 				'ok' => false,
-	// 				'flag' => 0,
-	// 				'message' => 'unauthorized'
-	// 			]));
-	// 		return;
-	// 	}
-
-	// 	$this->load->model('gedung/gedung_model');
-
-	// 	$flag = (int) $this->gedung_model->get_pemesanan_flag($username);
-
-	// 	$this->output
-	// 		->set_content_type('application/json')
-	// 		->set_output(json_encode([
-	// 			'ok' => true,
-	// 			'flag' => $flag
-	// 		]));
-	// }
 	public function notif_poll_v2()
 	{
-		if (!$this->input->is_ajax_request()) show_404();
+		header('Content-Type: application/json; charset=utf-8');
 
-		$username = $this->session->userdata('username');
-		if (!$username) {
-			$this->output->set_content_type('application/json')
-				->set_output(json_encode(['ok' => false, 'msg' => 'no-session']));
+		// pakai username (bukan id_user)
+		$username = (string) $this->session->userdata('username');
+		if ($username === '') {
+			echo json_encode(array('ok' => false, 'message' => 'Unauthorized'));
 			return;
 		}
 
-		// ✅ normalisasi biar tidak ke-skip karena AWKARIN vs awkarin
-		$username = strtolower(trim($username));
+		$since_p = (int) $this->input->get('since_p');
+		$since_t = (int) $this->input->get('since_t');
 
-		$since_p = (int)$this->input->get('since_p', true);
-		$since_t = (int)$this->input->get('since_t', true);
+		$this->load->library('notification_service');
 
-		// ✅ load model sesuai folder
-		$this->load->model('notification/notification_model', 'notif');
-
+		// types sesuai DB kamu
 		$typesP = array('USER_PEMESANAN');
 		$typesT = array('USER_TRANSAKSI');
 
-		$pemesanan = $this->notif->get_unread_since($username, $typesP, $since_p, 20);
-		$transaksi = $this->notif->get_unread_since($username, $typesT, $since_t, 20);
+		try {
+			// ambil list unread (lebih dari 5 biar ga miss)
+			$rawP = $this->notification_service->get_unread($username, $typesP, 30);
+			$rawT = $this->notification_service->get_unread($username, $typesT, 30);
 
-		$this->output->set_content_type('application/json')
-			->set_output(json_encode(array(
+			// filter berdasarkan since_id
+			$itemsP = array();
+			if (is_array($rawP)) {
+				foreach ($rawP as $n) {
+					$id = isset($n['id']) ? (int)$n['id'] : 0;
+					if ($id > $since_p) $itemsP[] = $n;
+				}
+			}
+
+			$itemsT = array();
+			if (is_array($rawT)) {
+				foreach ($rawT as $n) {
+					$id = isset($n['id']) ? (int)$n['id'] : 0;
+					if ($id > $since_t) $itemsT[] = $n;
+				}
+			}
+
+			$countP = (int) $this->notification_service->count_unread($username, $typesP);
+			$countT = (int) $this->notification_service->count_unread($username, $typesT);
+
+			echo json_encode(array(
 				'ok' => true,
 				'counts' => array(
-					'pemesanan' => (int)$this->notif->count_unread($username, $typesP),
-					'transaksi' => (int)$this->notif->count_unread($username, $typesT),
+					'pemesanan' => $countP,
+					'transaksi' => $countT
 				),
 				'items' => array(
-					'pemesanan' => $pemesanan,
-					'transaksi' => $transaksi
+					'pemesanan' => array_slice($itemsP, 0, 10),
+					'transaksi' => array_slice($itemsT, 0, 10)
 				)
-			)));
+			));
+		} catch (Exception $e) {
+			log_message('error', 'notif_poll_v2 USER error: ' . $e->getMessage());
+			echo json_encode(array('ok' => false, 'message' => 'Server error'));
+		}
 	}
+
+
+
 
 	/**
 	 * OPTIONAL: notif_poll lama (flag) boleh tetap ada,
@@ -1614,45 +1631,45 @@ public function index()
 		$this->load->model('gedung/gedung_model');
 		$this->gedung_model->clear_transaksi_flag($username);
 
-    $this->output->set_content_type('application/json')
-        ->set_output(json_encode(['ok' => true, 'trx_flag' => 0]));
-}
+		$this->output->set_content_type('application/json')
+			->set_output(json_encode(['ok' => true, 'trx_flag' => 0]));
+	}
 
-public function how_to_order()
-{
-    $username = (string)$this->session->userdata('username');
+	public function how_to_order()
+	{
+		$username = (string)$this->session->userdata('username');
 
-    $data = array(
-        'flag' => 0,
-        'trx_flag' => 0
-    );
+		$data = array(
+			'flag' => 0,
+			'trx_flag' => 0
+		);
 
-    $this->load->model('gedung/gedung_model');
-    $data['flag']     = (int)$this->gedung_model->get_pemesanan_flag($username);
-    $data['trx_flag'] = (int)$this->gedung_model->get_transaksi_flag($username);
+		$this->load->model('gedung/gedung_model');
+		$data['flag']     = (int)$this->gedung_model->get_pemesanan_flag($username);
+		$data['trx_flag'] = (int)$this->gedung_model->get_transaksi_flag($username);
 
-    $this->load->view('home/how_to_order', $data);
-}
+		$this->load->view('home/how_to_order', $data);
+	}
 
-public function jadwal_by_date($id_gedung)
-{
-    $this->output->set_content_type('application/json');
-    $this->db->db_debug = false;
+	public function jadwal_by_date($id_gedung)
+	{
+		$this->output->set_content_type('application/json');
+		$this->db->db_debug = false;
 
-    $id_gedung = (int)$id_gedung;
-    $date = $this->input->get('date', true); // YYYY-MM-DD
+		$id_gedung = (int)$id_gedung;
+		$date = $this->input->get('date', true); // YYYY-MM-DD
 
-    // validasi
-    if (!$id_gedung || empty($date) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
-        return $this->output
-            ->set_status_header(400)
-            ->set_output(json_encode(array(
-                'ok' => false,
-                'message' => 'Parameter tidak valid'
-            )));
-    }
+		// validasi
+		if (!$id_gedung || empty($date) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+			return $this->output
+				->set_status_header(400)
+				->set_output(json_encode(array(
+					'ok' => false,
+					'message' => 'Parameter tidak valid'
+				)));
+		}
 
-    $sql = "
+		$sql = "
         SELECT
             ps.ID_PEMESANAN,
             ps.TANGGAL_PEMESANAN AS TANGGAL_FINAL_PEMESANAN,
@@ -1676,35 +1693,31 @@ public function jadwal_by_date($id_gedung)
         ORDER BY ps.JAM_PEMESANAN ASC, ps.ID_PEMESANAN ASC
     ";
 
-    $q = $this->db->query($sql, array($id_gedung, $date));
+		$q = $this->db->query($sql, array($id_gedung, $date));
 
-    if (!$q) {
-        $dbError = $this->db->error();
-        $msg  = isset($dbError['message']) ? $dbError['message'] : 'unknown';
-        $code = isset($dbError['code']) ? $dbError['code'] : 0;
+		if (!$q) {
+			$dbError = $this->db->error();
+			$msg  = isset($dbError['message']) ? $dbError['message'] : 'unknown';
+			$code = isset($dbError['code']) ? $dbError['code'] : 0;
 
-        return $this->output
-            ->set_status_header(500)
-            ->set_output(json_encode(array(
-                'ok' => false,
-                'message' => 'Database error: ' . $msg,
-                'code' => $code
-            )));
-    }
+			return $this->output
+				->set_status_header(500)
+				->set_output(json_encode(array(
+					'ok' => false,
+					'message' => 'Database error: ' . $msg,
+					'code' => $code
+				)));
+		}
 
-    $rows = $q->result_array();
+		$rows = $q->result_array();
 
-    return $this->output
-        ->set_status_header(200)
-        ->set_output(json_encode(array(
-            'ok' => true,
-            'date' => $date,
-            'id_gedung' => $id_gedung,
-            'data' => $rows
-        )));
-}
-
-
-
-
+		return $this->output
+			->set_status_header(200)
+			->set_output(json_encode(array(
+				'ok' => true,
+				'date' => $date,
+				'id_gedung' => $id_gedung,
+				'data' => $rows
+			)));
+	}
 }

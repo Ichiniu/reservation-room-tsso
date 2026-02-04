@@ -53,10 +53,9 @@ $this->load->helper('text');
         </ul>
         <main class="">
         </main>
-        <!-- Materialize core JavaScript -->
+
         <!-- Placed at the end of the document so the pages load faster -->
         <script src="<?php echo base_url(); ?>assets/home/assets/js/jquery.min.js"></script>
-        <script src="<?php echo base_url(); ?>assets/home/materialize/js/materialize.js"></script>
         <script src="<?php echo base_url(); ?>assets/home/index.js"></script>
 </body>
 

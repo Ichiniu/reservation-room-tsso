@@ -76,10 +76,10 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
                         <?php $foto_profil = $this->session->userdata('foto_profil'); ?>
 
                         <?php if (!empty($foto_profil)): ?>
-                        <img src="<?= base_url($foto_profil); ?>" class="h-7 w-7 rounded-full object-cover"
-                            alt="Foto Profil">
+                            <img src="<?= base_url($foto_profil); ?>" class="h-7 w-7 rounded-full object-cover"
+                                alt="Foto Profil">
                         <?php else: ?>
-                        <i class="bi bi-person-circle text-slate-700"></i>
+                            <i class="bi bi-person-circle text-slate-700"></i>
                         <?php endif; ?>
 
                         <span class="text-xs font-medium text-slate-700">
@@ -189,133 +189,379 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
 <audio id="notifSound" preload="auto">
     <source src="<?= base_url('assets/nada_notifikasi1.mp3'); ?>" type="audio/mpeg">
 </audio>
-
 <script>
-(function() {
-    // ========= MOBILE MENU TOGGLE =========
-    const mobileBtn = document.getElementById("mobileMenuBtn");
-    const mobileMenu = document.getElementById("mobileMenu");
+    window.BM_USERNAME = "<?= addslashes(strtolower((string)$username)) ?>";
+</script>
+<script>
+    // ... (script kamu yang sudah ada)
 
-    if (mobileBtn && mobileMenu) {
-        mobileBtn.addEventListener("click", () => {
-            const isOpen = !mobileMenu.classList.contains("hidden");
-            mobileMenu.classList.toggle("hidden");
-            mobileBtn.setAttribute("aria-expanded", String(!isOpen));
-        });
+    // === TEST SOUND & TEST DESKTOP (USER) ===
+    const btnTestSound = document.getElementById('testSound');
+    const btnTestDesktop = document.getElementById('testDesktop');
+
+    function setNotifUI(on) {
+        const dot = document.getElementById('notifDot');
+        const txt = document.getElementById('notifStatusText');
+        if (dot) dot.className = "inline-block w-2 h-2 rounded-full " + (on ? "bg-green-500" : "bg-red-500");
+        if (txt) txt.textContent = on ? "Notifikasi: aktif" : "Notifikasi: diblokir";
     }
 
-    // ========= PROFILE DROPDOWN TOGGLE (DESKTOP) =========
-    const profileToggle = document.getElementById("profileToggle");
-    const profileMenu = document.getElementById("profileMenu");
-
-    function closeProfileMenu() {
-        if (!profileMenu) return;
-        profileMenu.classList.add("hidden");
-        if (profileToggle) profileToggle.setAttribute("aria-expanded", "false");
-    }
-
-    function toggleProfileMenu() {
-        if (!profileMenu) return;
-        const isHidden = profileMenu.classList.contains("hidden");
-        profileMenu.classList.toggle("hidden");
-        if (profileToggle) profileToggle.setAttribute("aria-expanded", String(isHidden));
-    }
-
-    if (profileToggle && profileMenu) {
-        profileToggle.addEventListener("click", (e) => {
+    if (btnTestSound) {
+        btnTestSound.addEventListener('click', async (e) => {
+            e.preventDefault();
             e.stopPropagation();
-            toggleProfileMenu();
-        });
 
-        // klik di luar => nutup
-        document.addEventListener("click", (e) => {
-            if (!profileMenu.contains(e.target) && !profileToggle.contains(e.target)) {
-                closeProfileMenu();
+            // anggap kalau test = user ingin mengaktifkan
+            localStorage.setItem("bm_notif_enabled_" + window.BM_USERNAME, "1");
+            setNotifUI(true);
+
+            const audio = document.getElementById('notifSound');
+            if (!audio) {
+                alert("Audio notifikasi tidak ditemukan.");
+                return;
+            }
+
+            try {
+                audio.currentTime = 0;
+                await audio.play();
+            } catch (err) {
+                console.log("AUDIO BLOCKED:", err);
+                alert("Sound diblokir browser. Izinkan suara di site settings lalu coba lagi.");
             }
         });
+    }
 
-        // tombol ESC => nutup
-        document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape") closeProfileMenu();
+    if (btnTestDesktop) {
+        btnTestDesktop.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (!("Notification" in window)) {
+                alert("Browser tidak mendukung notifikasi desktop.");
+                return;
+            }
+
+            // wajib HTTPS atau localhost
+            if (!window.isSecureContext) {
+                alert("Notifikasi desktop butuh HTTPS atau http://localhost.\nSekarang: " + location.origin);
+                return;
+            }
+
+            let perm = Notification.permission;
+            if (perm !== "granted") {
+                try {
+                    perm = await Notification.requestPermission();
+                } catch (e) {}
+            }
+
+            if (perm !== "granted") {
+                localStorage.setItem("bm_notif_enabled_" + window.BM_USERNAME, "0");
+                setNotifUI(false);
+                alert("Notifikasi masih diblokir. Aktifkan di setting browser.");
+                return;
+            }
+
+            localStorage.setItem("bm_notif_enabled_" + window.BM_USERNAME, "1");
+
+            setNotifUI(true);
+
+            try {
+                const n = new Notification("Booking Smarts", {
+                    body: "✅ Test desktop notification berhasil",
+                    silent: false
+                });
+                n.onclick = () => {
+                    window.focus();
+                    n.close();
+                };
+
+                // optional: ikut bunyi saat test desktop
+                const audio = document.getElementById('notifSound');
+                if (audio) {
+                    audio.currentTime = 0;
+                    audio.play().catch(() => {});
+                }
+            } catch (err) {
+                console.log("NOTIF ERROR:", err);
+                alert("Gagal menampilkan notif. Cek setting OS/Browser (DND/Focus Assist).");
+            }
+        });
+    }
+</script>
+
+<script>
+    (async function() {
+        if (!("Notification" in window)) return;
+
+        // permission - idealnya via tombol, tapi ini versi cepat
+        if (Notification.permission === "default") {
+            try {
+                await Notification.requestPermission();
+            } catch (e) {}
+        }
+
+        let last = 0;
+
+        async function poll() {
+            try {
+                const res = await fetch("<?= site_url('api/notif/unread-count') ?>", {
+                    credentials: "same-origin"
+                });
+                const data = await res.json();
+
+                const count = Number(data.count || 0);
+                if (Notification.permission === "granted" && count > last) {
+                    new Notification("Booking Smarts", {
+                        body: "Ada notifikasi baru."
+                    });
+                }
+                last = count;
+            } catch (e) {
+                console.log("notif error", e);
+            }
+        }
+
+        poll();
+        setInterval(poll, 15000);
+    })();
+</script>
+
+<script>
+    (function() {
+        // ========= MOBILE MENU TOGGLE =========
+        const mobileBtn = document.getElementById("mobileMenuBtn");
+        const mobileMenu = document.getElementById("mobileMenu");
+
+        if (mobileBtn && mobileMenu) {
+            mobileBtn.addEventListener("click", () => {
+                const isOpen = !mobileMenu.classList.contains("hidden");
+                mobileMenu.classList.toggle("hidden");
+                mobileBtn.setAttribute("aria-expanded", String(!isOpen));
+            });
+        }
+
+        // ========= PROFILE DROPDOWN TOGGLE (DESKTOP) =========
+        const profileToggle = document.getElementById("profileToggle");
+        const profileMenu = document.getElementById("profileMenu");
+
+        function closeProfileMenu() {
+            if (!profileMenu) return;
+            profileMenu.classList.add("hidden");
+            if (profileToggle) profileToggle.setAttribute("aria-expanded", "false");
+        }
+
+        function toggleProfileMenu() {
+            if (!profileMenu) return;
+            const isHidden = profileMenu.classList.contains("hidden");
+            profileMenu.classList.toggle("hidden");
+            if (profileToggle) profileToggle.setAttribute("aria-expanded", String(isHidden));
+        }
+
+        if (profileToggle && profileMenu) {
+            profileToggle.addEventListener("click", (e) => {
+                e.stopPropagation();
+                toggleProfileMenu();
+            });
+
+            // klik di luar => nutup
+            document.addEventListener("click", (e) => {
+                if (!profileMenu.contains(e.target) && !profileToggle.contains(e.target)) {
+                    closeProfileMenu();
+                }
+            });
+
+            // tombol ESC => nutup
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "Escape") closeProfileMenu();
+            });
+
+            profileMenu.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+
+        // ====== NOTIF POLLING & BADGES ======
+        var USERNAME = "<?= addslashes(strtolower((string)$username)) ?>";
+        var POLL_URL_BASE = "<?= site_url('home/home/notif_poll_v2') ?>";
+        var SITE_URL = "<?= rtrim(site_url(), '/') ?>";
+
+        var KEY_LAST_P = "bm_last_user_p_id_" + USERNAME;
+        var KEY_LAST_T = "bm_last_user_t_id_" + USERNAME;
+
+        const LOCK_KEY = "bm_notif_lock_user_" + USERNAME;
+        const TAB_ID = Date.now() + "_" + Math.random().toString(16).slice(2);
+
+        const getNum = k => parseInt(localStorage.getItem(k) || "0", 10) || 0;
+        const setNum = (k, v) => localStorage.setItem(k, String(v || 0));
+
+        function isLeaderTab() {
+            const now = Date.now();
+            let lock = null;
+            try {
+                lock = JSON.parse(localStorage.getItem(LOCK_KEY) || "null");
+            } catch (e) {
+                lock = null;
+            }
+            if (!lock || (now - lock.ts) > 15000) {
+                localStorage.setItem(LOCK_KEY, JSON.stringify({
+                    id: TAB_ID,
+                    ts: now
+                }));
+                return true;
+            }
+            if (lock.id === TAB_ID) {
+                localStorage.setItem(LOCK_KEY, JSON.stringify({
+                    id: TAB_ID,
+                    ts: now
+                }));
+                return true;
+            }
+            return false;
+        }
+
+        function setBadge(el, count) {
+            if (!el) return;
+            el.dataset.count = count;
+            if (count > 0) {
+                el.classList.remove('hidden');
+                el.textContent = count;
+            } else {
+                el.classList.add('hidden');
+                el.textContent = '';
+            }
+        }
+
+        function updateBadges(counts) {
+            const p = counts && counts.pemesanan ? parseInt(counts.pemesanan, 10) : 0;
+            const t = counts && counts.transaksi ? parseInt(counts.transaksi, 10) : 0;
+            setBadge(document.getElementById('notifBadge'), p);
+            setBadge(document.getElementById('notifBadgeMobile'), p);
+            setBadge(document.getElementById('trxBadge'), t);
+            setBadge(document.getElementById('trxBadgeMobile'), t);
+        }
+
+        window.aktifkanNotif = async function() {
+            if (!("Notification" in window)) {
+                alert("Browser tidak mendukung notifikasi.");
+                return;
+            }
+            const perm = await Notification.requestPermission();
+            const dot = document.getElementById('notifDot');
+            const txt = document.getElementById('notifStatusText');
+            if (perm === "granted") {
+                if (dot) dot.className = "inline-block w-2 h-2 rounded-full bg-green-500";
+                if (txt) txt.textContent = "Notifikasi: aktif";
+                localStorage.setItem("bm_notif_enabled_" + USERNAME, "1");
+            } else {
+                if (dot) dot.className = "inline-block w-2 h-2 rounded-full bg-red-500";
+                if (txt) txt.textContent = "Notifikasi: diblokir";
+                localStorage.setItem("bm_notif_enabled_" + USERNAME, "0");
+            }
+        };
+
+        function notifEnabled() {
+            return localStorage.getItem("bm_notif_enabled_" + USERNAME) === "1";
+        }
+
+        function showNotif(n) {
+            if (!("Notification" in window)) return;
+            if (Notification.permission !== "granted") return;
+            if (!notifEnabled()) return;
+            const tag = "bm_" + (n.type || "x") + "_" + (n.id || "0");
+            try {
+                const notif = new Notification(n.title || "Notifikasi", {
+                    body: n.message || "",
+                    tag: tag,
+                    renotify: false,
+                    silent: false
+                });
+                const audio = document.getElementById('notifSound');
+                if (audio) {
+                    try {
+                        audio.currentTime = 0;
+                        audio.play().catch(() => {});
+                    } catch (e) {}
+                }
+                notif.onclick = () => {
+                    if (n.url) window.location.href = SITE_URL + "/" + String(n.url).replace(/^\/+/, '');
+                    notif.close();
+                };
+            } catch (e) {}
+        }
+
+        function handle(list, key) {
+            const last = getNum(key);
+            let max = last;
+            (list || []).forEach(n => {
+                const id = parseInt(n.id, 10) || 0;
+                if (id > last) {
+                    showNotif(n);
+                    if (id > max) max = id;
+                }
+            });
+            if (max > last) setNum(key, max);
+            return max;
+        }
+
+        async function poll() {
+            if (!isLeaderTab()) return;
+            const lastP = getNum(KEY_LAST_P);
+            const lastT = getNum(KEY_LAST_T);
+            const url = POLL_URL_BASE + "?since_p=" + encodeURIComponent(lastP) + "&since_t=" + encodeURIComponent(lastT);
+            try {
+                const res = await fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                const data = await res.json();
+                if (!data || !data.ok) return;
+                updateBadges(data.counts);
+                handle(data.items && data.items.pemesanan ? data.items.pemesanan : [], KEY_LAST_P);
+                handle(data.items && data.items.transaksi ? data.items.transaksi : [], KEY_LAST_T);
+            } catch (e) {}
+        }
+
+        const MARK_READ_URL = "<?= site_url('api/notif/mark-read') ?>";
+        async function markRead(type) {
+            try {
+                const body = "type=" + encodeURIComponent(type);
+                await fetch(MARK_READ_URL, {
+                    method: "POST",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body
+                }).then(r => r.json()).catch(() => null);
+            } catch (e) {}
+        }
+
+        // run polling
+        poll();
+        setInterval(poll, 8000);
+
+        // wire click handlers
+        document.getElementById('pemesananLinkDesktop')?.addEventListener('click', () => {
+            markRead('pemesanan');
+            setBadge(document.getElementById('notifBadge'), 0);
+            setBadge(document.getElementById('notifBadgeMobile'), 0);
+        });
+        document.getElementById('pemesananLinkMobile')?.addEventListener('click', () => {
+            markRead('pemesanan');
+            setBadge(document.getElementById('notifBadge'), 0);
+            setBadge(document.getElementById('notifBadgeMobile'), 0);
+        });
+        document.getElementById('transaksiLinkDesktop')?.addEventListener('click', () => {
+            markRead('transaksi');
+            setBadge(document.getElementById('trxBadge'), 0);
+            setBadge(document.getElementById('trxBadgeMobile'), 0);
+        });
+        document.getElementById('transaksiLinkMobile')?.addEventListener('click', () => {
+            markRead('transaksi');
+            setBadge(document.getElementById('trxBadge'), 0);
+            setBadge(document.getElementById('trxBadgeMobile'), 0);
         });
 
-        profileMenu.addEventListener('click', function(e) { e.stopPropagation(); });
-    }
-
-    // ====== NOTIF POLLING & BADGES ======
-    var USERNAME = "<?= addslashes(strtolower((string)$username)) ?>";
-    var POLL_URL_BASE = "<?= site_url('home/home/notif_poll_v2') ?>";
-    var SITE_URL = "<?= rtrim(site_url(), '/') ?>";
-
-    var KEY_LAST_P = "bm_last_user_p_id_" + USERNAME;
-    var KEY_LAST_T = "bm_last_user_t_id_" + USERNAME;
-
-    const LOCK_KEY = "bm_notif_lock_user_" + USERNAME;
-    const TAB_ID = Date.now() + "_" + Math.random().toString(16).slice(2);
-
-    const getNum = k => parseInt(localStorage.getItem(k) || "0", 10) || 0;
-    const setNum = (k, v) => localStorage.setItem(k, String(v || 0));
-
-    function isLeaderTab() {
-        const now = Date.now();
-        let lock = null;
-        try { lock = JSON.parse(localStorage.getItem(LOCK_KEY) || "null"); } catch (e) { lock = null; }
-        if (!lock || (now - lock.ts) > 15000) { localStorage.setItem(LOCK_KEY, JSON.stringify({ id: TAB_ID, ts: now })); return true; }
-        if (lock.id === TAB_ID) { localStorage.setItem(LOCK_KEY, JSON.stringify({ id: TAB_ID, ts: now })); return true; }
-        return false;
-    }
-
-    function setBadge(el, count) {
-        if (!el) return; el.dataset.count = count;
-        if (count > 0) { el.classList.remove('hidden'); el.textContent = count; } else { el.classList.add('hidden'); el.textContent = ''; }
-    }
-
-    function updateBadges(counts) {
-        const p = counts && counts.pemesanan ? parseInt(counts.pemesanan, 10) : 0;
-        const t = counts && counts.transaksi ? parseInt(counts.transaksi, 10) : 0;
-        setBadge(document.getElementById('notifBadge'), p);
-        setBadge(document.getElementById('notifBadgeMobile'), p);
-        setBadge(document.getElementById('trxBadge'), t);
-        setBadge(document.getElementById('trxBadgeMobile'), t);
-    }
-
-    window.aktifkanNotif = async function() {
-        if (!("Notification" in window)) { alert("Browser tidak mendukung notifikasi."); return; }
-        const perm = await Notification.requestPermission(); const dot = document.getElementById('notifDot'); const txt = document.getElementById('notifStatusText');
-        if (perm === "granted") { if (dot) dot.className = "inline-block w-2 h-2 rounded-full bg-green-500"; if (txt) txt.textContent = "Notifikasi: aktif"; localStorage.setItem("bm_notif_enabled_" + USERNAME, "1"); } else { if (dot) dot.className = "inline-block w-2 h-2 rounded-full bg-red-500"; if (txt) txt.textContent = "Notifikasi: diblokir"; localStorage.setItem("bm_notif_enabled_" + USERNAME, "0"); }
-    };
-
-    function notifEnabled() { return localStorage.getItem("bm_notif_enabled_" + USERNAME) === "1"; }
-
-    function showNotif(n) {
-        if (!("Notification" in window)) return; if (Notification.permission !== "granted") return; if (!notifEnabled()) return;
-        const tag = "bm_" + (n.type || "x") + "_" + (n.id || "0");
-        try {
-            const notif = new Notification(n.title || "Notifikasi", { body: n.message || "", tag: tag, renotify: false, silent: false });
-            const audio = document.getElementById('notifSound'); if (audio) { try { audio.currentTime = 0; audio.play().catch(()=>{}); } catch(e) {} }
-            notif.onclick = () => { if (n.url) window.location.href = SITE_URL + "/" + String(n.url).replace(/^\/+/, ''); notif.close(); };
-        } catch (e) {}
-    }
-
-    function handle(list, key) { const last = getNum(key); let max = last; (list||[]).forEach(n => { const id = parseInt(n.id,10)||0; if (id>last) { showNotif(n); if (id>max) max = id; } }); if (max>last) setNum(key,max); return max; }
-
-    async function poll() {
-        if (!isLeaderTab()) return; const lastP = getNum(KEY_LAST_P); const lastT = getNum(KEY_LAST_T);
-        const url = POLL_URL_BASE + "?since_p=" + encodeURIComponent(lastP) + "&since_t=" + encodeURIComponent(lastT);
-        try { const res = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } }); const data = await res.json(); if (!data || !data.ok) return; updateBadges(data.counts); handle(data.items && data.items.pemesanan ? data.items.pemesanan : [], KEY_LAST_P); handle(data.items && data.items.transaksi ? data.items.transaksi : [], KEY_LAST_T); } catch (e) {}
-    }
-
-    const MARK_READ_URL = "<?= site_url('api/notif/mark-read') ?>";
-    async function markRead(type) { try { const body = "type=" + encodeURIComponent(type); await fetch(MARK_READ_URL, { method: "POST", headers: { "X-Requested-With": "XMLHttpRequest", "Content-Type": "application/x-www-form-urlencoded" }, body }).then(r=>r.json()).catch(()=>null); } catch (e) {} }
-
-    // run polling
-    poll(); setInterval(poll, 8000);
-
-    // wire click handlers
-    document.getElementById('pemesananLinkDesktop')?.addEventListener('click', () => { markRead('pemesanan'); setBadge(document.getElementById('notifBadge'), 0); setBadge(document.getElementById('notifBadgeMobile'), 0); });
-    document.getElementById('pemesananLinkMobile')?.addEventListener('click', () => { markRead('pemesanan'); setBadge(document.getElementById('notifBadge'), 0); setBadge(document.getElementById('notifBadgeMobile'), 0); });
-    document.getElementById('transaksiLinkDesktop')?.addEventListener('click', () => { markRead('transaksi'); setBadge(document.getElementById('trxBadge'), 0); setBadge(document.getElementById('trxBadgeMobile'), 0); });
-    document.getElementById('transaksiLinkMobile')?.addEventListener('click', () => { markRead('transaksi'); setBadge(document.getElementById('trxBadge'), 0); setBadge(document.getElementById('trxBadgeMobile'), 0); });
-
-})();
+    })();
 </script>

@@ -46,9 +46,6 @@ $tpls = isset($menu_json_templates) && is_array($menu_json_templates) ? $menu_js
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <link href="<?php echo base_url(); ?>assets/home/materialize/css/materialize.css" rel="stylesheet" type="text/css">
-    <link href="<?php echo base_url(); ?>assets/home/template.css" rel="stylesheet" type="text/css">
-
     <style>
         .input-field {
             margin-top: 14px;
@@ -273,9 +270,6 @@ $tpls = isset($menu_json_templates) && is_array($menu_json_templates) ? $menu_js
         </div>
     </main>
 
-    <script src="<?php echo base_url(); ?>assets/home/assets/js/jquery.min.js"></script>
-    <script src="<?php echo base_url(); ?>assets/home/materialize/js/materialize.js"></script>
-    <script src="<?php echo base_url(); ?>assets/home/index.js"></script>
 
     <script>
         (function() {

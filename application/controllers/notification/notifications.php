@@ -6,9 +6,11 @@ class Notifications extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        // pakai alias biar jelas & gak salah kapital
-        $this->load->model('notification/notification_model', 'notif');
+        $this->load->library('notification_service');
+        $this->load->model('notification/notification_model', 'notif_model');
     }
+
+
 
     /**
      * Map query "type" dari frontend -> daftar tipe notifikasi yang disimpan di DB
@@ -26,36 +28,67 @@ class Notifications extends CI_Controller
 
     public function unread_count()
     {
-        $username = $this->session->userdata('username');
-        if (!$username) show_error('Unauthorized', 401);
+        header('Content-Type: application/json; charset=utf-8');
 
-        $typeParam = $this->input->get('type', true); // pemesanan | transaksi | all
-        $types     = $this->mapTypes($typeParam);
+        // deteksi role
+        $role = $this->session->userdata('admin_username') ? 'admin' : 'user';
 
-        // asumsi model kamu mendukung parameter array types (sesuai Notification_service)
-        $count  = $this->notif->count_unread($username, $types);
-        $latest = $this->notif->latest_unread($username, $types, 1);
+        // sesuaikan type sesuai sistemmu
+        $types = ($role === 'admin')
+            ? ['ADMIN_INBOX']
+            : ['USER_INBOX'];
 
-        $this->output
-            ->set_content_type('application/json')
-            ->set_output(json_encode([
-                'count'  => (int)$count,
-                'latest' => !empty($latest) ? $latest[0] : null,
-            ]));
+        try {
+            $count = $this->notification_service->count_unread($role, $types);
+
+            echo json_encode([
+                'ok' => true,
+                'unread_count' => (int)$count
+            ]);
+        } catch (Throwable $e) {
+            log_message('error', 'unread_count error: ' . $e->getMessage());
+            echo json_encode([
+                'ok' => false,
+                'message' => 'Server error'
+            ]);
+        }
     }
+
+
 
     public function mark_read()
     {
-        $username = $this->session->userdata('username');
-        if (!$username) show_error('Unauthorized', 401);
+        header('Content-Type: application/json; charset=utf-8');
 
-        $typeParam = $this->input->post('type', true); // pemesanan | transaksi | all
-        $types     = $this->mapTypes($typeParam);
+        $notif_id = $this->input->post('id'); // pastikan JS kirim "id"
+        if (empty($notif_id)) {
+            echo json_encode([
+                'ok' => false,
+                'message' => 'ID tidak valid'
+            ]);
+            $notif_id = $this->input->post('id');
+            if (empty($notif_id)) $notif_id = $this->input->post('notif_id');
+            if (empty($notif_id)) $notif_id = $this->input->post('notification_id');
 
-        $this->notif->mark_read($username, $types);
+            // BONUS: kalau ternyata kamu kirim lewat GET (kadang JS begitu)
+            if (empty($notif_id)) $notif_id = $this->input->get('id');
+            if (empty($notif_id)) $notif_id = $this->input->get('notif_id');
 
-        $this->output
-            ->set_content_type('application/json')
-            ->set_output(json_encode(['ok' => true]));
+            return;
+        }
+
+        try {
+            $ok = $this->notif_model->mark_read_by_id((int)$notif_id);
+
+            echo json_encode([
+                'ok' => (bool)$ok
+            ]);
+        } catch (Throwable $e) {
+            log_message('error', 'mark_read error: ' . $e->getMessage());
+            echo json_encode([
+                'ok' => false,
+                'message' => 'Server error'
+            ]);
+        }
     }
 }

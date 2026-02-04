@@ -206,7 +206,7 @@ class Admin_Controls extends CI_Controller
 		$data['pembayaran'] = $this->gedung_model->get_all_pembayaran();
 		$data['notifs_admin_trx'] = $this->db->order_by('id', 'DESC')
 			->limit(10)
-			->like('type', 'ADMIN_TRANSAKSI_', 'after')
+			->like('type', 'ADMIN_TRANSAKSI', 'after')
 			->get_where('notifications', [
 				'username' => 'admin',
 				'read_at'  => null
@@ -264,7 +264,7 @@ class Admin_Controls extends CI_Controller
 		$data['result'] = $this->gedung_model->get_pending_transaction();
 		$data['notifs_admin_inbox'] = $this->db->order_by('id', 'DESC')
 			->limit(10)
-			->like('type', 'ADMIN_INBOX_', 'after')
+			->like('type', 'ADMIN_INBOX', 'after')
 			->get_where('notifications', [
 				'username' => 'admin',
 				'read_at'  => null
@@ -683,31 +683,65 @@ class Admin_Controls extends CI_Controller
 	}
 	public function notif_poll_v2()
 	{
-		if (!$this->input->is_ajax_request()) show_404();
+		header('Content-Type: application/json; charset=utf-8');
 
-		$admin = $this->session->userdata('admin_username');
-		if (!$admin) {
-			echo json_encode(['ok' => false, 'msg' => 'no-admin-session']);
+		// cek admin login
+		$admin = (string) $this->session->userdata('admin_username');
+		if ($admin === '') {
+			echo json_encode(array('ok' => false, 'message' => 'Unauthorized'));
 			return;
 		}
 
-		$this->load->model('Notification_model', 'notif');
+		$since_i = (int) $this->input->get('since_i'); // optional
+		$since_t = (int) $this->input->get('since_t');
 
-		$inbox    = $this->notif->get_unread('admin', ['ADMIN_INBOX'], 5);
-		$transaksi = $this->notif->get_unread('admin', ['ADMIN_TRANSAKSI'], 5);
+		$this->load->library('notification_service');
 
-		echo json_encode([
-			'ok' => true,
-			'counts' => [
-				'inbox'    => $this->notif->count_unread('admin', ['ADMIN_INBOX']),
-				'transaksi' => $this->notif->count_unread('admin', ['ADMIN_TRANSAKSI']),
-			],
-			'items' => [
-				'inbox'    => $inbox,
-				'transaksi' => $transaksi
-			]
-		]);
+		// types sesuai DB kamu
+		$typesI = array('ADMIN_INBOX_PROCESS');
+		$typesT = array('ADMIN_TRANSAKSI_PENDING');
+
+		try {
+			$adminKey = 'admin'; // sesuai DB kamu
+
+			$rawI = $this->notification_service->get_unread($adminKey, $typesI, 30);
+			$rawT = $this->notification_service->get_unread($adminKey, $typesT, 30);
+
+			$itemsI = array();
+			if (is_array($rawI)) {
+				foreach ($rawI as $n) {
+					$id = isset($n['id']) ? (int)$n['id'] : 0;
+					if ($id > $since_i) $itemsI[] = $n;
+				}
+			}
+
+			$itemsT = array();
+			if (is_array($rawT)) {
+				foreach ($rawT as $n) {
+					$id = isset($n['id']) ? (int)$n['id'] : 0;
+					if ($id > $since_t) $itemsT[] = $n;
+				}
+			}
+
+			$countI = (int) $this->notification_service->count_unread($adminKey, $typesI);
+			$countT = (int) $this->notification_service->count_unread($adminKey, $typesT);
+
+			echo json_encode(array(
+				'ok' => true,
+				'counts' => array('inbox' => $countI, 'transaksi' => $countT),
+				'items'  => array(
+					'inbox' => array_slice($itemsI, 0, 10),
+					'transaksi' => array_slice($itemsT, 0, 10)
+				)
+			));
+		} catch (Exception $e) {
+			log_message('error', 'notif_poll_v2 ADMIN error: ' . $e->getMessage());
+			echo json_encode(array('ok' => false, 'message' => 'Server error'));
+		}
 	}
+
+
+
 
 	public function notif_counter()
 	{

@@ -8,8 +8,18 @@ function formatTanggalIndo($tgl)
     if (empty($tgl)) return '-';
 
     $bulan = array(
-        1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        1 => 'Januari',
+        'Februari',
+        'Maret',
+        'April',
+        'Mei',
+        'Juni',
+        'Juli',
+        'Agustus',
+        'September',
+        'Oktober',
+        'November',
+        'Desember'
     );
 
     $ts = strtotime($tgl);
@@ -33,11 +43,10 @@ function formatTanggalIndo($tgl)
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Materialize (kalau icon masih dipakai) -->
-    <link href="<?= base_url('assets/home/materialize/css/materialize.css') ?>" rel="stylesheet">
 </head>
 
 <body class="bg-gray-100 text-gray-800">
+    <?php $this->load->view('components/navbar'); ?>
     <?php $this->load->view('admin/components/sidebar'); ?>
 
     <main class="pt-24 pl-0 md:pl-64 px-6 pb-10">
@@ -160,80 +169,80 @@ function formatTanggalIndo($tgl)
 
                         <tbody id="tableBody" class="divide-y divide-slate-200">
                             <?php if (!empty($pemesanan)) : ?>
-                            <?php foreach ($pemesanan as $row): ?>
-                            <?php
-                                        $id = isset($row['ID_PEMESANAN']) ? $row['ID_PEMESANAN'] : '-';
-                                        $user = isset($row['USERNAME']) ? $row['USERNAME'] : '-';
-                                        $tglRaw = isset($row['TANGGAL_PEMESANAN']) ? $row['TANGGAL_PEMESANAN'] : '';
-                                        $tglIndo = formatTanggalIndo($tglRaw);
+                                <?php foreach ($pemesanan as $row): ?>
+                                    <?php
+                                    $id = isset($row['ID_PEMESANAN']) ? $row['ID_PEMESANAN'] : '-';
+                                    $user = isset($row['USERNAME']) ? $row['USERNAME'] : '-';
+                                    $tglRaw = isset($row['TANGGAL_PEMESANAN']) ? $row['TANGGAL_PEMESANAN'] : '';
+                                    $tglIndo = formatTanggalIndo($tglRaw);
 
-                                        // buat filter tanggal (yyyy-mm-dd)
-                                        $tglForFilter = !empty($tglRaw) ? date('Y-m-d', strtotime($tglRaw)) : '';
+                                    // buat filter tanggal (yyyy-mm-dd)
+                                    $tglForFilter = !empty($tglRaw) ? date('Y-m-d', strtotime($tglRaw)) : '';
 
-                                        $gedung = isset($row['NAMA_GEDUNG']) ? $row['NAMA_GEDUNG'] : '-';
-                                        $status = isset($row['STATUS']) ? $row['STATUS'] : '-';
-                                        $statusUpper = strtoupper(trim((string)$status));
+                                    $gedung = isset($row['NAMA_GEDUNG']) ? $row['NAMA_GEDUNG'] : '-';
+                                    $status = isset($row['STATUS']) ? $row['STATUS'] : '-';
+                                    $statusUpper = strtoupper(trim((string)$status));
 
-                                        // jam
-                                        $jamText = '-';
-                                        if (!empty($row['JAM_PEMESANAN']) && !empty($row['JAM_SELESAI'])) {
-                                            $jamText = date('H:i', strtotime($row['JAM_PEMESANAN'])) . ' - ' . date('H:i', strtotime($row['JAM_SELESAI'])) . ' WIB';
-                                        }
+                                    // jam
+                                    $jamText = '-';
+                                    if (!empty($row['JAM_PEMESANAN']) && !empty($row['JAM_SELESAI'])) {
+                                        $jamText = date('H:i', strtotime($row['JAM_PEMESANAN'])) . ' - ' . date('H:i', strtotime($row['JAM_SELESAI'])) . ' WIB';
+                                    }
 
-                                        // badge status
-                                        $badge = 'bg-slate-100 text-slate-700';
-                                        if ($statusUpper === 'PROPOSAL APPROVE') $badge = 'bg-lime-100 text-lime-700';
-                                        else if ($statusUpper === 'PROCESS') $badge = 'bg-yellow-100 text-yellow-700';
-                                        else if ($statusUpper === 'REJECTED') $badge = 'bg-red-100 text-red-700';
-                                        else if ($statusUpper === 'APPROVE & PAID') $badge = 'bg-emerald-100 text-emerald-700';
-                                        else if ($statusUpper === 'SUBMITED' || $statusUpper === 'SUBMITTED') $badge = 'bg-blue-100 text-blue-700';
+                                    // badge status
+                                    $badge = 'bg-slate-100 text-slate-700';
+                                    if ($statusUpper === 'PROPOSAL APPROVE') $badge = 'bg-lime-100 text-lime-700';
+                                    else if ($statusUpper === 'PROCESS') $badge = 'bg-yellow-100 text-yellow-700';
+                                    else if ($statusUpper === 'REJECTED') $badge = 'bg-red-100 text-red-700';
+                                    else if ($statusUpper === 'APPROVE & PAID') $badge = 'bg-emerald-100 text-emerald-700';
+                                    else if ($statusUpper === 'SUBMITED' || $statusUpper === 'SUBMITTED') $badge = 'bg-blue-100 text-blue-700';
                                     ?>
 
-                            <tr class="table-row hover:bg-gray-50 text-center"
-                                data-id="<?= htmlspecialchars((string)$id, ENT_QUOTES, 'UTF-8'); ?>"
-                                data-status="<?= htmlspecialchars((string)$statusUpper, ENT_QUOTES, 'UTF-8'); ?>"
-                                data-date="<?= htmlspecialchars((string)$tglForFilter, ENT_QUOTES, 'UTF-8'); ?>">
-                                <td class="px-4 py-3 id font-medium text-slate-800">
-                                    <?= htmlspecialchars((string)$id, ENT_QUOTES, 'UTF-8'); ?>
-                                </td>
+                                    <tr class="table-row hover:bg-gray-50 text-center"
+                                        data-id="<?= htmlspecialchars((string)$id, ENT_QUOTES, 'UTF-8'); ?>"
+                                        data-status="<?= htmlspecialchars((string)$statusUpper, ENT_QUOTES, 'UTF-8'); ?>"
+                                        data-date="<?= htmlspecialchars((string)$tglForFilter, ENT_QUOTES, 'UTF-8'); ?>">
+                                        <td class="px-4 py-3 id font-medium text-slate-800">
+                                            <?= htmlspecialchars((string)$id, ENT_QUOTES, 'UTF-8'); ?>
+                                        </td>
 
-                                <td class="px-4 py-3 text-slate-700">
-                                    <?= htmlspecialchars((string)$user, ENT_QUOTES, 'UTF-8'); ?>
-                                </td>
+                                        <td class="px-4 py-3 text-slate-700">
+                                            <?= htmlspecialchars((string)$user, ENT_QUOTES, 'UTF-8'); ?>
+                                        </td>
 
-                                <td class="px-4 py-3 tanggal text-slate-700">
-                                    <?= htmlspecialchars((string)$tglIndo, ENT_QUOTES, 'UTF-8'); ?>
-                                </td>
+                                        <td class="px-4 py-3 tanggal text-slate-700">
+                                            <?= htmlspecialchars((string)$tglIndo, ENT_QUOTES, 'UTF-8'); ?>
+                                        </td>
 
-                                <td class="px-4 py-3 text-slate-700">
-                                    <?= htmlspecialchars((string)$jamText, ENT_QUOTES, 'UTF-8'); ?>
-                                </td>
+                                        <td class="px-4 py-3 text-slate-700">
+                                            <?= htmlspecialchars((string)$jamText, ENT_QUOTES, 'UTF-8'); ?>
+                                        </td>
 
-                                <td class="px-4 py-3 text-slate-700">
-                                    <?= htmlspecialchars((string)$gedung, ENT_QUOTES, 'UTF-8'); ?>
-                                </td>
+                                        <td class="px-4 py-3 text-slate-700">
+                                            <?= htmlspecialchars((string)$gedung, ENT_QUOTES, 'UTF-8'); ?>
+                                        </td>
 
-                                <td class="px-4 py-3 status">
-                                    <span
-                                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold <?= $badge; ?>">
-                                        <?= htmlspecialchars((string)$statusUpper, ENT_QUOTES, 'UTF-8'); ?>
-                                    </span>
-                                </td>
+                                        <td class="px-4 py-3 status">
+                                            <span
+                                                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold <?= $badge; ?>">
+                                                <?= htmlspecialchars((string)$statusUpper, ENT_QUOTES, 'UTF-8'); ?>
+                                            </span>
+                                        </td>
 
-                                <td class="px-4 py-3">
-                                    <a href="<?= site_url('admin/detail_transaksi/' . $row['ID_PEMESANAN']); ?>"
-                                        class="inline-flex items-center justify-center w-9 h-9 rounded-lg hover:bg-blue-50 text-blue-600">
-                                        <span class="text-xs font-semibold">Detail</span>
-                                    </a>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
+                                        <td class="px-4 py-3">
+                                            <a href="<?= site_url('admin/detail_transaksi/' . $row['ID_PEMESANAN']); ?>"
+                                                class="inline-flex items-center justify-center w-9 h-9 rounded-lg hover:bg-blue-50 text-blue-600">
+                                                <span class="text-xs font-semibold">Detail</span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
                             <?php else: ?>
-                            <tr>
-                                <td colspan="7" class="px-4 py-8 text-center text-gray-500">
-                                    Data pemesanan tidak ditemukan.
-                                </td>
-                            </tr>
+                                <tr>
+                                    <td colspan="7" class="px-4 py-8 text-center text-gray-500">
+                                        Data pemesanan tidak ditemukan.
+                                    </td>
+                                </tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
@@ -271,186 +280,208 @@ function formatTanggalIndo($tgl)
 
     <!-- ================= SCRIPT (AUTO FILTER + SORT BUTTON + PAGINATION) ================= -->
     <script>
-    (function() {
-        const rows = Array.from(document.querySelectorAll(".table-row"));
-        let filteredRows = [...rows];
+        (function() {
+            const rows = Array.from(document.querySelectorAll(".table-row"));
+            let filteredRows = [...rows];
 
-        const filterId = document.getElementById("filterId");
-        const filterStatus = document.getElementById("filterStatus");
-        const filterTanggal = document.getElementById("filterTanggal");
-        const resetFilter = document.getElementById("resetFilter");
+            const filterId = document.getElementById("filterId");
+            const filterStatus = document.getElementById("filterStatus");
+            const filterTanggal = document.getElementById("filterTanggal");
+            const resetFilter = document.getElementById("resetFilter");
 
-        const rowsPerPageSelect = document.getElementById("rowsPerPage");
-        const pageInfo = document.getElementById("pageInfo");
-        const prevBtn = document.getElementById("prevBtn");
-        const nextBtn = document.getElementById("nextBtn");
+            const rowsPerPageSelect = document.getElementById("rowsPerPage");
+            const pageInfo = document.getElementById("pageInfo");
+            const prevBtn = document.getElementById("prevBtn");
+            const nextBtn = document.getElementById("nextBtn");
 
-        // Sort UI
-        const sortBtn = document.getElementById("sortBtn");
-        const sortMenu = document.getElementById("sortMenu");
-        const sortItems = Array.from(document.querySelectorAll(".sortItem"));
+            // Sort UI
+            const sortBtn = document.getElementById("sortBtn");
+            const sortMenu = document.getElementById("sortMenu");
+            const sortItems = Array.from(document.querySelectorAll(".sortItem"));
 
-        let currentPage = 1;
-        let rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
+            let currentPage = 1;
+            let rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
 
-        // default sort: terbaru
-        let sortMode = "new"; // "new" | "old"
+            // default sort: terbaru
+            let sortMode = "new"; // "new" | "old"
 
-        function norm(s) {
-            return (s || "").toString().trim().toLowerCase().replace(/\s+/g, "");
-        }
+            function norm(s) {
+                return (s || "").toString().trim().toLowerCase().replace(/\s+/g, "");
+            }
 
-        function setSortCheck() {
+            function setSortCheck() {
+                sortItems.forEach(btn => {
+                    const check = btn.querySelector(".check");
+                    if (!check) return;
+                    if (btn.dataset.sort === sortMode) check.classList.remove("hidden");
+                    else check.classList.add("hidden");
+                });
+            }
+
+            function sortFilteredRows() {
+                filteredRows.sort((a, b) => {
+                    const da = (a.dataset.date || "").trim(); // yyyy-mm-dd
+                    const db = (b.dataset.date || "").trim();
+
+                    // sort tanggal dulu
+                    if (da !== db) {
+                        return sortMode === "new" ? db.localeCompare(da) : da.localeCompare(db);
+                    }
+
+                    // tie breaker by ID (angka)
+                    const ia = parseInt(a.dataset.id || "0", 10) || 0;
+                    const ib = parseInt(b.dataset.id || "0", 10) || 0;
+
+                    return sortMode === "new" ? (ib - ia) : (ia - ib);
+                });
+            }
+
+            function renderTable() {
+                rows.forEach(row => row.style.display = "none");
+
+                const start = (currentPage - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+
+                filteredRows.slice(start, end).forEach(row => {
+                    row.style.display = "";
+                });
+
+                const totalPages = Math.max(1, Math.ceil(filteredRows.length / rowsPerPage));
+                pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
+
+                prevBtn.disabled = currentPage === 1;
+                nextBtn.disabled = currentPage === totalPages;
+            }
+
+            function applyFilter() {
+                const idVal = norm(filterId.value);
+                const statusVal = (filterStatus.value || "").trim().toUpperCase();
+                const tanggalVal = filterTanggal.value; // yyyy-mm-dd
+
+                filteredRows = rows.filter(row => {
+                    const idText = norm(row.dataset.id);
+                    const statusText = (row.dataset.status || "").trim().toUpperCase();
+                    const tanggalText = (row.dataset.date || "").trim();
+
+                    const okId = !idVal ? true : idText.includes(idVal);
+                    const okStatus = !statusVal ? true : statusText === statusVal;
+                    const okTgl = !tanggalVal ? true : tanggalText === tanggalVal;
+
+                    return okId && okStatus && okTgl;
+                });
+
+                sortFilteredRows();
+                currentPage = 1;
+                renderTable();
+            }
+
+            // ===== SORT DROPDOWN BEHAVIOR =====
+            function openSortMenu() {
+                if (!sortMenu) return;
+                sortMenu.classList.remove("hidden");
+            }
+
+            function closeSortMenu() {
+                if (!sortMenu) return;
+                sortMenu.classList.add("hidden");
+            }
+
+            if (sortBtn && sortMenu) {
+                sortBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    sortMenu.classList.toggle("hidden");
+                });
+
+                // klik di luar => tutup
+                document.addEventListener("click", () => closeSortMenu());
+
+                // ESC => tutup
+                document.addEventListener("keydown", (e) => {
+                    if (e.key === "Escape") closeSortMenu();
+                });
+            }
+
+            // klik item sort
             sortItems.forEach(btn => {
-                const check = btn.querySelector(".check");
-                if (!check) return;
-                if (btn.dataset.sort === sortMode) check.classList.remove("hidden");
-                else check.classList.add("hidden");
-            });
-        }
-
-        function sortFilteredRows() {
-            filteredRows.sort((a, b) => {
-                const da = (a.dataset.date || "").trim(); // yyyy-mm-dd
-                const db = (b.dataset.date || "").trim();
-
-                // sort tanggal dulu
-                if (da !== db) {
-                    return sortMode === "new" ? db.localeCompare(da) : da.localeCompare(db);
-                }
-
-                // tie breaker by ID (angka)
-                const ia = parseInt(a.dataset.id || "0", 10) || 0;
-                const ib = parseInt(b.dataset.id || "0", 10) || 0;
-
-                return sortMode === "new" ? (ib - ia) : (ia - ib);
-            });
-        }
-
-        function renderTable() {
-            rows.forEach(row => row.style.display = "none");
-
-            const start = (currentPage - 1) * rowsPerPage;
-            const end = start + rowsPerPage;
-
-            filteredRows.slice(start, end).forEach(row => {
-                row.style.display = "";
+                btn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    sortMode = btn.dataset.sort || "new";
+                    setSortCheck();
+                    closeSortMenu();
+                    sortFilteredRows();
+                    currentPage = 1;
+                    renderTable();
+                });
             });
 
-            const totalPages = Math.max(1, Math.ceil(filteredRows.length / rowsPerPage));
-            pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
+            // ===== events filter =====
+            filterId.addEventListener("input", applyFilter);
+            filterStatus.addEventListener("change", applyFilter);
+            filterTanggal.addEventListener("change", applyFilter);
 
-            prevBtn.disabled = currentPage === 1;
-            nextBtn.disabled = currentPage === totalPages;
-        }
+            resetFilter.addEventListener("click", () => {
+                filterId.value = "";
+                filterStatus.value = "";
+                filterTanggal.value = "";
 
-        function applyFilter() {
-            const idVal = norm(filterId.value);
-            const statusVal = (filterStatus.value || "").trim().toUpperCase();
-            const tanggalVal = filterTanggal.value; // yyyy-mm-dd
-
-            filteredRows = rows.filter(row => {
-                const idText = norm(row.dataset.id);
-                const statusText = (row.dataset.status || "").trim().toUpperCase();
-                const tanggalText = (row.dataset.date || "").trim();
-
-                const okId = !idVal ? true : idText.includes(idVal);
-                const okStatus = !statusVal ? true : statusText === statusVal;
-                const okTgl = !tanggalVal ? true : tanggalText === tanggalVal;
-
-                return okId && okStatus && okTgl;
-            });
-
-            sortFilteredRows();
-            currentPage = 1;
-            renderTable();
-        }
-
-        // ===== SORT DROPDOWN BEHAVIOR =====
-        function openSortMenu() {
-            if (!sortMenu) return;
-            sortMenu.classList.remove("hidden");
-        }
-
-        function closeSortMenu() {
-            if (!sortMenu) return;
-            sortMenu.classList.add("hidden");
-        }
-
-        if (sortBtn && sortMenu) {
-            sortBtn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                sortMenu.classList.toggle("hidden");
-            });
-
-            // klik di luar => tutup
-            document.addEventListener("click", () => closeSortMenu());
-
-            // ESC => tutup
-            document.addEventListener("keydown", (e) => {
-                if (e.key === "Escape") closeSortMenu();
-            });
-        }
-
-        // klik item sort
-        sortItems.forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                e.preventDefault();
-                sortMode = btn.dataset.sort || "new";
+                sortMode = "new";
                 setSortCheck();
-                closeSortMenu();
+
+                filteredRows = [...rows];
                 sortFilteredRows();
                 currentPage = 1;
                 renderTable();
             });
-        });
 
-        // ===== events filter =====
-        filterId.addEventListener("input", applyFilter);
-        filterStatus.addEventListener("change", applyFilter);
-        filterTanggal.addEventListener("change", applyFilter);
+            rowsPerPageSelect.addEventListener("change", () => {
+                rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
+                currentPage = 1;
+                renderTable();
+            });
 
-        resetFilter.addEventListener("click", () => {
-            filterId.value = "";
-            filterStatus.value = "";
-            filterTanggal.value = "";
+            prevBtn.addEventListener("click", () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderTable();
+                }
+            });
 
-            sortMode = "new";
+            nextBtn.addEventListener("click", () => {
+                const totalPages = Math.max(1, Math.ceil(filteredRows.length / rowsPerPage));
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderTable();
+                }
+            });
+
+            // init
             setSortCheck();
-
-            filteredRows = [...rows];
             sortFilteredRows();
-            currentPage = 1;
             renderTable();
-        });
-
-        rowsPerPageSelect.addEventListener("change", () => {
-            rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
-            currentPage = 1;
-            renderTable();
-        });
-
-        prevBtn.addEventListener("click", () => {
-            if (currentPage > 1) {
-                currentPage--;
-                renderTable();
-            }
-        });
-
-        nextBtn.addEventListener("click", () => {
-            const totalPages = Math.max(1, Math.ceil(filteredRows.length / rowsPerPage));
-            if (currentPage < totalPages) {
-                currentPage++;
-                renderTable();
-            }
-        });
-
-        // init
-        setSortCheck();
-        sortFilteredRows();
-        renderTable();
-    })();
+        })();
     </script>
+    <script>
+        function markNotifRead(notifId) {
+            if (!notifId) return;
+
+            const fd = new FormData();
+            fd.append('id', notifId);
+
+            fetch('<?= site_url("api/notif/mark-read") ?>', {
+                    method: 'POST',
+                    body: fd
+                })
+                .then(r => r.json())
+                .then(res => {
+                    // optional: kalau sukses, refresh unread-count
+                    // panggil fungsi kamu yang update badge (mis. fetchUnreadCount())
+                    console.log('mark-read:', res);
+                    if (typeof fetchUnreadCount === 'function') fetchUnreadCount();
+                })
+                .catch(err => console.error('mark-read error:', err));
+        }
+    </script>
+
 </body>
 
 </html>

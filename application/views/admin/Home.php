@@ -154,9 +154,6 @@ if (isset($recent_invoices) && is_array($recent_invoices)) {
     <title>Admin Smart Office</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <link href="<?= base_url('assets/home/materialize/css/materialize.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('assets/home/style.css') ?>" rel="stylesheet">
 </head>
 
 <body class="bg-slate-100 min-h-screen">

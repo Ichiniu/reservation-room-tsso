@@ -28,7 +28,7 @@ $catering_data = isset($result) && is_array($result) ? $result : [];
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="<?= base_url(); ?>assets/home/materialize/css/materialize.css" rel="stylesheet">
+
 
     <style>
         .sidebar-mini {

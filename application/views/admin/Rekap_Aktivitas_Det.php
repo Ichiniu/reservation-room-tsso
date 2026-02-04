@@ -28,8 +28,6 @@ $second_date_period = !empty($last_period) ? date_create($last_period) : null;
 
 <body class="bg-slate-50 text-slate-800">
 
-    <!-- SIDEBAR (kalau sidebar kamu masih pakai materialize, sidebar tetap bisa dipakai;
-       kalau sidebar kamu butuh js materialize, kamu perlu ubah sidebar ke tailwind juga) -->
     <?php $this->load->view('admin/components/sidebar'); ?>
 
     <main class="pt-24 pl-0 md:pl-64 px-6 pb-10">

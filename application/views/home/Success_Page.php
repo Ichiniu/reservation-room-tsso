@@ -12,9 +12,8 @@ $redirectUrl = site_url('home/pemesanan');
   <!-- AUTO REDIRECT (100% PASTI JALAN) -->
   <meta http-equiv="refresh" content="3;url=<?php echo $redirectUrl; ?>">
 
-  <!-- Icons & Materialize -->
+
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link href="<?php echo base_url(); ?>assets/home/materialize/css/materialize.css" rel="stylesheet">
 
   <style>
     /* ===== BACKGROUND ===== */
@@ -128,7 +127,7 @@ $redirectUrl = site_url('home/pemesanan');
 </div>
 
 <script src="<?php echo base_url(); ?>assets/home/assets/js/jquery.min.js"></script>
-<script src="<?php echo base_url(); ?>assets/home/materialize/js/materialize.js"></script>
+
 
 <script>
   $(document).ready(function() {

@@ -39,44 +39,44 @@ $jumlah_trx   = (int)$get_transaction;
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-    .sidebar-mini {
-        width: 72px !important;
-    }
+        .sidebar-mini {
+            width: 72px !important;
+        }
 
-    .sidebar-mini .menu-text {
-        display: none;
-    }
+        .sidebar-mini .menu-text {
+            display: none;
+        }
 
-    .sidebar-mini nav a {
-        justify-content: center;
-    }
+        .sidebar-mini nav a {
+            justify-content: center;
+        }
 
-    .sidebar-mini .material-icons-outlined {
-        margin-right: 0 !important;
-    }
+        .sidebar-mini .material-icons-outlined {
+            margin-right: 0 !important;
+        }
 
-    .content-mini {
-        margin-left: 72px !important;
-    }
+        .content-mini {
+            margin-left: 72px !important;
+        }
 
-    .menu-active {
-        background-color: #fff;
-        font-weight: 600;
-    }
+        .menu-active {
+            background-color: #fff;
+            font-weight: 600;
+        }
 
-    .badge {
-        margin-left: auto;
-    }
+        .badge {
+            margin-left: auto;
+        }
 
-    .sidebar-mini .badge {
-        position: absolute;
-        top: 8px;
-        right: 12px;
-        width: 18px;
-        height: 18px;
-        font-size: 10px;
-        margin-left: 0;
-    }
+        .sidebar-mini .badge {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            margin-left: 0;
+        }
     </style>
 </head>
 
@@ -111,67 +111,67 @@ $jumlah_trx   = (int)$get_transaction;
         <nav class="px-3 py-6 space-y-1 text-sm">
 
             <a href="<?php echo site_url('admin/dashboard'); ?>"
-                class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white <?php if (is_active('admin/dashboard',$current_uri)) echo 'menu-active'; ?>">
+                class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white <?php if (is_active('admin/dashboard', $current_uri)) echo 'menu-active'; ?>">
                 <span class="material-icons">dashboard</span>
                 <span class="menu-text">Home</span>
             </a>
 
             <a href="<?php echo site_url('admin/list'); ?>"
-                class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white <?php if (is_active('admin/list',$current_uri)) echo 'menu-active'; ?>">
+                class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white <?php if (is_active('admin/list', $current_uri)) echo 'menu-active'; ?>">
                 <span class="material-icons">people</span>
                 <span class="menu-text">List User</span>
             </a>
 
             <a href="<?php echo site_url('admin/gedung'); ?>"
-                class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white <?php if (is_active('admin/gedung',$current_uri)) echo 'menu-active'; ?>">
+                class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white <?php if (is_active('admin/gedung', $current_uri)) echo 'menu-active'; ?>">
                 <span class="material-icons">business</span>
                 <span class="menu-text">List Ruangan</span>
             </a>
 
             <a href="<?php echo site_url('admin/catering'); ?>"
-                class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white <?php if (is_active('admin/catering',$current_uri)) echo 'menu-active'; ?>">
+                class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white <?php if (is_active('admin/catering', $current_uri)) echo 'menu-active'; ?>">
                 <span class="material-icons">restaurant</span>
                 <span class="menu-text">Catering</span>
             </a>
 
             <a href="<?php echo site_url('admin/pemesanan2'); ?>"
-                class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white <?php if (is_active('admin/pemesanan',$current_uri)) echo 'menu-active'; ?>">
+                class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white <?php if (is_active('admin/pemesanan', $current_uri)) echo 'menu-active'; ?>">
                 <span class="material-icons">assignment</span>
                 <span class="menu-text">List Pemesanan</span>
             </a>
 
             <!-- INBOX -->
             <a href="<?php echo site_url('admin/transaksi'); ?>"
-                class="relative flex items-center gap-3 px-4 py-3 rounded hover:bg-white <?php if ($current_uri=='admin/transaksi') echo 'menu-active'; ?>">
+                class="relative flex items-center gap-3 px-4 py-3 rounded hover:bg-white <?php if ($current_uri == 'admin/transaksi') echo 'menu-active'; ?>">
                 <span class="material-icons-outlined">inbox</span>
                 <span class="menu-text">Inbox</span>
                 <span id="badge-inbox"
                     class="badge bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                    <?php if ($jumlah_inbox<=0) echo 'style="display:none"'; ?>>
+                    <?php if ($jumlah_inbox <= 0) echo 'style="display:none"'; ?>>
                     <?php echo $jumlah_inbox; ?>
                 </span>
             </a>
 
             <!-- TRANSAKSI -->
             <a href="<?php echo site_url('admin/pembayaran'); ?>"
-                class="relative flex items-center gap-3 px-4 py-3 rounded hover:bg-white <?php if (is_active('admin/pembayaran',$current_uri)) echo 'menu-active'; ?>">
+                class="relative flex items-center gap-3 px-4 py-3 rounded hover:bg-white <?php if (is_active('admin/pembayaran', $current_uri)) echo 'menu-active'; ?>">
                 <span class="material-icons">payments</span>
                 <span class="menu-text">Transaksi</span>
                 <span id="badge-trx"
                     class="badge bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                    <?php if ($jumlah_trx<=0) echo 'style="display:none"'; ?>>
+                    <?php if ($jumlah_trx <= 0) echo 'style="display:none"'; ?>>
                     <?php echo $jumlah_trx; ?>
                 </span>
             </a>
 
             <a href="<?php echo site_url('admin/rekap_aktivitas'); ?>"
-                class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white <?php if (is_active('admin/rekap_aktivitas',$current_uri)) echo 'menu-active'; ?>">
+                class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white <?php if (is_active('admin/rekap_aktivitas', $current_uri)) echo 'menu-active'; ?>">
                 <span class="material-icons">history</span>
                 <span class="menu-text">Rekap Aktivitas</span>
             </a>
 
             <a href="<?php echo site_url('admin/rekap_transaksi'); ?>"
-                class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white <?php if (is_active('admin/rekap_transaksi',$current_uri)) echo 'menu-active'; ?>">
+                class="flex items-center gap-3 px-4 py-3 rounded hover:bg-white <?php if (is_active('admin/rekap_transaksi', $current_uri)) echo 'menu-active'; ?>">
                 <span class="material-icons">summarize</span>
                 <span class="menu-text">Rekap Transaksi</span>
             </a>
@@ -198,236 +198,363 @@ $jumlah_trx   = (int)$get_transaction;
     </audio>
 
     <script>
-    /* =============== UI basic =============== */
-    const toggleBtn = document.getElementById('toggleSidebar');
-    const sidebar = document.getElementById('sidebar');
-    const content = document.getElementById('content');
-    toggleBtn.addEventListener('click', function() {
-        sidebar.classList.toggle('sidebar-mini');
-        content.classList.toggle('content-mini');
-    });
-
-    const toast = document.getElementById('toast');
-    const badgeInbox = document.getElementById('badge-inbox');
-    const badgeTrx = document.getElementById('badge-trx');
-
-    function showToast(message, bgClass) {
-        toast.className = "fixed bottom-5 right-5 px-4 py-3 rounded-lg shadow-lg text-white text-sm z-50 " + bgClass;
-        toast.innerText = message;
-        toast.style.display = "block";
-        setTimeout(function() {
-            toast.style.display = "none";
-        }, 3500);
-    }
-
-    function setBadge(el, count) {
-        if (!el) return;
-        if (count > 0) {
-            el.innerText = count;
-            el.style.display = "flex";
-        } else {
-            el.style.display = "none";
-        }
-    }
-
-    /* =============== IMPORTANT: HTTPS check (desktop notif usually requires secure context) =============== */
-    /*
-      Browser modern biasanya butuh secure context untuk Notification:
-      - OK: https://... atau http://localhost
-      - NOT OK: http://192.168.x.x atau http://nama-host (dianggap tidak secure)
-    */
-    function isSecureForNotif() {
-        if (window.isSecureContext) return true;
-        // fallback check
-        const host = location.hostname;
-        if (host === "localhost" || host === "127.0.0.1") return true;
-        return false;
-    }
-
-    /* =============== AUDIO =============== */
-    const notifSound = document.getElementById('notifSound');
-
-    function playNotifSound() {
-        if (!notifEnabled) return;
-
-        try {
-            notifSound.currentTime = 0;
-            const p = notifSound.play();
-            if (p && p.catch) {
-                p.catch(function(err) {
-                    console.log("AUDIO BLOCKED:", err);
-                    showToast("🔇 Sound diblokir browser (cek Console F12)", "bg-yellow-600");
-                });
-            }
-        } catch (e) {
-            console.log("AUDIO ERROR:", e);
-        }
-    }
-
-    /* =============== DESKTOP NOTIF =============== */
-    function showDesktopNotif(title, body, tag) {
-        if (!notifEnabled) return;
-
-        if (!("Notification" in window)) {
-            console.log("Notification API not supported");
-            return;
-        }
-        if (!isSecureForNotif()) {
-            console.log("Not secure context. Need https or localhost. Current:", location.origin);
-            showToast("⚠️ Desktop notif butuh HTTPS / localhost", "bg-yellow-600");
-            return;
-        }
-        if (Notification.permission !== "granted") {
-            console.log("Notification permission:", Notification.permission);
-            return;
-        }
-
-        try {
-            const n = new Notification(title, {
-                body: body,
-                tag: tag,
-                renotify: true
-            });
-            n.onclick = function() {
-                try {
-                    window.focus();
-                } catch (e) {}
-                n.close();
-            };
-            setTimeout(function() {
-                n.close();
-            }, 6000);
-        } catch (e) {
-            console.log("NOTIF ERROR:", e);
-        }
-    }
-
-    /* =============== ENABLE + TEST BUTTONS =============== */
-    const enableBtn = document.getElementById('enableNotifBtn');
-    const testSoundBtn = document.getElementById('testSoundBtn');
-    const testDesktopBtn = document.getElementById('testDesktopBtn');
-
-    let notifEnabled = false;
-
-    enableBtn.addEventListener('click', function() {
-        // 1) unlock audio
-        try {
-            const p = notifSound.play();
-            if (p && p.then) {
-                p.then(function() {
-                    notifSound.pause();
-                    notifSound.currentTime = 0;
-                    console.log("Audio unlocked");
-                }).catch(function(err) {
-                    console.log("Audio unlock failed:", err);
-                });
-            }
-        } catch (e) {}
-
-        // 2) request notif permission
-        if (!("Notification" in window)) {
-            notifEnabled = true; // sound only
-            showToast("⚠️ Browser tidak dukung desktop notif. Sound aktif.", "bg-yellow-600");
-            return;
-        }
-
-        if (!isSecureForNotif()) {
-            notifEnabled = true; // sound only
-            showToast("⚠️ Desktop notif butuh HTTPS/localhost. Sound aktif.", "bg-yellow-600");
-            return;
-        }
-
-        Notification.requestPermission().then(function(permission) {
-            console.log("Notification permission result:", permission);
-            notifEnabled = true; // minimal sound aktif
-            if (permission === "granted") {
-                showToast("✅ Notifikasi aktif (sound + desktop)", "bg-green-600");
-                showDesktopNotif("Notifikasi aktif", "Desktop notification sudah aktif.", "enabled");
-                playNotifSound();
-            } else {
-                showToast("⚠️ Desktop notif ditolak. Sound saja.", "bg-yellow-600");
-            }
+        /* =============== UI basic =============== */
+        const toggleBtn = document.getElementById('toggleSidebar');
+        const sidebar = document.getElementById('sidebar');
+        const content = document.getElementById('content');
+        toggleBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('sidebar-mini');
+            content.classList.toggle('content-mini');
         });
-    });
 
-    testSoundBtn.addEventListener('click', function() {
-        notifEnabled = true;
-        playNotifSound();
-        showToast("🔊 Test sound diputar (cek volume PC)", "bg-blue-600");
-    });
+        const toast = document.getElementById('toast');
+        const badgeInbox = document.getElementById('badge-inbox');
+        const badgeTrx = document.getElementById('badge-trx');
 
-    testDesktopBtn.addEventListener('click', function() {
-        notifEnabled = true;
-
-        if (!("Notification" in window)) {
-            alert("Browser tidak support Notification API");
-            return;
+        function showToast(message, bgClass) {
+            toast.className = "fixed bottom-5 right-5 px-4 py-3 rounded-lg shadow-lg text-white text-sm z-50 " + bgClass;
+            toast.innerText = message;
+            toast.style.display = "block";
+            setTimeout(function() {
+                toast.style.display = "none";
+            }, 3500);
         }
-        if (!isSecureForNotif()) {
-            alert("Desktop notif butuh HTTPS atau http://localhost\nSekarang: " + location.origin);
-            return;
-        }
-        alert("Permission sekarang: " + Notification.permission + "\nOrigin: " + location.origin);
 
-        if (Notification.permission !== "granted") {
-            Notification.requestPermission().then(function(p) {
-                alert("Hasil request: " + p);
-                if (p === "granted") {
-                    showDesktopNotif("TEST Desktop", "Kalau ini tidak muncul, OS/Browser memblokir.",
-                        "test");
+        function setBadge(el, count) {
+            if (!el) return;
+            if (count > 0) {
+                el.innerText = count;
+                el.style.display = "flex";
+            } else {
+                el.style.display = "none";
+            }
+        }
+
+        /* =============== IMPORTANT: HTTPS check (desktop notif usually requires secure context) =============== */
+        /*
+          Browser modern biasanya butuh secure context untuk Notification:
+          - OK: https://... atau http://localhost
+          - NOT OK: http://192.168.x.x atau http://nama-host (dianggap tidak secure)
+        */
+        function isSecureForNotif() {
+            if (window.isSecureContext) return true;
+            // fallback check
+            const host = location.hostname;
+            if (host === "localhost" || host === "127.0.0.1") return true;
+            return false;
+        }
+
+        /* =============== AUDIO =============== */
+        const notifSound = document.getElementById('notifSound');
+
+        function playNotifSound() {
+            if (!notifEnabled) return;
+
+            try {
+                notifSound.currentTime = 0;
+                const p = notifSound.play();
+                if (p && p.catch) {
+                    p.catch(function(err) {
+                        console.log("AUDIO BLOCKED:", err);
+                        showToast("🔇 Sound diblokir browser (cek Console F12)", "bg-yellow-600");
+                    });
+                }
+            } catch (e) {
+                console.log("AUDIO ERROR:", e);
+            }
+        }
+
+        /* =============== DESKTOP NOTIF =============== */
+        function showDesktopNotif(title, body, tag) {
+            if (!notifEnabled) return;
+
+            if (!("Notification" in window)) {
+                console.log("Notification API not supported");
+                return;
+            }
+            if (!isSecureForNotif()) {
+                console.log("Not secure context. Need https or localhost. Current:", location.origin);
+                showToast("⚠️ Desktop notif butuh HTTPS / localhost", "bg-yellow-600");
+                return;
+            }
+            if (Notification.permission !== "granted") {
+                console.log("Notification permission:", Notification.permission);
+                return;
+            }
+
+            try {
+                const n = new Notification(title, {
+                    body: body,
+                    tag: tag,
+                    renotify: true
+                });
+                n.onclick = function() {
+                    try {
+                        window.focus();
+                    } catch (e) {}
+                    n.close();
+                };
+                setTimeout(function() {
+                    n.close();
+                }, 6000);
+            } catch (e) {
+                console.log("NOTIF ERROR:", e);
+            }
+        }
+
+        /* =============== ENABLE + TEST BUTTONS =============== */
+        const enableBtn = document.getElementById('enableNotifBtn');
+        const testSoundBtn = document.getElementById('testSoundBtn');
+        const testDesktopBtn = document.getElementById('testDesktopBtn');
+
+        let notifEnabled = false;
+
+        enableBtn.addEventListener('click', function() {
+            // 1) unlock audio
+            try {
+                const p = notifSound.play();
+                if (p && p.then) {
+                    p.then(function() {
+                        notifSound.pause();
+                        notifSound.currentTime = 0;
+                        console.log("Audio unlocked");
+                    }).catch(function(err) {
+                        console.log("Audio unlock failed:", err);
+                    });
+                }
+            } catch (e) {}
+
+            // 2) request notif permission
+            if (!("Notification" in window)) {
+                notifEnabled = true; // sound only
+                showToast("⚠️ Browser tidak dukung desktop notif. Sound aktif.", "bg-yellow-600");
+                return;
+            }
+
+            if (!isSecureForNotif()) {
+                notifEnabled = true; // sound only
+                showToast("⚠️ Desktop notif butuh HTTPS/localhost. Sound aktif.", "bg-yellow-600");
+                return;
+            }
+
+            Notification.requestPermission().then(function(permission) {
+                console.log("Notification permission result:", permission);
+                notifEnabled = true; // minimal sound aktif
+                if (permission === "granted") {
+                    showToast("✅ Notifikasi aktif (sound + desktop)", "bg-green-600");
+                    showDesktopNotif("Notifikasi aktif", "Desktop notification sudah aktif.", "enabled");
+                    playNotifSound();
+                } else {
+                    showToast("⚠️ Desktop notif ditolak. Sound saja.", "bg-yellow-600");
                 }
             });
-            return;
+        });
+
+        testSoundBtn.addEventListener('click', function() {
+            notifEnabled = true;
+            playNotifSound();
+            showToast("🔊 Test sound diputar (cek volume PC)", "bg-blue-600");
+        });
+
+        testDesktopBtn.addEventListener('click', function() {
+            notifEnabled = true;
+
+            if (!("Notification" in window)) {
+                alert("Browser tidak support Notification API");
+                return;
+            }
+            if (!isSecureForNotif()) {
+                alert("Desktop notif butuh HTTPS atau http://localhost\nSekarang: " + location.origin);
+                return;
+            }
+            alert("Permission sekarang: " + Notification.permission + "\nOrigin: " + location.origin);
+
+            if (Notification.permission !== "granted") {
+                Notification.requestPermission().then(function(p) {
+                    alert("Hasil request: " + p);
+                    if (p === "granted") {
+                        showDesktopNotif("TEST Desktop", "Kalau ini tidak muncul, OS/Browser memblokir.",
+                            "test");
+                    }
+                });
+                return;
+            }
+            showDesktopNotif("TEST Desktop", "Kalau ini tidak muncul, OS/Browser memblokir.", "test");
+        });
+
+        /* =============== POLLING =============== */
+        let lastInbox = <?php echo (int)$jumlah_inbox; ?>;
+        let lastTrx = <?php echo (int)$jumlah_trx; ?>;
+
+        function pollNotif() {
+            fetch("<?php echo site_url('admin/notif_counter'); ?>", {
+                    cache: "no-store"
+                })
+                .then(function(r) {
+                    return r.json();
+                })
+                .then(function(d) {
+                    if (!d || d.ok !== true) return;
+
+                    // update badge dulu (biar kelihatan jalan)
+                    setBadge(badgeInbox, d.inbox);
+                    setBadge(badgeTrx, d.transaksi);
+
+                    // INBOX
+                    if (d.inbox > lastInbox) {
+                        const plus = d.inbox - lastInbox;
+                        playNotifSound();
+                        showToast("📩 Inbox baru: +" + plus + " (total " + d.inbox + ")", "bg-red-500");
+                        showDesktopNotif("Notifikasi inbox", "Ada inbox baru (+" + plus + "). Total: " + d.inbox + ".",
+                            "inbox");
+                    }
+
+                    // TRANSAKSI
+                    if (d.transaksi > lastTrx) {
+                        const plus2 = d.transaksi - lastTrx;
+                        playNotifSound();
+                        showToast("💳 Transaksi baru: +" + plus2 + " (total " + d.transaksi + ")", "bg-blue-500");
+                        showDesktopNotif("Notifikasi transaksi", "Ada update transaksi (" + d.transaksi + ").",
+                            "transaksi");
+                    }
+
+                    lastInbox = d.inbox;
+                    lastTrx = d.transaksi;
+                })
+                .catch(function(err) {
+                    console.log("poll error:", err);
+                });
         }
-        showDesktopNotif("TEST Desktop", "Kalau ini tidak muncul, OS/Browser memblokir.", "test");
-    });
 
-    /* =============== POLLING =============== */
-    let lastInbox = <?php echo (int)$jumlah_inbox; ?>;
-    let lastTrx = <?php echo (int)$jumlah_trx; ?>;
-
-    function pollNotif() {
-        fetch("<?php echo site_url('admin/notif_counter'); ?>", {
-                cache: "no-store"
-            })
-            .then(function(r) {
-                return r.json();
-            })
-            .then(function(d) {
-                if (!d || d.ok !== true) return;
-
-                // update badge dulu (biar kelihatan jalan)
-                setBadge(badgeInbox, d.inbox);
-                setBadge(badgeTrx, d.transaksi);
-
-                // INBOX
-                if (d.inbox > lastInbox) {
-                    const plus = d.inbox - lastInbox;
-                    playNotifSound();
-                    showToast("📩 Inbox baru: +" + plus + " (total " + d.inbox + ")", "bg-red-500");
-                    showDesktopNotif("Notifikasi inbox", "Ada inbox baru (+" + plus + "). Total: " + d.inbox + ".",
-                        "inbox");
-                }
-
-                // TRANSAKSI
-                if (d.transaksi > lastTrx) {
-                    const plus2 = d.transaksi - lastTrx;
-                    playNotifSound();
-                    showToast("💳 Transaksi baru: +" + plus2 + " (total " + d.transaksi + ")", "bg-blue-500");
-                    showDesktopNotif("Notifikasi transaksi", "Ada update transaksi (" + d.transaksi + ").",
-                        "transaksi");
-                }
-
-                lastInbox = d.inbox;
-                lastTrx = d.transaksi;
-            })
-            .catch(function(err) {
-                console.log("poll error:", err);
-            });
-    }
-
-    setInterval(pollNotif, 2000);
+        setInterval(pollNotif, 2000);
     </script>
+    <script>
+        (function() {
+            // === kunci admin (samakan dengan username di tabel notifications) ===
+            var ADMIN_KEY = "admin";
+
+            var POLL_URL = "<?= site_url('admin/admin_controls/notif_poll_v2') ?>";
+            var SITE_URL = "<?= rtrim(site_url(), '/') ?>";
+
+            // localStorage keys
+            var KEY_LAST_I = "bm_last_admin_i_id_" + ADMIN_KEY;
+            var KEY_LAST_T = "bm_last_admin_t_id_" + ADMIN_KEY;
+            var KEY_ENABLED = "bm_notif_enabled_" + ADMIN_KEY;
+
+            function getNum(k) {
+                return parseInt(localStorage.getItem(k) || "0", 10) || 0;
+            }
+
+            function setNum(k, v) {
+                localStorage.setItem(k, String(v || 0));
+            }
+
+            function notifEnabled() {
+                return localStorage.getItem(KEY_ENABLED) === "1";
+            }
+
+            // optional: kalau kamu punya <audio id="notifSoundAdmin">
+            function playSound() {
+                var audio = document.getElementById('notifSoundAdmin') || document.getElementById('notifSound');
+                if (!audio) return;
+                try {
+                    audio.currentTime = 0;
+                    audio.play().catch(function() {});
+                } catch (e) {}
+            }
+
+            function showNotif(n) {
+                if (!("Notification" in window)) return;
+                if (Notification.permission !== "granted") return;
+                if (!notifEnabled()) return;
+
+                try {
+                    var notif = new Notification(n.title || "Booking Smarts", {
+                        body: n.message || "",
+                        silent: false,
+                        tag: "bm_admin_" + (n.type || "x") + "_" + (n.id || "0")
+                    });
+
+                    playSound();
+
+                    notif.onclick = function() {
+                        window.focus();
+                        if (n.url) window.location.href = SITE_URL + "/" + String(n.url).replace(/^\/+/, '');
+                        notif.close();
+                    };
+                } catch (e) {}
+            }
+
+            function handle(list, key) {
+                var last = getNum(key);
+                var max = last;
+                if (list && list.length) {
+                    for (var i = 0; i < list.length; i++) {
+                        var n = list[i];
+                        var id = parseInt(n.id, 10) || 0;
+                        if (id > last) {
+                            showNotif(n);
+                            if (id > max) max = id;
+                        }
+                    }
+                }
+                if (max > last) setNum(key, max);
+            }
+
+            async function poll() {
+                try {
+                    var lastI = getNum(KEY_LAST_I);
+                    var lastT = getNum(KEY_LAST_T);
+
+                    var url = POLL_URL + "?since_i=" + encodeURIComponent(lastI) + "&since_t=" + encodeURIComponent(lastT);
+
+                    var res = await fetch(url, {
+                        headers: {
+                            "X-Requested-With": "XMLHttpRequest"
+                        },
+                        credentials: "same-origin"
+                    });
+                    var data = await res.json();
+                    if (!data || !data.ok) return;
+
+                    // update badge (kalau kamu punya id badge)
+                    // contoh:
+                    // updateBadgesAdmin(data.counts);
+
+                    handle(data.items && data.items.inbox ? data.items.inbox : [], KEY_LAST_I);
+                    handle(data.items && data.items.transaksi ? data.items.transaksi : [], KEY_LAST_T);
+
+                } catch (e) {
+                    console.log("admin poll error", e);
+                }
+            }
+
+            // tombol enable (kalau ada)
+            window.aktifkanNotifAdmin = async function() {
+                if (!("Notification" in window)) return alert("Browser tidak mendukung notifikasi.");
+                if (!window.isSecureContext) return alert("Notifikasi butuh HTTPS atau localhost.");
+
+                var perm = Notification.permission;
+                if (perm !== "granted") {
+                    try {
+                        perm = await Notification.requestPermission();
+                    } catch (e) {}
+                }
+                if (perm === "granted") {
+                    localStorage.setItem(KEY_ENABLED, "1");
+                    alert("Notifikasi admin aktif.");
+                } else {
+                    localStorage.setItem(KEY_ENABLED, "0");
+                    alert("Notifikasi diblokir.");
+                }
+            };
+
+            // jalan
+            poll();
+            setInterval(poll, 8000);
+        })();
+    </script>
+
     <script>
         (function() {
             const POLL_URL = "<?= base_url('admin/admin_controls/notif_poll_v2') ?>";

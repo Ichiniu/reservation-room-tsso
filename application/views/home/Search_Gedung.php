@@ -20,13 +20,7 @@ $user = $this->uri->segment(2);
     <link rel="icon" href="<?php echo base_url(); ?>assets/home/assets/img/favicon/favicon-32x32.png" sizes="32x32">
     <title>Home</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Materialize core CSS -->
-    <link href="<?php echo base_url(); ?>assets/home/materialize/css/materialize.css" rel="stylesheet" type="text/css">
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-            <script src="assets/js/html5shiv.js"></script>
-            <script src="assets/js/respond.min.js"></script>
-        <![endif]-->
+    
     <link href="<?php echo base_url(); ?>assets/home-user/template.css" rel="stylesheet" type="text/css">
 </head>
 
@@ -167,10 +161,7 @@ $user = $this->uri->segment(2);
         </div>
         <main class="">
         </main>
-        <!-- Materialize core JavaScript -->
-        <!-- Placed at the end of the document so the pages load faster -->
-        <script src="<?php echo base_url(); ?>assets/home/assets/js/jquery.min.js"></script>
-        <script src="<?php echo base_url(); ?>assets/home/materialize/js/materialize.js"></script>
+
         <script src="<?php echo base_url(); ?>assets/home/index.js"></script>
 </body>
 

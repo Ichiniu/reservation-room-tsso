@@ -170,12 +170,7 @@ $this->load->helper(['text','form']);
         </div>
     </main>
 
-    <!-- NOTE:
-    Kalau sidebar kamu masih butuh JS materialize untuk collapse/sidenav,
-    tambahkan kembali script berikut:
-    <script src="<?= base_url('assets/home/assets/js/jquery.min.js'); ?>"></script>
-    <script src="<?= base_url('assets/home/materialize/js/materialize.js'); ?>"></script>
-  -->
+
 </body>
 
 </html>

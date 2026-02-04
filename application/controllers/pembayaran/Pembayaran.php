@@ -65,7 +65,7 @@ class Pembayaran extends CI_Controller
             $this->load->library('notification_service');
 
             // ✅ user transaksi confirmed (sesuai kebutuhan user: confirmed di halaman transaksi)
-            $this->notifier->notifyUser(
+            $this->notification_service->notifyUser(
                 $pesanan->USERNAME,
                 'USER_TRANSAKSI_CONFIRMED',
                 'Pembayaran dikonfirmasi',

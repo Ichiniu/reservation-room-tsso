@@ -13,9 +13,6 @@ $this->load->helper('text');
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Materialize -->
-    <link href="<?= base_url('assets/home/materialize/css/materialize.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('assets/home/style.css') ?>" rel="stylesheet">
 </head>
 
 <body class="bg-slate-200 min-h-screen">

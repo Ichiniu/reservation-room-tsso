@@ -23,9 +23,6 @@ $id_gedung = $this->uri->segment(4);
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Materialize (untuk textarea/file-field helper kamu) -->
-    <link href="<?php echo base_url(); ?>assets/home/materialize/css/materialize.css" rel="stylesheet" type="text/css">
 </head>
 
 <body class="min-h-screen bg-slate-100 text-slate-900">
