@@ -85,7 +85,7 @@ $jadwalEndpoint = site_url('home/home/jadwal_by_date/' . $id_gedung);
                     </div>
                     <?php endif; ?>
 
-                    <!-- ✅ penting: jangan pakai .prevent agar submit normal -->
+                    <!-- ✅ jangan pakai .prevent agar submit normal -->
                     <form id="orderFormEl" action="<?php echo site_url('home/order-gedung/validate/' . $id_gedung); ?>"
                         method="post" class="mt-2" @submit="handleSubmit($event)">
 
@@ -145,7 +145,7 @@ $jadwalEndpoint = site_url('home/home/jadwal_by_date/' . $id_gedung);
                                     *<?php echo htmlspecialchars($min_text, ENT_QUOTES, 'UTF-8'); ?>*
                                 </small>
 
-                                <!-- ✅ BOX JADWAL (opsional, kalau endpoint sudah ada) -->
+                                <!-- ✅ BOX JADWAL -->
                                 <div class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
                                     <div class="font-semibold mb-2">Jadwal pada tanggal ini</div>
 
@@ -171,8 +171,8 @@ $jadwalEndpoint = site_url('home/home/jadwal_by_date/' . $id_gedung);
                                 </div>
                             </div>
 
-                            <!-- Pilihan Jam -->
-                            <div class="rounded-xl border border-slate-300 bg-white p-5 ring-1 ring-slate-200">
+                            <!-- ✅ PILIHAN JAM (WHEEL dari script lama) -->
+                            <div class="rounded-xl border border-slate-300 bg-white p-5 ring-1 ring-slate-200 relative">
                                 <label class="block text-xs font-semibold tracking-widest text-slate-500">PILIHAN
                                     JAM</label>
 
@@ -199,36 +199,135 @@ $jadwalEndpoint = site_url('home/home/jadwal_by_date/' . $id_gedung);
                                     <span x-text="RULES[tipeJam] ? RULES[tipeJam].label : ''"></span>
                                 </div>
 
-                                <!-- CUSTOM TIME INPUT -->
+                                <!-- CUSTOM (WHEEL PICKER UI) -->
                                 <div x-show="isCustom" x-transition class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div>
                                         <label class="block text-xs font-semibold text-slate-500">Jam Mulai</label>
-                                        <input type="time" name="jam_pesan" id="jam_pesan" x-model="jamMulai"
-                                            :required="isCustom"
-                                            class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
-                                            focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40" />
+                                        <button type="button" @click="openWheel('start')" class="mt-2 w-full text-left rounded-xl bg-white border border-slate-300 px-4 py-3
+                                            text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40
+                                            flex items-center justify-between">
+                                            <span class="font-semibold"
+                                                x-text="jamMulai ? jamMulai : 'Pilih jam mulai'"></span>
+                                            <span class="text-slate-500 text-sm">🕒</span>
+                                        </button>
+                                        <input type="hidden" name="jam_pesan" :value="jamMulai">
                                     </div>
+
                                     <div>
                                         <label class="block text-xs font-semibold text-slate-500">Jam Selesai</label>
-                                        <input type="time" name="jam_selesai" id="jam_selesai" x-model="jamSelesai"
-                                            :required="isCustom"
-                                            class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
-                                            focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40" />
+                                        <button type="button" @click="openWheel('end')" class="mt-2 w-full text-left rounded-xl bg-white border border-slate-300 px-4 py-3
+                                            text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40
+                                            flex items-center justify-between">
+                                            <span class="font-semibold"
+                                                x-text="jamSelesai ? jamSelesai : 'Pilih jam selesai'"></span>
+                                            <span class="text-slate-500 text-sm">🕒</span>
+                                        </button>
+                                        <input type="hidden" name="jam_selesai" :value="jamSelesai">
                                     </div>
 
                                     <div class="sm:col-span-2">
+                                        <div class="mt-1 text-xs text-slate-500">Format 24 jam (contoh: 11:02). Tanpa
+                                            AM/PM.</div>
                                         <div x-show="customError" class="mt-2 text-sm text-red-600 font-semibold"
                                             x-text="customError"></div>
                                     </div>
                                 </div>
 
-                                <!-- biar tetap terkirim saat non-custom -->
+                                <!-- fallback non-custom (tetap kirim time input tersembunyi) -->
                                 <template x-if="!isCustom">
                                     <div class="hidden">
                                         <input type="time" name="jam_pesan" x-model="jamMulai">
                                         <input type="time" name="jam_selesai" x-model="jamSelesai">
                                     </div>
                                 </template>
+
+                                <!-- MODAL WHEEL (FULL Tailwind) -->
+                                <div x-show="wheelOpen" x-transition
+                                    class="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+                                    <div class="absolute inset-0 bg-black/40" @click="closeWheel()"></div>
+
+                                    <div
+                                        class="relative w-full sm:max-w-md bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+                                        <div
+                                            class="px-5 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                                            <div class="text-sm font-semibold text-slate-900">
+                                                Pilih Jam
+                                                <span class="text-slate-500 font-normal"
+                                                    x-text="wheelTarget==='start' ? '(Mulai)' : '(Selesai)'"></span>
+                                            </div>
+                                            <button type="button" class="text-slate-500 hover:text-slate-900"
+                                                @click="closeWheel()">✕</button>
+                                        </div>
+
+                                        <div class="p-5">
+                                            <div
+                                                class="relative rounded-2xl border border-slate-200 bg-white overflow-hidden">
+                                                <!-- fade -->
+                                                <div
+                                                    class="pointer-events-none absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-white via-white/70 to-transparent">
+                                                </div>
+                                                <div
+                                                    class="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white via-white/70 to-transparent">
+                                                </div>
+
+                                                <!-- highlight center -->
+                                                <div
+                                                    class="pointer-events-none absolute left-0 right-0 top-1/2 -translate-y-1/2 h-12 border-y border-slate-300/80">
+                                                </div>
+
+                                                <div class="grid grid-cols-[1fr_auto_1fr] items-center">
+                                                    <!-- hours -->
+                                                    <div class="relative">
+                                                        <div x-ref="wheelHours" @scroll.passive="onWheelScroll('hours')"
+                                                            class="h-60 overflow-y-auto [scroll-snap-type:y_mandatory] [scrollbar-width:none]"
+                                                            style="padding-top: var(--wheel-pad, 100px); padding-bottom: var(--wheel-pad, 100px); -webkit-overflow-scrolling: touch;">
+                                                            <template x-for="h in hours" :key="'h'+h">
+                                                                <div class="h-10 flex items-center justify-center text-[22px] font-semibold select-none [scroll-snap-align:center]"
+                                                                    :class="selectedHour===h ? 'text-slate-900' : 'text-slate-900/35'"
+                                                                    :data-value="h" x-text="h"></div>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="px-3 text-3xl font-bold text-slate-900">:</div>
+
+                                                    <!-- minutes -->
+                                                    <div class="relative">
+                                                        <div x-ref="wheelMinutes"
+                                                            @scroll.passive="onWheelScroll('minutes')"
+                                                            class="h-60 overflow-y-auto [scroll-snap-type:y_mandatory] [scrollbar-width:none]"
+                                                            style="padding-top: var(--wheel-pad, 100px); padding-bottom: var(--wheel-pad, 100px); -webkit-overflow-scrolling: touch;">
+                                                            <template x-for="m in minutes" :key="'m'+m">
+                                                                <div class="h-10 flex items-center justify-center text-[22px] font-semibold select-none [scroll-snap-align:center]"
+                                                                    :class="selectedMinute===m ? 'text-slate-900' : 'text-slate-900/35'"
+                                                                    :data-value="m" x-text="m"></div>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div
+                                            class="px-5 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+                                            <div class="text-sm font-semibold text-slate-700">
+                                                Dipilih: <span class="text-slate-900"
+                                                    x-text="selectedHour + ':' + selectedMinute"></span>
+                                            </div>
+                                            <div class="flex gap-2">
+                                                <button type="button" @click="closeWheel()"
+                                                    class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold hover:bg-slate-50">
+                                                    Batal
+                                                </button>
+                                                <button type="button" @click="applyWheel()"
+                                                    class="rounded-lg bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800">
+                                                    Pakai
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- END MODAL -->
                             </div>
 
                             <!-- Email -->
@@ -348,8 +447,9 @@ $jadwalEndpoint = site_url('home/home/jadwal_by_date/' . $id_gedung);
                                                 rows="2" :name="'menu_input[' + cat.key + ']'"
                                                 :placeholder="cat.placeholder"></textarea>
 
-                                            <div class="mt-1 text-xs text-slate-500">Isi pilihan kamu (mis: “Nasi Putih,
-                                                Mie Goreng Jawa”).</div>
+                                            <div class="mt-1 text-xs text-slate-500">
+                                                Isi pilihan kamu (mis: “Nasi Putih, Mie Goreng Jawa”).
+                                            </div>
                                         </div>
                                     </template>
 
@@ -501,6 +601,17 @@ $jadwalEndpoint = site_url('home/home/jadwal_by_date/' . $id_gedung);
             jadwalError: '',
             jadwalItems: [],
 
+            // ==== WHEEL (anti-loncat) ====
+            wheelOpen: false,
+            wheelTarget: 'start',
+            hours: [],
+            minutes: [],
+            selectedHour: '08',
+            selectedMinute: '00',
+            itemHeight: 40,
+            _scrollRAF: null,
+            _scrollTimer: null,
+
             // ==== catering state ====
             categories: [],
             addons: [],
@@ -517,6 +628,14 @@ $jadwalEndpoint = site_url('home/home/jadwal_by_date/' . $id_gedung);
             },
 
             init() {
+                // build hours 00-23
+                this.hours = [];
+                for (let h = 0; h < 24; h++) this.hours.push(String(h).padStart(2, '0'));
+
+                // build minutes 00-59
+                this.minutes = [];
+                for (let m = 0; m < 60; m++) this.minutes.push(String(m).padStart(2, '0'));
+
                 // guard tipeJam
                 if (this.allowedTipeJam && this.allowedTipeJam.indexOf(this.tipeJam) === -1) {
                     this.tipeJam = this.defaultTipeJam;
@@ -541,20 +660,26 @@ $jadwalEndpoint = site_url('home/home/jadwal_by_date/' . $id_gedung);
                 });
             },
 
-            // ✅ submit handler yang bikin tombol "Lanjutkan" pasti jalan
+            // ✅ submit handler
             handleSubmit(e) {
-                // validasi custom jam
                 if (!this.validateCustomTime()) {
                     e.preventDefault();
                     return;
                 }
-
-                // kalau valid -> disable tombol lalu submit berjalan normal
                 const btn = document.getElementById('submit');
                 if (btn) {
                     btn.disabled = true;
                     btn.style.opacity = '0.7';
                 }
+            },
+
+            timeToMinutes(t) {
+                if (!t || !t.includes(':')) return -1;
+                const p = t.split(':');
+                const hh = parseInt(p[0], 10);
+                const mm = parseInt(p[1], 10);
+                if (isNaN(hh) || isNaN(mm)) return -1;
+                return (hh * 60) + mm;
             },
 
             validateCustomTime() {
@@ -570,7 +695,7 @@ $jadwalEndpoint = site_url('home/home/jadwal_by_date/' . $id_gedung);
                 const b = this.timeToMinutes(this.jamSelesai);
 
                 if (a < 0 || b < 0) {
-                    this.customError = 'Format jam tidak valid.';
+                    this.customError = 'Format jam tidak valid. Gunakan HH:MM (24 jam).';
                     return false;
                 }
                 if (b <= a) {
@@ -578,15 +703,6 @@ $jadwalEndpoint = site_url('home/home/jadwal_by_date/' . $id_gedung);
                     return false;
                 }
                 return true;
-            },
-
-            timeToMinutes(t) {
-                if (!t || !t.includes(':')) return -1;
-                const p = t.split(':');
-                const hh = parseInt(p[0], 10);
-                const mm = parseInt(p[1], 10);
-                if (isNaN(hh) || isNaN(mm)) return -1;
-                return (hh * 60) + mm;
             },
 
             applyJam() {
@@ -602,7 +718,7 @@ $jadwalEndpoint = site_url('home/home/jadwal_by_date/' . $id_gedung);
                 this.jamSelesai = rule.end;
             },
 
-            // ✅ fetch jadwal by date (opsional)
+            // ✅ fetch jadwal by date
             async onDatePicked(dateStr) {
                 this.jadwalError = '';
                 this.jadwalItems = [];
@@ -642,6 +758,93 @@ $jadwalEndpoint = site_url('home/home/jadwal_by_date/' . $id_gedung);
                 } finally {
                     this.jadwalLoading = false;
                 }
+            },
+
+            // ===== WHEEL helpers =====
+            _setWheelPad(el) {
+                if (!el) return;
+                const pad = Math.max(0, Math.round((el.clientHeight - this.itemHeight) / 2));
+                el.style.setProperty('--wheel-pad', pad + 'px');
+            },
+
+            _scrollToValue(el, val, smooth = true) {
+                if (!el) return;
+                const item = el.querySelector(`[data-value="${val}"]`);
+                if (!item) return;
+                item.scrollIntoView({
+                    block: 'center',
+                    behavior: smooth ? 'smooth' : 'auto'
+                });
+            },
+
+            _syncFromCenter(type) {
+                const el = (type === 'hours') ? this.$refs.wheelHours : this.$refs.wheelMinutes;
+                if (!el) return;
+
+                const r = el.getBoundingClientRect();
+                const cx = Math.round(r.left + r.width / 2);
+                const cy = Math.round(r.top + r.height / 2);
+
+                let node = document.elementFromPoint(cx, cy);
+                while (node && node !== el && !(node.dataset && node.dataset.value)) {
+                    node = node.parentNode;
+                }
+                if (!node || !(node.dataset && node.dataset.value)) return;
+
+                const v = node.dataset.value;
+                if (type === 'hours') this.selectedHour = v;
+                else this.selectedMinute = v;
+            },
+
+            openWheel(target) {
+                this.customError = '';
+                this.wheelTarget = target || 'start';
+
+                const current = (this.wheelTarget === 'start') ? this.jamMulai : this.jamSelesai;
+                if (current && current.includes(':')) {
+                    const p = current.split(':');
+                    this.selectedHour = String(p[0] || '08').padStart(2, '0');
+                    this.selectedMinute = String(p[1] || '00').padStart(2, '0');
+                } else {
+                    this.selectedHour = '08';
+                    this.selectedMinute = '00';
+                }
+
+                this.wheelOpen = true;
+
+                this.$nextTick(() => {
+                    this._setWheelPad(this.$refs.wheelHours);
+                    this._setWheelPad(this.$refs.wheelMinutes);
+
+                    this._scrollToValue(this.$refs.wheelHours, this.selectedHour, false);
+                    this._scrollToValue(this.$refs.wheelMinutes, this.selectedMinute, false);
+
+                    this._syncFromCenter('hours');
+                    this._syncFromCenter('minutes');
+                });
+            },
+
+            closeWheel() {
+                this.wheelOpen = false;
+            },
+
+            onWheelScroll(type) {
+                if (this._scrollRAF) cancelAnimationFrame(this._scrollRAF);
+                this._scrollRAF = requestAnimationFrame(() => this._syncFromCenter(type));
+
+                clearTimeout(this._scrollTimer);
+                this._scrollTimer = setTimeout(() => {
+                    const el = (type === 'hours') ? this.$refs.wheelHours : this.$refs.wheelMinutes;
+                    const v = (type === 'hours') ? this.selectedHour : this.selectedMinute;
+                    this._scrollToValue(el, v, true);
+                }, 120);
+            },
+
+            applyWheel() {
+                const value = this.selectedHour + ':' + this.selectedMinute;
+                if (this.wheelTarget === 'start') this.jamMulai = value;
+                else this.jamSelesai = value;
+                this.wheelOpen = false;
             },
 
             // ===== catering (tetap) =====
