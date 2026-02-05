@@ -9,7 +9,7 @@
     </head>
 
     <body class="min-h-screen text-white relative overflow-hidden
-    bg-[url('<?=base_url('assets/login/login.png')?>')]
+    bg-[url('<?= base_url('assets/login/log.jpeg') ?>')]
     bg-cover bg-center bg-no-repeat bg-fixed">
 
         <!-- Dark overlay (biar background lebih gelap) -->
@@ -123,17 +123,17 @@
         </main>
 
         <script>
-        const btn = document.getElementById("togglePassword");
-        const pass = document.getElementById("password");
-        const eyeOpen = document.getElementById("eyeOpen");
-        const eyeClosed = document.getElementById("eyeClosed");
+            const btn = document.getElementById("togglePassword");
+            const pass = document.getElementById("password");
+            const eyeOpen = document.getElementById("eyeOpen");
+            const eyeClosed = document.getElementById("eyeClosed");
 
-        btn.addEventListener("click", () => {
-            const isPassword = pass.type === "password";
-            pass.type = isPassword ? "text" : "password";
-            eyeOpen.classList.toggle("hidden", !isPassword);
-            eyeClosed.classList.toggle("hidden", isPassword);
-        });
+            btn.addEventListener("click", () => {
+                const isPassword = pass.type === "password";
+                pass.type = isPassword ? "text" : "password";
+                eyeOpen.classList.toggle("hidden", !isPassword);
+                eyeClosed.classList.toggle("hidden", isPassword);
+            });
         </script>
     </body>
 
