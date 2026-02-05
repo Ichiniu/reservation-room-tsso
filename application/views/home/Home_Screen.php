@@ -5,9 +5,134 @@ $user  = $this->uri->segment(2);
 
 $total = (isset($res) && is_array($res)) ? count($res) : 0;
 
-function e($v)
-{
-    return html_escape((string)$v);
+function e($v){ return html_escape((string)$v); }
+
+/* =========================================================================
+   ✅ PENGATURAN FASILITAS PER RUANGAN (EDIT DI SINI)
+   -------------------------------------------------------------------------
+   - Key array = ID_GEDUNG (ID ruangan di DB)
+   - Isi = list badge icon + label (Material Icons)
+   ========================================================================= */
+$FACILITY_BY_ROOM_ID = array(
+    // RUANG 1 (ID_GEDUNG = 1) -> Meeting Room
+    1 => array(
+        array('icon' => 'tv',        'label' => 'TV LED'),
+        array('icon' => 'wifi',      'label' => 'WiFi'),
+        array('icon' => 'ac_unit',   'label' => 'AC'),
+        array('icon' => 'volume_up', 'label' => 'Sound'),
+    ),
+
+    // RUANG 2 (ID_GEDUNG = 2) -> Amphitheater
+    2 => array(
+        array('icon' => 'present_to_all', 'label' => 'Proyektor'),
+        array('icon' => 'wifi',           'label' => 'WiFi'),
+        array('icon' => 'ac_unit',        'label' => 'AC'),
+        array('icon' => 'volume_up',      'label' => 'Sound'),
+    ),
+
+    // RUANG 3 (ID_GEDUNG = 3) -> Studio Podcast
+    3 => array(
+        array('icon' => 'mic',         'label' => 'Mic'),
+        array('icon' => 'headphones',  'label' => 'Headset'),
+        array('icon' => 'graphic_eq',  'label' => 'Audio'),
+        array('icon' => 'videocam',    'label' => 'Kamera'),
+    ),
+);
+
+/* =========================================================================
+   ✅ PENGATURAN DESKRIPSI PER RUANGAN (EDIT DI SINI)
+   -------------------------------------------------------------------------
+   - Ini yang mengganti teks:
+     "Ruangan nyaman dengan penataan modern, siap digunakan..."
+   - Key array = ID_GEDUNG
+   ========================================================================= */
+$DESC_BY_ROOM_ID = array(
+    // RUANG 1 (Meeting Room)
+    1 => "Meeting Room nyaman untuk rapat, presentasi, dan diskusi internal. Tata ruang rapi, suasana fokus, siap dipakai kegiatan resmi.",
+
+    // RUANG 2 (Amphitheater)
+    2 => "Amphitheater luas untuk seminar, pelatihan, dan acara skala besar. Visibilitas bagus, audio jelas, cocok untuk event formal maupun publik.",
+
+    // RUANG 3 (Studio Podcast)
+    3 => "Studio Podcast untuk rekaman audio/video, talkshow, dan konten kreatif. Setup mendukung produksi konten dengan kualitas suara yang lebih rapi.",
+);
+
+/* =========================================================================
+   ✅ PENGATURAN TAGLINE DI ATAS GAMBAR (EDIT DI SINI)
+   -------------------------------------------------------------------------
+   - Ini yang mengganti teks kecil di bawah nama ruangan (overlay gambar).
+   ========================================================================= */
+$TAGLINE_BY_ROOM_ID = array(
+    1 => "Cocok untuk rapat, presentasi, dan diskusi tim.",
+    2 => "Ideal untuk seminar, pelatihan, dan event skala besar.",
+    3 => "Untuk rekaman podcast, talkshow, dan konten kreatif.",
+);
+
+/* =========================================================================
+   (OPSIONAL) Fallback fasilitas kalau ID ruangan tidak ada di mapping.
+   Misal ada ruangan baru ID 4,5,6 dll -> tetap dapat badge “otomatis”.
+   ========================================================================= */
+$FACILITY_POOL_FALLBACK = array(
+    array('icon' => 'wifi',        'label' => 'WiFi'),
+    array('icon' => 'ac_unit',     'label' => 'AC'),
+    array('icon' => 'volume_up',   'label' => 'Sound'),
+    array('icon' => 'videocam',    'label' => 'Proyektor'),
+    array('icon' => 'tv',          'label' => 'TV'),
+    array('icon' => 'mic',         'label' => 'Mic'),
+    array('icon' => 'draw',        'label' => 'Whiteboard'),
+    array('icon' => 'power',       'label' => 'Power'),
+);
+
+/* ===== Shuffle deterministik untuk fallback (biar stabil) ===== */
+if (!function_exists('seeded_shuffle')) {
+    function seeded_shuffle($items, $seed)
+    {
+        $items = array_values($items);
+        $n = count($items);
+
+        $state = (int)$seed;
+        if ($state <= 0) $state = 1234567;
+
+        for ($i = $n - 1; $i > 0; $i--) {
+            $state = ($state * 1103515245 + 12345) & 0x7fffffff;
+            $j = $state % ($i + 1);
+            $tmp = $items[$i];
+            $items[$i] = $items[$j];
+            $items[$j] = $tmp;
+        }
+        return $items;
+    }
+}
+
+/* ===== Ambil fasilitas untuk ruangan (mapping -> fallback) ===== */
+if (!function_exists('get_facilities_for_room')) {
+    function get_facilities_for_room($id, $map, $fallbackPool, $take = 4)
+    {
+        if (isset($map[$id]) && is_array($map[$id]) && count($map[$id]) > 0) {
+            return $map[$id];
+        }
+        $seed = (int)abs(crc32((string)$id));
+        $shuffled = seeded_shuffle($fallbackPool, $seed);
+        return array_slice($shuffled, 0, max(1, (int)$take));
+    }
+}
+
+/* ===== Ambil deskripsi per ruangan (mapping -> fallback) ===== */
+if (!function_exists('get_desc_for_room')) {
+    function get_desc_for_room($id, $map, $fallback = "Ruangan nyaman dengan penataan modern, siap digunakan untuk kegiatan internal maupun eksternal.")
+    {
+        if (isset($map[$id]) && trim((string)$map[$id]) !== '') return $map[$id];
+        return $fallback;
+    }
+}
+
+/* ===== Ambil tagline per ruangan (mapping -> fallback) ===== */
+if (!function_exists('get_tagline_for_room')) {
+    function get_tagline_for_room($id, $map, $fallback = "Cocok untuk rapat, presentasi, dan kegiatan resmi.")
+    {
+        if (isset($map[$id]) && trim((string)$map[$id]) !== '') return $map[$id];
+        return $fallback;
+    }
 }
 
 /* ===== Format tanggal Indo: 01 januari 2001 ===== */
@@ -91,7 +216,6 @@ if (!function_exists('parse_title_3lines')) {
 
         $original = $t;
 
-        // date
         $dateRawYmd = '';
         $dateTextInTitle = '';
 
@@ -108,7 +232,6 @@ if (!function_exists('parse_title_3lines')) {
             }
         }
 
-        // time
         $timeRaw = '';
         if (preg_match('/\(([^)]*)\)/', $t, $mt)) {
             $timeRaw = trim($mt[1]);
@@ -121,25 +244,20 @@ if (!function_exists('parse_title_3lines')) {
 
         if ($dateRawYmd === '' && $timeRaw === '') return null;
 
-        // normalize jam
         $jam = ($timeRaw !== '') ? $timeRaw : '-';
         if ($jam !== '-') {
             $jam = str_replace(':', '.', $jam);
             $jam = preg_replace('/\s*-\s*/', ' - ', $jam);
-
             if (stripos($jam, 'wib') === false) $jam .= ' wib';
             $jam = preg_replace('/\s*wib\s*/i', ' wib', $jam);
             $jam = trim($jam);
         }
 
-        // nama
         $nama = $t;
         $nama = preg_replace('/\([^)]*\)/', '', $nama);
         if ($dateTextInTitle !== '') $nama = str_replace($dateTextInTitle, '', $nama);
-
         $nama = preg_replace('/\b\d{1,2}[:.]\d{2}\s*-\s*\d{1,2}[:.]\d{2}\b/i', '', $nama);
         $nama = preg_replace('/\s*wib\b/i', '', $nama);
-
         $nama = preg_replace('/\s+/', ' ', $nama);
         $nama = trim($nama);
         $nama = rtrim($nama, '-');
@@ -149,11 +267,7 @@ if (!function_exists('parse_title_3lines')) {
 
         $tgl = ($dateRawYmd !== '') ? formatTanggalIndo($dateRawYmd) : '-';
 
-        return array(
-            'nama' => $nama,
-            'tgl'  => $tgl,
-            'jam'  => $jam,
-        );
+        return array('nama' => $nama, 'tgl' => $tgl, 'jam' => $jam);
     }
 }
 
@@ -203,52 +317,46 @@ $ulasan_count = is_array($ulasan_home) ? count($ulasan_home) : 0;
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-        /* ===== marquee animation (loop ke kanan terus) ===== */
-        @keyframes review-marquee {
-            0% {
-                transform: translateX(0);
-            }
-
-            100% {
-                transform: translateX(-50%);
-            }
-
-            /* karena track digandakan */
+    @keyframes review-marquee {
+        0% {
+            transform: translateX(0);
         }
+
+        100% {
+            transform: translateX(-50%);
+        }
+    }
 
         .marquee-track {
             animation: review-marquee linear infinite;
             will-change: transform;
         }
 
-        /* pause saat hover (opsional, hapus kalau tidak perlu) */
-        .marquee-wrap:hover .marquee-track {
-            animation-play-state: paused;
-        }
+    .marquee-wrap:hover .marquee-track {
+        animation-play-state: paused;
+    }
     </style>
 </head>
 
 <body class="min-h-screen text-slate-900 bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200">
 
     <?php if ($this->session->flashdata('success_popup')): ?>
-        <div id="toastSuccess"
-            class="fixed z-50 top-5 right-5 w-[92vw] max-w-sm rounded-2xl border border-emerald-200 bg-white/90 backdrop-blur shadow-2xl">
-            <div class="p-4">
-                <div class="flex items-start gap-3">
-                    <div class="h-10 w-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
-                        <span class="material-icons">check_circle</span>
-                    </div>
-
-                    <div class="flex-1">
-                        <p class="text-sm font-semibold">Berhasil</p>
-                        <p class="mt-0.5 text-sm text-slate-600"><?= e($this->session->flashdata('success_popup')); ?></p>
-                    </div>
-
-                    <button type="button" class="h-9 w-9 rounded-xl hover:bg-slate-100 flex items-center justify-center"
-                        onclick="var el=document.getElementById('toastSuccess'); if(el) el.remove();">
-                        <span class="material-icons text-slate-500">close</span>
-                    </button>
+    <div id="toastSuccess"
+        class="fixed z-50 top-5 right-5 w-[92vw] max-w-sm rounded-2xl border border-emerald-200 bg-white/90 backdrop-blur shadow-2xl">
+        <div class="p-4">
+            <div class="flex items-start gap-3">
+                <div class="h-10 w-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                    <span class="material-icons">check_circle</span>
                 </div>
+                <div class="flex-1">
+                    <p class="text-sm font-semibold">Berhasil</p>
+                    <p class="mt-0.5 text-sm text-slate-600"><?= e($this->session->flashdata('success_popup')); ?></p>
+                </div>
+                <button type="button" class="h-9 w-9 rounded-xl hover:bg-slate-100 flex items-center justify-center"
+                    onclick="var el=document.getElementById('toastSuccess'); if(el) el.remove();">
+                    <span class="material-icons text-slate-500">close</span>
+                </button>
+            </div>
 
                 <div class="mt-3 h-1 w-full rounded-full bg-slate-100 overflow-hidden">
                     <div id="toastBar" class="h-full w-full bg-emerald-500"></div>
@@ -316,33 +424,24 @@ $ulasan_count = is_array($ulasan_home) ? count($ulasan_home) : 0;
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
 
                     <?php if (!empty($res) && is_array($res)): ?>
-                        <?php foreach (array_slice($res, 0, 3) as $row): ?>
-                            <?php
-                            $img  = (!empty($row['PATH']) && !empty($row['IMG_NAME'])) ? ($row['PATH'] . $row['IMG_NAME']) : '';
-                            $nama = isset($row['NAMA_GEDUNG']) ? $row['NAMA_GEDUNG'] : 'Ruangan';
-                            $kap  = isset($row['KAPASITAS']) ? $row['KAPASITAS'] : '-';
-                            $id   = isset($row['ID_GEDUNG']) ? $row['ID_GEDUNG'] : '';
+                    <?php foreach (array_slice($res, 0, 3) as $row): ?>
+                    <?php
+                    $img  = (!empty($row['PATH']) && !empty($row['IMG_NAME'])) ? ($row['PATH'] . $row['IMG_NAME']) : '';
+                    $nama = isset($row['NAMA_GEDUNG']) ? $row['NAMA_GEDUNG'] : 'Ruangan';
+                    $kap  = isset($row['KAPASITAS']) ? $row['KAPASITAS'] : '-';
+                    $id   = isset($row['ID_GEDUNG']) ? (int)$row['ID_GEDUNG'] : 0;
 
-                            /* ===== DESKRIPSI DINAMIS (sesuai permintaan kamu) ===== */
-                            $namaLower = strtolower((string)$nama);
+                    // ✅ FASILITAS PER ID RUANGAN
+                    $badges  = get_facilities_for_room($id, $FACILITY_BY_ROOM_ID, $FACILITY_POOL_FALLBACK, 4);
 
-                            if (strpos($namaLower, 'meeting') !== false) {
-                                $desc = 'Ruang formal yang efisien untuk rapat koordinasi dan presentasi tim profesional.';
-                            } elseif (
-                                strpos($namaLower, 'amphitheater') !== false ||
-                                strpos($namaLower, 'amphiteater') !== false ||
-                                strpos($namaLower, 'amphi') !== false
-                            ) {
-                                $desc = 'Area berkapasitas besar untuk seminar dan pengarahan resmi dengan visibilitas maksimal.';
-                            } elseif (strpos($namaLower, 'studio') !== false || strpos($namaLower, 'podcast') !== false) {
-                                // dirapikan supaya tidak dobel & tidak kepanjangan
-                                $desc = 'Studio konten premium untuk sesi talkshow resmi dan presentasi digital berkualitas.';
-                            } else {
-                                $desc = 'Cocok untuk rapat, presentasi, dan kegiatan resmi.';
-                            }
-                            ?>
-                            <article class="group bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-sm
-                              hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                    // ✅ DESKRIPSI CARD PER ID RUANGAN (mengganti teks "Ruangan nyaman...")
+                    $desc    = get_desc_for_room($id, $DESC_BY_ROOM_ID);
+
+                    // ✅ TAGLINE OVERLAY PER ID RUANGAN (teks kecil di atas gambar)
+                    $tagline = get_tagline_for_room($id, $TAGLINE_BY_ROOM_ID);
+                ?>
+                    <article
+                        class="group bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
 
                                 <div class="relative overflow-hidden">
                                     <?php if ($img): ?>
@@ -356,87 +455,42 @@ $ulasan_count = is_array($ulasan_home) ? count($ulasan_home) : 0;
 
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent"></div>
 
-                                    <div class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full
-                              text-xs font-semibold text-slate-800 flex items-center gap-1 shadow">
-                                        <span class="material-icons text-sm">groups</span>
-                                        <?= e($kap); ?> org
-                                    </div>
+                            <div
+                                class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-semibold text-slate-800 flex items-center gap-1 shadow">
+                                <span class="material-icons text-sm">groups</span>
+                                <?= e($kap); ?> org
+                            </div>
 
-                                    <div class="absolute left-4 right-4 bottom-4">
-                                        <h3 class="text-lg font-bold text-white drop-shadow"><?= e($nama); ?></h3>
+                            <div class="absolute left-4 right-4 bottom-4">
+                                <h3 class="text-lg font-bold text-white drop-shadow"><?= e($nama); ?></h3>
 
-                                        <!-- ✅ DESKRIPSI DIGANTI DINAMIS DI SINI -->
-                                        <p class="mt-1 text-xs text-white/85
-                              [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] overflow-hidden">
-                                            <?= e($desc); ?>
-                                        </p>
-                                    </div>
-                                </div>
+                                <!-- ✅ TAGLINE PER RUANGAN -->
+                                <p
+                                    class="mt-1 text-xs text-white/85 [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] overflow-hidden">
+                                    <?= e($tagline); ?>
+                                </p>
+                            </div>
+                        </div>
 
-                                <div class="p-5">
-                                    <?php if (stripos($nama, 'meeting') !== false): ?>
-                                        <div class="flex flex-wrap gap-2">
-                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs">
-                                                <span class="material-icons text-sm">tv</span> SmartTV 70'
-                                            </span>
+                        <div class="p-5">
 
-                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs">
-                                                <span class="material-icons text-sm">border_color</span> Whiteboard
-                                            </span>
+                            <!-- ✅ BADGE FASILITAS (SESUAI ID RUANGAN) -->
+                            <div class="flex flex-wrap gap-2">
+                                <?php foreach ($badges as $b): ?>
+                                <span
+                                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs">
+                                    <span class="material-icons text-sm"><?= e($b['icon']); ?></span>
+                                    <?= e($b['label']); ?>
+                                </span>
+                                <?php endforeach; ?>
+                            </div>
 
-                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs">
-                                                <span class="material-icons text-sm">light_mode</span> Modern lighting
-                                            </span>
-
-                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs">
-                                                <span class="material-icons text-sm">ac_unit</span> AC
-                                            </span>
-                                        </div>
-
-                                    <?php elseif (stripos($nama, 'studio') !== false || stripos($nama, 'podcast') !== false): ?>
-                                        <div class="flex flex-wrap gap-2">
-                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs">
-                                                <span class="material-icons text-sm">weekend</span> Sofa
-                                            </span>
-
-                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs">
-                                                <span class="material-icons text-sm">palette</span> Dekorasi
-                                            </span>
-
-                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs">
-                                                <span class="material-icons text-sm">room_preferences</span> Modern room
-                                            </span>
-
-                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs">
-                                                <span class="material-icons text-sm">light_mode</span> Lighting
-                                            </span>
-                                        </div>
-
-                                    <?php else: ?>
-                                        <div class="flex flex-wrap gap-2">
-                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs">
-                                                <span class="material-icons text-sm">videocam</span> Proyektor
-                                            </span>
-
-                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs">
-                                                <span class="material-icons text-sm">volume_up</span> Sound
-                                            </span>
-
-                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs">
-                                                <span class="material-icons text-sm">wifi</span> WiFi
-                                            </span>
-
-                                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs">
-                                                <span class="material-icons text-sm">ac_unit</span> AC
-                                            </span>
-                                        </div>
-                                    <?php endif; ?>
-
-                                    <p class="mt-4 text-sm text-slate-600
-                            [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:3] overflow-hidden">
-                                        Ruangan nyaman dengan penataan modern, siap digunakan untuk kegiatan internal maupun eksternal.
-                                    </p>
-                                </div>
+                            <!-- ✅ DESKRIPSI PER RUANGAN (ini yang kamu minta) -->
+                            <p
+                                class="mt-4 text-sm text-slate-600 [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:3] overflow-hidden">
+                                <?= e($desc); ?>
+                            </p>
+                        </div>
 
                                 <div class="px-5 pb-5 flex items-center justify-between">
                                     <div class="flex items-center gap-2 text-xs text-slate-500">
@@ -444,13 +498,13 @@ $ulasan_count = is_array($ulasan_home) ? count($ulasan_home) : 0;
                                         Respons cepat
                                     </div>
 
-                                    <a href="<?= site_url('home/details/' . $id); ?>" class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-sky-600 text-white text-sm font-semibold
-                           hover:bg-sky-700 active:scale-[0.99] transition shadow-sm
-                           focus:outline-none focus:ring-4 focus:ring-sky-200">
-                                        Detail
-                                        <span class="material-icons text-base transition group-hover:translate-x-0.5">arrow_forward</span>
-                                    </a>
-                                </div>
+                            <a href="<?= site_url('home/details/' . $id); ?>"
+                                class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-sky-600 text-white text-sm font-semibold hover:bg-sky-700 active:scale-[0.99] transition shadow-sm focus:outline-none focus:ring-4 focus:ring-sky-200">
+                                Detail
+                                <span
+                                    class="material-icons text-base transition group-hover:translate-x-0.5">arrow_forward</span>
+                            </a>
+                        </div>
 
                             </article>
                         <?php endforeach; ?>
@@ -468,7 +522,9 @@ $ulasan_count = is_array($ulasan_home) ? count($ulasan_home) : 0;
 
                 </div>
 
-                <section class="relative overflow-hidden rounded-3xl border border-slate-200 bg-white/70 backdrop-blur shadow-sm mt-12">
+                <!-- ===== SECTION ULASAN (tetap) ===== -->
+                <section
+                    class="relative overflow-hidden rounded-3xl border border-slate-200 bg-white/70 backdrop-blur shadow-sm mt-12">
                     <div class="absolute inset-0 pointer-events-none">
                         <div class="absolute -top-24 -left-24 h-64 w-64 rounded-full bg-amber-200/35 blur-3xl"></div>
                         <div class="absolute -bottom-24 -right-24 h-64 w-64 rounded-full bg-sky-200/35 blur-3xl"></div>
@@ -497,9 +553,8 @@ $ulasan_count = is_array($ulasan_home) ? count($ulasan_home) : 0;
                                     <p class="text-xs text-slate-500"><?= (int)$ul_total; ?> ulasan</p>
                                 </div>
 
-                                <a href="<?= site_url('home/ulasan'); ?>" class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-900 text-white text-sm font-semibold
-                                      hover:bg-slate-800 active:scale-[0.99] transition shadow-sm
-                                      focus:outline-none focus:ring-4 focus:ring-slate-200">
+                                <a href="<?= site_url('home/ulasan'); ?>"
+                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 active:scale-[0.99] transition shadow-sm focus:outline-none focus:ring-4 focus:ring-slate-200">
                                     Lihat semua
                                     <span class="material-icons text-base">arrow_forward</span>
                                 </a>
@@ -508,43 +563,42 @@ $ulasan_count = is_array($ulasan_home) ? count($ulasan_home) : 0;
 
                         <div class="mt-6">
                             <?php if (!empty($ulasan_home) && $ulasan_count > 0): ?>
+                            <div id="reviewMarquee" class="marquee-wrap overflow-hidden">
+                                <div id="reviewTrack" class="marquee-track flex gap-6 py-1"
+                                    style="animation-duration: 18s;">
+                                    <?php for ($loop = 0; $loop < 2; $loop++): ?>
+                                    <?php foreach ($ulasan_home as $r): ?>
+                                    <?php
+                                    $nm = isset($r['name']) ? $r['name'] : 'Customer';
+                                    $dt_raw = isset($r['date']) ? $r['date'] : '';
+                                    $dt = formatTanggalIndo($dt_raw);
 
-                                <!-- wrapper -->
-                                <div id="reviewMarquee" class="marquee-wrap overflow-hidden">
-                                    <!-- track: kita gandakan isi 2x supaya loop mulus -->
-                                    <div id="reviewTrack" class="marquee-track flex gap-6 py-1" style="animation-duration: 18s;">
-                                        <?php for ($loop = 0; $loop < 2; $loop++): ?>
-                                            <?php foreach ($ulasan_home as $r): ?>
-                                                <?php
-                                                $nm = isset($r['name']) ? $r['name'] : 'Customer';
-                                                $dt_raw = isset($r['date']) ? $r['date'] : '';
-                                                $dt = formatTanggalIndo($dt_raw);
+                                    $rt = isset($r['rating']) ? (int)$r['rating'] : 5;
+                                    if ($rt < 1) $rt = 1;
+                                    if ($rt > 5) $rt = 5;
 
-                                                $rt = isset($r['rating']) ? (int)$r['rating'] : 5;
-                                                if ($rt < 1) $rt = 1;
-                                                if ($rt > 5) $rt = 5;
+                                    $tt = isset($r['title']) ? $r['title'] : '';
+                                    $cm = isset($r['comment']) ? $r['comment'] : '';
 
-                                                $tt = isset($r['title']) ? $r['title'] : '';
-                                                $cm = isset($r['comment']) ? $r['comment'] : '';
+                                    $inisial = strtoupper(substr((string)$nm, 0, 1));
+                                    if ($inisial === '') $inisial = 'U';
 
-                                                $inisial = strtoupper(substr((string)$nm, 0, 1));
-                                                if ($inisial === '') $inisial = 'U';
+                                    $parts = parse_title_3lines($tt);
+                                ?>
 
-                                                $parts = parse_title_3lines($tt);
-                                                ?>
-
-                                                <!-- slide item: card kecil, bukan w-full -->
-                                                <article class="w-[320px] md:w-[380px] flex-none bg-white rounded-3xl border border-slate-200 shadow-sm p-5">
-                                                    <div class="flex items-start justify-between gap-3">
-                                                        <div class="flex items-center gap-3 min-w-0">
-                                                            <div class="h-11 w-11 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center font-extrabold text-slate-700">
-                                                                <?= e($inisial); ?>
-                                                            </div>
-                                                            <div class="min-w-0">
-                                                                <p class="text-sm font-bold truncate"><?= e($nm); ?></p>
-                                                                <p class="text-xs text-slate-500"><?= e($dt); ?></p>
-                                                            </div>
-                                                        </div>
+                                    <article
+                                        class="w-[320px] md:w-[380px] flex-none bg-white rounded-3xl border border-slate-200 shadow-sm p-5">
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div class="flex items-center gap-3 min-w-0">
+                                                <div
+                                                    class="h-11 w-11 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center font-extrabold text-slate-700">
+                                                    <?= e($inisial); ?>
+                                                </div>
+                                                <div class="min-w-0">
+                                                    <p class="text-sm font-bold truncate"><?= e($nm); ?></p>
+                                                    <p class="text-xs text-slate-500"><?= e($dt); ?></p>
+                                                </div>
+                                            </div>
 
                                                         <?= stars_html($rt); ?>
                                                     </div>
@@ -581,11 +635,10 @@ $ulasan_count = is_array($ulasan_home) ? count($ulasan_home) : 0;
                                                     </div>
                                                 </article>
 
-                                            <?php endforeach; ?>
-                                        <?php endfor; ?>
-                                    </div>
+                                    <?php endforeach; ?>
+                                    <?php endfor; ?>
                                 </div>
-
+                            </div>
                             <?php else: ?>
                                 <div class="rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm">
                                     <div class="mx-auto h-12 w-12 rounded-2xl bg-slate-100 flex items-center justify-center">
@@ -605,21 +658,19 @@ $ulasan_count = is_array($ulasan_home) ? count($ulasan_home) : 0;
 
     <?php $this->load->view('components/Footer'); ?>
 
-    <!-- ===== Opsional: set kecepatan otomatis berdasarkan jumlah data ===== -->
     <script>
         (function() {
             var track = document.getElementById('reviewTrack');
             var wrap = document.getElementById('reviewMarquee');
             if (!track || !wrap) return;
 
-            // kalau item sedikit, pelankan biar enak
-            var itemCount = <?= (int)$ulasan_count; ?>;
-            // base 12s, tambah 2s per item (max 40s)
-            var dur = 12 + (itemCount * 2);
-            if (dur > 40) dur = 40;
-            track.style.animationDuration = dur + 's';
-        })();
+        var itemCount = <?= (int)$ulasan_count; ?>;
+        var dur = 12 + (itemCount * 2);
+        if (dur > 40) dur = 40;
+        track.style.animationDuration = dur + 's';
+    })();
     </script>
+
 </body>
 
 </html>
