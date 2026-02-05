@@ -163,9 +163,14 @@ $jadwalEndpoint = site_url('home/home/jadwal_by_date/' . $id_gedung);
 
                                     <template x-for="it in jadwalItems" :key="it.ID_PEMESANAN">
                                         <div class="py-2 border-t border-slate-200 first:border-t-0">
-                                            <div class="text-sm font-semibold"
-                                                x-text="it.JAM_MULAI + ' - ' + it.JAM_SELESAI"></div>
-                                            <div class="text-xs text-slate-600" x-text="it.DESKRIPSI_ACARA"></div>
+                                            <div class="flex items-center gap-3">
+                                                <div class="text-sm font-bold whitespace-nowrap"
+                                                    x-text="it.JAM_MULAI + ' - ' + it.JAM_SELESAI"></div>
+
+                                                <div class="text-ms text-slate-600 text-right font-semibold truncate"
+                                                    x-text="'(' + it.DESKRIPSI_ACARA + ')'"></div>
+                                            </div>
+
                                         </div>
                                     </template>
                                 </div>

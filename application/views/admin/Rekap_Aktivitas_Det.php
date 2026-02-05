@@ -4,8 +4,43 @@ $this->load->helper('text');
 
 $no = 1;
 
-$first_date_period  = !empty($first_period) ? date_create($first_period) : null;
-$second_date_period = !empty($last_period) ? date_create($last_period) : null;
+// aman kalau belum dikirim controller
+$first_period = isset($first_period) ? $first_period : '';
+$last_period  = isset($last_period) ? $last_period : '';
+$hasil        = isset($hasil) ? $hasil : array();
+
+// fallback: ambil dari GET / URI kalau periode belum kebawa
+$CI = &get_instance();
+if (empty($first_period)) $first_period = $CI->input->get('first_period', true);
+if (empty($last_period))  $last_period  = $CI->input->get('last_period', true);
+if (empty($first_period)) $first_period = $CI->uri->segment(3);
+if (empty($last_period))  $last_period  = $CI->uri->segment(4);
+
+/* ===== Format tanggal Indonesia ===== */
+function formatTanggalIndo($tgl)
+{
+    if (empty($tgl)) return '-';
+
+    $bulan = array(
+        1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    );
+
+    $ts = strtotime($tgl);
+    if (!$ts) return '-';
+
+    $d = date('d', $ts);
+    $m = (int) date('n', $ts);
+    $y = date('Y', $ts);
+
+    return $d . ' ' . $bulan[$m] . ' ' . $y;
+}
+
+/* ===== PDF link aktif kalau periode lengkap ===== */
+$hasPeriod = (!empty($first_period) && !empty($last_period));
+$pdfUrl = $hasPeriod
+    ? site_url('admin/kegiatan_download_pdf/' . rawurlencode($first_period) . '/' . rawurlencode($last_period))
+    : '#';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -15,15 +50,7 @@ $second_date_period = !empty($last_period) ? date_create($last_period) : null;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Smart Office</title>
 
-    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <style>
-    /* biar scroll bar tidak bikin header/body “geser” di beberapa browser */
-    .scroll-stable {
-        scrollbar-gutter: stable;
-    }
-    </style>
 </head>
 
 <body class="bg-slate-50 text-slate-800">
@@ -41,79 +68,109 @@ $second_date_period = !empty($last_period) ? date_create($last_period) : null;
                     class="p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div class="text-sm text-slate-600">
                         <span class="font-semibold text-slate-800">Periode:</span>
-                        <?php if ($first_date_period && $second_date_period): ?>
-                        <?= date_format($first_date_period, 'd F Y'); ?>
+                        <?php if ($hasPeriod): ?>
+                        <?= formatTanggalIndo($first_period); ?>
                         <span class="mx-2">—</span>
-                        <?= date_format($second_date_period, 'd F Y'); ?>
+                        <?= formatTanggalIndo($last_period); ?>
                         <?php else: ?>
                         -
                         <?php endif; ?>
                     </div>
 
-                    <a class="text-sm font-medium text-teal-700 hover:text-teal-800 underline"
-                        href="<?= site_url('admin/kegiatan_download_pdf/' . $first_period . '/' . $last_period); ?>">
+                    <a class="text-sm font-medium underline <?= $hasPeriod ? 'text-teal-700 hover:text-teal-800' : 'text-slate-400 pointer-events-none' ?>"
+                        href="<?= $pdfUrl; ?>" <?= $hasPeriod ? 'target="_blank" rel="noopener"' : ''; ?>>
                         Ekspor ke PDF
                     </a>
                 </div>
 
                 <div class="p-5">
-                    <!-- TABLE WRAP: HANYA INI YANG SCROLL -->
+                    <!-- ✅ TABLE WRAP: TANPA overflow-y (tidak ada scroll vertikal di box) -->
                     <div class="border border-slate-200 rounded-xl overflow-hidden">
-                        <div class="max-h-[420px] overflow-auto scroll-stable">
-                            <table id="rekapTable" class="min-w-[980px] w-full text-sm">
-                                <thead class="sticky top-0 z-10 bg-slate-50 border-b border-slate-200">
+                        <!-- hanya overflow-x untuk layar kecil -->
+                        <div id="tableScroll" class="overflow-x-auto">
+                            <table id="rekapTable" class="w-full text-sm table-auto">
+                                <thead class="bg-slate-50 border-b border-slate-200">
                                     <tr class="text-left">
-                                        <th class="px-4 py-3 font-semibold text-slate-700 w-[70px]">No</th>
-                                        <th class="px-4 py-3 font-semibold text-slate-700 w-[180px]">Nama Gedung</th>
-                                        <th class="px-4 py-3 font-semibold text-slate-700 w-[160px]">Tanggal Pemesanan
-                                        </th>
-                                        <th class="px-4 py-3 font-semibold text-slate-700 w-[160px]">Tanggal Approval
-                                        </th>
-                                        <th class="px-4 py-3 font-semibold text-slate-700 w-[240px]">Kegiatan</th>
-                                        <th class="px-4 py-3 font-semibold text-slate-700 w-[140px]">Jam Kegiatan</th>
-                                        <th class="px-4 py-3 font-semibold text-slate-700 w-[200px]">Nama Pemesan</th>
+                                        <th class="px-4 py-3 font-semibold text-slate-700 w-[70px] text-center">No</th>
+                                        <th class="px-4 py-3 font-semibold text-slate-700">Nama Gedung</th>
+                                        <th class="px-4 py-3 font-semibold text-slate-700">Tanggal Pemesanan</th>
+                                        <th class="px-4 py-3 font-semibold text-slate-700">Tanggal Approval</th>
+
+                                        <!-- ✅ kolom baru -->
+                                        <th class="px-4 py-3 font-semibold text-slate-700">Tanggal Kegiatan</th>
+
+                                        <th class="px-4 py-3 font-semibold text-slate-700">Kegiatan</th>
+                                        <th class="px-4 py-3 font-semibold text-slate-700 whitespace-nowrap">Jam
+                                            Kegiatan</th>
+                                        <th class="px-4 py-3 font-semibold text-slate-700">Nama Pemesan</th>
                                     </tr>
                                 </thead>
 
                                 <tbody id="rekapBody" class="divide-y divide-slate-200">
-                                    <?php if (!empty($hasil)): ?>
+                                    <?php if (!empty($hasil) && is_array($hasil)): ?>
                                     <?php foreach ($hasil as $row): ?>
                                     <?php
-                        $date = !empty($row['TANGGAL_FINAL_PEMESANAN']) ? date_create($row['TANGGAL_FINAL_PEMESANAN']) : null;
-                        $date_approval = !empty($row['TANGGAL_APPROVAL']) ? date_create($row['TANGGAL_APPROVAL']) : null;
+                                            // Tanggal Pemesanan (final kalau ada)
+                                            $date_pemesanan = null;
+                                            if (!empty($row['TANGGAL_FINAL_PEMESANAN'])) {
+                                                $date_pemesanan = date_create($row['TANGGAL_FINAL_PEMESANAN']);
+                                            } elseif (!empty($row['TANGGAL_PEMESANAN'])) {
+                                                $date_pemesanan = date_create($row['TANGGAL_PEMESANAN']);
+                                            }
 
-                        $jamMulai = !empty($row['JAM_MULAI']) ? $row['JAM_MULAI'] : (!empty($row['JAM_PEMESANAN']) ? $row['JAM_PEMESANAN'] : null);
-                        $jamSelesai = !empty($row['JAM_SELESAI']) ? $row['JAM_SELESAI'] : null;
+                                            // Tanggal Approval
+                                            $date_approval = !empty($row['TANGGAL_APPROVAL']) ? date_create($row['TANGGAL_APPROVAL']) : null;
 
-                        $jamText = '-';
-                        if (!empty($jamMulai) && !empty($jamSelesai)) {
-                          $jamText = date('H:i', strtotime($jamMulai)) . ' - ' . date('H:i', strtotime($jamSelesai));
-                        } elseif (!empty($jamMulai)) {
-                          $jamText = date('H:i', strtotime($jamMulai));
-                        }
-                      ?>
+                                            // Tanggal Kegiatan (ambil dari TANGGAL_PEMESANAN; fallback ke final)
+                                            $date_kegiatan = !empty($row['TANGGAL_PEMESANAN']) ? date_create($row['TANGGAL_PEMESANAN']) : null;
+                                            if (!$date_kegiatan && $date_pemesanan) $date_kegiatan = $date_pemesanan;
+
+                                            // Jam
+                                            $jamMulai   = !empty($row['JAM_MULAI']) ? $row['JAM_MULAI'] : (!empty($row['JAM_PEMESANAN']) ? $row['JAM_PEMESANAN'] : null);
+                                            $jamSelesai = !empty($row['JAM_SELESAI']) ? $row['JAM_SELESAI'] : null;
+
+                                            $jamText = '-';
+                                            if (!empty($jamMulai) && !empty($jamSelesai)) {
+                                                $jamText = date('H:i', strtotime($jamMulai)) . ' - ' . date('H:i', strtotime($jamSelesai));
+                                            } elseif (!empty($jamMulai)) {
+                                                $jamText = date('H:i', strtotime($jamMulai));
+                                            }
+                                            ?>
                                     <tr class="hover:bg-slate-50">
-                                        <td class="px-4 py-3 text-center w-[70px]"><?= $no++; ?></td>
-                                        <td class="px-4 py-3 w-[180px]">
-                                            <?= !empty($row['NAMA_GEDUNG']) ? $row['NAMA_GEDUNG'] : '-'; ?></td>
-                                        <td class="px-4 py-3 w-[160px]">
-                                            <?= $date ? date_format($date, 'd M Y') : '-'; ?></td>
-                                        <td class="px-4 py-3 w-[160px]">
-                                            <?= $date_approval ? date_format($date_approval, 'd M Y') : '-'; ?></td>
+                                        <td class="px-4 py-3 text-center"><?= $no++; ?></td>
 
-                                        <!-- Kegiatan boleh wrap -->
-                                        <td class="px-4 py-3 w-[240px] whitespace-normal break-words">
-                                            <?= !empty($row['DESKRIPSI_ACARA']) ? $row['DESKRIPSI_ACARA'] : '-'; ?>
+                                        <td class="px-4 py-3">
+                                            <?= !empty($row['NAMA_GEDUNG']) ? htmlspecialchars($row['NAMA_GEDUNG'], ENT_QUOTES, 'UTF-8') : '-'; ?>
                                         </td>
 
-                                        <td class="px-4 py-3 w-[140px]"><?= $jamText; ?></td>
-                                        <td class="px-4 py-3 w-[200px]">
-                                            <?= !empty($row['NAMA_LENGKAP']) ? $row['NAMA_LENGKAP'] : '-'; ?></td>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <?= $date_pemesanan ? date_format($date_pemesanan, 'd M Y') : '-'; ?>
+                                        </td>
+
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <?= $date_approval ? date_format($date_approval, 'd M Y') : '-'; ?>
+                                        </td>
+
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <?= $date_kegiatan ? date_format($date_kegiatan, 'd M Y') : '-'; ?>
+                                        </td>
+
+                                        <td class="px-4 py-3 whitespace-normal break-words">
+                                            <?= !empty($row['DESKRIPSI_ACARA']) ? htmlspecialchars($row['DESKRIPSI_ACARA'], ENT_QUOTES, 'UTF-8') : '-'; ?>
+                                        </td>
+
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <?= htmlspecialchars($jamText, ENT_QUOTES, 'UTF-8'); ?>
+                                        </td>
+
+                                        <td class="px-4 py-3">
+                                            <?= !empty($row['NAMA_LENGKAP']) ? htmlspecialchars($row['NAMA_LENGKAP'], ENT_QUOTES, 'UTF-8') : '-'; ?>
+                                        </td>
                                     </tr>
                                     <?php endforeach; ?>
                                     <?php else: ?>
                                     <tr>
-                                        <td colspan="7" class="px-4 py-6 text-center text-slate-500">Tidak ada data.
+                                        <td colspan="8" class="px-4 py-6 text-center text-slate-500">Tidak ada data.
                                         </td>
                                     </tr>
                                     <?php endif; ?>
@@ -152,10 +209,8 @@ $second_date_period = !empty($last_period) ? date_create($last_period) : null;
     </main>
 
     <script>
-    // Pagination client-side + reset scroll tabel saat pindah halaman
     (function() {
         const tbody = document.getElementById('rekapBody');
-        const scrollBox = document.querySelector('.max-h-\\[420px\\]');
         if (!tbody) return;
 
         let rows = Array.from(tbody.querySelectorAll('tr'));
@@ -195,7 +250,7 @@ $second_date_period = !empty($last_period) ? date_create($last_period) : null;
             pageInfo.textContent =
                 `Page ${currentPage} of ${tp} • Showing ${showingFrom}-${showingTo} of ${totalRows}`;
 
-            // nomor ulang sesuai urutan global
+            // renumber
             let visibleNo = start + 1;
             rows.forEach((row, idx) => {
                 if (idx >= start && idx < end) {
@@ -204,8 +259,12 @@ $second_date_period = !empty($last_period) ? date_create($last_period) : null;
                 }
             });
 
-            // balik ke atas tabel saat pindah halaman
-            if (scrollBox) scrollBox.scrollTop = 0;
+            // scroll halaman ke atas tabel saat pindah halaman (biar nyaman)
+            const tableTop = document.getElementById('rekapTable');
+            if (tableTop) tableTop.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
         }
 
         prevBtn.addEventListener('click', function() {

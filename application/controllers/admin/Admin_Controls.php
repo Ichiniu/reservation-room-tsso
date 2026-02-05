@@ -123,6 +123,50 @@ class Admin_Controls extends CI_Controller
 		$this->load->view('admin/rekap_aktivitas_det', $data);
 	}
 
+	public function rekap_transaksi()
+{
+    $this->load->model('gedung/gedung_model');
+
+    // badge sidebar
+    $data['result'] = $this->gedung_model->get_pending_transaction();
+    $data['get_transaction'] = $this->gedung_model->get_unread_transaction();
+
+    // halaman filter / form periode (buat view sendiri: admin/rekap_transaksi.php)
+    $this->load->view('admin/rekap_transaksi', $data);
+}
+
+public function rekap_transaksi_det($tanggal_awal = null, $tanggal_akhir = null)
+{
+    $this->load->model('gedung/gedung_model');
+
+    // badge sidebar
+    $data['result'] = $this->gedung_model->get_pending_transaction();
+    $data['get_transaction'] = $this->gedung_model->get_unread_transaction();
+
+    /**
+     * Ambil periode (prioritas GET agar sama kayak rekap_aktivitas_det kamu)
+     * URL contoh:
+     * /admin/rekap_transaksi_det?start_date=2026-02-01&end_date=2026-02-05
+     */
+    $start_date = $this->input->get('start_date');
+    $end_date   = $this->input->get('end_date');
+
+    // fallback kalau dipanggil via segment: /admin/rekap_transaksi_det/2026-02-01/2026-02-05
+    if (empty($start_date) && !empty($tanggal_awal)) $start_date = $tanggal_awal;
+    if (empty($end_date) && !empty($tanggal_akhir)) $end_date = $tanggal_akhir;
+
+    // simpan periode untuk view
+    $data['start_date']  = $start_date;
+    $data['end_date']    = $end_date;
+
+    // ambil data transaksi periodik (sudah kamu pakai di transaksi_export_pdf)
+    $data['row'] = $this->gedung_model->laporan_pembayaran_periodic($start_date, $end_date);
+
+    // arahkan ke view detail transaksi (pakai view yang kamu sudah punya: Rekap_Transaksi_Det.php)
+    $this->load->view('admin/Rekap_Transaksi_Det', $data);
+}
+
+
 
 	/**
 	 * Hapus gambar gedung (DB + filesystem)
