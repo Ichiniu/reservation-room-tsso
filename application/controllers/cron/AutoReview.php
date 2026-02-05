@@ -30,7 +30,36 @@ class AutoReview extends CI_Controller
         // Cari pemesanan yang berstatus SUBMITTED (3), berdasar tanggal pemesanan (TANGGAL_PEMESANAN).
         // Aturan: user dapat mengisi ulasan mulai pada hari H = TANGGAL_PEMESANAN.
         // Jika pada H sampai H+3 tidak ada ulasan, maka otomatis diisi pada job ini.
-        // Jadi kita pilih pemesanan dengan DATE(TANGGAL_PEMESANAN) <= (today - 3 days).
+        // Pertama: kirim notifikasi/email pada hari H (DATE == today) jika belum pernah dikirim.
+        $today = date('Y-m-d');
+        $todayRows = $this->db->select('p.ID_PEMESANAN, p.USERNAME')
+            ->from('pemesanan p')
+            ->where('p.STATUS', 3)
+            ->where('DATE(p.TANGGAL_PEMESANAN)', $today)
+            ->group_by('p.ID_PEMESANAN')
+            ->get()
+            ->result_array();
+
+        foreach ($todayRows as $tr) {
+            $pid = (int)$tr['ID_PEMESANAN'];
+            $uname = isset($tr['USERNAME']) ? $tr['USERNAME'] : '';
+            if ($pid <= 0 || $uname === '') continue;
+
+            // cek apakah notifikasi review untuk pemesanan ini sudah pernah dikirim
+            $full_id = 'PMSN000' . $pid;
+            $exists = $this->db->from('notifications')
+                ->where('username', $uname)
+                ->where('type', 'REVIEW_REQUEST')
+                ->like('message', $full_id)
+                ->limit(1)
+                ->count_all_results() > 0;
+
+            if (!$exists) {
+                $this->notification_service->notifyReviewRequest($uname, $pid);
+            }
+        }
+
+        // Jadi kita pilih pemesanan dengan DATE(TANGGAL_PEMESANAN) <= (today - 3 days) untuk auto-fill
         $cutoff_date = date('Y-m-d', strtotime('-3 days'));
 
         $rows = $this->db->select('p.ID_PEMESANAN, p.USERNAME')

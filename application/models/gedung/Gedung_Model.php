@@ -268,21 +268,19 @@ class Gedung_Model extends CI_Model
 
 	public function get_pemesanan_flag($username)
 	{
+		// Count pemesanan where underlying numeric pemesanan.STATUS = 0 (PROCESS)
 		$sql = "
-        SELECT COUNT(*) AS jml
-        FROM v_pemesanan v
-        JOIN pemesanan p
-          ON p.ID_PEMESANAN = (
-            CASE
-              WHEN BINARY LEFT(v.ID_PEMESANAN, 4) = 'PMSN'
-                THEN CAST(SUBSTRING(v.ID_PEMESANAN, 5) AS UNSIGNED)
-              ELSE CAST(v.ID_PEMESANAN AS UNSIGNED)
-            END
-          )
-				WHERE LOWER(v.USERNAME) = LOWER(?)
-					AND v.STATUS IN ('PROPOSAL APPROVE','SUBMITED','REJECTED','PROCESS')
-          AND p.FLAG = 1
-    ";
+		SELECT COUNT(*) AS jml
+		FROM V_PEMESANAN v
+		JOIN pemesanan p ON p.ID_PEMESANAN = (
+		    CASE
+		      WHEN BINARY LEFT(v.ID_PEMESANAN,4) = 'PMSN' THEN CAST(SUBSTRING(v.ID_PEMESANAN,5) AS UNSIGNED)
+		      ELSE CAST(v.ID_PEMESANAN AS UNSIGNED)
+		    END
+		)
+		WHERE LOWER(v.USERNAME) = LOWER(?)
+		  AND p.STATUS = 0
+		";
 
 		$row = $this->db->query($sql, [$username])->row();
 		return $row ? (int)$row->jml : 0;
@@ -537,10 +535,18 @@ TIME_FORMAT(
 
 	public function get_pending_transaction()
 	{
+		// Return pending pemesanan based on numeric pemesanan.STATUS = 0
+		// Map vp.ID_PEMESANAN to numeric pemesanan.ID_PEMESANAN when needed.
 		$sql = "SELECT vp.ID_PEMESANAN
-	FROM V_PEMESANAN vp
-	JOIN pemesanan_details pd ON pd.ID_PEMESANAN = vp.ID_PEMESANAN
-	WHERE vp.STATUS = 'PROCESS'";
+		FROM V_PEMESANAN vp
+		JOIN pemesanan p ON p.ID_PEMESANAN = (
+		    CASE
+		      WHEN BINARY LEFT(vp.ID_PEMESANAN,4) = 'PMSN' THEN CAST(SUBSTRING(vp.ID_PEMESANAN,5) AS UNSIGNED)
+		      ELSE CAST(vp.ID_PEMESANAN AS UNSIGNED)
+		    END
+		)
+		JOIN pemesanan_details pd ON pd.ID_PEMESANAN = p.ID_PEMESANAN
+		WHERE p.STATUS = 0";
 		$q = $this->db->query($sql);
 		if (!$q) return [];
 		return $q->result_array();

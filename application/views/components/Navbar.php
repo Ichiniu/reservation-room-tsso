@@ -542,15 +542,13 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
         setInterval(poll, 8000);
 
         // wire click handlers
+        // Keep pemesanan badge persistent (based on STATUS='PROCESS').
+        // Do not clear the badge on click so users still see pending PROCESS items.
         document.getElementById('pemesananLinkDesktop')?.addEventListener('click', () => {
-            markRead('pemesanan');
-            setBadge(document.getElementById('notifBadge'), 0);
-            setBadge(document.getElementById('notifBadgeMobile'), 0);
+            // Intentionally no markRead() nor badge clearing here.
         });
         document.getElementById('pemesananLinkMobile')?.addEventListener('click', () => {
-            markRead('pemesanan');
-            setBadge(document.getElementById('notifBadge'), 0);
-            setBadge(document.getElementById('notifBadgeMobile'), 0);
+            // Intentionally no markRead() nor badge clearing here.
         });
         document.getElementById('transaksiLinkDesktop')?.addEventListener('click', () => {
             markRead('transaksi');

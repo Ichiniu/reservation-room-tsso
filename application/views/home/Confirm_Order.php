@@ -148,6 +148,12 @@ $id_gedung = $this->uri->segment(4);
                                     </tr>
 
                                     <tr class="bg-white">
+                                        <td class="w-48 px-4 py-3 font-semibold text-slate-700">Harga Ruangan</td>
+                                        <td class="px-2 py-3 text-slate-400">:</td>
+                                        <td class="px-4 py-3 text-slate-900">Rp. <?php echo number_format(isset($order['HARGA_SEWA']) ? (float)$order['HARGA_SEWA'] : 0, 0, ',', '.'); ?></td>
+                                    </tr>
+
+                                    <tr class="bg-white">
                                         <td class="w-48 px-4 py-3 font-semibold text-slate-700">Jumlah Catering</td>
                                         <td class="px-2 py-3 text-slate-400">:</td>
                                         <td class="px-4 py-3 text-slate-900"><?php echo $order['JUMLAH_CATERING']; ?></td>
@@ -156,16 +162,28 @@ $id_gedung = $this->uri->segment(4);
                                     <tr class="bg-white">
                                         <td class="w-48 px-4 py-3 font-semibold text-slate-700">Harga Satuan</td>
                                         <td class="px-2 py-3 text-slate-400">:</td>
-                                        <td class="px-4 py-3 text-slate-900">Rp.
-                                            <?php echo number_format((float)$order['HARGA_SATUAN']); ?></td>
+                                        <td class="px-4 py-3 text-slate-900">Rp. <?php echo number_format((float)(isset($order['HARGA_SATUAN']) ? $order['HARGA_SATUAN'] : 0), 0, ',', '.'); ?></td>
                                     </tr>
 
                                     <tr class="bg-white">
                                         <td class="w-48 px-4 py-3 font-semibold text-slate-700">Total Harga Catering</td>
                                         <td class="px-2 py-3 text-slate-400">:</td>
-                                        <td class="px-4 py-3 text-slate-900">Rp.
-                                            <?php echo number_format((float)$order['TOTAL_HARGA']); ?></td>
+                                        <td class="px-4 py-3 text-slate-900">Rp. <?php echo number_format((float)(isset($order['TOTAL_HARGA']) ? $order['TOTAL_HARGA'] : 0), 0, ',', '.'); ?></td>
                                     </tr>
+
+                                    <?php
+                                    $hasCatering = (isset($order['JUMLAH_CATERING']) && (int)$order['JUMLAH_CATERING'] > 0) || (isset($order['TOTAL_HARGA']) && (float)$order['TOTAL_HARGA'] > 0);
+                                    if ($hasCatering):
+                                        $harga_sewa_val = isset($order['HARGA_SEWA']) ? (float)$order['HARGA_SEWA'] : 0;
+                                        $total_catering_val = isset($order['TOTAL_HARGA']) ? (float)$order['TOTAL_HARGA'] : 0;
+                                        $total_keseluruhan = $harga_sewa_val + $total_catering_val;
+                                    ?>
+                                        <tr class="bg-white">
+                                            <td class="w-48 px-4 py-3 font-semibold text-slate-700">Total Keseluruhan</td>
+                                            <td class="px-2 py-3 text-slate-400">:</td>
+                                            <td class="px-4 py-3 text-slate-900">Rp. <?php echo number_format($total_keseluruhan, 0, ',', '.'); ?></td>
+                                        </tr>
+                                    <?php endif; ?>
                                 <?php } // end else 
                                 ?>
                             </tbody>

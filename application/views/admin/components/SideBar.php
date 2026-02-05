@@ -4,19 +4,21 @@ if (empty($username)) {
     $username = $this->session->userdata('username');
 }
 
-/* inbox */
-if (isset($result)) {
-    if (is_array($result)) $result = count($result);
-    elseif (is_numeric($result)) $result = (int)$result;
-    else $result = 0;
-} else $result = 0;
+// Compute inbox & transaksi counts directly from model to avoid collision
+// with controller-passed variables (some controllers use $result / $res
+// for other data which caused incorrect badge counts).
+$this->load->model('gedung/gedung_model');
+$pending = $this->gedung_model->get_pending_transaction();
+if (is_array($pending)) {
+    $jumlah_inbox = count($pending);
+} elseif (is_numeric($pending)) {
+    $jumlah_inbox = (int)$pending;
+} else {
+    $jumlah_inbox = 0;
+}
 
-/* transaksi */
-if (isset($get_transaction)) {
-    if (is_array($get_transaction)) $get_transaction = count($get_transaction);
-    elseif (is_numeric($get_transaction)) $get_transaction = (int)$get_transaction;
-    else $get_transaction = 0;
-} else $get_transaction = 0;
+$gt = $this->gedung_model->get_unread_transaction();
+$jumlah_trx = is_numeric($gt) ? (int)$gt : 0;
 
 $current_uri = uri_string();
 function is_active($uri, $current_uri)
@@ -25,8 +27,9 @@ function is_active($uri, $current_uri)
     return false;
 }
 
-$jumlah_inbox = (int)$result;
-$jumlah_trx   = (int)$get_transaction;
+// ensure integers
+$jumlah_inbox = (int)$jumlah_inbox;
+$jumlah_trx = (int)$jumlah_trx;
 ?>
 <!DOCTYPE html>
 <html lang="en">

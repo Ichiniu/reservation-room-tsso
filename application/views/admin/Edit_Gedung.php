@@ -151,9 +151,13 @@ $this->load->helper('text');
                                     Harga Sewa
                                 </div>
                                 <div>
-                                    <input placeholder="650000000" value="<?php echo htmlspecialchars($row['HARGA_SEWA'], ENT_QUOTES, 'UTF-8') ?>"
-                                        id="kapasitas" name="harga_sewa" type="text" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
-                                    <div class="text-sm text-gray-500 mt-2">Isi angka saja jika memungkinkan (contoh: 650000000).</div>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-500">Rp</span>
+                                        <input placeholder="6.500.000" id="harga_sewa_display" name="harga_sewa_display" type="text" value=""
+                                            class="w-full pl-10 rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
+                                        <input type="hidden" id="harga_sewa" name="harga_sewa" value="<?= htmlspecialchars($row['HARGA_SEWA'], ENT_QUOTES, 'UTF-8') ?>">
+                                    </div>
+                                    <div class="text-sm text-gray-500 mt-2">Masukkan angka atau desimal; preview akan diformat sebagai Rupiah.</div>
                                 </div>
                             </div>
 
@@ -317,6 +321,46 @@ $this->load->helper('text');
                 });
             });
         });
+    </script>
+    <script>
+        // Price formatting for edit form
+        function formatRupiahInput(v) {
+            if (v === null || v === undefined) return '';
+            v = String(v).replace(/[^0-9\.,]/g, '');
+            var parts = v.replace(/,/g, '.').split('.');
+            var intPart = parts[0] || '0';
+            var decPart = parts.length > 1 ? parts.slice(1).join('') : '';
+            intPart = intPart.replace(/^0+(?=\d)/, '');
+            var withThousand = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            return decPart ? withThousand + ',' + decPart : withThousand;
+        }
+
+        (function() {
+            var disp = document.getElementById('harga_sewa_display');
+            var hidden = document.getElementById('harga_sewa');
+            if (!disp || !hidden) return;
+
+            // initialize display from hidden raw value
+            try {
+                var raw = hidden.value || '';
+                if (raw !== '') {
+                    // format raw number (assume dot as decimal separator if present)
+                    var formatted = formatRupiahInput(raw.toString());
+                    disp.value = formatted;
+                }
+            } catch (e) {}
+
+            disp.addEventListener('input', function() {
+                var formatted = formatRupiahInput(this.value);
+                this.value = formatted;
+                hidden.value = formatted ? formatted.replace(/\./g, '').replace(/,/g, '.') : '';
+            });
+
+            var form = disp.closest('form');
+            if (form) form.addEventListener('submit', function() {
+                hidden.value = disp.value ? disp.value.replace(/\./g, '').replace(/,/g, '.') : hidden.value;
+            });
+        })();
     </script>
     <script>
         // Ensure submit works even if other scripts prevent default

@@ -1,6 +1,6 @@
 <?php
 $session_id = $this->session->userdata('username');
-$this->load->helper(['text','form']);
+$this->load->helper(['text', 'form']);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -81,9 +81,10 @@ $this->load->helper(['text','form']);
                             </label>
                             <div class="relative">
                                 <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-500">Rp</span>
-                                <input id="harga_sewa" name="harga_sewa" type="text" placeholder="Contoh: 6500000"
+                                <input id="harga_sewa_display" name="harga_sewa_display" type="text" placeholder="Contoh: 6.500.000"
                                     class="w-full pl-10 rounded-lg border border-slate-200 px-3 py-2 text-sm bg-white
                            focus:outline-none focus:ring-2 focus:ring-teal-300">
+                                <input type="hidden" id="harga_sewa" name="harga_sewa" value="">
                             </div>
                             <p class="mt-1 text-xs text-slate-500">Masukkan angka tanpa titik/koma (opsional).</p>
                         </div>
@@ -174,3 +175,43 @@ $this->load->helper(['text','form']);
 </body>
 
 </html>
+
+<script>
+    // Format input to Indonesian thousands (dots) and comma for decimals if user types comma
+    function formatRupiahInput(v) {
+        if (v === null || v === undefined) return '';
+        // replace non-digit and non-separators
+        v = String(v).replace(/[^0-9\.,]/g, '');
+        // normalize comma to dot for decimal parse, but keep original for formatting
+        var parts = v.replace(/,/g, '.').split('.');
+        var intPart = parts[0] || '0';
+        var decPart = parts.length > 1 ? parts.slice(1).join('') : '';
+        // remove leading zeros
+        intPart = intPart.replace(/^0+(?=\d)/, '');
+        var withThousand = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        return decPart ? withThousand + ',' + decPart : withThousand;
+    }
+
+    (function() {
+        var disp = document.getElementById('harga_sewa_display');
+        var hidden = document.getElementById('harga_sewa');
+        if (!disp || !hidden) return;
+
+        // when typing, format display but keep caret near end (simple approach)
+        disp.addEventListener('input', function(e) {
+            var raw = this.value;
+            var formatted = formatRupiahInput(raw);
+            this.value = formatted;
+            // prepare hidden value as plain number with dot decimal
+            var hiddenVal = formatted.replace(/\./g, '').replace(/,/g, '.');
+            hidden.value = hiddenVal;
+        });
+
+        // on form submit ensure hidden has cleaned value
+        var form = disp.closest('form');
+        if (form) form.addEventListener('submit', function() {
+            var f = disp.value;
+            hidden.value = f ? f.replace(/\./g, '').replace(/,/g, '.') : '';
+        });
+    })();
+</script>

@@ -357,7 +357,7 @@ class Home extends CI_Controller
 
 		$gedung['hasil'] = $this->gedung_model->get_gedung_name($id_gedung);
 
-		
+
 		$rule = $this->_min_booking_rule($id_gedung);
 		$gedung['min_pesan'] = date('Y-m-d', strtotime('+' . $rule['days'] . ' day'));
 		$gedung['min_text']  = $rule['text'];
@@ -416,10 +416,8 @@ class Home extends CI_Controller
 	{
 		$username = $this->session->userdata('username');
 		$this->load->model('gedung/gedung_model');
-		// $this->gedung_model->clear_pemesanan_flag($username);
-
-		// wajib di sini
-		$this->gedung_model->clear_pemesanan_flag($username);
+		// NOTE: do not clear pemesanan flag here — inbox badge should remain
+		// based on STATUS='PROCESS' so users still see the badge after opening.
 
 		$data['res'] = $this->gedung_model->get_pemesanan($username);
 		$data['flag']     = $this->gedung_model->get_pemesanan_flag($username);

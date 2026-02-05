@@ -5,12 +5,20 @@ $this->load->helper('text');
 /* ===== URI ===== */
 $current_uri = uri_string();
 
-/* ===== INBOX COUNT ===== */
-if (isset($res)) {
-    $inbox_count = is_array($res) ? count($res) : (int)$res;
+/* ===== INBOX & TRANSAKSI COUNTS ===== */
+// Compute counts directly from model to avoid conflicts with controller view vars
+$this->load->model('gedung/gedung_model');
+$pending = $this->gedung_model->get_pending_transaction();
+if (is_array($pending)) {
+    $inbox_count = count($pending);
+} elseif (is_numeric($pending)) {
+    $inbox_count = (int)$pending;
 } else {
     $inbox_count = 0;
 }
+
+$gt = $this->gedung_model->get_unread_transaction();
+$get_transaction = is_numeric($gt) ? (int)$gt : 0;
 
 /* ===== DATA CATERING ===== */
 $catering_data = isset($result) && is_array($result) ? $result : [];
@@ -67,6 +75,20 @@ $catering_data = isset($result) && is_array($result) ? $result : [];
             width: 18px;
             height: 18px;
             font-size: 10px
+        }
+
+        /* make generic .badge behave like .inbox-badge so Transaksi badge aligns */
+        .badge {
+            margin-left: auto;
+        }
+
+        .sidebar-mini .badge {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
         }
     </style>
 </head>
@@ -135,6 +157,9 @@ $catering_data = isset($result) && is_array($result) ? $result : [];
    <?= strpos($current_uri, 'pembayaran') !== false ? 'menu-active' : '' ?>">
                 <span class="material-icons">payments</span>
                 <span class="menu-text">Transaksi</span>
+                <span id="badge-trx" class="badge bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs" <?php if ($get_transaction <= 0) echo 'style="display:none"'; ?>>
+                    <?php echo $get_transaction; ?>
+                </span>
             </a>
 
 
