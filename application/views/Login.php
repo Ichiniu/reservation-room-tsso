@@ -13,7 +13,7 @@
     bg-cover bg-center bg-no-repeat bg-fixed">
 
         <!-- Dark overlay (biar background lebih gelap) -->
-        <div class="absolute inset-0 bg-gradient-to-b from-black/10 via-black/50 to-black/70"></div>
+        <div></div>
 
         <!-- Metallic + glossy overlay -->
         <div class="pointer-events-none absolute -top-40 -left-40 h-[560px] w-[560px] rounded-full bg-white/20 blur-3xl">
