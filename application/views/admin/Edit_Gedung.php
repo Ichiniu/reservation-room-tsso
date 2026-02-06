@@ -1,6 +1,7 @@
 <?php
 $session_id = $this->session->userdata('username');
 $this->load->helper('text');
+$this->load->helper('pricing');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -144,11 +145,32 @@ $this->load->helper('text');
                                 </div>
                             </div>
 
-                            <!-- Harga Sewa -->
+                            <!-- Mode Harga (khusus user EKSTERNAL) -->
+                            <?php
+                            $pm_val = isset($row['PRICING_MODE']) ? $row['PRICING_MODE'] : '';
+                            $pm_val = bs_detect_pricing_mode($row['NAMA_GEDUNG'], $pm_val);
+                            ?>
                             <div class="border border-gray-200 rounded-xl p-4 bg-white">
                                 <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                                    <i class="material-icons text-base text-gray-700">tune</i>
+                                    Mode Harga (User Eksternal)
+                                </div>
+                                <div>
+                                    <select id="pricing_mode" name="pricing_mode" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
+                                        <option value="FLAT" <?php echo ($pm_val === 'FLAT' ? 'selected' : ''); ?>>Flat (Harga Gedung)</option>
+                                        <option value="PER_PESERTA" <?php echo ($pm_val === 'PER_PESERTA' ? 'selected' : ''); ?>>Per Peserta (Meeting/Amphitheater)</option>
+                                        <option value="PODCAST_PER_JAM" <?php echo ($pm_val === 'PODCAST_PER_JAM' ? 'selected' : ''); ?>>Per Jam (Studio Podcast)</option>
+                                    </select>
+                                    <div class="text-sm text-gray-500 mt-2">Internal tidak berubah. Setting ini untuk eksternal.</div>
+                                </div>
+                            </div>
+
+
+                            <!-- Harga Sewa (Flat) -->
+                            <div id="block_price_flat" class="border border-gray-200 rounded-xl p-4 bg-white">
+                                <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
                                     <i class="material-icons text-base text-gray-700">payments</i>
-                                    Harga Sewa
+                                    Harga Sewa (Flat)
                                 </div>
                                 <div>
                                     <div class="relative">
@@ -159,6 +181,61 @@ $this->load->helper('text');
                                     </div>
                                     <div class="text-sm text-gray-500 mt-2">Masukkan angka atau desimal; preview akan diformat sebagai Rupiah.</div>
                                 </div>
+                            </div>
+
+
+                            <!-- Harga (Per Peserta) -->
+                            <div id="block_price_perpeserta" class="md:col-span-2 border border-gray-200 rounded-xl p-4 bg-white">
+                                <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                                    <i class="material-icons text-base text-gray-700">groups</i>
+                                    Harga (Per Peserta)
+                                </div>
+                                <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-600 mb-1">Halfday / peserta</label>
+                                        <div class="relative">
+                                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-500">Rp</span>
+                                            <input id="harga_halfday_pp_display" name="harga_halfday_pp_display" type="text" value="" placeholder="30.000" class="w-full pl-10 rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
+                                            <input type="hidden" id="harga_halfday_pp" name="harga_halfday_pp" value="<?php echo htmlspecialchars(isset($row['HARGA_HALF_DAY_PP']) ? $row['HARGA_HALF_DAY_PP'] : 30000, ENT_QUOTES, 'UTF-8'); ?>">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-600 mb-1">Fullday / peserta</label>
+                                        <div class="relative">
+                                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-500">Rp</span>
+                                            <input id="harga_fullday_pp_display" name="harga_fullday_pp_display" type="text" value="" placeholder="60.000" class="w-full pl-10 rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
+                                            <input type="hidden" id="harga_fullday_pp" name="harga_fullday_pp" value="<?php echo htmlspecialchars(isset($row['HARGA_FULL_DAY_PP']) ? $row['HARGA_FULL_DAY_PP'] : 60000, ENT_QUOTES, 'UTF-8'); ?>">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-sm text-gray-500 mt-2">Dipakai untuk Meeting Room & Amphitheater (user eksternal).</div>
+                            </div>
+
+                            <!-- Harga (Podcast Per Jam) -->
+                            <div id="block_price_podcast" class="md:col-span-2 border border-gray-200 rounded-xl p-4 bg-white">
+                                <div class="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                                    <i class="material-icons text-base text-gray-700">mic</i>
+                                    Harga (Podcast Per Jam)
+                                </div>
+                                <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-600 mb-1">Audio Podcast / jam</label>
+                                        <div class="relative">
+                                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-500">Rp</span>
+                                            <input id="harga_audio_per_jam_display" name="harga_audio_per_jam_display" type="text" value="" placeholder="150.000" class="w-full pl-10 rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
+                                            <input type="hidden" id="harga_audio_per_jam" name="harga_audio_per_jam" value="<?php echo htmlspecialchars(isset($row['HARGA_AUDIO_PER_JAM']) ? $row['HARGA_AUDIO_PER_JAM'] : 150000, ENT_QUOTES, 'UTF-8'); ?>">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-600 mb-1">Video Streaming / jam</label>
+                                        <div class="relative">
+                                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-500">Rp</span>
+                                            <input id="harga_video_per_jam_display" name="harga_video_per_jam_display" type="text" value="" placeholder="200.000" class="w-full pl-10 rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200">
+                                            <input type="hidden" id="harga_video_per_jam" name="harga_video_per_jam" value="<?php echo htmlspecialchars(isset($row['HARGA_VIDEO_PER_JAM']) ? $row['HARGA_VIDEO_PER_JAM'] : 200000, ENT_QUOTES, 'UTF-8'); ?>">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-sm text-gray-500 mt-2">Dipakai untuk Studio Podcast (user eksternal). Per jam dibulatkan ke atas.</div>
                             </div>
 
                             <!-- Placeholder biar grid balance -->
@@ -323,44 +400,60 @@ $this->load->helper('text');
         });
     </script>
     <script>
-        // Price formatting for edit form
+        // Price formatting + toggle blok harga (admin edit)
         function formatRupiahInput(v) {
-            if (v === null || v === undefined) return '';
-            v = String(v).replace(/[^0-9\.,]/g, '');
-            var parts = v.replace(/,/g, '.').split('.');
-            var intPart = parts[0] || '0';
-            var decPart = parts.length > 1 ? parts.slice(1).join('') : '';
-            intPart = intPart.replace(/^0+(?=\d)/, '');
-            var withThousand = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-            return decPart ? withThousand + ',' + decPart : withThousand;
+            v = (v === null || v === undefined) ? '' : String(v);
+            v = v.replace(/[^0-9]/g, '');
+            if (!v) return '';
+            return v.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
         }
 
-        (function() {
-            var disp = document.getElementById('harga_sewa_display');
-            var hidden = document.getElementById('harga_sewa');
+        function bindRupiahPair(displayId, hiddenId) {
+            var disp = document.getElementById(displayId);
+            var hidden = document.getElementById(hiddenId);
             if (!disp || !hidden) return;
 
-            // initialize display from hidden raw value
-            try {
-                var raw = hidden.value || '';
-                if (raw !== '') {
-                    // format raw number (assume dot as decimal separator if present)
-                    var formatted = formatRupiahInput(raw.toString());
-                    disp.value = formatted;
-                }
-            } catch (e) {}
+            // init display from hidden raw numeric
+            var rawInit = (hidden.value || '').toString().replace(/[^0-9]/g, '');
+            disp.value = formatRupiahInput(rawInit);
+            hidden.value = rawInit;
 
             disp.addEventListener('input', function() {
-                var formatted = formatRupiahInput(this.value);
-                this.value = formatted;
-                hidden.value = formatted ? formatted.replace(/\./g, '').replace(/,/g, '.') : '';
+                var raw = (this.value || '').toString().replace(/[^0-9]/g, '');
+                this.value = formatRupiahInput(raw);
+                hidden.value = raw;
             });
 
             var form = disp.closest('form');
-            if (form) form.addEventListener('submit', function() {
-                hidden.value = disp.value ? disp.value.replace(/\./g, '').replace(/,/g, '.') : hidden.value;
-            });
-        })();
+            if (form) {
+                form.addEventListener('submit', function() {
+                    var raw = (disp.value || '').toString().replace(/[^0-9]/g, '');
+                    hidden.value = raw;
+                });
+            }
+        }
+
+        function togglePricingBlocks() {
+            var pm = (document.getElementById('pricing_mode')?.value || 'FLAT').toUpperCase();
+            var flat = document.getElementById('block_price_flat');
+            var per = document.getElementById('block_price_perpeserta');
+            var pod = document.getElementById('block_price_podcast');
+            if (flat) flat.style.display = (pm === 'FLAT') ? '' : 'none';
+            if (per) per.style.display = (pm === 'PER_PESERTA') ? '' : 'none';
+            if (pod) pod.style.display = (pm === 'PODCAST_PER_JAM') ? '' : 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            bindRupiahPair('harga_sewa_display', 'harga_sewa');
+            bindRupiahPair('harga_halfday_pp_display', 'harga_halfday_pp');
+            bindRupiahPair('harga_fullday_pp_display', 'harga_fullday_pp');
+            bindRupiahPair('harga_audio_per_jam_display', 'harga_audio_per_jam');
+            bindRupiahPair('harga_video_per_jam_display', 'harga_video_per_jam');
+
+            var pmSel = document.getElementById('pricing_mode');
+            if (pmSel) pmSel.addEventListener('change', togglePricingBlocks);
+            togglePricingBlocks();
+        });
     </script>
     <script>
         // Ensure submit works even if other scripts prevent default

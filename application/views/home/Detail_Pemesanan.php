@@ -234,6 +234,28 @@ function e($v)
                                         <td class="px-5 py-3 font-semibold text-slate-700">Ruangan</td>
                                         <td class="px-5 py-3 text-slate-800"><?php echo e($nama_gedung); ?></td>
                                     </tr>
+
+                                    <?php if (isset($result->PRICING_MODE) && $result->PRICING_MODE === 'PER_PESERTA'): ?>
+                                        <tr>
+                                            <td class="px-5 py-3 font-semibold text-slate-700">Total Peserta</td>
+                                            <td class="px-5 py-3 text-slate-800"><?php echo isset($result->TOTAL_PESERTA) ? (int)$result->TOTAL_PESERTA : 0; ?> orang</td>
+                                        </tr>
+                                    <?php elseif (isset($result->PRICING_MODE) && $result->PRICING_MODE === 'PODCAST_PER_JAM'): ?>
+                                        <tr>
+                                            <td class="px-5 py-3 font-semibold text-slate-700">Jenis Podcast</td>
+                                            <td class="px-5 py-3 text-slate-800">
+                                                <?php
+                                                $pt = isset($result->PODCAST_TYPE) ? strtoupper(trim((string)$result->PODCAST_TYPE)) : '';
+                                                echo ($pt === 'VIDEO') ? 'Video Streaming' : 'Audio Podcast';
+                                                ?>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-5 py-3 font-semibold text-slate-700">Durasi</td>
+                                            <td class="px-5 py-3 text-slate-800"><?php echo isset($result->DURASI_JAM) ? (int)$result->DURASI_JAM : 0; ?> jam</td>
+                                        </tr>
+                                    <?php endif; ?>
+
                                     <tr>
                                         <td class="px-5 py-3 font-semibold text-slate-700">Jumlah Catering</td>
                                         <td class="px-5 py-3 text-slate-800"><?php echo e($jumlah_cat_display); ?></td>

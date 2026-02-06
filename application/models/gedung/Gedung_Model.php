@@ -756,10 +756,21 @@ TIME_FORMAT(
 
 	public function get_gedung_name($id_gedung)
 	{
-		$sql = "SELECT NAMA_GEDUNG, HARGA_SEWA FROM GEDUNG WHERE ID_GEDUNG = $id_gedung";
-		$query = $this->db->query($sql);
-		$hasil = $query->result_array();
-		return $hasil;
+		$id_gedung = (int) $id_gedung;
+		// SELECT dinamis supaya tidak error kalau kolom harga baru belum ditambahkan
+		$cols = array('NAMA_GEDUNG', 'HARGA_SEWA');
+
+		if ($this->db->field_exists('PRICING_MODE', 'gedung')) $cols[] = 'PRICING_MODE';
+		if ($this->db->field_exists('HARGA_HALF_DAY_PP', 'gedung')) $cols[] = 'HARGA_HALF_DAY_PP';
+		if ($this->db->field_exists('HARGA_FULL_DAY_PP', 'gedung')) $cols[] = 'HARGA_FULL_DAY_PP';
+		if ($this->db->field_exists('HARGA_AUDIO_PER_JAM', 'gedung')) $cols[] = 'HARGA_AUDIO_PER_JAM';
+		if ($this->db->field_exists('HARGA_VIDEO_PER_JAM', 'gedung')) $cols[] = 'HARGA_VIDEO_PER_JAM';
+
+		$q = $this->db->select(implode(', ', $cols), false)
+			->from('gedung')
+			->where('ID_GEDUNG', $id_gedung)
+			->get();
+		return $q->result_array();
 	}
 
 	public function insert_gedung_img($data)
@@ -823,9 +834,29 @@ TIME_FORMAT(
 
 	public function gedung_details($id_gedung)
 	{
-		$query = "SELECT ID_GEDUNG, NAMA_GEDUNG, ALAMAT, DESKRIPSI_GEDUNG, KAPASITAS, HARGA_SEWA, fasilitas FROM GEDUNG WHERE ID_GEDUNG = $id_gedung";
-		$sql = $this->db->query($query);
-		return $sql->result_array();
+		$id_gedung = (int)$id_gedung;
+		// SELECT dinamis supaya tidak error kalau kolom harga baru belum ditambahkan
+		$cols = array(
+			'ID_GEDUNG',
+			'NAMA_GEDUNG',
+			'ALAMAT',
+			'DESKRIPSI_GEDUNG',
+			'KAPASITAS',
+			'HARGA_SEWA',
+			'fasilitas'
+		);
+
+		if ($this->db->field_exists('PRICING_MODE', 'gedung')) $cols[] = 'PRICING_MODE';
+		if ($this->db->field_exists('HARGA_HALF_DAY_PP', 'gedung')) $cols[] = 'HARGA_HALF_DAY_PP';
+		if ($this->db->field_exists('HARGA_FULL_DAY_PP', 'gedung')) $cols[] = 'HARGA_FULL_DAY_PP';
+		if ($this->db->field_exists('HARGA_AUDIO_PER_JAM', 'gedung')) $cols[] = 'HARGA_AUDIO_PER_JAM';
+		if ($this->db->field_exists('HARGA_VIDEO_PER_JAM', 'gedung')) $cols[] = 'HARGA_VIDEO_PER_JAM';
+
+		$q = $this->db->select(implode(', ', $cols), false)
+			->from('gedung')
+			->where('ID_GEDUNG', $id_gedung)
+			->get();
+		return $q->result_array();
 	}
 
 	public function search_gedung($nama_gedung)

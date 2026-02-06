@@ -390,9 +390,22 @@ class Home extends CI_Controller
 				$nama_gedung = (string) $first['NAMA_GEDUNG'];
 			}
 		}
-		$is_studio = (stripos($nama_gedung, 'studio') !== false);
 
-		// INTERNAL: semua opsi | EKSTERNAL: studio = per jam saja, selain studio = half/full day saja
+		// ===== pricing mode (khusus EKSTERNAL) =====
+		// Prioritas: kolom gedung.PRICING_MODE (kalau sudah ditambahkan)
+		$this->load->helper('pricing');
+		$pm_db = '';
+		if (!empty($gedung['hasil']) && is_array($gedung['hasil'])) {
+			$first = reset($gedung['hasil']);
+			if (is_array($first) && isset($first['PRICING_MODE'])) {
+				$pm_db = (string) $first['PRICING_MODE'];
+			}
+		}
+		$pricing_mode = bs_detect_pricing_mode($nama_gedung, $pm_db);
+		$data['pricing_mode'] = $pricing_mode;
+		$is_studio = ($pricing_mode === 'PODCAST_PER_JAM');
+
+		// INTERNAL: semua opsi | EKSTERNAL: podcast per jam = CUSTOM saja, selain itu = half/full day
 		if (!empty($data['is_internal'])) {
 			$data['allowed_tipe_jam'] = array('CUSTOM', 'HALF_DAY_PAGI', 'HALF_DAY_SIANG', 'FULL_DAY');
 		} else {
@@ -500,6 +513,56 @@ class Home extends CI_Controller
 		$data['user_email']    = $u && isset($u->EMAIL)
 			? $u->EMAIL
 			: (isset($data['result']->EMAIL) ? $data['result']->EMAIL : null);
+
+		// ===== hitung ulang harga sewa (khusus EKSTERNAL) supaya detail & pembayaran konsisten =====
+		if (!empty($data['result'])) {
+			$this->load->helper('pricing');
+
+			$extra_select = array(
+				'p.ID_PEMESANAN',
+				'p.USERNAME',
+				'p.ID_GEDUNG',
+				'p.TIPE_JAM',
+				'p.JAM_PEMESANAN',
+				'p.JAM_SELESAI',
+				'u.perusahaan',
+				'g.NAMA_GEDUNG',
+				'g.HARGA_SEWA'
+			);
+
+			if ($this->db->field_exists('TOTAL_PESERTA', 'pemesanan')) $extra_select[] = 'p.TOTAL_PESERTA';
+			if ($this->db->field_exists('PODCAST_TYPE', 'pemesanan')) $extra_select[] = 'p.PODCAST_TYPE';
+			if ($this->db->field_exists('PRICING_MODE', 'gedung')) $extra_select[] = 'g.PRICING_MODE';
+			if ($this->db->field_exists('HARGA_HALF_DAY_PP', 'gedung')) $extra_select[] = 'g.HARGA_HALF_DAY_PP';
+			if ($this->db->field_exists('HARGA_FULL_DAY_PP', 'gedung')) $extra_select[] = 'g.HARGA_FULL_DAY_PP';
+			if ($this->db->field_exists('HARGA_AUDIO_PER_JAM', 'gedung')) $extra_select[] = 'g.HARGA_AUDIO_PER_JAM';
+			if ($this->db->field_exists('HARGA_VIDEO_PER_JAM', 'gedung')) $extra_select[] = 'g.HARGA_VIDEO_PER_JAM';
+
+			$extra = $this->db->select(implode(",\n\t\t\t\t", $extra_select), false)
+				->from('pemesanan p')
+				->join('user u', 'u.USERNAME = p.USERNAME', 'left')
+				->join('gedung g', 'g.ID_GEDUNG = p.ID_GEDUNG', 'left')
+				->where('p.ID_PEMESANAN', (int)$temp_id)
+				->get()
+				->row();
+
+			if ($extra) {
+				$perusahaan_val = (isset($extra->perusahaan) && $extra->perusahaan !== null) ? $extra->perusahaan : '';
+				$is_internal_user = (strtoupper(trim((string)$perusahaan_val)) === 'INTERNAL');
+				$harga_sewa_calc = (int) bs_calc_room_sewa($extra, $is_internal_user);
+				$durasi_jam = (int) bs_duration_hours_ceil($extra->JAM_PEMESANAN, $extra->JAM_SELESAI);
+
+				// override object hasil dari V_PEMESANAN
+				$data['result']->HARGA_SEWA = $harga_sewa_calc;
+				$data['result']->PRICING_MODE = bs_detect_pricing_mode($extra->NAMA_GEDUNG, isset($extra->PRICING_MODE) ? $extra->PRICING_MODE : '');
+				$data['result']->DURASI_JAM = $durasi_jam;
+				if (isset($extra->TOTAL_PESERTA)) $data['result']->TOTAL_PESERTA = (int)$extra->TOTAL_PESERTA;
+				if (isset($extra->PODCAST_TYPE)) $data['result']->PODCAST_TYPE = (string)$extra->PODCAST_TYPE;
+
+				$total_catering_val = isset($data['result']->TOTAL_HARGA) ? (int)$data['result']->TOTAL_HARGA : 0;
+				$data['result']->TOTAL_KESELURUHAN = (int)$harga_sewa_calc + (int)$total_catering_val;
+			}
+		}
 
 		// =========================
 		// ✅ TAMBAHAN: Catatan Admin saat REJECT (dari tabel pembayaran)
@@ -689,6 +752,11 @@ class Home extends CI_Controller
 		$perusahaan  = strtoupper(trim((string)$perusahaan));
 		$is_internal = ($perusahaan === 'INTERNAL');
 
+		// ===== tambahan konsep harga (EKSTERNAL saja) =====
+		$pricing_mode = 'FLAT';
+		$total_peserta_final = null;
+		$podcast_type_final = null;
+
 		// ===== TIPE JAM (form) =====
 		$tipe_jam_form = $this->input->post('tipe_jam', TRUE);
 		if (empty($tipe_jam_form)) $tipe_jam_form = 'CUSTOM';
@@ -755,6 +823,46 @@ class Home extends CI_Controller
 			}
 
 			$namaU = strtoupper(trim((string)$nama));
+
+			// ===== pricing_mode (prioritas kolom gedung.PRICING_MODE, fallback deteksi nama) =====
+			$this->load->helper('pricing');
+			$pm_db = '';
+			if (is_array($g) && isset($g['PRICING_MODE'])) {
+				$pm_db = (string) $g['PRICING_MODE'];
+			}
+			$pricing_mode = bs_detect_pricing_mode($nama, $pm_db);
+			$is_studio_ext = ($pricing_mode === 'PODCAST_PER_JAM');
+
+			// ===== enforce tipe jam khusus EKSTERNAL (samakan dengan UI) =====
+			if ($is_studio_ext && $tipe_jam_form !== 'CUSTOM') {
+				$this->session->set_flashdata('error', 'Untuk ruangan Studio (eksternal), tipe jam wajib CUSTOM (per jam).');
+				redirect('home/order-gedung/' . $id_gedung);
+				return;
+			}
+			if (!$is_studio_ext && $tipe_jam_form === 'CUSTOM') {
+				$this->session->set_flashdata('error', 'Untuk ruangan non-studio (eksternal), tipe jam tidak boleh CUSTOM. Pilih HALF/FULL DAY.');
+				redirect('home/order-gedung/' . $id_gedung);
+				return;
+			}
+
+			// ===== validasi input tambahan (EKSTERNAL) =====
+			if ($pricing_mode === 'PER_PESERTA') {
+				$tp = (int)$this->input->post('total_peserta', TRUE);
+				if ($tp < 1) {
+					$this->session->set_flashdata('error', 'Total peserta wajib diisi (minimal 1).');
+					redirect('home/order-gedung/' . $id_gedung);
+					return;
+				}
+				$total_peserta_final = $tp;
+			} else if ($pricing_mode === 'PODCAST_PER_JAM') {
+				$pt = strtoupper(trim((string)$this->input->post('podcast_type', TRUE)));
+				if ($pt !== 'AUDIO' && $pt !== 'VIDEO') {
+					$this->session->set_flashdata('error', 'Pilih jenis podcast: Audio atau Video Streaming.');
+					redirect('home/order-gedung/' . $id_gedung);
+					return;
+				}
+				$podcast_type_final = $pt;
+			}
 
 			// Studio Podcast => H-3
 			if ($namaU !== '' && strpos($namaU, 'PODCAST') !== false) {
@@ -930,6 +1038,19 @@ class Home extends CI_Controller
 			'ADDON_INPUT_JSON'  => $addon_input_json,
 		);
 
+		// ===== simpan field tambahan jika kolom tersedia (biar tidak error sebelum ALTER TABLE) =====
+		if (!$is_internal) {
+			if ($pricing_mode === 'PER_PESERTA') {
+				if ($this->db->field_exists('total_peserta', 'pemesanan') || $this->db->field_exists('TOTAL_PESERTA', 'pemesanan')) {
+					$data['TOTAL_PESERTA'] = (int)$total_peserta_final;
+				}
+			} else if ($pricing_mode === 'PODCAST_PER_JAM') {
+				if ($this->db->field_exists('podcast_type', 'pemesanan') || $this->db->field_exists('PODCAST_TYPE', 'pemesanan')) {
+					$data['PODCAST_TYPE'] = (string)$podcast_type_final;
+				}
+			}
+		}
+
 		$id_pemesanan = $this->gedung_model->insert_pemesanan($data);
 
 		if ($id_pemesanan === false) {
@@ -1077,6 +1198,57 @@ class Home extends CI_Controller
 
 		$hasil['res'] = $this->gedung_model->get_order_by_id_user($id_pemesanan, $username);
 		if (empty($hasil['res'])) show_404();
+
+
+		// ===== hitung ulang harga sewa (khusus EKSTERNAL) supaya tampilan & pembayaran konsisten =====
+		$this->load->helper('pricing');
+		$extra_select = array(
+			'p.ID_PEMESANAN',
+			'p.USERNAME',
+			'p.ID_GEDUNG',
+			'p.TIPE_JAM',
+			'p.JAM_PEMESANAN',
+			'p.JAM_SELESAI',
+			'u.perusahaan',
+			'g.NAMA_GEDUNG',
+			'g.HARGA_SEWA'
+		);
+
+		if ($this->db->field_exists('TOTAL_PESERTA', 'pemesanan')) $extra_select[] = 'p.TOTAL_PESERTA';
+		if ($this->db->field_exists('PODCAST_TYPE', 'pemesanan')) $extra_select[] = 'p.PODCAST_TYPE';
+		if ($this->db->field_exists('PRICING_MODE', 'gedung')) $extra_select[] = 'g.PRICING_MODE';
+		if ($this->db->field_exists('HARGA_HALF_DAY_PP', 'gedung')) $extra_select[] = 'g.HARGA_HALF_DAY_PP';
+		if ($this->db->field_exists('HARGA_FULL_DAY_PP', 'gedung')) $extra_select[] = 'g.HARGA_FULL_DAY_PP';
+		if ($this->db->field_exists('HARGA_AUDIO_PER_JAM', 'gedung')) $extra_select[] = 'g.HARGA_AUDIO_PER_JAM';
+		if ($this->db->field_exists('HARGA_VIDEO_PER_JAM', 'gedung')) $extra_select[] = 'g.HARGA_VIDEO_PER_JAM';
+
+		$extra = $this->db->select(implode(",
+			", $extra_select), false)
+			->from('pemesanan p')
+			->join('user u', 'u.USERNAME = p.USERNAME', 'left')
+			->join('gedung g', 'g.ID_GEDUNG = p.ID_GEDUNG', 'left')
+			->where('p.ID_PEMESANAN', (int)$id_pemesanan)
+			->get()
+			->row();
+
+		if ($extra) {
+			$perusahaan_val = (isset($extra->perusahaan) && $extra->perusahaan !== null) ? $extra->perusahaan : '';
+			$is_internal = (strtoupper(trim((string)$perusahaan_val)) === 'INTERNAL');
+			$harga_sewa_calc = (int) bs_calc_room_sewa($extra, $is_internal);
+
+			// override untuk view confirm_order
+			if (isset($hasil['res'][0])) {
+				$hasil['res'][0]['HARGA_SEWA'] = $harga_sewa_calc;
+				$hasil['res'][0]['PRICING_MODE'] = bs_detect_pricing_mode($extra->NAMA_GEDUNG, isset($extra->PRICING_MODE) ? $extra->PRICING_MODE : '');
+				if (isset($extra->TOTAL_PESERTA)) $hasil['res'][0]['TOTAL_PESERTA'] = (int)$extra->TOTAL_PESERTA;
+				if (isset($extra->PODCAST_TYPE)) $hasil['res'][0]['PODCAST_TYPE'] = (string)$extra->PODCAST_TYPE;
+				$durasi_jam = bs_duration_hours_ceil($extra->JAM_PEMESANAN, $extra->JAM_SELESAI);
+				$hasil['res'][0]['DURASI_JAM'] = (int)$durasi_jam;
+
+				$total_catering_val = isset($hasil['res'][0]['TOTAL_HARGA']) ? (float)$hasil['res'][0]['TOTAL_HARGA'] : 0;
+				$hasil['res'][0]['TOTAL_KESELURUHAN'] = (float)$harga_sewa_calc + (float)$total_catering_val;
+			}
+		}
 
 		$hasil['flag'] = $this->gedung_model->get_pemesanan_flag($username);
 		$this->load->view('home/confirm_order', $hasil);

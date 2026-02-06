@@ -147,6 +147,30 @@ $id_gedung = $this->uri->segment(4);
                                         <td class="px-4 py-3 text-slate-900"><?php echo $order['NAMA_GEDUNG']; ?></td>
                                     </tr>
 
+                                    <?php if (isset($order['PRICING_MODE']) && $order['PRICING_MODE'] === 'PER_PESERTA'): ?>
+                                        <tr class="bg-white">
+                                            <td class="w-48 px-4 py-3 font-semibold text-slate-700">Total Peserta</td>
+                                            <td class="px-2 py-3 text-slate-400">:</td>
+                                            <td class="px-4 py-3 text-slate-900"><?php echo isset($order['TOTAL_PESERTA']) ? (int)$order['TOTAL_PESERTA'] : 0; ?> orang</td>
+                                        </tr>
+                                    <?php elseif (isset($order['PRICING_MODE']) && $order['PRICING_MODE'] === 'PODCAST_PER_JAM'): ?>
+                                        <tr class="bg-white">
+                                            <td class="w-48 px-4 py-3 font-semibold text-slate-700">Jenis Podcast</td>
+                                            <td class="px-2 py-3 text-slate-400">:</td>
+                                            <td class="px-4 py-3 text-slate-900">
+                                                <?php
+                                                $pt = isset($order['PODCAST_TYPE']) ? strtoupper(trim((string)$order['PODCAST_TYPE'])) : '';
+                                                echo ($pt === 'VIDEO') ? 'Video Streaming' : 'Audio Podcast';
+                                                ?>
+                                            </td>
+                                        </tr>
+                                        <tr class="bg-white">
+                                            <td class="w-48 px-4 py-3 font-semibold text-slate-700">Durasi</td>
+                                            <td class="px-2 py-3 text-slate-400">:</td>
+                                            <td class="px-4 py-3 text-slate-900"><?php echo isset($order['DURASI_JAM']) ? (int)$order['DURASI_JAM'] : 0; ?> jam</td>
+                                        </tr>
+                                    <?php endif; ?>
+
                                     <tr class="bg-white">
                                         <td class="w-48 px-4 py-3 font-semibold text-slate-700">Harga Ruangan</td>
                                         <td class="px-2 py-3 text-slate-400">:</td>
@@ -172,23 +196,22 @@ $id_gedung = $this->uri->segment(4);
                                     </tr>
 
                                     <?php
-                                    $hasCatering = (isset($order['JUMLAH_CATERING']) && (int)$order['JUMLAH_CATERING'] > 0) || (isset($order['TOTAL_HARGA']) && (float)$order['TOTAL_HARGA'] > 0);
-                                    if ($hasCatering):
-                                        $harga_sewa_val = isset($order['HARGA_SEWA']) ? (float)$order['HARGA_SEWA'] : 0;
-                                        $total_catering_val = isset($order['TOTAL_HARGA']) ? (float)$order['TOTAL_HARGA'] : 0;
-                                        $total_keseluruhan = $harga_sewa_val + $total_catering_val;
+                                    $harga_sewa_val = isset($order['HARGA_SEWA']) ? (float)$order['HARGA_SEWA'] : 0;
+                                    $total_catering_val = isset($order['TOTAL_HARGA']) ? (float)$order['TOTAL_HARGA'] : 0;
+                                    $total_keseluruhan = isset($order['TOTAL_KESELURUHAN']) ? (float)$order['TOTAL_KESELURUHAN'] : ($harga_sewa_val + $total_catering_val);
                                     ?>
-                                        <tr class="bg-white">
-                                            <td class="w-48 px-4 py-3 font-semibold text-slate-700">Total Keseluruhan</td>
-                                            <td class="px-2 py-3 text-slate-400">:</td>
-                                            <td class="px-4 py-3 text-slate-900">Rp. <?php echo number_format($total_keseluruhan, 0, ',', '.'); ?></td>
-                                        </tr>
-                                    <?php endif; ?>
+                                    <tr class="bg-white">
+                                        <td class="w-48 px-4 py-3 font-semibold text-slate-700">Total Keseluruhan</td>
+                                        <td class="px-2 py-3 text-slate-400">:</td>
+                                        <td class="px-4 py-3 text-slate-900">Rp. <?php echo number_format($total_keseluruhan, 0, ',', '.'); ?></td>
+                                    </tr>
+
                                 <?php } // end else 
                                 ?>
                             </tbody>
                         </table>
                     </div>
+
                     <!-- FORM UPLOAD -->
                     <div class="mt-6 rounded-xl border border-slate-300 bg-slate-50 p-5 ring-1 ring-slate-200">
                         <?php echo form_open_multipart('home/home/upload_proposal/' . $id, ['id' => 'formUpload']); ?>
@@ -199,6 +222,7 @@ $id_gedung = $this->uri->segment(4);
                                 <?php echo $this->session->flashdata('upload_error'); ?>
                             </div>
                         <?php endif; ?>
+
                         <div class="grid grid-cols-1 gap-4">
                             <div>
                                 <label class="block text-xs font-semibold tracking-widest text-slate-600">KEPERLUAN

@@ -19,18 +19,37 @@ class Pembayaran extends CI_Controller
             return;
         }
 
-        // Ambil detail pemesanan + harga + perusahaan user
-        $pesanan = $this->db->select("
-            p.ID_PEMESANAN,
-            p.USERNAME,
-            p.TANGGAL_PEMESANAN,
-            p.JUMLAH_CATERING,
-            u.perusahaan,
-            g.NAMA_GEDUNG,
-            g.HARGA_SEWA,
-            c.NAMA_PAKET,
-            c.HARGA AS HARGA_CATERING_SATUAN
-        ")
+        // Ambil detail pemesanan + perusahaan user + harga
+        // (select dibangun dinamis supaya tidak error sebelum ALTER TABLE kolom harga baru)
+        $select = array(
+            'p.ID_PEMESANAN',
+            'p.USERNAME',
+            'p.ID_GEDUNG',
+            'p.TANGGAL_PEMESANAN',
+            'p.JUMLAH_CATERING',
+            'p.JAM_PEMESANAN',
+            'p.JAM_SELESAI',
+            'p.TIPE_JAM',
+            'u.perusahaan',
+            'g.NAMA_GEDUNG',
+            'g.HARGA_SEWA',
+            'c.NAMA_PAKET',
+            'c.HARGA AS HARGA_CATERING_SATUAN',
+        );
+
+        // kolom tambahan pemesanan (eksternal)
+        if ($this->db->field_exists('TOTAL_PESERTA', 'pemesanan')) $select[] = 'p.TOTAL_PESERTA';
+        if ($this->db->field_exists('PODCAST_TYPE', 'pemesanan')) $select[] = 'p.PODCAST_TYPE';
+
+        // kolom harga baru gedung (eksternal)
+        if ($this->db->field_exists('PRICING_MODE', 'gedung')) $select[] = 'g.PRICING_MODE';
+        if ($this->db->field_exists('HARGA_HALF_DAY_PP', 'gedung')) $select[] = 'g.HARGA_HALF_DAY_PP';
+        if ($this->db->field_exists('HARGA_FULL_DAY_PP', 'gedung')) $select[] = 'g.HARGA_FULL_DAY_PP';
+        if ($this->db->field_exists('HARGA_AUDIO_PER_JAM', 'gedung')) $select[] = 'g.HARGA_AUDIO_PER_JAM';
+        if ($this->db->field_exists('HARGA_VIDEO_PER_JAM', 'gedung')) $select[] = 'g.HARGA_VIDEO_PER_JAM';
+
+        $pesanan = $this->db->select(implode(",
+            ", $select), false)
             ->from('pemesanan p')
             ->join('user u', 'u.USERNAME = p.USERNAME', 'left')
             ->join('gedung g', 'g.ID_GEDUNG = p.ID_GEDUNG', 'left')
@@ -50,10 +69,10 @@ class Pembayaran extends CI_Controller
         $perusahaan = strtoupper(trim((string) $perusahaan_val));
         $is_internal = ($perusahaan === 'INTERNAL');
 
-        $harga_sewa = !empty($pesanan->HARGA_SEWA) ? (int) $pesanan->HARGA_SEWA : 0;
-        if ($is_internal) {
-            $harga_sewa = 0; // INTERNAL => gedung gratis
-        }
+        // ===== HITUNG HARGA SEWA RUANGAN =====
+        // INTERNAL: tetap seperti sebelumnya (gratis)
+        $this->load->helper('pricing');
+        $harga_sewa = (int) bs_calc_room_sewa($pesanan, $is_internal);
 
         $harga_catering_satuan = !empty($pesanan->HARGA_CATERING_SATUAN) ? (int) $pesanan->HARGA_CATERING_SATUAN : 0;
         $jumlah_catering = !empty($pesanan->JUMLAH_CATERING) ? (int) $pesanan->JUMLAH_CATERING : 0;

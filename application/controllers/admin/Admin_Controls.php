@@ -43,6 +43,20 @@ class Admin_Controls extends CI_Controller
 		}
 
 		// 1) INSERT GEDUNG (SEKALI SAJA)
+		$parse_int = function ($v) {
+			$v = preg_replace('/[^0-9]/', '', (string)$v);
+			return ($v === '' ? 0 : (int)$v);
+		};
+
+		$pricing_mode = strtoupper(trim((string)$this->input->post('pricing_mode', true)));
+		$allowed_pm = array('FLAT', 'PER_PESERTA', 'PODCAST_PER_JAM');
+		if (!in_array($pricing_mode, $allowed_pm, true)) $pricing_mode = '';
+
+		$harga_halfday_pp = $parse_int($this->input->post('harga_halfday_pp', true));
+		$harga_fullday_pp = $parse_int($this->input->post('harga_fullday_pp', true));
+		$harga_audio_per_jam = $parse_int($this->input->post('harga_audio_per_jam', true));
+		$harga_video_per_jam = $parse_int($this->input->post('harga_video_per_jam', true));
+
 		$data_gedung = array(
 			'NAMA_GEDUNG'      => $this->input->post('nama_gedung'),
 			'KAPASITAS'        => $this->input->post('kapasitas_gedung'),
@@ -51,6 +65,13 @@ class Admin_Controls extends CI_Controller
 			'fasilitas'        => $this->input->post('fasilitas_gedung'), // ✅ TAMBAH
 			'HARGA_SEWA'       => $this->input->post('harga_sewa')
 		);
+
+		// kolom harga eksternal (opsional - tidak error sebelum ALTER TABLE)
+		if ($this->db->field_exists('PRICING_MODE', 'gedung') && $pricing_mode !== '') $data_gedung['PRICING_MODE'] = $pricing_mode;
+		if ($this->db->field_exists('HARGA_HALF_DAY_PP', 'gedung')) $data_gedung['HARGA_HALF_DAY_PP'] = $harga_halfday_pp;
+		if ($this->db->field_exists('HARGA_FULL_DAY_PP', 'gedung')) $data_gedung['HARGA_FULL_DAY_PP'] = $harga_fullday_pp;
+		if ($this->db->field_exists('HARGA_AUDIO_PER_JAM', 'gedung')) $data_gedung['HARGA_AUDIO_PER_JAM'] = $harga_audio_per_jam;
+		if ($this->db->field_exists('HARGA_VIDEO_PER_JAM', 'gedung')) $data_gedung['HARGA_VIDEO_PER_JAM'] = $harga_video_per_jam;
 
 		$this->gedung_model->insert_gedung($data_gedung);
 
@@ -124,47 +145,47 @@ class Admin_Controls extends CI_Controller
 	}
 
 	public function rekap_transaksi()
-{
-    $this->load->model('gedung/gedung_model');
+	{
+		$this->load->model('gedung/gedung_model');
 
-    // badge sidebar
-    $data['result'] = $this->gedung_model->get_pending_transaction();
-    $data['get_transaction'] = $this->gedung_model->get_unread_transaction();
+		// badge sidebar
+		$data['result'] = $this->gedung_model->get_pending_transaction();
+		$data['get_transaction'] = $this->gedung_model->get_unread_transaction();
 
-    // halaman filter / form periode (buat view sendiri: admin/rekap_transaksi.php)
-    $this->load->view('admin/rekap_transaksi', $data);
-}
+		// halaman filter / form periode (buat view sendiri: admin/rekap_transaksi.php)
+		$this->load->view('admin/rekap_transaksi', $data);
+	}
 
-public function rekap_transaksi_det($tanggal_awal = null, $tanggal_akhir = null)
-{
-    $this->load->model('gedung/gedung_model');
+	public function rekap_transaksi_det($tanggal_awal = null, $tanggal_akhir = null)
+	{
+		$this->load->model('gedung/gedung_model');
 
-    // badge sidebar
-    $data['result'] = $this->gedung_model->get_pending_transaction();
-    $data['get_transaction'] = $this->gedung_model->get_unread_transaction();
+		// badge sidebar
+		$data['result'] = $this->gedung_model->get_pending_transaction();
+		$data['get_transaction'] = $this->gedung_model->get_unread_transaction();
 
-    /**
-     * Ambil periode (prioritas GET agar sama kayak rekap_aktivitas_det kamu)
-     * URL contoh:
-     * /admin/rekap_transaksi_det?start_date=2026-02-01&end_date=2026-02-05
-     */
-    $start_date = $this->input->get('start_date');
-    $end_date   = $this->input->get('end_date');
+		/**
+		 * Ambil periode (prioritas GET agar sama kayak rekap_aktivitas_det kamu)
+		 * URL contoh:
+		 * /admin/rekap_transaksi_det?start_date=2026-02-01&end_date=2026-02-05
+		 */
+		$start_date = $this->input->get('start_date');
+		$end_date   = $this->input->get('end_date');
 
-    // fallback kalau dipanggil via segment: /admin/rekap_transaksi_det/2026-02-01/2026-02-05
-    if (empty($start_date) && !empty($tanggal_awal)) $start_date = $tanggal_awal;
-    if (empty($end_date) && !empty($tanggal_akhir)) $end_date = $tanggal_akhir;
+		// fallback kalau dipanggil via segment: /admin/rekap_transaksi_det/2026-02-01/2026-02-05
+		if (empty($start_date) && !empty($tanggal_awal)) $start_date = $tanggal_awal;
+		if (empty($end_date) && !empty($tanggal_akhir)) $end_date = $tanggal_akhir;
 
-    // simpan periode untuk view
-    $data['start_date']  = $start_date;
-    $data['end_date']    = $end_date;
+		// simpan periode untuk view
+		$data['start_date']  = $start_date;
+		$data['end_date']    = $end_date;
 
-    // ambil data transaksi periodik (sudah kamu pakai di transaksi_export_pdf)
-    $data['row'] = $this->gedung_model->laporan_pembayaran_periodic($start_date, $end_date);
+		// ambil data transaksi periodik (sudah kamu pakai di transaksi_export_pdf)
+		$data['row'] = $this->gedung_model->laporan_pembayaran_periodic($start_date, $end_date);
 
-    // arahkan ke view detail transaksi (pakai view yang kamu sudah punya: Rekap_Transaksi_Det.php)
-    $this->load->view('admin/Rekap_Transaksi_Det', $data);
-}
+		// arahkan ke view detail transaksi (pakai view yang kamu sudah punya: Rekap_Transaksi_Det.php)
+		$this->load->view('admin/Rekap_Transaksi_Det', $data);
+	}
 
 
 
@@ -488,6 +509,20 @@ public function rekap_transaksi_det($tanggal_awal = null, $tanggal_akhir = null)
 
 		// 1) PROSES POST DULU
 		if (!empty($simpan)) {
+			$parse_int = function ($v) {
+				$v = preg_replace('/[^0-9]/', '', (string)$v);
+				return ($v === '' ? 0 : (int)$v);
+			};
+
+			$pricing_mode = strtoupper(trim((string)$this->input->post('pricing_mode', true)));
+			$allowed_pm = array('FLAT', 'PER_PESERTA', 'PODCAST_PER_JAM');
+			if (!in_array($pricing_mode, $allowed_pm, true)) $pricing_mode = '';
+
+			$harga_halfday_pp = $parse_int($this->input->post('harga_halfday_pp', true));
+			$harga_fullday_pp = $parse_int($this->input->post('harga_fullday_pp', true));
+			$harga_audio_per_jam = $parse_int($this->input->post('harga_audio_per_jam', true));
+			$harga_video_per_jam = $parse_int($this->input->post('harga_video_per_jam', true));
+
 			$data = array(
 				'NAMA_GEDUNG'      => $this->input->post('nama_gedung'),
 				'KAPASITAS'        => $this->input->post('kapasitas_gedung'),
@@ -496,6 +531,13 @@ public function rekap_transaksi_det($tanggal_awal = null, $tanggal_akhir = null)
 				'fasilitas'        => $this->input->post('fasilitas_gedung'), // ✅ TAMBAH
 				'HARGA_SEWA'       => $this->input->post('harga_sewa')
 			);
+
+			// kolom harga eksternal (opsional - tidak error sebelum ALTER TABLE)
+			if ($this->db->field_exists('PRICING_MODE', 'gedung') && $pricing_mode !== '') $data['PRICING_MODE'] = $pricing_mode;
+			if ($this->db->field_exists('HARGA_HALF_DAY_PP', 'gedung')) $data['HARGA_HALF_DAY_PP'] = $harga_halfday_pp;
+			if ($this->db->field_exists('HARGA_FULL_DAY_PP', 'gedung')) $data['HARGA_FULL_DAY_PP'] = $harga_fullday_pp;
+			if ($this->db->field_exists('HARGA_AUDIO_PER_JAM', 'gedung')) $data['HARGA_AUDIO_PER_JAM'] = $harga_audio_per_jam;
+			if ($this->db->field_exists('HARGA_VIDEO_PER_JAM', 'gedung')) $data['HARGA_VIDEO_PER_JAM'] = $harga_video_per_jam;
 
 			$this->gedung_model->update_gedung((int)$id_gedung, $data);
 
