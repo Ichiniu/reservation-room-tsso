@@ -153,14 +153,107 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                     TANGGAL PEMESANAN
                                 </label>
 
-                                <input type="date" name="tgl_pesan" id="tgl_pesan"
-                                    min="<?php echo htmlspecialchars($min_pesan, ENT_QUOTES, 'UTF-8'); ?>" required
-                                    @change="onDatePicked($event.target.value)" class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
-                                    focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40" />
+                                <!-- Hidden input for form submission -->
+                                <input type="hidden" name="tgl_pesan" id="tgl_pesan"
+                                    :value="selectedDate" required>
 
-                                <!-- ✅ HASIL FORMAT TANGGAL INDONESIA -->
-                                <div id="tgl-format-id" class="mt-2 text-sm font-semibold text-slate-700 hidden">
-                                    📅 <span id="tgl-text"></span>
+                                <!-- Custom Calendar Component -->
+                                <div class="mt-3" x-data="customCalendar()">
+                                    <!-- Selected Date Display -->
+                                    <div class="mb-3 p-3 rounded-lg bg-slate-50 border border-slate-200">
+                                        <div class="text-sm text-slate-600">Tanggal dipilih:</div>
+                                        <div class="text-base font-semibold text-slate-900" x-text="formatDisplayDate()"></div>
+                                    </div>
+
+                                    <!-- Calendar Container -->
+                                    <div class="rounded-lg border border-slate-200 bg-white p-3">
+                                        <!-- Calendar Header with Dropdowns -->
+                                        <div class="flex items-center justify-between gap-2 mb-3">
+                                            <button type="button" @click="previousMonth()"
+                                                class="p-2 hover:bg-slate-100 rounded-md transition-colors">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                                </svg>
+                                            </button>
+
+                                            <div class="flex gap-2">
+                                                <!-- Month Dropdown -->
+                                                <select x-model="viewMonth" @change="renderCalendar()"
+                                                    class="px-2 py-1 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                    <option value="0">Januari</option>
+                                                    <option value="1">Februari</option>
+                                                    <option value="2">Maret</option>
+                                                    <option value="3">April</option>
+                                                    <option value="4">Mei</option>
+                                                    <option value="5">Juni</option>
+                                                    <option value="6">Juli</option>
+                                                    <option value="7">Agustus</option>
+                                                    <option value="8">September</option>
+                                                    <option value="9">Oktober</option>
+                                                    <option value="10">November</option>
+                                                    <option value="11">Desember</option>
+                                                </select>
+
+                                                <!-- Year Dropdown -->
+                                                <select x-model="viewYear" @change="renderCalendar()"
+                                                    class="px-2 py-1 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                    <template x-for="year in yearOptions" :key="year">
+                                                        <option :value="year" x-text="year"></option>
+                                                    </template>
+                                                </select>
+                                            </div>
+
+                                            <button type="button" @click="nextMonth()"
+                                                class="p-2 hover:bg-slate-100 rounded-md transition-colors">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                                </svg>
+                                            </button>
+                                        </div>
+
+                                        <!-- Weekday Headers -->
+                                        <div class="grid grid-cols-7 gap-1 mb-2">
+                                            <div class="text-center text-xs font-medium text-slate-500 py-2">Su</div>
+                                            <div class="text-center text-xs font-medium text-slate-500 py-2">Mo</div>
+                                            <div class="text-center text-xs font-medium text-slate-500 py-2">Tu</div>
+                                            <div class="text-center text-xs font-medium text-slate-500 py-2">We</div>
+                                            <div class="text-center text-xs font-medium text-slate-500 py-2">Th</div>
+                                            <div class="text-center text-xs font-medium text-slate-500 py-2">Fr</div>
+                                            <div class="text-center text-xs font-medium text-slate-500 py-2">Sa</div>
+                                        </div>
+
+                                        <!-- Calendar Grid -->
+                                        <div class="grid grid-cols-7 gap-1">
+                                            <template x-for="(day, index) in calendarDays" :key="index">
+                                                <button type="button"
+                                                    @click="selectDate(day)"
+                                                    :disabled="!day.isCurrentMonth || day.isPast || day.isWeekend"
+                                                    :class="{
+                                                        'bg-slate-900 text-white hover:bg-slate-800': day.isSelected,
+                                                        'hover:bg-slate-100': day.isCurrentMonth && !day.isPast && !day.isWeekend && !day.isSelected,
+                                                        'text-slate-300 cursor-not-allowed': !day.isCurrentMonth || day.isPast,
+                                                        'text-red-300 cursor-not-allowed line-through': day.isWeekend && day.isCurrentMonth,
+                                                        'text-slate-900': day.isCurrentMonth && !day.isPast && !day.isWeekend && !day.isSelected,
+                                                        'font-semibold': day.isToday
+                                                    }"
+                                                    class="aspect-square flex items-center justify-center text-sm rounded-md transition-colors">
+                                                    <span x-text="day.date"></span>
+                                                </button>
+                                            </template>
+                                        </div>
+
+                                        <!-- Legend -->
+                                        <div class="mt-3 pt-3 border-t border-slate-200 text-xs text-slate-500 space-y-1">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-3 h-3 bg-slate-900 rounded"></div>
+                                                <span>Tanggal dipilih</span>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-3 h-3 bg-red-100 rounded line-through"></div>
+                                                <span>Weekend (tidak tersedia)</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <small class="mt-2 block text-xs text-slate-500">
@@ -639,6 +732,7 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                 podcastType: '',
                 extraError: '',
                 catering: 'tidak',
+                selectedDate: '', // <--- NEW: to store value from custom calendar
                 tipeJam: <?php echo json_encode($default_tipe_jam); ?>,
                 allowedTipeJam: <?php echo json_encode(array_values($allowed_tipe_jam)); ?>,
                 defaultTipeJam: <?php echo json_encode($default_tipe_jam); ?>,
@@ -1097,6 +1191,118 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
 
                 get grandTotal() {
                     return this.subtotal + this.addonsTotal;
+                }
+            }
+        }
+
+        function customCalendar() {
+            return {
+                viewMonth: new Date().getMonth(),
+                viewYear: new Date().getFullYear(),
+                calendarDays: [],
+                yearOptions: [],
+                selectedDateObj: null,
+                minPesan: <?php echo json_encode($min_pesan); ?>,
+
+                init() {
+                    const currentYear = new Date().getFullYear();
+                    for (let i = currentYear; i <= currentYear + 5; i++) {
+                        this.yearOptions.push(i);
+                    }
+                    this.renderCalendar();
+                },
+
+                renderCalendar() {
+                    this.calendarDays = [];
+                    const firstDayOfMonth = new Date(this.viewYear, this.viewMonth, 1).getDay();
+                    const daysInMonth = new Date(this.viewYear, this.viewMonth + 1, 0).getDate();
+                    const daysInPrevMonth = new Date(this.viewYear, this.viewMonth, 0).getDate();
+
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+
+                    const minDate = new Date(this.minPesan + 'T00:00:00');
+
+                    // Add padding from previous month
+                    for (let i = firstDayOfMonth - 1; i >= 0; i--) {
+                        this.calendarDays.push({
+                            date: daysInPrevMonth - i,
+                            fullDate: null,
+                            isCurrentMonth: false,
+                            isToday: false,
+                            isSelected: false,
+                            isPast: true,
+                            isWeekend: false
+                        });
+                    }
+
+                    // Add days of current month
+                    for (let i = 1; i <= daysInMonth; i++) {
+                        const dateObj = new Date(this.viewYear, this.viewMonth, i);
+                        const dayOfWeek = dateObj.getDay();
+                        const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+                        const isPast = dateObj < minDate;
+                        const dateStr = this.viewYear + '-' + String(this.viewMonth + 1).padStart(2, '0') + '-' + String(i).padStart(2, '0');
+
+                        this.calendarDays.push({
+                            date: i,
+                            fullDate: dateStr,
+                            isCurrentMonth: true,
+                            isToday: dateObj.getTime() === today.getTime(),
+                            isSelected: this.$parent.selectedDate === dateStr,
+                            isPast: isPast,
+                            isWeekend: isWeekend
+                        });
+                    }
+
+                    // Add padding for next month (to fill 42 cells)
+                    const totalCells = 42;
+                    const remainingCells = totalCells - this.calendarDays.length;
+                    for (let i = 1; i <= remainingCells; i++) {
+                        this.calendarDays.push({
+                            date: i,
+                            fullDate: null,
+                            isCurrentMonth: false,
+                            isToday: false,
+                            isSelected: false,
+                            isPast: true,
+                            isWeekend: false
+                        });
+                    }
+                },
+
+                selectDate(day) {
+                    if (!day.fullDate || day.isPast || day.isWeekend) return;
+                    this.$parent.selectedDate = day.fullDate;
+                    this.$parent.onDatePicked(day.fullDate);
+                    this.renderCalendar();
+                },
+
+                previousMonth() {
+                    if (this.viewMonth === 0) {
+                        this.viewMonth = 11;
+                        this.viewYear--;
+                    } else {
+                        this.viewMonth--;
+                    }
+                    this.renderCalendar();
+                },
+
+                nextMonth() {
+                    if (this.viewMonth === 11) {
+                        this.viewMonth = 0;
+                        this.viewYear++;
+                    } else {
+                        this.viewMonth++;
+                    }
+                    this.renderCalendar();
+                },
+
+                formatDisplayDate() {
+                    if (!this.$parent.selectedDate) return 'Belum ada tanggal dipilih';
+                    const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                    const parts = this.$parent.selectedDate.split('-');
+                    return parseInt(parts[2]) + ' ' + months[parseInt(parts[1]) - 1] + ' ' + parts[0];
                 }
             }
         }
