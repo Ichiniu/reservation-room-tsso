@@ -417,8 +417,191 @@ class Home extends CI_Controller
 		$data['default_tipe_jam'] = $data['allowed_tipe_jam'][0];
 
 
+		// ✅ Pass gedung data as 'res' for view compatibility (jadwal preview needs $res[0]['ID_GEDUNG'])
+		$data['res'] = $gedung['hasil'];
+
 		$hasil = array_merge($gedung, $data);
 		$this->load->view('gedung/order_gedung', $hasil);
+	}
+
+	/**
+	 * POST handler for order form submission
+	 * Processes booking data and redirects to confirm page
+	 */
+	public function order($id_gedung)
+	{
+		$username = $this->session->userdata('username');
+		if (empty($username)) {
+			redirect('login');
+			return;
+		}
+
+		$this->load->model('gedung/gedung_model');
+		$this->load->model('catering/catering_model');
+		$this->load->helper('pricing');
+
+		$id_gedung = (int)$id_gedung;
+		if ($id_gedung <= 0) {
+			show_404();
+			return;
+		}
+
+		// ===== GET POST DATA =====
+		$tgl_pesan    = trim((string)$this->input->post('tgl_pesan', TRUE));
+		$jam_pesan    = trim((string)$this->input->post('jam_pesan', TRUE));
+		$jam_selesai  = trim((string)$this->input->post('jam_selesai', TRUE));
+		$email        = trim((string)$this->input->post('email', TRUE));
+		$catering_val = trim((string)$this->input->post('radios', TRUE));
+		$tipe_jam     = trim((string)$this->input->post('tipe_jam', TRUE));
+		$request_id   = trim((string)$this->input->post('request_id', TRUE));
+
+		// ===== VALIDATION =====
+		if (empty($tgl_pesan) || empty($jam_pesan) || empty($jam_selesai) || empty($email)) {
+			$this->session->set_flashdata('error', 'Semua field wajib diisi.');
+			redirect('home/order-gedung/' . $id_gedung);
+			return;
+		}
+
+		// ✅ Get user's latest pending booking to exclude from conflict check
+		$exclude_id = $this->gedung_model->get_user_latest_pending_booking($username, $id_gedung);
+
+		// Check for conflicts (excluding user's own pending booking)
+		$conflict = $this->gedung_model->check_date($tgl_pesan, $id_gedung, $jam_pesan, $jam_selesai, $exclude_id ? $exclude_id : 0);
+
+		if ($conflict > 0) {
+			$this->session->set_flashdata('error', 'Tanggal/gedung sudah terbooking. Silakan pilih tanggal atau jam lain.');
+			redirect('home/order-gedung/' . $id_gedung);
+			return;
+		}
+
+		// ===== CATERING DATA =====
+		$id_catering    = null;
+		$jumlah_catering = null;
+		$menu_inputs    = array();
+		$addon_inputs   = array();
+
+		if ($catering_val === 'ya') {
+			$id_catering = (int)$this->input->post('catering');
+			$jumlah_catering = (int)$this->input->post('jumlah-porsi');
+
+			if ($id_catering <= 0 || $jumlah_catering <= 0) {
+				$this->session->set_flashdata('error', 'Pilih paket catering dan jumlah porsi dengan benar.');
+				redirect('home/order-gedung/' . $id_gedung);
+				return;
+			}
+
+			$menu_raw = $this->input->post('menu_input');
+			if (is_array($menu_raw)) {
+				foreach ($menu_raw as $k => $v) {
+					$menu_inputs[$k] = trim((string)$v);
+				}
+			}
+
+			$addon_enabled = $this->input->post('addon_enabled');
+			$addon_values  = $this->input->post('addon_input');
+
+			if (is_array($addon_enabled)) {
+				foreach ($addon_enabled as $k => $chk) {
+					if ($chk == '1') {
+						$addon_inputs[$k] = isset($addon_values[$k]) ? trim((string)$addon_values[$k]) : '';
+					}
+				}
+			}
+		}
+
+		// ===== EKSTERNAL-SPECIFIC FIELDS =====
+		$total_peserta = null;
+		$podcast_type  = null;
+
+		$u = $this->db->select('perusahaan')->from('user')->where('USERNAME', $username)->get()->row();
+		$is_internal = ($u && strtoupper(trim((string)$u->perusahaan)) === 'INTERNAL');
+
+		if (!$is_internal) {
+			$gedung_data = $this->gedung_model->get_gedung_name($id_gedung);
+			$nama_gedung = '';
+			if (!empty($gedung_data) && is_array($gedung_data) && is_array($gedung_data[0])) {
+				$nama_gedung = isset($gedung_data[0]['NAMA_GEDUNG']) ? (string)$gedung_data[0]['NAMA_GEDUNG'] : '';
+			}
+
+			$pm_db = '';
+			if (!empty($gedung_data) && is_array($gedung_data) && is_array($gedung_data[0]) && isset($gedung_data[0]['PRICING_MODE'])) {
+				$pm_db = (string)$gedung_data[0]['PRICING_MODE'];
+			}
+
+			$pricing_mode = bs_detect_pricing_mode($nama_gedung, $pm_db);
+
+			if ($pricing_mode === 'PER_PESERTA') {
+				$total_peserta = (int)$this->input->post('total_peserta');
+				if ($total_peserta <= 0) {
+					$this->session->set_flashdata('error', 'Total peserta wajib diisi.');
+					redirect('home/order-gedung/' . $id_gedung);
+					return;
+				}
+			} elseif ($pricing_mode === 'PODCAST_PER_JAM') {
+				$podcast_type = trim((string)$this->input->post('podcast_type', TRUE));
+				if (empty($podcast_type)) {
+					$this->session->set_flashdata('error', 'Pilih jenis podcast.');
+					redirect('home/order-gedung/' . $id_gedung);
+					return;
+				}
+			}
+		}
+
+		// ===== BUILD PEMESANAN DATA =====
+		$data_pemesanan = array(
+			'USERNAME'          => $username,
+			'ID_GEDUNG'         => $id_gedung,
+			'TANGGAL_PEMESANAN' => $tgl_pesan,
+			'JAM_PEMESANAN'     => $jam_pesan,
+			'JAM_SELESAI'       => $jam_selesai,
+			'TIPE_JAM'          => $tipe_jam,
+			'EMAIL'             => $email,
+			'ID_CATERING'       => $id_catering,
+			'JUMLAH_CATERING'   => $jumlah_catering,
+			'STATUS'            => 0,
+			'FLAG'              => 1,
+		);
+
+		if (!empty($request_id)) {
+			$data_pemesanan['REQUEST_ID'] = $request_id;
+		}
+
+		if ($total_peserta !== null) {
+			if ($this->db->field_exists('TOTAL_PESERTA', 'pemesanan')) {
+				$data_pemesanan['TOTAL_PESERTA'] = $total_peserta;
+			}
+		}
+
+		if ($podcast_type !== null) {
+			if ($this->db->field_exists('PODCAST_TYPE', 'pemesanan')) {
+				$data_pemesanan['PODCAST_TYPE'] = $podcast_type;
+			}
+		}
+
+		// ===== INSERT PEMESANAN =====
+		$id_pemesanan = $this->gedung_model->insert_pemesanan($data_pemesanan);
+
+		if (!$id_pemesanan) {
+			$this->session->set_flashdata('error', 'Gagal menyimpan pemesanan. Silakan coba lagi.');
+			redirect('home/order-gedung/' . $id_gedung);
+			return;
+		}
+
+		// ===== SAVE CATERING DETAILS (menu + addon) =====
+		if (!empty($menu_inputs) || !empty($addon_inputs)) {
+			$combined = array_merge($menu_inputs, $addon_inputs);
+			$json_str = json_encode($combined, JSON_UNESCAPED_UNICODE);
+
+			if ($this->db->table_exists('pemesanan_catering_details')) {
+				$this->db->replace('pemesanan_catering_details', array(
+					'ID_PEMESANAN' => $id_pemesanan,
+					'DETAIL_JSON'  => $json_str
+				));
+			}
+		}
+
+		// ===== REDIRECT TO CONFIRM PAGE =====
+		redirect('home/confirm-order/' . $id_pemesanan);
 	}
 
 
@@ -596,69 +779,44 @@ class Home extends CI_Controller
 		$username = $this->session->userdata('username');
 		if (!$username) show_404();
 
-		// ambil ID dari parameter atau POST
 		$id = $id_pemesanan ?: (int)$this->input->post('id_pemesanan');
 		if ($id <= 0) show_404();
 
 		// pastikan order ini milik user yg login
 		if (!$this->gedung_model->is_order_owner($id, $username)) show_404();
 
-		// ✅ pindahkan ke sini (lebih aman)
+		// tandai notif/flag unread
 		$this->gedung_model->mark_flag_unread('PMSN000' . $id);
 
 		// =========================
-		// OPTIONAL UPLOAD (TIDAK WAJIB)
+		// TANPA UPLOAD FILE (HANYA DESKRIPSI)
 		// =========================
-		$hasFile = (isset($_FILES['proposal']) && $_FILES['proposal']['error'] !== UPLOAD_ERR_NO_FILE && !empty($_FILES['proposal']['name']));
+		$deskripsi = trim((string)$this->input->post('deskripsi-acara', TRUE));
+		if ($deskripsi === '') {
+			$this->session->set_flashdata('upload_error', 'Keperluan acara wajib diisi.');
+			redirect('home/home/validasi_upload/' . $id);
+			return;
+		}
 
-		$doc_name    = null;
-		$public_path = null;
-
-		if ($hasFile) {
-			$upload_path = FCPATH . 'assets/user-proposal/';
-			$public_path = rtrim(base_url('assets/user-proposal/'), '/') . '/';
-
-			if (!is_dir($upload_path)) @mkdir($upload_path, 0775, true);
-
-			$file_name = $username . "_" . date('dmY_His');
-
-			$config = [
-				'upload_path'   => $upload_path,
-				'allowed_types' => 'pdf|doc|docx',
-				'max_size'      => 800,
-				'file_name'     => $file_name,
-				'overwrite'     => false,
-			];
-
-			$this->load->library('upload');
-			$this->upload->initialize($config);
-
-			if (!$this->upload->do_upload('proposal')) {
-				$this->session->set_flashdata('upload_error', strip_tags($this->upload->display_errors()));
-				redirect('home/home/validasi_upload/' . $id);
-				return;
-			}
-
-			$upload_data = $this->upload->data();
-			$doc_name    = $upload_data['file_name'];
+		// opsional: batasi max 200 karakter (sesuai maxlength di UI)
+		if (strlen($deskripsi) > 200) {
+			$deskripsi = substr($deskripsi, 0, 200);
 		}
 
 		$data = [
 			'ID_PEMESANAN'    => $id,
-			'PATH'            => $public_path,
-			'FILE_NAME'       => $doc_name,
-			'DESKRIPSI_ACARA' => $this->input->post('deskripsi-acara', TRUE),
+			'PATH'            => '',   // aman kalau kolom NOT NULL
+			'FILE_NAME'       => '',   // aman kalau kolom NOT NULL
+			'DESKRIPSI_ACARA' => $deskripsi,
 		];
 
 		if ($this->gedung_model->proposal_exists($id)) {
-			if (!$hasFile) {
-				$this->gedung_model->update_proposal($id, [
-					'ID_PEMESANAN'    => $id,
-					'DESKRIPSI_ACARA' => $this->input->post('deskripsi-acara', TRUE),
-				]);
-			} else {
-				$this->gedung_model->update_proposal($id, $data);
-			}
+			$this->gedung_model->update_proposal($id, [
+				'ID_PEMESANAN'    => $id,
+				'DESKRIPSI_ACARA' => $deskripsi,
+				'PATH'            => '',
+				'FILE_NAME'       => '',
+			]);
 		} else {
 			$this->gedung_model->upload_proposal($data);
 		}
@@ -674,6 +832,9 @@ class Home extends CI_Controller
 
 		$is_internal = ($u && strtoupper(trim((string)$u->perusahaan)) === 'INTERNAL');
 
+		// ✅ draft session dibuang setelah submit sukses (biar back/edit gak nyangkut)
+		$this->session->unset_userdata('draft_pemesanan_id');
+
 		// =========================
 		// INTERNAL: auto confirmed
 		// =========================
@@ -681,8 +842,6 @@ class Home extends CI_Controller
 
 			// ... (blok internal kamu tetap)
 
-			// setelah trans_commit internal:
-			// ✅ (opsional) user dapat notif transaksi confirmed juga
 			$this->load->library('notification_service');
 			$this->notification_service->notifyUser(
 				$username,
@@ -693,27 +852,24 @@ class Home extends CI_Controller
 				true
 			);
 
-			$this->session->set_flashdata('upload_success', 'INTERNAL: Proposal tersimpan & pemesanan langsung CONFIRMED.');
+			$this->session->set_flashdata('upload_success', 'INTERNAL: Keperluan acara tersimpan & pemesanan langsung CONFIRMED.');
 			redirect('home/pemesanan');
 			return;
 		}
 
 		// =========================
-		// EKSTERNAL: normal (menunggu admin)
-		// di sinilah admin perlu notif inbox PROCESS
+		// EKSTERNAL: notif ke admin
 		// =========================
 		$this->load->library('notification_service');
-
 		$this->notification_service->notifyAdmin(
 			'ADMIN_INBOX',
 			'Pesanan masuk (PROCESS)',
-			'Ada pesanan/proposal baru PMSN000' . $id . ' dari user ' . $username . '.',
+			'Ada pesanan baru PMSN000' . $id . ' dari user ' . $username . '.',
 			'admin/pemesanan.php',
 			true
 		);
 
-
-		$this->session->set_flashdata('upload_success', 'Proposal berhasil disimpan (tanpa upload juga boleh).');
+		$this->session->set_flashdata('upload_success', 'Keperluan acara berhasil disimpan.');
 		redirect('home/home/proposal_success/' . $id);
 		return;
 	}
@@ -733,338 +889,6 @@ class Home extends CI_Controller
 		$this->load->view('home/success_page'); // view sukses kamu
 	}
 
-	public function order()
-	{
-		$this->load->model('gedung/gedung_model');
-		$this->load->model('catering/Catering_Model', 'catering_model');
-
-		$tanggal_pesan = $this->input->post('tgl_pesan', TRUE);
-		$id_gedung     = (int) $this->uri->segment(4);
-		$username      = $this->session->userdata('username');
-
-		// ===== CEK USER INTERNAL / EKSTERNAL (dipakai untuk rule min booking & status awal) =====
-		$perusahaan = $this->db->select('perusahaan')
-			->from('user')
-			->where('USERNAME', $username)
-			->get()
-			->row('perusahaan');
-
-		$perusahaan  = strtoupper(trim((string)$perusahaan));
-		$is_internal = ($perusahaan === 'INTERNAL');
-
-		// ===== tambahan konsep harga (EKSTERNAL saja) =====
-		$pricing_mode = 'FLAT';
-		$total_peserta_final = null;
-		$podcast_type_final = null;
-
-		// ===== TIPE JAM (form) =====
-		$tipe_jam_form = $this->input->post('tipe_jam', TRUE);
-		if (empty($tipe_jam_form)) $tipe_jam_form = 'CUSTOM';
-
-		// Untuk DB (karena enum kamu: CUSTOM, HALF_DAY, FULL_DAY)
-		$tipe_jam_db = $tipe_jam_form;
-		if ($tipe_jam_form === 'HALF_DAY_PAGI' || $tipe_jam_form === 'HALF_DAY_SIANG') {
-			$tipe_jam_db = 'HALF_DAY';
-		}
-
-		$paket = array(
-			'HALF_DAY_PAGI'  => array('08:00', '12:00'),
-			'HALF_DAY_SIANG' => array('13:00', '16:00'),
-			'FULL_DAY'       => array('08:00', '17:00'),
-		);
-
-		// Tentukan jam mulai & selesai
-		if ($tipe_jam_form === 'CUSTOM') {
-			$jam_mulai   = $this->input->post('jam_pesan', TRUE);
-			$jam_selesai = $this->input->post('jam_selesai', TRUE);
-
-			if (empty($jam_mulai) || empty($jam_selesai)) {
-				$this->session->set_flashdata('error', 'Jam mulai dan jam selesai wajib diisi.');
-				redirect('home/order-gedung/' . $id_gedung);
-				return;
-			}
-		} elseif (isset($paket[$tipe_jam_form])) {
-			$jam_mulai   = $paket[$tipe_jam_form][0];
-			$jam_selesai = $paket[$tipe_jam_form][1];
-		} else {
-			show_error('Tipe jam tidak valid');
-			return;
-		}
-
-		if (strtotime($jam_mulai) >= strtotime($jam_selesai)) {
-			$this->session->set_flashdata('error', 'Jam mulai harus lebih kecil dari jam selesai.');
-			redirect('home/order-gedung/' . $id_gedung);
-			return;
-		}
-
-		// ===== MIN BOOKING (DINAMIS PER GEDUNG + OVERRIDE EKSTERNAL) =====
-		$rule = $this->_min_booking_rule($id_gedung); // default rule yang sudah kamu punya
-
-		// pastikan keys aman
-		if (!is_array($rule)) $rule = array();
-		if (!isset($rule['days'])) $rule['days'] = 0;
-		if (!isset($rule['text'])) $rule['text'] = 'Minimal booking';
-
-		// Override khusus USER EKSTERNAL:
-		// - Meeting room & amphitheater => H-2
-		// - Studio Podcast => H-3
-		if (!$is_internal) {
-
-			// Ambil nama gedung/ruangan untuk deteksi tipe
-			$g = $this->db->get_where('gedung', array('ID_GEDUNG' => $id_gedung))->row_array();
-
-			// PHP 5.6: tanpa null coalescing (??)
-			$nama = '';
-			if (is_array($g)) {
-				if (isset($g['NAMA_GEDUNG'])) $nama = $g['NAMA_GEDUNG'];
-				else if (isset($g['nama_gedung'])) $nama = $g['nama_gedung'];
-				else if (isset($g['NAMA'])) $nama = $g['NAMA'];
-				else if (isset($g['nama'])) $nama = $g['nama'];
-			}
-
-			$namaU = strtoupper(trim((string)$nama));
-
-			// ===== pricing_mode (prioritas kolom gedung.PRICING_MODE, fallback deteksi nama) =====
-			$this->load->helper('pricing');
-			$pm_db = '';
-			if (is_array($g) && isset($g['PRICING_MODE'])) {
-				$pm_db = (string) $g['PRICING_MODE'];
-			}
-			$pricing_mode = bs_detect_pricing_mode($nama, $pm_db);
-			$is_studio_ext = ($pricing_mode === 'PODCAST_PER_JAM');
-
-			// ===== enforce tipe jam khusus EKSTERNAL (samakan dengan UI) =====
-			if ($is_studio_ext && $tipe_jam_form !== 'CUSTOM') {
-				$this->session->set_flashdata('error', 'Untuk ruangan Studio (eksternal), tipe jam wajib CUSTOM (per jam).');
-				redirect('home/order-gedung/' . $id_gedung);
-				return;
-			}
-			if (!$is_studio_ext && $tipe_jam_form === 'CUSTOM') {
-				$this->session->set_flashdata('error', 'Untuk ruangan non-studio (eksternal), tipe jam tidak boleh CUSTOM. Pilih HALF/FULL DAY.');
-				redirect('home/order-gedung/' . $id_gedung);
-				return;
-			}
-
-			// ===== validasi input tambahan (EKSTERNAL) =====
-			if ($pricing_mode === 'PER_PESERTA') {
-				$tp = (int)$this->input->post('total_peserta', TRUE);
-				if ($tp < 1) {
-					$this->session->set_flashdata('error', 'Total peserta wajib diisi (minimal 1).');
-					redirect('home/order-gedung/' . $id_gedung);
-					return;
-				}
-				$total_peserta_final = $tp;
-			} else if ($pricing_mode === 'PODCAST_PER_JAM') {
-				$pt = strtoupper(trim((string)$this->input->post('podcast_type', TRUE)));
-				if ($pt !== 'AUDIO' && $pt !== 'VIDEO') {
-					$this->session->set_flashdata('error', 'Pilih jenis podcast: Audio atau Video Streaming.');
-					redirect('home/order-gedung/' . $id_gedung);
-					return;
-				}
-				$podcast_type_final = $pt;
-			}
-
-			// Studio Podcast => H-3
-			if ($namaU !== '' && strpos($namaU, 'PODCAST') !== false) {
-				$rule = array('days' => 3, 'text' => 'H-3 (Studio Podcast)');
-			}
-			// Meeting room / Amphitheater => H-2
-			else if (
-				($namaU !== '' && strpos($namaU, 'MEETING') !== false) ||
-				($namaU !== '' && strpos($namaU, 'AMPHI') !== false) ||
-				($namaU !== '' && strpos($namaU, 'AMPHITHEATER') !== false) ||
-				($namaU !== '' && strpos($namaU, 'AMPITHEATER') !== false) ||  // antisipasi typo
-				($namaU !== '' && strpos($namaU, 'AMPHITEATER') !== false)      // antisipasi typo lain
-			) {
-				$rule = array('days' => 2, 'text' => 'H-2 (Meeting Room/Amphitheater)');
-			}
-			// kalau nama kosong / tidak match -> pakai default $rule dari _min_booking_rule()
-		}
-
-		$min_pesan = date('Y-m-d', strtotime('+' . (int)$rule['days'] . ' day'));
-
-		if (strtotime($tanggal_pesan) < strtotime($min_pesan)) {
-			$this->load->view('errors/pemesanan_alert', array(
-				'tgl_pesan' => $tanggal_pesan,
-				'min_pesan' => $min_pesan,
-				'min_text'  => $rule['text'],
-				'min_days'  => $rule['days'],
-			));
-			return;
-		}
-
-		// ===== CEK BENTROK (LOCKED) =====
-		if ($this->gedung_model->has_locked_conflict($id_gedung, $tanggal_pesan, $jam_mulai, $jam_selesai)) {
-			$this->session->set_flashdata(
-				'error',
-				'Maaf, jadwal tersebut sudah dipesan dan sudah ada pembayaran (menunggu verifikasi / sudah dikonfirmasi). Silakan cek pada halaman Jadwal Gedung.'
-			);
-			redirect('home/order-gedung/' . $id_gedung);
-			return;
-		}
-
-		// ===== CEK BENTROK NORMAL =====
-		$exist = $this->gedung_model->check_date($tanggal_pesan, $id_gedung, $jam_mulai, $jam_selesai);
-		if ($exist > 0) {
-			$this->session->set_flashdata('error', 'Tanggal/gedung sudah terbooking.');
-			redirect('home/order-gedung/' . $id_gedung);
-			return;
-		}
-
-		// ===== REQUEST ID =====
-		$request_id = $this->input->post('request_id', TRUE);
-		if (empty($request_id)) {
-			$request_id = sha1(
-				session_id() . '|' . $username . '|' . $id_gedung . '|' .
-					$tanggal_pesan . '|' . $jam_mulai . '|' . $jam_selesai . '|' . $tipe_jam_form
-			);
-		}
-
-		// ===== CATERING INPUT =====
-		$catering_choice   = $this->input->post('radios', TRUE); // 'ya' / 'tidak'
-		$id_catering_post  = $this->input->post('catering', TRUE);
-		$jumlah_porsi_post = $this->input->post('jumlah-porsi', TRUE);
-
-		// textarea input per kategori + addon
-		$menu_input     = $this->input->post('menu_input', TRUE);     // array
-		$addon_input    = $this->input->post('addon_input', TRUE);    // array
-		$addon_enabled  = $this->input->post('addon_enabled', TRUE);  // array (key => "1")
-
-		$id_catering_final  = null;
-		$jumlah_porsi_final = null;
-
-		// JSON columns
-		$menu_pilihan_json = null;
-		$menu_input_json   = null;
-		$addon_input_json  = null;
-
-		if ($catering_choice === 'ya') {
-
-			// wajib pilih paket
-			if (empty($id_catering_post)) {
-				$this->session->set_flashdata('error', 'Jika memilih catering "Ya", paket catering wajib dipilih.');
-				redirect('home/order-gedung/' . $id_gedung);
-				return;
-			}
-
-			$id_catering_final = (int) $id_catering_post;
-
-			$jumlah_porsi_final = (int) $jumlah_porsi_post;
-			if ($jumlah_porsi_final < 1) {
-				$this->session->set_flashdata('error', 'Jumlah porsi wajib diisi (minimal 1).');
-				redirect('home/order-gedung/' . $id_gedung);
-				return;
-			}
-
-			// validasi id catering + min pax
-			$c_row = $this->catering_model->get_by_id($id_catering_final);
-			if (empty($c_row)) {
-				$this->session->set_flashdata('error', 'Paket catering tidak valid.');
-				redirect('home/order-gedung/' . $id_gedung);
-				return;
-			}
-
-			$min_pax = isset($c_row['MIN_PAX']) ? (int) $c_row['MIN_PAX'] : 1;
-			if ($min_pax < 1) $min_pax = 1;
-
-			if ($jumlah_porsi_final < $min_pax) {
-				$this->session->set_flashdata('error', 'Jumlah porsi minimal untuk paket ini adalah ' . $min_pax . ' pax.');
-				redirect('home/order-gedung/' . $id_gedung);
-				return;
-			}
-
-			// ===== simpan MENU_INPUT_JSON (kategori) =====
-			if (is_array($menu_input)) {
-				$clean = array();
-				foreach ($menu_input as $k => $v) {
-					$v = trim((string) $v);
-					if ($v !== '') $clean[$k] = $v;
-				}
-				if (!empty($clean)) {
-					$menu_input_json = json_encode($clean, JSON_UNESCAPED_UNICODE);
-				}
-			}
-
-			// ===== simpan ADDON_INPUT_JSON (yang enabled saja) =====
-			if (is_array($addon_enabled)) {
-				$addon_clean = array();
-				foreach ($addon_enabled as $k => $flag) {
-					if (!$flag) continue;
-
-					$txt = '';
-					if (is_array($addon_input) && isset($addon_input[$k])) {
-						$txt = trim((string) $addon_input[$k]);
-					}
-
-					// simpan key addon walau kosong (biar kelihatan addon dicentang)
-					$addon_clean[$k] = $txt;
-				}
-
-				if (!empty($addon_clean)) {
-					$addon_input_json = json_encode($addon_clean, JSON_UNESCAPED_UNICODE);
-				}
-			}
-		} else {
-			// catering "tidak" -> pastikan NULL semua
-			$id_catering_final  = null;
-			$jumlah_porsi_final = null;
-			$menu_pilihan_json  = null;
-			$menu_input_json    = null;
-			$addon_input_json   = null;
-		}
-
-		// ===== STATUS AWAL (INTERNAL vs EKSTERNAL) =====
-		$status_awal = 0; // eksternal
-		if ($is_internal) {
-			$status_awal = 3; // internal
-		}
-
-		// ===== INSERT PEMESANAN =====
-		$data = array(
-			'USERNAME'          => $username,
-			'TANGGAL_PEMESANAN' => $tanggal_pesan,
-			'JAM_PEMESANAN'     => $jam_mulai,
-			'JAM_SELESAI'       => $jam_selesai,
-			'TIPE_JAM'          => $tipe_jam_db,
-			'EMAIL'             => $this->input->post('email', TRUE),
-
-			'ID_GEDUNG'         => $id_gedung,
-			'ID_CATERING'       => $id_catering_final,
-			'JUMLAH_CATERING'   => $jumlah_porsi_final,
-			'STATUS'            => (int)$status_awal,
-			'REQUEST_ID'        => $request_id,
-			'MENU_PILIHAN_JSON' => $menu_pilihan_json,
-			'MENU_INPUT_JSON'   => $menu_input_json,
-			'ADDON_INPUT_JSON'  => $addon_input_json,
-		);
-
-		// ===== simpan field tambahan jika kolom tersedia (biar tidak error sebelum ALTER TABLE) =====
-		if (!$is_internal) {
-			if ($pricing_mode === 'PER_PESERTA') {
-				if ($this->db->field_exists('total_peserta', 'pemesanan') || $this->db->field_exists('TOTAL_PESERTA', 'pemesanan')) {
-					$data['TOTAL_PESERTA'] = (int)$total_peserta_final;
-				}
-			} else if ($pricing_mode === 'PODCAST_PER_JAM') {
-				if ($this->db->field_exists('podcast_type', 'pemesanan') || $this->db->field_exists('PODCAST_TYPE', 'pemesanan')) {
-					$data['PODCAST_TYPE'] = (string)$podcast_type_final;
-				}
-			}
-		}
-
-		$id_pemesanan = $this->gedung_model->insert_pemesanan($data);
-
-		if ($id_pemesanan === false) {
-			$row = $this->db->get_where('pemesanan', array('REQUEST_ID' => $request_id))->row_array();
-			if (!empty($row)) {
-				redirect('home/confirm-order/' . (int) $row['ID_PEMESANAN']);
-				return;
-			}
-			show_error('Gagal membuat pemesanan. Silakan coba lagi.');
-			return;
-		}
-
-		redirect('home/confirm-order/' . (int) $id_pemesanan);
-	}
 
 
 	public function edit_data($user = null)

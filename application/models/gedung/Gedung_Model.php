@@ -462,23 +462,48 @@ TIME_FORMAT(
 
 
 
-	public function check_date($tanggal, $id_gedung, $jam_mulai, $jam_selesai)
+	public function check_date($tanggal, $id_gedung, $jam_mulai, $jam_selesai, $exclude_id = 0)
 	{
-		// status yang dianggap "aktif" (silakan sesuaikan mappingmu)
-		// contoh: 0=draft, 1=submitted, 2=process, 3=confirmed
 		$aktif = array(0, 1, 2, 3);
+
 		$this->db->from('pemesanan');
 		$this->db->where('ID_GEDUNG', (int)$id_gedung);
 		$this->db->where('TANGGAL_PEMESANAN', $tanggal);
 		$this->db->where_in('STATUS', $aktif);
 
-		// OVERLAP RULE: existing_start < new_end AND existing_end > new_start
+		if ((int)$exclude_id > 0) {
+			$this->db->where('ID_PEMESANAN !=', (int)$exclude_id);
+		}
+
 		$this->db->where('JAM_PEMESANAN <', $jam_selesai);
 		$this->db->where('JAM_SELESAI >', $jam_mulai);
 
-		return $this->db->count_all_results(); // >0 berarti bentrok
+		return $this->db->count_all_results();
 	}
 
+	/**
+	 * Get user's latest pending booking for a specific gedung
+	 * Used to exclude user's own booking when checking for conflicts on re-submission
+	 * 
+	 * @param string $username User's username
+	 * @param int $id_gedung Gedung ID
+	 * @return int|null ID_PEMESANAN of latest pending booking, or null if none exists
+	 */
+	public function get_user_latest_pending_booking($username, $id_gedung)
+	{
+		$this->db->select('ID_PEMESANAN');
+		$this->db->from('pemesanan');
+		$this->db->where('USERNAME', $username);
+		$this->db->where('ID_GEDUNG', (int)$id_gedung);
+		// STATUS 0 = pending, 1 = process - both are considered "draft" bookings
+		$this->db->where_in('STATUS', array(0, 1));
+		$this->db->order_by('ID_PEMESANAN', 'DESC');
+		$this->db->limit(1);
+
+		$row = $this->db->get()->row();
+
+		return $row ? (int)$row->ID_PEMESANAN : null;
+	}
 
 	public function get_email_address($username)
 	{

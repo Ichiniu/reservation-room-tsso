@@ -1,7 +1,20 @@
 <?php
 $session_id = $this->session->userdata('username');
 $this->load->helper('text');
-$id_gedung = $this->uri->segment(3);
+
+// ✅ Extract ID_GEDUNG with multiple fallback sources
+$id_gedung = 0;
+if (isset($res[0]['ID_GEDUNG'])) {
+    $id_gedung = (int)$res[0]['ID_GEDUNG'];
+} elseif (isset($hasil[0]['ID_GEDUNG'])) {
+    $id_gedung = (int)$hasil[0]['ID_GEDUNG'];
+} elseif (isset($_SERVER['REQUEST_URI'])) {
+    // Extract from URL as last resort: /home/order-gedung/123
+    if (preg_match('/order-gedung\/(\d+)/', $_SERVER['REQUEST_URI'], $m)) {
+        $id_gedung = (int)$m[1];
+    }
+}
+
 
 // ✅ opsi pilihan jam dari controller (fallback aman)
 $allowed_tipe_jam = (isset($allowed_tipe_jam) && is_array($allowed_tipe_jam))
@@ -89,8 +102,14 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                     <?php endif; ?>
 
                     <!-- ✅ jangan pakai .prevent agar submit normal -->
-                    <form id="orderFormEl" action="<?php echo site_url('home/order-gedung/validate/' . $id_gedung); ?>"
-                        method="post" class="mt-2" @submit="handleSubmit($event)">
+                    <form id="orderFormEl"
+                        action="<?php echo site_url('home/home/order/' . (int)$id_gedung); ?>"
+                        method="post"
+                        class="mt-2"
+                        @submit="handleSubmit($event)">
+
+
+
 
                         <?php
                         // token stabil per browser
@@ -556,11 +575,13 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                             </p>
 
                             <div class="mt-5 flex items-center justify-end">
-                                <button type="submit" name="submit" id="submit"
+                                <button type="submit" id="submit"
                                     class="inline-flex items-center justify-center rounded-lg bg-blue-700 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-800 active:bg-blue-900">
                                     Lanjutkan
                                 </button>
+
                             </div>
+
                         </div>
 
                     </form>
