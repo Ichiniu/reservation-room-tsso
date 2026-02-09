@@ -39,9 +39,6 @@ $this->load->helper('text');
                     <h1 class="mt-3 text-2xl md:text-3xl font-extrabold tracking-tight">
                         Jadwal Penggunaan Ruangan
                     </h1>
-                    <!-- <p class="mt-2 text-sm md:text-base text-slate-600">
-                        Menampilkan jadwal dari hari ini dan seterusnya. Gunakan filter untuk bulan & tahun.
-                    </p> -->
                 </div>
 
                 <div class="flex items-center gap-3">
@@ -57,24 +54,24 @@ $this->load->helper('text');
         <!-- CARD CONTENT -->
         <section class="bg-white rounded-3xl border border-slate-200 shadow-xl p-6">
 
-            <!-- FILTER -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
+            <!-- FILTER (✅ tambah filter ruangan) -->
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-5">
                 <div class="space-y-1">
                     <label class="text-xs font-semibold text-slate-700">Bulan</label>
                     <div class="relative">
                         <span
                             class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base">date_range</span>
                         <select id="filterBulan" class="w-full rounded-2xl border border-slate-200 bg-white pl-10 pr-4 py-3 text-sm outline-none
-                     focus:ring-4 focus:ring-sky-100 focus:border-sky-300">
+                            focus:ring-4 focus:ring-sky-100 focus:border-sky-300">
                             <option value="">Semua Bulan</option>
                             <?php
-              $bulan = array(
-                '01' => 'Januari','02' => 'Februari','03' => 'Maret','04' => 'April',
-                '05' => 'Mei','06' => 'Juni','07' => 'Juli','08' => 'Agustus',
-                '09' => 'September','10' => 'Oktober','11' => 'November','12' => 'Desember'
-              );
-              foreach ($bulan as $k => $v) echo "<option value='$k'>$v</option>";
-              ?>
+                                $bulan = array(
+                                    '01' => 'Januari','02' => 'Februari','03' => 'Maret','04' => 'April',
+                                    '05' => 'Mei','06' => 'Juni','07' => 'Juli','08' => 'Agustus',
+                                    '09' => 'September','10' => 'Oktober','11' => 'November','12' => 'Desember'
+                                );
+                                foreach ($bulan as $k => $v) echo "<option value='$k'>$v</option>";
+                            ?>
                         </select>
                     </div>
                 </div>
@@ -85,7 +82,7 @@ $this->load->helper('text');
                         <span
                             class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base">calendar_today</span>
                         <select id="filterTahun" class="w-full rounded-2xl border border-slate-200 bg-white pl-10 pr-4 py-3 text-sm outline-none
-                     focus:ring-4 focus:ring-sky-100 focus:border-sky-300">
+                            focus:ring-4 focus:ring-sky-100 focus:border-sky-300">
                             <option value="">Semua Tahun</option>
                             <?php for ($y = date('Y') - 3; $y <= date('Y') + 1; $y++): ?>
                             <option value="<?= $y ?>"><?= $y ?></option>
@@ -94,9 +91,23 @@ $this->load->helper('text');
                     </div>
                 </div>
 
+                <!-- ✅ FILTER RUANGAN -->
+                <div class="space-y-1">
+                    <label class="text-xs font-semibold text-slate-700">Ruangan</label>
+                    <div class="relative">
+                        <span
+                            class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base">meeting_room</span>
+                        <select id="filterRuangan" class="w-full rounded-2xl border border-slate-200 bg-white pl-10 pr-4 py-3 text-sm outline-none
+                            focus:ring-4 focus:ring-sky-100 focus:border-sky-300">
+                            <option value="">Semua Ruangan</option>
+                            <!-- option akan diisi via JS dari data tabel -->
+                        </select>
+                    </div>
+                </div>
+
                 <div class="flex items-end">
                     <button type="button" onclick="resetFilter()" class="w-full inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-semibold
-                   bg-slate-900 text-white hover:bg-slate-800 active:scale-[0.99] transition shadow-sm">
+                        bg-slate-900 text-white hover:bg-slate-800 active:scale-[0.99] transition shadow-sm">
                         <span class="material-icons text-base">restart_alt</span>
                         Reset
                     </button>
@@ -119,7 +130,7 @@ $this->load->helper('text');
                 </div>
             </div>
 
-            <!-- TABLE WRAP (sticky header via tailwind) -->
+            <!-- TABLE WRAP -->
             <div class="rounded-2xl border border-slate-200 overflow-hidden">
                 <div class="max-h-[420px] overflow-auto">
                     <table class="min-w-full text-sm">
@@ -135,21 +146,25 @@ $this->load->helper('text');
 
                         <tbody class="divide-y divide-slate-100">
                             <?php
-              $today = date('Y-m-d');
-              $no = 1;
+                            $today = date('Y-m-d');
+                            $no = 1;
 
-              if (!empty($jadwal)):
+                            if (!empty($jadwal)):
 
-                $jadwal_filtered = array_values(array_filter($jadwal, function ($row) use ($today) {
-                  $tgl = date('Y-m-d', strtotime($row['TANGGAL_FINAL_PEMESANAN']));
-                  return $tgl >= $today;
-                }));
+                                $jadwal_filtered = array_values(array_filter($jadwal, function ($row) use ($today) {
+                                    $tgl = date('Y-m-d', strtotime($row['TANGGAL_FINAL_PEMESANAN']));
+                                    return $tgl >= $today;
+                                }));
 
-                if (!empty($jadwal_filtered)):
-                  foreach ($jadwal_filtered as $row):
-                    $tglFinal = date('Y-m-d', strtotime($row['TANGGAL_FINAL_PEMESANAN']));
-              ?>
-                            <tr data-date="<?= $tglFinal ?>" class="hover:bg-slate-50 transition">
+                                if (!empty($jadwal_filtered)):
+                                    foreach ($jadwal_filtered as $row):
+                                        $tglFinal = date('Y-m-d', strtotime($row['TANGGAL_FINAL_PEMESANAN']));
+                                        $ruang = isset($row['NAMA_GEDUNG']) ? $row['NAMA_GEDUNG'] : '';
+                            ?>
+                            <!-- ✅ tambahkan data-room untuk filter ruangan -->
+                            <tr data-date="<?= $tglFinal ?>"
+                                data-room="<?= htmlspecialchars($ruang, ENT_QUOTES, 'UTF-8') ?>"
+                                class="hover:bg-slate-50 transition">
                                 <td class="px-4 py-3">
                                     <span
                                         class="inline-flex items-center text-center justify-center h-7 min-w-[28px] px-2 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
@@ -188,9 +203,9 @@ $this->load->helper('text');
                                 </td>
                             </tr>
                             <?php
-                  endforeach;
-                else:
-              ?>
+                                    endforeach;
+                                else:
+                            ?>
                             <tr>
                                 <td colspan="5" class="text-center py-10 text-slate-600">
                                     <div
@@ -201,10 +216,10 @@ $this->load->helper('text');
                                 </td>
                             </tr>
                             <?php
-                endif;
+                                endif;
 
-              else:
-              ?>
+                            else:
+                            ?>
                             <tr>
                                 <td colspan="5" class="text-center py-10 text-slate-600">
                                     <div
@@ -223,7 +238,7 @@ $this->load->helper('text');
             <!-- PAGINATION -->
             <div class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <button id="prevBtn" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-2xl border border-slate-200 bg-white
-                 hover:bg-slate-50 active:scale-[0.99] transition disabled:opacity-50 disabled:cursor-not-allowed">
+                    hover:bg-slate-50 active:scale-[0.99] transition disabled:opacity-50 disabled:cursor-not-allowed">
                     <span class="material-icons text-base">chevron_left</span>
                     Prev
                 </button>
@@ -235,15 +250,16 @@ $this->load->helper('text');
                         <span
                             class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base">table_rows</span>
                         <select id="rowsPerPage" class="border border-slate-200 bg-white rounded-2xl pl-10 pr-3 py-2 text-sm outline-none
-                     focus:ring-4 focus:ring-sky-100 focus:border-sky-300">
+                            focus:ring-4 focus:ring-sky-100 focus:border-sky-300">
                             <option value="5">5 rows</option>
                             <option value="10" selected>10 rows</option>
                             <option value="25">25 rows</option>
                         </select>
                     </div>
 
-                    <button id="nextBtn" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-2xl border border-slate-200 bg-white
-                   hover:bg-slate-50 active:scale-[0.99] transition disabled:opacity-50 disabled:cursor-not-allowed">
+                    <button id="nextBtn"
+                        class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-2xl border border-slate-200 bg-white
+                        hover:bg-slate-50 active:scale-[0.99] transition disabled:opacity-50 disabled:cursor-not-allowed">
                         Next
                         <span class="material-icons text-base">chevron_right</span>
                     </button>
@@ -257,6 +273,7 @@ $this->load->helper('text');
     var rows = Array.prototype.slice.call(document.querySelectorAll('tbody tr[data-date]'));
     var bulanSelect = document.getElementById('filterBulan');
     var tahunSelect = document.getElementById('filterTahun');
+    var ruanganSelect = document.getElementById('filterRuangan'); // ✅
     var rowsSelect = document.getElementById('rowsPerPage');
     var prevBtn = document.getElementById('prevBtn');
     var nextBtn = document.getElementById('nextBtn');
@@ -266,6 +283,29 @@ $this->load->helper('text');
     var rowsPerPage = parseInt(rowsSelect.value, 10);
     var currentPage = 1;
     var filteredRows = rows.slice();
+
+    // ✅ isi dropdown ruangan dari data tabel (unik, diurutkan)
+    function initRuanganOptions() {
+        var set = {};
+        rows.forEach(function(r) {
+            var room = (r.getAttribute('data-room') || '').trim();
+            if (room) set[room] = true;
+        });
+
+        var rooms = Object.keys(set).sort(function(a, b) {
+            return a.localeCompare(b, 'id');
+        });
+
+        // bersihin option selain default
+        while (ruanganSelect.options.length > 1) ruanganSelect.remove(1);
+
+        rooms.forEach(function(room) {
+            var opt = document.createElement('option');
+            opt.value = room;
+            opt.textContent = room;
+            ruanganSelect.appendChild(opt);
+        });
+    }
 
     function render() {
         for (var i = 0; i < rows.length; i++) rows[i].style.display = 'none';
@@ -291,11 +331,15 @@ $this->load->helper('text');
     function applyFilter() {
         var bulan = bulanSelect.value;
         var tahun = tahunSelect.value;
+        var ruangan = ruanganSelect.value; // ✅
 
         filteredRows = rows.filter(function(r) {
             var d = r.getAttribute('data-date');
+            var room = (r.getAttribute('data-room') || '');
+
             if (bulan && d.indexOf('-' + bulan) === -1) return false;
             if (tahun && d.indexOf(tahun) !== 0) return false;
+            if (ruangan && room !== ruangan) return false; // ✅ filter ruangan
             return true;
         });
 
@@ -306,6 +350,7 @@ $this->load->helper('text');
     function resetFilter() {
         bulanSelect.value = '';
         tahunSelect.value = '';
+        ruanganSelect.value = ''; // ✅
         filteredRows = rows.slice();
         currentPage = 1;
         render();
@@ -330,6 +375,7 @@ $this->load->helper('text');
 
     bulanSelect.onchange = applyFilter;
     tahunSelect.onchange = applyFilter;
+    ruanganSelect.onchange = applyFilter; // ✅
 
     rowsSelect.onchange = function() {
         rowsPerPage = parseInt(rowsSelect.value, 10);
@@ -338,6 +384,7 @@ $this->load->helper('text');
     };
 
     // init
+    initRuanganOptions();
     render();
     </script>
 
