@@ -15,7 +15,6 @@ if (isset($res[0]['ID_GEDUNG'])) {
     }
 }
 
-
 // ✅ opsi pilihan jam dari controller (fallback aman)
 $allowed_tipe_jam = (isset($allowed_tipe_jam) && is_array($allowed_tipe_jam))
     ? $allowed_tipe_jam
@@ -96,20 +95,13 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
 
                 <div class="p-5 sm:p-6">
                     <?php if ($this->session->flashdata('error')): ?>
-                        <div class="p-3 mb-4 rounded bg-red-100 text-red-700">
-                            <?php echo $this->session->flashdata('error'); ?>
-                        </div>
+                    <div class="p-3 mb-4 rounded bg-red-100 text-red-700">
+                        <?php echo $this->session->flashdata('error'); ?>
+                    </div>
                     <?php endif; ?>
 
-                    <!-- ✅ jangan pakai .prevent agar submit normal -->
-                    <form id="orderFormEl"
-                        action="<?php echo site_url('home/home/order/' . (int)$id_gedung); ?>"
-                        method="post"
-                        class="mt-2"
-                        @submit="handleSubmit($event)">
-
-
-
+                    <form id="orderFormEl" action="<?php echo site_url('home/home/order/' . (int)$id_gedung); ?>"
+                        method="post" class="mt-2" @submit="handleSubmit($event)">
 
                         <?php
                         // token stabil per browser
@@ -142,119 +134,44 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                     RUANGAN</label>
                                 <div class="mt-2 text-sm font-semibold text-slate-900">
                                     <?php foreach ($hasil as $gedung): ?>
-                                        <?php echo htmlspecialchars($gedung['NAMA_GEDUNG'], ENT_QUOTES, 'UTF-8'); ?>
+                                    <?php echo htmlspecialchars($gedung['NAMA_GEDUNG'], ENT_QUOTES, 'UTF-8'); ?>
                                     <?php endforeach; ?>
                                 </div>
                             </div>
 
-                            <!-- Tanggal -->
+                            <!-- ✅ TANGGAL (FIX BUTTON CALENDAR) -->
                             <div class="rounded-xl border border-slate-300 bg-white p-5 ring-1 ring-slate-200">
                                 <label class="block text-xs font-semibold tracking-widest text-slate-500">
                                     TANGGAL PEMESANAN
                                 </label>
 
-                                <!-- Hidden input for form submission -->
-                                <input type="hidden" name="tgl_pesan" id="tgl_pesan"
-                                    :value="selectedDate" required>
+                                <!-- input date asli (untuk submit) dibuat 1px dan tidak menutup UI -->
+                                <input type="date" name="tgl_pesan" id="tgl_pesan" x-ref="tglDate"
+                                    min="<?php echo htmlspecialchars($min_pesan, ENT_QUOTES, 'UTF-8'); ?>" required
+                                    @change="setTanggalDisplay($event.target.value); onDatePicked($event.target.value)"
+                                    class="absolute w-px h-px opacity-0 -z-10" />
 
-                                <!-- Custom Calendar Component -->
-                                <div class="mt-3" x-data="customCalendar()">
-                                    <!-- Selected Date Display -->
-                                    <div class="mb-3 p-3 rounded-lg bg-slate-50 border border-slate-200">
-                                        <div class="text-sm text-slate-600">Tanggal dipilih:</div>
-                                        <div class="text-base font-semibold text-slate-900" x-text="formatDisplayDate()"></div>
-                                    </div>
+                                <!-- input display + tombol kalender -->
+                                <div class="mt-2 relative">
+                                    <input type="text" id="tgl_pesan_display" x-model="tglDisplay" readonly
+                                        placeholder="Pilih tanggal" @click="openDatePicker()"
+                                        class="w-full rounded-xl bg-white border border-slate-300 px-4 py-3 pr-12 text-slate-900 cursor-pointer
+                                        focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40" />
 
-                                    <!-- Calendar Container -->
-                                    <div class="rounded-lg border border-slate-200 bg-white p-3">
-                                        <!-- Calendar Header with Dropdowns -->
-                                        <div class="flex items-center justify-between gap-2 mb-3">
-                                            <button type="button" @click="previousMonth()"
-                                                class="p-2 hover:bg-slate-100 rounded-md transition-colors">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                                                </svg>
-                                            </button>
-
-                                            <div class="flex gap-2">
-                                                <!-- Month Dropdown -->
-                                                <select x-model="viewMonth" @change="renderCalendar()"
-                                                    class="px-2 py-1 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                                    <option value="0">Januari</option>
-                                                    <option value="1">Februari</option>
-                                                    <option value="2">Maret</option>
-                                                    <option value="3">April</option>
-                                                    <option value="4">Mei</option>
-                                                    <option value="5">Juni</option>
-                                                    <option value="6">Juli</option>
-                                                    <option value="7">Agustus</option>
-                                                    <option value="8">September</option>
-                                                    <option value="9">Oktober</option>
-                                                    <option value="10">November</option>
-                                                    <option value="11">Desember</option>
-                                                </select>
-
-                                                <!-- Year Dropdown -->
-                                                <select x-model="viewYear" @change="renderCalendar()"
-                                                    class="px-2 py-1 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                                    <template x-for="year in yearOptions" :key="year">
-                                                        <option :value="year" x-text="year"></option>
-                                                    </template>
-                                                </select>
-                                            </div>
-
-                                            <button type="button" @click="nextMonth()"
-                                                class="p-2 hover:bg-slate-100 rounded-md transition-colors">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                                                </svg>
-                                            </button>
-                                        </div>
-
-                                        <!-- Weekday Headers -->
-                                        <div class="grid grid-cols-7 gap-1 mb-2">
-                                            <div class="text-center text-xs font-medium text-slate-500 py-2">Su</div>
-                                            <div class="text-center text-xs font-medium text-slate-500 py-2">Mo</div>
-                                            <div class="text-center text-xs font-medium text-slate-500 py-2">Tu</div>
-                                            <div class="text-center text-xs font-medium text-slate-500 py-2">We</div>
-                                            <div class="text-center text-xs font-medium text-slate-500 py-2">Th</div>
-                                            <div class="text-center text-xs font-medium text-slate-500 py-2">Fr</div>
-                                            <div class="text-center text-xs font-medium text-slate-500 py-2">Sa</div>
-                                        </div>
-
-                                        <!-- Calendar Grid -->
-                                        <div class="grid grid-cols-7 gap-1">
-                                            <template x-for="(day, index) in calendarDays" :key="index">
-                                                <button type="button"
-                                                    @click="selectDate(day)"
-                                                    :disabled="!day.isCurrentMonth || day.isPast || day.isWeekend"
-                                                    :class="{
-                                                        'bg-slate-900 text-white hover:bg-slate-800': day.isSelected,
-                                                        'hover:bg-slate-100': day.isCurrentMonth && !day.isPast && !day.isWeekend && !day.isSelected,
-                                                        'text-slate-300 cursor-not-allowed': !day.isCurrentMonth || day.isPast,
-                                                        'text-red-300 cursor-not-allowed line-through': day.isWeekend && day.isCurrentMonth,
-                                                        'text-slate-900': day.isCurrentMonth && !day.isPast && !day.isWeekend && !day.isSelected,
-                                                        'font-semibold': day.isToday
-                                                    }"
-                                                    class="aspect-square flex items-center justify-center text-sm rounded-md transition-colors">
-                                                    <span x-text="day.date"></span>
-                                                </button>
-                                            </template>
-                                        </div>
-
-                                        <!-- Legend -->
-                                        <div class="mt-3 pt-3 border-t border-slate-200 text-xs text-slate-500 space-y-1">
-                                            <div class="flex items-center gap-2">
-                                                <div class="w-3 h-3 bg-slate-900 rounded"></div>
-                                                <span>Tanggal dipilih</span>
-                                            </div>
-                                            <div class="flex items-center gap-2">
-                                                <div class="w-3 h-3 bg-red-100 rounded line-through"></div>
-                                                <span>Weekend (tidak tersedia)</span>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <button type="button" @click="openDatePicker()" class="absolute right-3 top-1/2 -translate-y-1/2 inline-flex items-center justify-center
+                                        h-9 w-9 rounded-lg hover:bg-slate-100 text-slate-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                                        </svg>
+                                    </button>
                                 </div>
+
+                                <!-- ✅ baris "📅 13 Februari 2026" DIHILANGKAN -->
 
                                 <small class="mt-2 block text-xs text-slate-500">
                                     *<?php echo htmlspecialchars($min_text, ENT_QUOTES, 'UTF-8'); ?>*
@@ -281,17 +198,15 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                             <div class="flex items-center gap-3">
                                                 <div class="text-sm font-bold whitespace-nowrap"
                                                     x-text="it.JAM_MULAI + ' - ' + it.JAM_SELESAI"></div>
-
-                                                <div class="text-ms text-slate-600 text-right font-semibold truncate"
+                                                <div class="text-sm text-slate-600 text-right font-semibold truncate"
                                                     x-text="'(' + it.DESKRIPSI_ACARA + ')'"></div>
                                             </div>
-
                                         </div>
                                     </template>
                                 </div>
                             </div>
 
-                            <!-- ✅ PILIHAN JAM (WHEEL dari script lama) -->
+                            <!-- ✅ PILIHAN JAM -->
                             <div class="rounded-xl border border-slate-300 bg-white p-5 ring-1 ring-slate-200 relative">
                                 <label class="block text-xs font-semibold tracking-widest text-slate-500">PILIHAN
                                     JAM</label>
@@ -308,9 +223,9 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                     );
                                     ?>
                                     <?php foreach ($allowed_tipe_jam as $opt): ?>
-                                        <option value="<?php echo htmlspecialchars($opt, ENT_QUOTES, 'UTF-8'); ?>">
-                                            <?php echo htmlspecialchars(isset($labels_tipe_jam[$opt]) ? $labels_tipe_jam[$opt] : $opt, ENT_QUOTES, 'UTF-8'); ?>
-                                        </option>
+                                    <option value="<?php echo htmlspecialchars($opt, ENT_QUOTES, 'UTF-8'); ?>">
+                                        <?php echo htmlspecialchars(isset($labels_tipe_jam[$opt]) ? $labels_tipe_jam[$opt] : $opt, ENT_QUOTES, 'UTF-8'); ?>
+                                    </option>
                                     <?php endforeach; ?>
                                 </select>
 
@@ -353,7 +268,6 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                     </div>
                                 </div>
 
-                                <!-- fallback non-custom (tetap kirim time input tersembunyi) -->
                                 <template x-if="!isCustom">
                                     <div class="hidden">
                                         <input type="time" name="jam_pesan" x-model="jamMulai">
@@ -361,7 +275,7 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                     </div>
                                 </template>
 
-                                <!-- MODAL WHEEL (FULL Tailwind) -->
+                                <!-- MODAL WHEEL -->
                                 <div x-show="wheelOpen" x-transition
                                     class="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
                                     <div class="absolute inset-0 bg-black/40" @click="closeWheel()"></div>
@@ -382,21 +296,17 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                         <div class="p-5">
                                             <div
                                                 class="relative rounded-2xl border border-slate-200 bg-white overflow-hidden">
-                                                <!-- fade -->
                                                 <div
                                                     class="pointer-events-none absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-white via-white/70 to-transparent">
                                                 </div>
                                                 <div
                                                     class="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white via-white/70 to-transparent">
                                                 </div>
-
-                                                <!-- highlight center -->
                                                 <div
                                                     class="pointer-events-none absolute left-0 right-0 top-1/2 -translate-y-1/2 h-12 border-y border-slate-300/80">
                                                 </div>
 
                                                 <div class="grid grid-cols-[1fr_auto_1fr] items-center">
-                                                    <!-- hours -->
                                                     <div class="relative">
                                                         <div x-ref="wheelHours" @scroll.passive="onWheelScroll('hours')"
                                                             class="h-60 overflow-y-auto [scroll-snap-type:y_mandatory] [scrollbar-width:none]"
@@ -411,7 +321,6 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
 
                                                     <div class="px-3 text-3xl font-bold text-slate-900">:</div>
 
-                                                    <!-- minutes -->
                                                     <div class="relative">
                                                         <div x-ref="wheelMinutes"
                                                             @scroll.passive="onWheelScroll('minutes')"
@@ -447,29 +356,14 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                         </div>
                                     </div>
                                 </div>
-                                <!-- END MODAL -->
                             </div>
 
-                            <!-- Info Tambahan (EKSTERNAL tertentu) -->
-                            <div x-show="showPeserta" x-transition
-                                class="rounded-xl border border-slate-300 bg-white p-5 ring-1 ring-slate-200">
-                                <label class="block text-xs font-semibold tracking-widest text-slate-500">TOTAL
-                                    PESERTA</label>
-                                <input type="number" name="total_peserta" x-model="totalPeserta" min="1" step="1"
-                                    :required="showPeserta" placeholder="Masukkan jumlah peserta"
-                                    class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400
-                                    focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40" />
-                                <p class="mt-2 text-xs text-slate-500">
-                                    *Khusus user eksternal untuk Meeting Room &amp; Amphitheater (harga dihitung per peserta).*
-                                </p>
-                            </div>
-
+                            <!-- Podcast -->
                             <div x-show="showPodcast" x-transition
                                 class="rounded-xl border border-slate-300 bg-white p-5 ring-1 ring-slate-200">
                                 <label class="block text-xs font-semibold tracking-widest text-slate-500">JENIS
                                     PODCAST</label>
-                                <select name="podcast_type" x-model="podcastType" :required="showPodcast"
-                                    class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
+                                <select name="podcast_type" x-model="podcastType" :required="showPodcast" class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
                                     focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40">
                                     <option value="">Pilih Jenis</option>
                                     <option value="AUDIO">Audio Podcast</option>
@@ -485,14 +379,28 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                 <span x-text="extraError"></span>
                             </div>
 
-                            <!-- Email -->
-                            <div
-                                class="rounded-xl border border-slate-300 bg-white p-5 ring-1 ring-slate-200 lg:col-span-2">
+                            <!-- EMAIL -->
+                            <div class="rounded-xl border border-slate-300 bg-white p-5 ring-1 ring-slate-200"
+                                :class="showPeserta ? '' : 'lg:col-span-2'">
                                 <label class="block text-xs font-semibold tracking-widest text-slate-500">EMAIL</label>
                                 <input type="email" name="email"
                                     value="<?php echo htmlspecialchars($email->EMAIL, ENT_QUOTES, 'UTF-8'); ?>" required
                                     class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
                                     focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40" />
+                            </div>
+
+                            <!-- TOTAL PESERTA -->
+                            <div x-show="showPeserta" x-transition
+                                class="rounded-xl border border-slate-300 bg-white p-5 ring-1 ring-slate-200">
+                                <label class="block text-xs font-semibold tracking-widest text-slate-500">TOTAL
+                                    PESERTA</label>
+                                <input type="number" name="total_peserta" x-model="totalPeserta" min="1" step="1"
+                                    :required="showPeserta" placeholder="Masukkan jumlah peserta" class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400
+                                    focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40" />
+                                <p class="mt-2 text-xs text-slate-500">
+                                    *Khusus user eksternal untuk Meeting Room &amp; Amphitheater (harga dihitung per
+                                    peserta).*
+                                </p>
                             </div>
 
                             <!-- Catering -->
@@ -550,9 +458,9 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                     ?>
 
                                     <?php foreach ($groups as $jenis => $items): ?>
-                                        <optgroup label="<?php echo htmlspecialchars($jenis, ENT_QUOTES, 'UTF-8'); ?>">
-                                            <?php foreach ($items as $row): ?>
-                                                <?php
+                                    <optgroup label="<?php echo htmlspecialchars($jenis, ENT_QUOTES, 'UTF-8'); ?>">
+                                        <?php foreach ($items as $row): ?>
+                                        <?php
                                                 $id      = (int)$row['ID_CATERING'];
                                                 $nama    = isset($row['NAMA_PAKET']) ? $row['NAMA_PAKET'] : '';
                                                 $harga   = isset($row['HARGA']) ? (int)$row['HARGA'] : 0;
@@ -562,16 +470,16 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                                 $menujson = isset($row['MENU_JSON']) ? trim($row['MENU_JSON']) : '';
                                                 $menujson_attr = str_replace(array("\r", "\n"), ' ', $menujson);
                                                 ?>
-                                                <option value="<?php echo $id; ?>" data-harga="<?php echo $harga; ?>"
-                                                    data-minpax="<?php echo $minp; ?>"
-                                                    data-nama="<?php echo htmlspecialchars($nama, ENT_QUOTES, 'UTF-8'); ?>"
-                                                    data-menujson="<?php echo htmlspecialchars($menujson_attr, ENT_QUOTES, 'UTF-8'); ?>">
-                                                    <?php echo htmlspecialchars($nama, ENT_QUOTES, 'UTF-8'); ?>
-                                                    — Rp <?php echo number_format($harga, 0, ',', '.'); ?>/pax (min
-                                                    <?php echo $minp; ?>)
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </optgroup>
+                                        <option value="<?php echo $id; ?>" data-harga="<?php echo $harga; ?>"
+                                            data-minpax="<?php echo $minp; ?>"
+                                            data-nama="<?php echo htmlspecialchars($nama, ENT_QUOTES, 'UTF-8'); ?>"
+                                            data-menujson="<?php echo htmlspecialchars($menujson_attr, ENT_QUOTES, 'UTF-8'); ?>">
+                                            <?php echo htmlspecialchars($nama, ENT_QUOTES, 'UTF-8'); ?>
+                                            — Rp <?php echo number_format($harga, 0, ',', '.'); ?>/pax (min
+                                            <?php echo $minp; ?>)
+                                        </option>
+                                        <?php endforeach; ?>
+                                    </optgroup>
                                     <?php endforeach; ?>
                                 </select>
 
@@ -636,7 +544,6 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                     </div>
                                 </div>
 
-                                <!-- Info ringkas -->
                                 <div x-show="cateringEnabled && selectedHarga > 0"
                                     class="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm">
                                     <div class="font-semibold text-slate-900" x-text="selectedNama"></div>
@@ -672,9 +579,7 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                     class="inline-flex items-center justify-center rounded-lg bg-blue-700 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-800 active:bg-blue-900">
                                     Lanjutkan
                                 </button>
-
                             </div>
-
                         </div>
 
                     </form>
@@ -686,626 +591,505 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
     <?php $this->load->view('components/footer'); ?>
 
     <script>
-        // FORMAT TANGGAL INDONESIA
-        document.addEventListener('DOMContentLoaded', function() {
-            const tglInput = document.getElementById('tgl_pesan');
-            const tglFormatId = document.getElementById('tgl-format-id');
-            const tglText = document.getElementById('tgl-text');
+    function orderForm() {
+        return {
+            // ==== state umum ====
+            isInternal: <?php echo json_encode(!empty($is_internal_view)); ?>,
+            pricingMode: <?php echo json_encode($pricing_mode_view); ?>,
+            totalPeserta: '',
+            podcastType: '',
+            extraError: '',
+            catering: 'tidak',
+            tipeJam: <?php echo json_encode($default_tipe_jam); ?>,
+            allowedTipeJam: <?php echo json_encode(array_values($allowed_tipe_jam)); ?>,
+            defaultTipeJam: <?php echo json_encode($default_tipe_jam); ?>,
 
-            function formatTanggalIndonesia(dateStr) {
-                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus',
-                    'September', 'Oktober', 'November', 'Desember'
+            // ✅ display tanggal Indonesia
+            tglDisplay: '',
+
+            RULES: {
+                HALF_DAY_PAGI: {
+                    start: '08:00',
+                    end: '12:00',
+                    label: 'HALF DAY (08:00 - 12:00)'
+                },
+                HALF_DAY_SIANG: {
+                    start: '13:00',
+                    end: '16:00',
+                    label: 'HALF DAY (13:00 - 16:00)'
+                },
+                FULL_DAY: {
+                    start: '08:00',
+                    end: '17:00',
+                    label: 'FULL DAY (08:00 - 17:00)'
+                }
+            },
+
+            jamMulai: '',
+            jamSelesai: '',
+            profileOpen: false,
+            customError: '',
+
+            // ==== jadwal by date ====
+            jadwalLoading: false,
+            jadwalError: '',
+            jadwalItems: [],
+
+            // ==== WHEEL ====
+            wheelOpen: false,
+            wheelTarget: 'start',
+            hours: [],
+            minutes: [],
+            selectedHour: '08',
+            selectedMinute: '00',
+            itemHeight: 40,
+            _scrollRAF: null,
+            _scrollTimer: null,
+
+            // ==== catering state ====
+            categories: [],
+            addons: [],
+            selectedHarga: 0,
+            selectedMinPax: 1,
+            selectedNama: '',
+            jumlahPorsi: '',
+
+            get cateringEnabled() {
+                return this.catering === 'ya';
+            },
+            get isCustom() {
+                return this.tipeJam === 'CUSTOM';
+            },
+            get showPeserta() {
+                return !this.isInternal && this.pricingMode === 'PER_PESERTA';
+            },
+            get showPodcast() {
+                return !this.isInternal && this.pricingMode === 'PODCAST_PER_JAM';
+            },
+
+            // ✅ format tanggal Indonesia
+            formatTanggalIndonesia(dateStr) {
+                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September',
+                    'Oktober', 'November', 'Desember'
                 ];
-                const parts = dateStr.split('-');
+                const parts = String(dateStr || '').split('-');
                 if (parts.length !== 3) return '';
-                const year = parts[0];
-                const month = parseInt(parts[1], 10) - 1;
-                const day = parseInt(parts[2], 10);
-                return day + ' ' + months[month] + ' ' + year;
-            }
+                const y = parts[0];
+                const m = parseInt(parts[1], 10) - 1;
+                const d = parseInt(parts[2], 10);
+                if (isNaN(d) || isNaN(m) || m < 0 || m > 11) return '';
+                return d + ' ' + months[m] + ' ' + y;
+            },
 
-            tglInput.addEventListener('change', function() {
-                const formatted = formatTanggalIndonesia(tglInput.value);
-                if (formatted) {
-                    tglText.textContent = formatted;
-                    tglFormatId.classList.remove('hidden');
-                } else {
-                    tglFormatId.classList.add('hidden');
-                }
-            });
+            setTanggalDisplay(dateStr) {
+                this.tglDisplay = dateStr ? this.formatTanggalIndonesia(dateStr) : '';
+                const el = this.$refs.tglDate;
+                if (el && el.value !== dateStr) el.value = dateStr || '';
+            },
 
-            if (tglInput.value) {
-                const formatted = formatTanggalIndonesia(tglInput.value);
-                if (formatted) {
-                    tglText.textContent = formatted;
-                    tglFormatId.classList.remove('hidden');
-                }
-            }
-        });
+            // ✅ tombol kalender FIX
+            openDatePicker() {
+                const el = this.$refs.tglDate || document.getElementById('tgl_pesan');
+                if (!el) return;
 
-        function orderForm() {
-            return {
-                // ==== state umum ====
-                isInternal: <?php echo json_encode(!empty($is_internal_view)); ?>,
-                pricingMode: <?php echo json_encode($pricing_mode_view); ?>,
-                totalPeserta: '',
-                podcastType: '',
-                extraError: '',
-                catering: 'tidak',
-                selectedDate: '', // <--- NEW: to store value from custom calendar
-                tipeJam: <?php echo json_encode($default_tipe_jam); ?>,
-                allowedTipeJam: <?php echo json_encode(array_values($allowed_tipe_jam)); ?>,
-                defaultTipeJam: <?php echo json_encode($default_tipe_jam); ?>,
-                RULES: {
-                    HALF_DAY_PAGI: {
-                        start: '08:00',
-                        end: '12:00',
-                        label: 'HALF DAY (08:00 - 12:00)'
-                    },
-                    HALF_DAY_SIANG: {
-                        start: '13:00',
-                        end: '16:00',
-                        label: 'HALF DAY (13:00 - 16:00)'
-                    },
-                    FULL_DAY: {
-                        start: '08:00',
-                        end: '17:00',
-                        label: 'FULL DAY (08:00 - 17:00)'
+                // pastikan fokus dulu
+                el.focus({
+                    preventScroll: true
+                });
+
+                // Chrome/Edge support showPicker()
+                try {
+                    if (typeof el.showPicker === 'function') {
+                        el.showPicker();
+                        return;
                     }
-                },
+                } catch (e) {}
 
-                jamMulai: '',
-                jamSelesai: '',
-                profileOpen: false,
-                customError: '',
+                // fallback: trigger click (beberapa browser akan buka date picker)
+                try {
+                    el.click();
+                } catch (e) {}
+            },
 
-                // ==== jadwal by date ====
-                jadwalLoading: false,
-                jadwalError: '',
-                jadwalItems: [],
+            init() {
+                // build hours 00-23
+                this.hours = [];
+                for (let h = 0; h < 24; h++) this.hours.push(String(h).padStart(2, '0'));
 
-                // ==== WHEEL (anti-loncat) ====
-                wheelOpen: false,
-                wheelTarget: 'start',
-                hours: [],
-                minutes: [],
-                selectedHour: '08',
-                selectedMinute: '00',
-                itemHeight: 40,
-                _scrollRAF: null,
-                _scrollTimer: null,
+                // build minutes 00-59
+                this.minutes = [];
+                for (let m = 0; m < 60; m++) this.minutes.push(String(m).padStart(2, '0'));
 
-                // ==== catering state ====
-                categories: [],
-                addons: [],
-                selectedHarga: 0,
-                selectedMinPax: 1,
-                selectedNama: '',
-                jumlahPorsi: '',
+                // guard tipeJam
+                if (this.allowedTipeJam && this.allowedTipeJam.indexOf(this.tipeJam) === -1) {
+                    this.tipeJam = this.defaultTipeJam;
+                }
 
-                get cateringEnabled() {
-                    return this.catering === 'ya';
-                },
-                get isCustom() {
-                    return this.tipeJam === 'CUSTOM';
-                },
+                // set jam default jika bukan CUSTOM
+                if (!this.isCustom) this.applyJam();
 
-                get showPeserta() {
-                    return !this.isInternal && this.pricingMode === 'PER_PESERTA';
-                },
-                get showPodcast() {
-                    return !this.isInternal && this.pricingMode === 'PODCAST_PER_JAM';
-                },
-
-                init() {
-                    // build hours 00-23
-                    this.hours = [];
-                    for (let h = 0; h < 24; h++) this.hours.push(String(h).padStart(2, '0'));
-
-                    // build minutes 00-59
-                    this.minutes = [];
-                    for (let m = 0; m < 60; m++) this.minutes.push(String(m).padStart(2, '0'));
-
-                    // guard tipeJam
-                    if (this.allowedTipeJam && this.allowedTipeJam.indexOf(this.tipeJam) === -1) {
-                        this.tipeJam = this.defaultTipeJam;
-                    }
-
-                    // set jam default jika bukan CUSTOM
+                this.$watch('catering', (v) => {
+                    if (v !== 'ya') this.resetCatering();
+                });
+                this.$watch('tipeJam', () => {
+                    this.customError = '';
                     if (!this.isCustom) this.applyJam();
+                });
 
-                    this.$watch('catering', (v) => {
-                        if (v !== 'ya') this.resetCatering();
-                    });
+                // autofill date -> set display + fetch jadwal (kalau ada value)
+                this.$nextTick(() => {
+                    const tgl = this.$refs.tglDate || document.getElementById('tgl_pesan');
+                    if (tgl && tgl.value) {
+                        this.setTanggalDisplay(tgl.value);
+                        this.onDatePicked(tgl.value);
+                    }
+                });
+            },
 
-                    this.$watch('tipeJam', () => {
-                        this.customError = '';
-                        if (!this.isCustom) this.applyJam();
-                    });
+            // ✅ submit handler
+            handleSubmit(e) {
+                if (!this.validateCustomTime()) {
+                    e.preventDefault();
+                    return;
+                }
 
-                    // autofill date -> fetch jadwal (kalau ada value)
-                    this.$nextTick(() => {
-                        const tgl = document.getElementById('tgl_pesan');
-                        if (tgl && tgl.value) this.onDatePicked(tgl.value);
-                    });
-                },
+                this.extraError = '';
 
-                // ✅ submit handler
-                handleSubmit(e) {
-                    if (!this.validateCustomTime()) {
+                if (this.showPeserta) {
+                    const n = parseInt(this.totalPeserta || '0', 10);
+                    if (!n || n < 1) {
+                        this.extraError = 'Total peserta wajib diisi (minimal 1).';
                         e.preventDefault();
                         return;
                     }
-
-                    // reset error tambahan
-                    this.extraError = '';
-
-                    // ===== validasi tambahan (khusus EKSTERNAL) =====
-                    if (this.showPeserta) {
-                        const n = parseInt(this.totalPeserta || '0', 10);
-                        if (!n || n < 1) {
-                            this.extraError = 'Total peserta wajib diisi (minimal 1).';
-                            e.preventDefault();
-                            return;
-                        }
-                        if (this.tipeJam === 'CUSTOM') {
-                            this.extraError = 'Untuk ruangan ini (eksternal), tipe jam tidak boleh CUSTOM. Pilih HALF/FULL DAY.';
-                            e.preventDefault();
-                            return;
-                        }
-                    }
-
-                    if (this.showPodcast) {
-                        if (!this.podcastType) {
-                            this.extraError = 'Pilih jenis podcast (Audio atau Video).';
-                            e.preventDefault();
-                            return;
-                        }
-                        if (this.tipeJam !== 'CUSTOM') {
-                            this.extraError = 'Studio Podcast (eksternal) wajib memilih tipe jam CUSTOM (per jam).';
-                            e.preventDefault();
-                            return;
-                        }
-                    }
-                    const btn = document.getElementById('submit');
-                    if (btn) {
-                        btn.disabled = true;
-                        btn.style.opacity = '0.7';
-                    }
-                },
-
-                timeToMinutes(t) {
-                    if (!t || !t.includes(':')) return -1;
-                    const p = t.split(':');
-                    const hh = parseInt(p[0], 10);
-                    const mm = parseInt(p[1], 10);
-                    if (isNaN(hh) || isNaN(mm)) return -1;
-                    return (hh * 60) + mm;
-                },
-
-                validateCustomTime() {
-                    this.customError = '';
-                    if (!this.isCustom) return true;
-
-                    if (!this.jamMulai || !this.jamSelesai) {
-                        this.customError = 'Jam mulai dan jam selesai wajib diisi.';
-                        return false;
-                    }
-
-                    const a = this.timeToMinutes(this.jamMulai);
-                    const b = this.timeToMinutes(this.jamSelesai);
-
-                    if (a < 0 || b < 0) {
-                        this.customError = 'Format jam tidak valid. Gunakan HH:MM (24 jam).';
-                        return false;
-                    }
-                    if (b <= a) {
-                        this.customError = 'Jam selesai harus lebih besar dari jam mulai.';
-                        return false;
-                    }
-                    return true;
-                },
-
-                applyJam() {
-                    if (this.allowedTipeJam && this.allowedTipeJam.indexOf(this.tipeJam) === -1) {
-                        this.tipeJam = this.defaultTipeJam;
-                    }
-                    if (this.isCustom) return;
-
-                    const rule = this.RULES[this.tipeJam];
-                    if (!rule) return;
-
-                    this.jamMulai = rule.start;
-                    this.jamSelesai = rule.end;
-                },
-
-                // ✅ fetch jadwal by date
-                async onDatePicked(dateStr) {
-                    this.jadwalError = '';
-                    this.jadwalItems = [];
-                    if (!dateStr) return;
-
-                    // ✅ Check if selected date is weekend (Saturday=6 or Sunday=0)
-                    const selectedDate = new Date(dateStr + 'T00:00:00');
-                    const dayOfWeek = selectedDate.getDay();
-
-                    if (dayOfWeek === 0 || dayOfWeek === 6) {
-                        const dayName = dayOfWeek === 0 ? 'Minggu' : 'Sabtu';
-                        alert(`Maaf, ${dayName} tidak tersedia untuk pemesanan. Silakan pilih hari Senin-Jumat.`);
-                        // Reset date input
-                        const dateInput = document.getElementById('tgl_pesan');
-                        if (dateInput) {
-                            dateInput.value = '';
-                            // Hide formatted date display
-                            const tglFormatDiv = document.getElementById('tgl-format-id');
-                            if (tglFormatDiv) tglFormatDiv.classList.add('hidden');
-                        }
+                    if (this.tipeJam === 'CUSTOM') {
+                        this.extraError =
+                            'Untuk ruangan ini (eksternal), tipe jam tidak boleh CUSTOM. Pilih HALF/FULL DAY.';
+                        e.preventDefault();
                         return;
                     }
+                }
 
-                    this.jadwalLoading = true;
-
-                    try {
-                        const base = <?php echo json_encode($jadwalEndpoint); ?>;
-                        const url = base + '?date=' + encodeURIComponent(dateStr);
-
-                        const res = await fetch(url, {
-                            headers: {
-                                'Accept': 'application/json'
-                            }
-                        });
-                        const rawText = await res.text();
-
-                        let json = null;
-                        try {
-                            json = JSON.parse(rawText);
-                        } catch (e) {
-                            json = null;
-                        }
-
-                        if (!res.ok) {
-                            this.jadwalError = (json && json.message) ? json.message : ('Error ' + res.status);
-                            return;
-                        }
-                        if (!json || !json.ok) {
-                            this.jadwalError = (json && json.message) ? json.message : 'Gagal mengambil jadwal.';
-                            return;
-                        }
-                        this.jadwalItems = Array.isArray(json.data) ? json.data : [];
-                    } catch (e) {
-                        this.jadwalError = 'Terjadi error saat mengambil jadwal.';
-                    } finally {
-                        this.jadwalLoading = false;
+                if (this.showPodcast) {
+                    if (!this.podcastType) {
+                        this.extraError = 'Pilih jenis podcast (Audio atau Video).';
+                        e.preventDefault();
+                        return;
                     }
-                },
+                    if (this.tipeJam !== 'CUSTOM') {
+                        this.extraError = 'Studio Podcast (eksternal) wajib memilih tipe jam CUSTOM (per jam).';
+                        e.preventDefault();
+                        return;
+                    }
+                }
 
-                // ===== WHEEL helpers =====
-                _setWheelPad(el) {
-                    if (!el) return;
-                    const pad = Math.max(0, Math.round((el.clientHeight - this.itemHeight) / 2));
-                    el.style.setProperty('--wheel-pad', pad + 'px');
-                },
+                const btn = document.getElementById('submit');
+                if (btn) {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.7';
+                }
+            },
 
-                _scrollToValue(el, val, smooth = true) {
-                    if (!el) return;
-                    const item = el.querySelector(`[data-value="${val}"]`);
-                    if (!item) return;
-                    item.scrollIntoView({
-                        block: 'center',
-                        behavior: smooth ? 'smooth' : 'auto'
+            timeToMinutes(t) {
+                if (!t || !t.includes(':')) return -1;
+                const p = t.split(':');
+                const hh = parseInt(p[0], 10);
+                const mm = parseInt(p[1], 10);
+                if (isNaN(hh) || isNaN(mm)) return -1;
+                return (hh * 60) + mm;
+            },
+
+            validateCustomTime() {
+                this.customError = '';
+                if (!this.isCustom) return true;
+
+                if (!this.jamMulai || !this.jamSelesai) {
+                    this.customError = 'Jam mulai dan jam selesai wajib diisi.';
+                    return false;
+                }
+
+                const a = this.timeToMinutes(this.jamMulai);
+                const b = this.timeToMinutes(this.jamSelesai);
+
+                if (a < 0 || b < 0) {
+                    this.customError = 'Format jam tidak valid. Gunakan HH:MM (24 jam).';
+                    return false;
+                }
+                if (b <= a) {
+                    this.customError = 'Jam selesai harus lebih besar dari jam mulai.';
+                    return false;
+                }
+                return true;
+            },
+
+            applyJam() {
+                if (this.allowedTipeJam && this.allowedTipeJam.indexOf(this.tipeJam) === -1) {
+                    this.tipeJam = this.defaultTipeJam;
+                }
+                if (this.isCustom) return;
+
+                const rule = this.RULES[this.tipeJam];
+                if (!rule) return;
+
+                this.jamMulai = rule.start;
+                this.jamSelesai = rule.end;
+            },
+
+            // ✅ fetch jadwal by date
+            async onDatePicked(dateStr) {
+                this.jadwalError = '';
+                this.jadwalItems = [];
+                if (!dateStr) return;
+
+                this.jadwalLoading = true;
+
+                try {
+                    const base = <?php echo json_encode($jadwalEndpoint); ?>;
+                    const url = base + '?date=' + encodeURIComponent(dateStr);
+
+                    const res = await fetch(url, {
+                        headers: {
+                            'Accept': 'application/json'
+                        }
                     });
-                },
+                    const rawText = await res.text();
 
-                _syncFromCenter(type) {
+                    let json = null;
+                    try {
+                        json = JSON.parse(rawText);
+                    } catch (e) {
+                        json = null;
+                    }
+
+                    if (!res.ok) {
+                        this.jadwalError = (json && json.message) ? json.message : ('Error ' + res.status);
+                        return;
+                    }
+                    if (!json || !json.ok) {
+                        this.jadwalError = (json && json.message) ? json.message : 'Gagal mengambil jadwal.';
+                        return;
+                    }
+                    this.jadwalItems = Array.isArray(json.data) ? json.data : [];
+                } catch (e) {
+                    this.jadwalError = 'Terjadi error saat mengambil jadwal.';
+                } finally {
+                    this.jadwalLoading = false;
+                }
+            },
+
+            // ===== WHEEL helpers =====
+            _setWheelPad(el) {
+                if (!el) return;
+                const pad = Math.max(0, Math.round((el.clientHeight - this.itemHeight) / 2));
+                el.style.setProperty('--wheel-pad', pad + 'px');
+            },
+
+            _scrollToValue(el, val, smooth = true) {
+                if (!el) return;
+                const item = el.querySelector(`[data-value="${val}"]`);
+                if (!item) return;
+                item.scrollIntoView({
+                    block: 'center',
+                    behavior: smooth ? 'smooth' : 'auto'
+                });
+            },
+
+            _syncFromCenter(type) {
+                const el = (type === 'hours') ? this.$refs.wheelHours : this.$refs.wheelMinutes;
+                if (!el) return;
+
+                const r = el.getBoundingClientRect();
+                const cx = Math.round(r.left + r.width / 2);
+                const cy = Math.round(r.top + r.height / 2);
+
+                let node = document.elementFromPoint(cx, cy);
+                while (node && node !== el && !(node.dataset && node.dataset.value)) node = node.parentNode;
+                if (!node || !(node.dataset && node.dataset.value)) return;
+
+                const v = node.dataset.value;
+                if (type === 'hours') this.selectedHour = v;
+                else this.selectedMinute = v;
+            },
+
+            openWheel(target) {
+                this.customError = '';
+                this.wheelTarget = target || 'start';
+
+                const current = (this.wheelTarget === 'start') ? this.jamMulai : this.jamSelesai;
+                if (current && current.includes(':')) {
+                    const p = current.split(':');
+                    this.selectedHour = String(p[0] || '08').padStart(2, '0');
+                    this.selectedMinute = String(p[1] || '00').padStart(2, '0');
+                } else {
+                    this.selectedHour = '08';
+                    this.selectedMinute = '00';
+                }
+
+                this.wheelOpen = true;
+
+                this.$nextTick(() => {
+                    this._setWheelPad(this.$refs.wheelHours);
+                    this._setWheelPad(this.$refs.wheelMinutes);
+
+                    this._scrollToValue(this.$refs.wheelHours, this.selectedHour, false);
+                    this._scrollToValue(this.$refs.wheelMinutes, this.selectedMinute, false);
+
+                    this._syncFromCenter('hours');
+                    this._syncFromCenter('minutes');
+                });
+            },
+
+            closeWheel() {
+                this.wheelOpen = false;
+            },
+
+            onWheelScroll(type) {
+                if (this._scrollRAF) cancelAnimationFrame(this._scrollRAF);
+                this._scrollRAF = requestAnimationFrame(() => this._syncFromCenter(type));
+
+                clearTimeout(this._scrollTimer);
+                this._scrollTimer = setTimeout(() => {
                     const el = (type === 'hours') ? this.$refs.wheelHours : this.$refs.wheelMinutes;
-                    if (!el) return;
+                    const v = (type === 'hours') ? this.selectedHour : this.selectedMinute;
+                    this._scrollToValue(el, v, true);
+                }, 120);
+            },
 
-                    const r = el.getBoundingClientRect();
-                    const cx = Math.round(r.left + r.width / 2);
-                    const cy = Math.round(r.top + r.height / 2);
+            applyWheel() {
+                const value = this.selectedHour + ':' + this.selectedMinute;
+                if (this.wheelTarget === 'start') this.jamMulai = value;
+                else this.jamSelesai = value;
+                this.wheelOpen = false;
+            },
 
-                    let node = document.elementFromPoint(cx, cy);
-                    while (node && node !== el && !(node.dataset && node.dataset.value)) {
-                        node = node.parentNode;
-                    }
-                    if (!node || !(node.dataset && node.dataset.value)) return;
+            // ===== catering =====
+            resetCatering() {
+                this.selectedHarga = 0;
+                this.selectedMinPax = 1;
+                this.selectedNama = '';
+                this.jumlahPorsi = '';
+                this.categories = [];
+                this.addons = [];
+                const sel = document.getElementById('selected_catering');
+                if (sel) sel.value = '';
+            },
 
-                    const v = node.dataset.value;
-                    if (type === 'hours') this.selectedHour = v;
-                    else this.selectedMinute = v;
-                },
+            onCateringChange(e) {
+                const opt = e.target.options[e.target.selectedIndex];
+                this.selectedHarga = parseInt(opt.getAttribute('data-harga') || '0', 10);
+                this.selectedMinPax = parseInt(opt.getAttribute('data-minpax') || '1', 10);
+                this.selectedNama = opt.getAttribute('data-nama') || '';
 
-                openWheel(target) {
-                    this.customError = '';
-                    this.wheelTarget = target || 'start';
+                const raw = opt.getAttribute('data-menujson') || '';
+                this.parseMenuJson(raw);
 
-                    const current = (this.wheelTarget === 'start') ? this.jamMulai : this.jamSelesai;
-                    if (current && current.includes(':')) {
-                        const p = current.split(':');
-                        this.selectedHour = String(p[0] || '08').padStart(2, '0');
-                        this.selectedMinute = String(p[1] || '00').padStart(2, '0');
-                    } else {
-                        this.selectedHour = '08';
-                        this.selectedMinute = '00';
-                    }
+                const jp = parseInt(this.jumlahPorsi || '0', 10);
+                if (!jp || jp < this.selectedMinPax) this.jumlahPorsi = this.selectedMinPax;
+            },
 
-                    this.wheelOpen = true;
+            parseMenuJson(raw) {
+                this.categories = [];
+                this.addons = [];
+                if (!raw) return;
 
-                    this.$nextTick(() => {
-                        this._setWheelPad(this.$refs.wheelHours);
-                        this._setWheelPad(this.$refs.wheelMinutes);
-
-                        this._scrollToValue(this.$refs.wheelHours, this.selectedHour, false);
-                        this._scrollToValue(this.$refs.wheelMinutes, this.selectedMinute, false);
-
-                        this._syncFromCenter('hours');
-                        this._syncFromCenter('minutes');
-                    });
-                },
-
-                closeWheel() {
-                    this.wheelOpen = false;
-                },
-
-                onWheelScroll(type) {
-                    if (this._scrollRAF) cancelAnimationFrame(this._scrollRAF);
-                    this._scrollRAF = requestAnimationFrame(() => this._syncFromCenter(type));
-
-                    clearTimeout(this._scrollTimer);
-                    this._scrollTimer = setTimeout(() => {
-                        const el = (type === 'hours') ? this.$refs.wheelHours : this.$refs.wheelMinutes;
-                        const v = (type === 'hours') ? this.selectedHour : this.selectedMinute;
-                        this._scrollToValue(el, v, true);
-                    }, 120);
-                },
-
-                applyWheel() {
-                    const value = this.selectedHour + ':' + this.selectedMinute;
-                    if (this.wheelTarget === 'start') this.jamMulai = value;
-                    else this.jamSelesai = value;
-                    this.wheelOpen = false;
-                },
-
-                // ===== catering (tetap) =====
-                resetCatering() {
-                    this.selectedHarga = 0;
-                    this.selectedMinPax = 1;
-                    this.selectedNama = '';
-                    this.jumlahPorsi = '';
-                    this.categories = [];
-                    this.addons = [];
-                    const sel = document.getElementById('selected_catering');
-                    if (sel) sel.value = '';
-                },
-
-                onCateringChange(e) {
-                    const opt = e.target.options[e.target.selectedIndex];
-                    this.selectedHarga = parseInt(opt.getAttribute('data-harga') || '0', 10);
-                    this.selectedMinPax = parseInt(opt.getAttribute('data-minpax') || '1', 10);
-                    this.selectedNama = opt.getAttribute('data-nama') || '';
-
-                    const raw = opt.getAttribute('data-menujson') || '';
-                    this.parseMenuJson(raw);
-
-                    const jp = parseInt(this.jumlahPorsi || '0', 10);
-                    if (!jp || jp < this.selectedMinPax) this.jumlahPorsi = this.selectedMinPax;
-                },
-
-                parseMenuJson(raw) {
-                    this.categories = [];
-                    this.addons = [];
-                    if (!raw) return;
-
-                    let obj = null;
-                    try {
-                        obj = JSON.parse(raw);
-                    } catch (e) {
-                        obj = null;
-                    }
-                    if (!obj) return;
-
-                    if (obj.categories && Array.isArray(obj.categories)) {
-                        for (let i = 0; i < obj.categories.length; i++) {
-                            const c = obj.categories[i] || {};
-                            const key = c.key || ('cat_' + i);
-                            const label = c.label || ('Kategori ' + (i + 1));
-                            const pick = parseInt(c.pick || 0, 10);
-                            const note = c.note || '';
-                            const items = (c.items && Array.isArray(c.items)) ? c.items : [];
-
-                            let exclude = false;
-                            if (items.length === 0 && note && note.toLowerCase().includes('tidak termasuk')) exclude = true;
-
-                            let noteText = '';
-                            if (pick > 0) noteText = 'Bebas memilih ' + pick + ' macam';
-                            if (note) noteText = noteText ? (noteText + ' • ' + note) : note;
-
-                            const example = items.length ? items.slice(0, 2).join(', ') : 'Tulis pilihan kamu di sini';
-
-                            let placeholder = '';
-                            if (pick > 0) placeholder = 'Pilih maksimal ' + pick + ' (contoh: ' + example + ')';
-                            else if (note) placeholder = note + ' (contoh: ' + example + ')';
-                            else placeholder = 'Contoh: ' + example;
-
-                            this.categories.push({
-                                key,
-                                label,
-                                pick,
-                                note,
-                                noteText,
-                                items,
-                                example,
-                                placeholder,
-                                exclude
-                            });
-                        }
-                    }
-
-                    if (obj.addons && Array.isArray(obj.addons)) {
-                        for (let j = 0; j < obj.addons.length; j++) {
-                            const a = obj.addons[j] || {};
-                            const key = a.key || ('addon_' + j);
-                            const label = a.label || ('Add-on ' + (j + 1));
-                            const pick = parseInt(a.pick || 0, 10);
-                            const price = parseInt(a.price || 0, 10);
-                            const note = a.note || '';
-                            const items = (a.items && Array.isArray(a.items)) ? a.items : [];
-
-                            const example = items.length ? items.slice(0, 2).join(', ') : 'Tulis pilihan add-on';
-
-                            let placeholder = '';
-                            if (pick > 0) placeholder = 'Pilih maksimal ' + pick + ' (contoh: ' + example + ')';
-                            else if (note) placeholder = note + ' (contoh: ' + example + ')';
-                            else placeholder = 'Contoh: ' + example;
-
-                            this.addons.push({
-                                key,
-                                label,
-                                pick,
-                                price,
-                                note,
-                                items,
-                                example,
-                                placeholder,
-                                enabled: false
-                            });
-                        }
-                    }
-                },
-
-                get subtotal() {
-                    const jp = parseInt(this.jumlahPorsi || '0', 10);
-                    if (!jp || !this.selectedHarga) return 0;
-                    return jp * this.selectedHarga;
-                },
-
-                get addonsTotal() {
-                    let jp = parseInt(this.jumlahPorsi || '0', 10);
-                    if (!jp) jp = 0;
-                    let total = 0;
-                    for (let i = 0; i < this.addons.length; i++) {
-                        if (this.addons[i].enabled) total += (parseInt(this.addons[i].price || 0, 10) * jp);
-                    }
-                    return total;
-                },
-
-                get grandTotal() {
-                    return this.subtotal + this.addonsTotal;
+                let obj = null;
+                try {
+                    obj = JSON.parse(raw);
+                } catch (e) {
+                    obj = null;
                 }
+                if (!obj) return;
+
+                if (obj.categories && Array.isArray(obj.categories)) {
+                    for (let i = 0; i < obj.categories.length; i++) {
+                        const c = obj.categories[i] || {};
+                        const key = c.key || ('cat_' + i);
+                        const label = c.label || ('Kategori ' + (i + 1));
+                        const pick = parseInt(c.pick || 0, 10);
+                        const note = c.note || '';
+                        const items = (c.items && Array.isArray(c.items)) ? c.items : [];
+
+                        let exclude = false;
+                        if (items.length === 0 && note && note.toLowerCase().includes('tidak termasuk')) exclude = true;
+
+                        let noteText = '';
+                        if (pick > 0) noteText = 'Bebas memilih ' + pick + ' macam';
+                        if (note) noteText = noteText ? (noteText + ' • ' + note) : note;
+
+                        const example = items.length ? items.slice(0, 2).join(', ') : 'Tulis pilihan kamu di sini';
+
+                        let placeholder = '';
+                        if (pick > 0) placeholder = 'Pilih maksimal ' + pick + ' (contoh: ' + example + ')';
+                        else if (note) placeholder = note + ' (contoh: ' + example + ')';
+                        else placeholder = 'Contoh: ' + example;
+
+                        this.categories.push({
+                            key,
+                            label,
+                            pick,
+                            note,
+                            noteText,
+                            items,
+                            example,
+                            placeholder,
+                            exclude
+                        });
+                    }
+                }
+
+                if (obj.addons && Array.isArray(obj.addons)) {
+                    for (let j = 0; j < obj.addons.length; j++) {
+                        const a = obj.addons[j] || {};
+                        const key = a.key || ('addon_' + j);
+                        const label = a.label || ('Add-on ' + (j + 1));
+                        const pick = parseInt(a.pick || 0, 10);
+                        const price = parseInt(a.price || 0, 10);
+                        const note = a.note || '';
+                        const items = (a.items && Array.isArray(a.items)) ? a.items : [];
+
+                        const example = items.length ? items.slice(0, 2).join(', ') : 'Tulis pilihan add-on';
+
+                        let placeholder = '';
+                        if (pick > 0) placeholder = 'Pilih maksimal ' + pick + ' (contoh: ' + example + ')';
+                        else if (note) placeholder = note + ' (contoh: ' + example + ')';
+                        else placeholder = 'Contoh: ' + example;
+
+                        this.addons.push({
+                            key,
+                            label,
+                            pick,
+                            price,
+                            note,
+                            items,
+                            example,
+                            placeholder,
+                            enabled: false
+                        });
+                    }
+                }
+            },
+
+            get subtotal() {
+                const jp = parseInt(this.jumlahPorsi || '0', 10);
+                if (!jp || !this.selectedHarga) return 0;
+                return jp * this.selectedHarga;
+            },
+
+            get addonsTotal() {
+                let jp = parseInt(this.jumlahPorsi || '0', 10);
+                if (!jp) jp = 0;
+                let total = 0;
+                for (let i = 0; i < this.addons.length; i++) {
+                    if (this.addons[i].enabled) total += (parseInt(this.addons[i].price || 0, 10) * jp);
+                }
+                return total;
+            },
+
+            get grandTotal() {
+                return this.subtotal + this.addonsTotal;
             }
         }
-
-        function customCalendar() {
-            return {
-                viewMonth: new Date().getMonth(),
-                viewYear: new Date().getFullYear(),
-                calendarDays: [],
-                yearOptions: [],
-                selectedDateObj: null,
-                minPesan: <?php echo json_encode($min_pesan); ?>,
-
-                init() {
-                    const currentYear = new Date().getFullYear();
-                    for (let i = currentYear; i <= currentYear + 5; i++) {
-                        this.yearOptions.push(i);
-                    }
-                    this.renderCalendar();
-                },
-
-                renderCalendar() {
-                    this.calendarDays = [];
-                    const firstDayOfMonth = new Date(this.viewYear, this.viewMonth, 1).getDay();
-                    const daysInMonth = new Date(this.viewYear, this.viewMonth + 1, 0).getDate();
-                    const daysInPrevMonth = new Date(this.viewYear, this.viewMonth, 0).getDate();
-
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
-
-                    const minDate = new Date(this.minPesan + 'T00:00:00');
-
-                    // Add padding from previous month
-                    for (let i = firstDayOfMonth - 1; i >= 0; i--) {
-                        this.calendarDays.push({
-                            date: daysInPrevMonth - i,
-                            fullDate: null,
-                            isCurrentMonth: false,
-                            isToday: false,
-                            isSelected: false,
-                            isPast: true,
-                            isWeekend: false
-                        });
-                    }
-
-                    // Add days of current month
-                    for (let i = 1; i <= daysInMonth; i++) {
-                        const dateObj = new Date(this.viewYear, this.viewMonth, i);
-                        const dayOfWeek = dateObj.getDay();
-                        const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
-                        const isPast = dateObj < minDate;
-                        const dateStr = this.viewYear + '-' + String(this.viewMonth + 1).padStart(2, '0') + '-' + String(i).padStart(2, '0');
-
-                        this.calendarDays.push({
-                            date: i,
-                            fullDate: dateStr,
-                            isCurrentMonth: true,
-                            isToday: dateObj.getTime() === today.getTime(),
-                            isSelected: this.$parent.selectedDate === dateStr,
-                            isPast: isPast,
-                            isWeekend: isWeekend
-                        });
-                    }
-
-                    // Add padding for next month (to fill 42 cells)
-                    const totalCells = 42;
-                    const remainingCells = totalCells - this.calendarDays.length;
-                    for (let i = 1; i <= remainingCells; i++) {
-                        this.calendarDays.push({
-                            date: i,
-                            fullDate: null,
-                            isCurrentMonth: false,
-                            isToday: false,
-                            isSelected: false,
-                            isPast: true,
-                            isWeekend: false
-                        });
-                    }
-                },
-
-                selectDate(day) {
-                    if (!day.fullDate || day.isPast || day.isWeekend) return;
-                    this.$parent.selectedDate = day.fullDate;
-                    this.$parent.onDatePicked(day.fullDate);
-                    this.renderCalendar();
-                },
-
-                previousMonth() {
-                    if (this.viewMonth === 0) {
-                        this.viewMonth = 11;
-                        this.viewYear--;
-                    } else {
-                        this.viewMonth--;
-                    }
-                    this.renderCalendar();
-                },
-
-                nextMonth() {
-                    if (this.viewMonth === 11) {
-                        this.viewMonth = 0;
-                        this.viewYear++;
-                    } else {
-                        this.viewMonth++;
-                    }
-                    this.renderCalendar();
-                },
-
-                formatDisplayDate() {
-                    if (!this.$parent.selectedDate) return 'Belum ada tanggal dipilih';
-                    const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-                    const parts = this.$parent.selectedDate.split('-');
-                    return parseInt(parts[2]) + ' ' + months[parseInt(parts[1]) - 1] + ' ' + parts[0];
-                }
-            }
-        }
+    }
     </script>
 
 </body>
