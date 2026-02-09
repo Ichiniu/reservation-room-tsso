@@ -831,6 +831,24 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                     this.jadwalItems = [];
                     if (!dateStr) return;
 
+                    // ✅ Check if selected date is weekend (Saturday=6 or Sunday=0)
+                    const selectedDate = new Date(dateStr + 'T00:00:00');
+                    const dayOfWeek = selectedDate.getDay();
+
+                    if (dayOfWeek === 0 || dayOfWeek === 6) {
+                        const dayName = dayOfWeek === 0 ? 'Minggu' : 'Sabtu';
+                        alert(`Maaf, ${dayName} tidak tersedia untuk pemesanan. Silakan pilih hari Senin-Jumat.`);
+                        // Reset date input
+                        const dateInput = document.getElementById('tgl_pesan');
+                        if (dateInput) {
+                            dateInput.value = '';
+                            // Hide formatted date display
+                            const tglFormatDiv = document.getElementById('tgl-format-id');
+                            if (tglFormatDiv) tglFormatDiv.classList.add('hidden');
+                        }
+                        return;
+                    }
+
                     this.jadwalLoading = true;
 
                     try {
