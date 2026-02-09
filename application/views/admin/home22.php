@@ -9,8 +9,18 @@ function formatTanggalIndo($tgl)
     }
 
     $bulan = array(
-        1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        1 => 'Januari',
+        'Februari',
+        'Maret',
+        'April',
+        'Mei',
+        'Juni',
+        'Juli',
+        'Agustus',
+        'September',
+        'Oktober',
+        'November',
+        'Desember'
     );
 
     $ts = strtotime($tgl);
@@ -122,20 +132,20 @@ foreach ($topRooms as $k => $v) {
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <style>
-    #tableWrap::-webkit-scrollbar {
-        width: 10px;
-        height: 10px;
-    }
+        #tableWrap::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
 
-    #tableWrap::-webkit-scrollbar-thumb {
-        background: rgba(100, 116, 139, .35);
-        border-radius: 999px;
-    }
+        #tableWrap::-webkit-scrollbar-thumb {
+            background: rgba(100, 116, 139, .35);
+            border-radius: 999px;
+        }
 
-    #tableWrap::-webkit-scrollbar-track {
-        background: rgba(148, 163, 184, .12);
-        border-radius: 999px;
-    }
+        #tableWrap::-webkit-scrollbar-track {
+            background: rgba(148, 163, 184, .12);
+            border-radius: 999px;
+        }
     </style>
 </head>
 
@@ -379,7 +389,9 @@ foreach ($topRooms as $k => $v) {
                                 if (!empty($recent_pemesanan)) {
                                     foreach ($recent_pemesanan as $row) {
                                         $jam = '-';
-                                        if (!empty($row->JAM)) { $jam = $row->JAM; }
+                                        if (!empty($row->JAM)) {
+                                            $jam = $row->JAM;
+                                        }
 
                                         echo '<li class="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 hover:bg-white transition">';
                                         echo '<div class="flex items-center gap-3">';
@@ -467,33 +479,45 @@ foreach ($topRooms as $k => $v) {
                                             foreach ($pemesanan as $row) {
 
                                                 $id = '-';
-                                                if (isset($row['ID_PEMESANAN'])) { $id = $row['ID_PEMESANAN']; }
+                                                if (isset($row['ID_PEMESANAN'])) {
+                                                    $id = $row['ID_PEMESANAN'];
+                                                }
 
                                                 $user = '-';
-                                                if (isset($row['USERNAME'])) { $user = $row['USERNAME']; }
+                                                if (isset($row['USERNAME'])) {
+                                                    $user = $row['USERNAME'];
+                                                }
 
                                                 $tglRaw = '';
-                                                if (isset($row['TANGGAL_PEMESANAN'])) { $tglRaw = $row['TANGGAL_PEMESANAN']; }
+                                                if (isset($row['TANGGAL_PEMESANAN'])) {
+                                                    $tglRaw = $row['TANGGAL_PEMESANAN'];
+                                                }
 
                                                 $tglIndo = formatTanggalIndo($tglRaw);
                                                 $tglForFilter = '';
-                                                if (!empty($tglRaw)) { $tglForFilter = date('Y-m-d', strtotime($tglRaw)); }
+                                                if (!empty($tglRaw)) {
+                                                    $tglForFilter = date('Y-m-d', strtotime($tglRaw));
+                                                }
 
                                                 $gedung = '-';
-                                                if (isset($row['NAMA_GEDUNG'])) { $gedung = $row['NAMA_GEDUNG']; }
+                                                if (isset($row['NAMA_GEDUNG'])) {
+                                                    $gedung = $row['NAMA_GEDUNG'];
+                                                }
 
                                                 $status = '-';
-                                                if (isset($row['STATUS'])) { $status = $row['STATUS']; }
+                                                if (isset($row['STATUS'])) {
+                                                    $status = $row['STATUS'];
+                                                }
                                                 $statusUpper = strtoupper(trim((string)$status));
 
                                                 $jamText = '-';
                                                 if (!empty($row['JAM_PEMESANAN']) && !empty($row['JAM_SELESAI'])) {
                                                     $jamText = date('H:i', strtotime($row['JAM_PEMESANAN'])) . ' - ' .
-                                                               date('H:i', strtotime($row['JAM_SELESAI'])) . ' WIB';
+                                                        date('H:i', strtotime($row['JAM_SELESAI'])) . ' WIB';
                                                 }
 
                                                 $badge = 'bg-slate-100 text-slate-700';
-                                                if ($statusUpper === 'PROPOSAL APPROVE') $badge = 'bg-lime-100 text-lime-700';
+                                                if ($statusUpper === 'APPROVE') $badge = 'bg-lime-100 text-lime-700';
                                                 else if ($statusUpper === 'PROCESS') $badge = 'bg-yellow-100 text-yellow-700';
                                                 else if ($statusUpper === 'REJECTED') $badge = 'bg-rose-100 text-rose-700';
                                                 else if ($statusUpper === 'APPROVE & PAID') $badge = 'bg-emerald-100 text-emerald-700';
@@ -582,225 +606,225 @@ foreach ($topRooms as $k => $v) {
          JS: Chart + Filter + Pagination
          ========================= -->
     <script>
-    (function() {
-        // ===== Chart Data from PHP
-        var statusLabels = <?php echo json_encode($statusLabels); ?>;
-        var statusValues = <?php echo json_encode($statusValues); ?>;
+        (function() {
+            // ===== Chart Data from PHP
+            var statusLabels = <?php echo json_encode($statusLabels); ?>;
+            var statusValues = <?php echo json_encode($statusValues); ?>;
 
-        var dayLabels = <?php echo json_encode($dayLabels); ?>;
-        var dayValues = <?php echo json_encode($dayValues); ?>;
+            var dayLabels = <?php echo json_encode($dayLabels); ?>;
+            var dayValues = <?php echo json_encode($dayValues); ?>;
 
-        var roomLabels = <?php echo json_encode($roomLabels); ?>;
-        var roomValues = <?php echo json_encode($roomValues); ?>;
+            var roomLabels = <?php echo json_encode($roomLabels); ?>;
+            var roomValues = <?php echo json_encode($roomValues); ?>;
 
-        // Doughnut status
-        var elStatus = document.getElementById('chartStatus');
-        if (elStatus) {
-            new Chart(elStatus, {
-                type: 'doughnut',
-                data: {
-                    labels: statusLabels,
-                    datasets: [{
-                        data: statusValues,
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
+            // Doughnut status
+            var elStatus = document.getElementById('chartStatus');
+            if (elStatus) {
+                new Chart(elStatus, {
+                    type: 'doughnut',
+                    data: {
+                        labels: statusLabels,
+                        datasets: [{
+                            data: statusValues,
+                            borderWidth: 1
+                        }]
                     },
-                    cutout: '62%'
-                }
-            });
-        }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        },
+                        cutout: '62%'
+                    }
+                });
+            }
 
-        // Line daily
-        var elDaily = document.getElementById('chartDaily');
-        if (elDaily) {
-            new Chart(elDaily, {
-                type: 'line',
-                data: {
-                    labels: dayLabels,
-                    datasets: [{
-                        data: dayValues,
-                        tension: 0.35,
-                        fill: true,
-                        borderWidth: 2,
-                        pointRadius: 3
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
+            // Line daily
+            var elDaily = document.getElementById('chartDaily');
+            if (elDaily) {
+                new Chart(elDaily, {
+                    type: 'line',
+                    data: {
+                        labels: dayLabels,
+                        datasets: [{
+                            data: dayValues,
+                            tension: 0.35,
+                            fill: true,
+                            borderWidth: 2,
+                            pointRadius: 3
+                        }]
                     },
-                    scales: {
-                        x: {
-                            grid: {
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
                                 display: false
                             }
                         },
-                        y: {
-                            beginAtZero: true
+                        scales: {
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            },
+                            y: {
+                                beginAtZero: true
+                            }
                         }
                     }
-                }
-            });
-        }
+                });
+            }
 
-        // Bar rooms
-        var elRooms = document.getElementById('chartRooms');
-        if (elRooms) {
-            new Chart(elRooms, {
-                type: 'bar',
-                data: {
-                    labels: roomLabels,
-                    datasets: [{
-                        data: roomValues,
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
+            // Bar rooms
+            var elRooms = document.getElementById('chartRooms');
+            if (elRooms) {
+                new Chart(elRooms, {
+                    type: 'bar',
+                    data: {
+                        labels: roomLabels,
+                        datasets: [{
+                            data: roomValues,
+                            borderWidth: 1
+                        }]
                     },
-                    scales: {
-                        x: {
-                            grid: {
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
                                 display: false
                             }
                         },
-                        y: {
-                            beginAtZero: true
+                        scales: {
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            },
+                            y: {
+                                beginAtZero: true
+                            }
                         }
                     }
+                });
+            }
+
+            // ===== Table Filter + Pagination (client-side)
+            var tableBody = document.getElementById('tableBody');
+            if (!tableBody) return;
+
+            var rows = Array.prototype.slice.call(tableBody.querySelectorAll('tr.table-row'));
+            var searchInput = document.getElementById('searchInput');
+            var statusFilter = document.getElementById('statusFilter');
+            var dateFilter = document.getElementById('dateFilter');
+
+            var prevBtn = document.getElementById('prevBtn');
+            var nextBtn = document.getElementById('nextBtn');
+            var rowsPerPageEl = document.getElementById('rowsPerPage');
+            var pageInfo = document.getElementById('pageInfo');
+            var resultInfo = document.getElementById('resultInfo');
+
+            var currentPage = 1;
+            var rowsPerPage = parseInt(rowsPerPageEl.value, 10);
+            if (!rowsPerPage || rowsPerPage < 1) rowsPerPage = 10;
+
+            function norm(str) {
+                var s = '';
+                if (str !== null && str !== undefined) s = String(str);
+                return s.toLowerCase().replace(/^\s+|\s+$/g, '');
+            }
+
+            function matchesFilter(row) {
+                var q = norm(searchInput.value);
+                var st = norm(statusFilter.value);
+                var dt = (dateFilter.value || '').trim();
+
+                var id = norm(row.getAttribute('data-id'));
+                var user = norm(row.getAttribute('data-user'));
+                var gedung = norm(row.getAttribute('data-gedung'));
+                var status = norm(row.getAttribute('data-status'));
+                var date = (row.getAttribute('data-date') || '').trim();
+
+                if (q !== '') {
+                    var hit = (id.indexOf(q) !== -1) || (user.indexOf(q) !== -1) || (gedung.indexOf(q) !== -1);
+                    if (!hit) return false;
                 }
-            });
-        }
-
-        // ===== Table Filter + Pagination (client-side)
-        var tableBody = document.getElementById('tableBody');
-        if (!tableBody) return;
-
-        var rows = Array.prototype.slice.call(tableBody.querySelectorAll('tr.table-row'));
-        var searchInput = document.getElementById('searchInput');
-        var statusFilter = document.getElementById('statusFilter');
-        var dateFilter = document.getElementById('dateFilter');
-
-        var prevBtn = document.getElementById('prevBtn');
-        var nextBtn = document.getElementById('nextBtn');
-        var rowsPerPageEl = document.getElementById('rowsPerPage');
-        var pageInfo = document.getElementById('pageInfo');
-        var resultInfo = document.getElementById('resultInfo');
-
-        var currentPage = 1;
-        var rowsPerPage = parseInt(rowsPerPageEl.value, 10);
-        if (!rowsPerPage || rowsPerPage < 1) rowsPerPage = 10;
-
-        function norm(str) {
-            var s = '';
-            if (str !== null && str !== undefined) s = String(str);
-            return s.toLowerCase().replace(/^\s+|\s+$/g, '');
-        }
-
-        function matchesFilter(row) {
-            var q = norm(searchInput.value);
-            var st = norm(statusFilter.value);
-            var dt = (dateFilter.value || '').trim();
-
-            var id = norm(row.getAttribute('data-id'));
-            var user = norm(row.getAttribute('data-user'));
-            var gedung = norm(row.getAttribute('data-gedung'));
-            var status = norm(row.getAttribute('data-status'));
-            var date = (row.getAttribute('data-date') || '').trim();
-
-            if (q !== '') {
-                var hit = (id.indexOf(q) !== -1) || (user.indexOf(q) !== -1) || (gedung.indexOf(q) !== -1);
-                if (!hit) return false;
+                if (st !== '') {
+                    if (status !== st) return false;
+                }
+                if (dt !== '') {
+                    if (date !== dt) return false;
+                }
+                return true;
             }
-            if (st !== '') {
-                if (status !== st) return false;
+
+            function getFilteredRows() {
+                return rows.filter(matchesFilter);
             }
-            if (dt !== '') {
-                if (date !== dt) return false;
+
+            function render() {
+                var filtered = getFilteredRows();
+                var total = filtered.length;
+
+                var totalPages = Math.ceil(total / rowsPerPage);
+                if (!totalPages || totalPages < 1) totalPages = 1;
+
+                if (currentPage > totalPages) currentPage = totalPages;
+                if (currentPage < 1) currentPage = 1;
+
+                var start = (currentPage - 1) * rowsPerPage;
+                var end = start + rowsPerPage;
+
+                rows.forEach(function(r) {
+                    r.classList.add('hidden');
+                });
+                filtered.slice(start, end).forEach(function(r) {
+                    r.classList.remove('hidden');
+                });
+
+                var shownFrom = 0;
+                if (total > 0) shownFrom = start + 1;
+                var shownTo = end;
+                if (shownTo > total) shownTo = total;
+
+                resultInfo.textContent = 'Show ' + shownFrom + '-' + shownTo + ' of ' + total;
+                pageInfo.textContent = 'Page ' + currentPage + ' / ' + totalPages;
+
+                prevBtn.disabled = (currentPage <= 1);
+                nextBtn.disabled = (currentPage >= totalPages);
             }
-            return true;
-        }
 
-        function getFilteredRows() {
-            return rows.filter(matchesFilter);
-        }
+            function resetToFirstPage() {
+                currentPage = 1;
+                render();
+            }
 
-        function render() {
-            var filtered = getFilteredRows();
-            var total = filtered.length;
+            if (searchInput) searchInput.addEventListener('input', resetToFirstPage);
+            if (statusFilter) statusFilter.addEventListener('change', resetToFirstPage);
+            if (dateFilter) dateFilter.addEventListener('change', resetToFirstPage);
 
-            var totalPages = Math.ceil(total / rowsPerPage);
-            if (!totalPages || totalPages < 1) totalPages = 1;
-
-            if (currentPage > totalPages) currentPage = totalPages;
-            if (currentPage < 1) currentPage = 1;
-
-            var start = (currentPage - 1) * rowsPerPage;
-            var end = start + rowsPerPage;
-
-            rows.forEach(function(r) {
-                r.classList.add('hidden');
-            });
-            filtered.slice(start, end).forEach(function(r) {
-                r.classList.remove('hidden');
+            if (rowsPerPageEl) rowsPerPageEl.addEventListener('change', function() {
+                var v = parseInt(rowsPerPageEl.value, 10);
+                if (!v || v < 1) v = 10;
+                rowsPerPage = v;
+                resetToFirstPage();
             });
 
-            var shownFrom = 0;
-            if (total > 0) shownFrom = start + 1;
-            var shownTo = end;
-            if (shownTo > total) shownTo = total;
+            if (prevBtn) prevBtn.addEventListener('click', function() {
+                currentPage = currentPage - 1;
+                render();
+            });
+            if (nextBtn) nextBtn.addEventListener('click', function() {
+                currentPage = currentPage + 1;
+                render();
+            });
 
-            resultInfo.textContent = 'Show ' + shownFrom + '-' + shownTo + ' of ' + total;
-            pageInfo.textContent = 'Page ' + currentPage + ' / ' + totalPages;
-
-            prevBtn.disabled = (currentPage <= 1);
-            nextBtn.disabled = (currentPage >= totalPages);
-        }
-
-        function resetToFirstPage() {
-            currentPage = 1;
             render();
-        }
-
-        if (searchInput) searchInput.addEventListener('input', resetToFirstPage);
-        if (statusFilter) statusFilter.addEventListener('change', resetToFirstPage);
-        if (dateFilter) dateFilter.addEventListener('change', resetToFirstPage);
-
-        if (rowsPerPageEl) rowsPerPageEl.addEventListener('change', function() {
-            var v = parseInt(rowsPerPageEl.value, 10);
-            if (!v || v < 1) v = 10;
-            rowsPerPage = v;
-            resetToFirstPage();
-        });
-
-        if (prevBtn) prevBtn.addEventListener('click', function() {
-            currentPage = currentPage - 1;
-            render();
-        });
-        if (nextBtn) nextBtn.addEventListener('click', function() {
-            currentPage = currentPage + 1;
-            render();
-        });
-
-        render();
-    })();
+        })();
     </script>
 </body>
 

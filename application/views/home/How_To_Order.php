@@ -191,9 +191,9 @@
                             class="h-10 w-10 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-extrabold">
                             7</div>
                         <div class="flex-1">
-                            <h3 class="text-lg font-bold">Status: Proposal Approve → Masuk Halaman Pembayaran</h3>
+                            <h3 class="text-lg font-bold">Status: Approve → Masuk Halaman Pembayaran</h3>
                             <p class="mt-1 text-sm text-slate-600">
-                                Jika disetujui, status berubah menjadi <b>Proposal Approve</b> dan user diarahkan ke
+                                Jika disetujui, status berubah menjadi <b>Approve</b> dan user diarahkan ke
                                 halaman <b>Pembayaran</b>.
                             </p>
                             <p class="mt-2 text-sm text-slate-600">

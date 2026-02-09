@@ -92,7 +92,7 @@ $id_gedung = $this->uri->segment(3);
                                 <option value="SUBMITED">SUBMITED</option>
                                 <option value="SUBMITTED">SUBMITTED</option>
                                 <option value="PROCESS">PROCESS</option>
-                                <option value="PROPOSAL APPROVE">PROPOSAL APPROVE</option>
+                                <option value="APPROVE">APPROVE</option>
                                 <option value="APPROVE & PAID">APPROVE & PAID</option>
                                 <option value="REJECTED">REJECTED</option>
                                 <option value="CONFIRMED">CONFIRMED</option>
@@ -129,129 +129,129 @@ $id_gedung = $this->uri->segment(3);
 
                             <tbody id="tableBody" class="divide-y divide-slate-100">
                                 <?php
-                if (isset($res) && is_array($res)) {
-                  foreach ($res as $row) {
+                                if (isset($res) && is_array($res)) {
+                                    foreach ($res as $row) {
 
-                    // ID
-                    $id_pemesanan = (isset($row['ID_PEMESANAN']) && $row['ID_PEMESANAN'] !== '') ? (string)$row['ID_PEMESANAN'] : '-';
+                                        // ID
+                                        $id_pemesanan = (isset($row['ID_PEMESANAN']) && $row['ID_PEMESANAN'] !== '') ? (string)$row['ID_PEMESANAN'] : '-';
 
-                    // STATUS
-                    $statusRaw = (isset($row['STATUS']) && $row['STATUS'] !== '') ? (string)$row['STATUS'] : '-';
-                    $statusUpper = strtoupper(trim($statusRaw));
+                                        // STATUS
+                                        $statusRaw = (isset($row['STATUS']) && $row['STATUS'] !== '') ? (string)$row['STATUS'] : '-';
+                                        $statusUpper = strtoupper(trim($statusRaw));
 
-                    // TANGGAL RAW (untuk sort)
-                    $tanggalRaw = (isset($row['TANGGAL_PEMESANAN']) && $row['TANGGAL_PEMESANAN'] !== '') ? (string)$row['TANGGAL_PEMESANAN'] : '';
+                                        // TANGGAL RAW (untuk sort)
+                                        $tanggalRaw = (isset($row['TANGGAL_PEMESANAN']) && $row['TANGGAL_PEMESANAN'] !== '') ? (string)$row['TANGGAL_PEMESANAN'] : '';
 
-                    // TANGGAL TAMPIL
-                    $tanggalTampil = '-';
-                    if ($tanggalRaw !== '') {
-                      $dateObj = date_create($tanggalRaw);
-                      $tanggalTampil = $dateObj ? date_format($dateObj, 'd F Y') : $tanggalRaw;
-                    }
+                                        // TANGGAL TAMPIL
+                                        $tanggalTampil = '-';
+                                        if ($tanggalRaw !== '') {
+                                            $dateObj = date_create($tanggalRaw);
+                                            $tanggalTampil = $dateObj ? date_format($dateObj, 'd F Y') : $tanggalRaw;
+                                        }
 
-                    // JAM
-                    $jamText = '-';
-                    if (isset($row['JAM_PEMESANAN']) && isset($row['JAM_SELESAI'])) {
-                      if ($row['JAM_PEMESANAN'] !== '' && $row['JAM_SELESAI'] !== '') {
-                        $jamMulai = date('H:i', strtotime($row['JAM_PEMESANAN']));
-                        $jamSelesai = date('H:i', strtotime($row['JAM_SELESAI']));
-                        $jamText = $jamMulai . ' - ' . $jamSelesai . ' WIB';
-                      }
-                    }
+                                        // JAM
+                                        $jamText = '-';
+                                        if (isset($row['JAM_PEMESANAN']) && isset($row['JAM_SELESAI'])) {
+                                            if ($row['JAM_PEMESANAN'] !== '' && $row['JAM_SELESAI'] !== '') {
+                                                $jamMulai = date('H:i', strtotime($row['JAM_PEMESANAN']));
+                                                $jamSelesai = date('H:i', strtotime($row['JAM_SELESAI']));
+                                                $jamText = $jamMulai . ' - ' . $jamSelesai . ' WIB';
+                                            }
+                                        }
 
-                    // PAKET
-                    $paket = (isset($row['NAMA_PAKET']) && $row['NAMA_PAKET'] !== '') ? (string)$row['NAMA_PAKET'] : '-';
+                                        // PAKET
+                                        $paket = (isset($row['NAMA_PAKET']) && $row['NAMA_PAKET'] !== '') ? (string)$row['NAMA_PAKET'] : '-';
 
-                    // GEDUNG
-                    $gedung = (isset($row['NAMA_GEDUNG']) && $row['NAMA_GEDUNG'] !== '') ? (string)$row['NAMA_GEDUNG'] : '-';
+                                        // GEDUNG
+                                        $gedung = (isset($row['NAMA_GEDUNG']) && $row['NAMA_GEDUNG'] !== '') ? (string)$row['NAMA_GEDUNG'] : '-';
 
-                    // BADGE
-                    $badge = 'bg-slate-100 text-slate-700 border border-slate-200';
-                    if ($statusUpper === 'REJECTED') $badge = 'bg-red-50 text-red-700 border border-red-200';
-                    else if ($statusUpper === 'PROPOSAL APPROVE') $badge = 'bg-sky-50 text-sky-700 border border-sky-200';
-                    else if ($statusUpper === 'APPROVE & PAID') $badge = 'bg-emerald-50 text-emerald-700 border border-emerald-200';
-                    else if ($statusUpper === 'SUBMITED' || $statusUpper === 'SUBMITTED') $badge = 'bg-purple-50 text-purple-700 border border-purple-200';
-                    else if ($statusUpper === 'PROCESS') $badge = 'bg-amber-50 text-amber-800 border border-amber-200';
-                    else if ($statusUpper === 'CONFIRMED') $badge = 'bg-teal-50 text-teal-800 border border-teal-200';
+                                        // BADGE
+                                        $badge = 'bg-slate-100 text-slate-700 border border-slate-200';
+                                        if ($statusUpper === 'REJECTED') $badge = 'bg-red-50 text-red-700 border border-red-200';
+                                        else if ($statusUpper === 'APPROVE') $badge = 'bg-sky-50 text-sky-700 border border-sky-200';
+                                        else if ($statusUpper === 'APPROVE & PAID') $badge = 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+                                        else if ($statusUpper === 'SUBMITED' || $statusUpper === 'SUBMITTED') $badge = 'bg-purple-50 text-purple-700 border border-purple-200';
+                                        else if ($statusUpper === 'PROCESS') $badge = 'bg-amber-50 text-amber-800 border border-amber-200';
+                                        else if ($statusUpper === 'CONFIRMED') $badge = 'bg-teal-50 text-teal-800 border border-teal-200';
 
-                    $safeId = htmlspecialchars($id_pemesanan, ENT_QUOTES, 'UTF-8');
-                    $safeStatus = htmlspecialchars($statusUpper, ENT_QUOTES, 'UTF-8');
-                    $safeDate = htmlspecialchars($tanggalRaw, ENT_QUOTES, 'UTF-8');
+                                        $safeId = htmlspecialchars($id_pemesanan, ENT_QUOTES, 'UTF-8');
+                                        $safeStatus = htmlspecialchars($statusUpper, ENT_QUOTES, 'UTF-8');
+                                        $safeDate = htmlspecialchars($tanggalRaw, ENT_QUOTES, 'UTF-8');
 
-                    $safePaket = htmlspecialchars($paket, ENT_QUOTES, 'UTF-8');
-                    $safeGedung = htmlspecialchars($gedung, ENT_QUOTES, 'UTF-8');
-                    $safeJam = htmlspecialchars($jamText, ENT_QUOTES, 'UTF-8');
+                                        $safePaket = htmlspecialchars($paket, ENT_QUOTES, 'UTF-8');
+                                        $safeGedung = htmlspecialchars($gedung, ENT_QUOTES, 'UTF-8');
+                                        $safeJam = htmlspecialchars($jamText, ENT_QUOTES, 'UTF-8');
 
-                    $detailUrl = site_url('home/pemesanan/details/' . $id_pemesanan);
-                ?>
-                                <tr class="table-row hover:bg-slate-50 transition" data-id="<?php echo $safeId; ?>"
-                                    data-status="<?php echo $safeStatus; ?>" data-date="<?php echo $safeDate; ?>">
+                                        $detailUrl = site_url('home/pemesanan/details/' . $id_pemesanan);
+                                ?>
+                                        <tr class="table-row hover:bg-slate-50 transition" data-id="<?php echo $safeId; ?>"
+                                            data-status="<?php echo $safeStatus; ?>" data-date="<?php echo $safeDate; ?>">
 
-                                    <td class="px-4 py-3">
-                                        <div class="font-semibold text-slate-900"><?php echo $tanggalTampil; ?></div>
-                                        <div class="mt-0.5 text-xs text-slate-500 inline-flex items-center gap-1">
-                                            <span class="material-icons text-[14px]">schedule</span>
-                                            Dibuat
-                                        </div>
-                                    </td>
+                                            <td class="px-4 py-3">
+                                                <div class="font-semibold text-slate-900"><?php echo $tanggalTampil; ?></div>
+                                                <div class="mt-0.5 text-xs text-slate-500 inline-flex items-center gap-1">
+                                                    <span class="material-icons text-[14px]">schedule</span>
+                                                    Dibuat
+                                                </div>
+                                            </td>
 
-                                    <td class="px-4 py-3">
-                                        <span class="inline-flex items-center gap-2">
-                                            <span
-                                                class="inline-flex items-center justify-center h-8 min-w-[34px] px-2 rounded-full bg-slate-100 text-slate-700 text-xs font-bold">
-                                                #
-                                            </span>
-                                            <span class="font-bold text-slate-900"><?php echo $safeId; ?></span>
-                                        </span>
-                                    </td>
+                                            <td class="px-4 py-3">
+                                                <span class="inline-flex items-center gap-2">
+                                                    <span
+                                                        class="inline-flex items-center justify-center h-8 min-w-[34px] px-2 rounded-full bg-slate-100 text-slate-700 text-xs font-bold">
+                                                        #
+                                                    </span>
+                                                    <span class="font-bold text-slate-900"><?php echo $safeId; ?></span>
+                                                </span>
+                                            </td>
 
-                                    <td class="px-4 py-3 text-slate-700">
-                                        <span
-                                            class="inline-flex items-center gap-1 rounded-full bg-sky-50 text-sky-800 px-3 py-1 text-xs font-semibold">
-                                            <span class="material-icons text-[16px]">access_time</span>
-                                            <?php echo $safeJam; ?>
-                                        </span>
-                                    </td>
+                                            <td class="px-4 py-3 text-slate-700">
+                                                <span
+                                                    class="inline-flex items-center gap-1 rounded-full bg-sky-50 text-sky-800 px-3 py-1 text-xs font-semibold">
+                                                    <span class="material-icons text-[16px]">access_time</span>
+                                                    <?php echo $safeJam; ?>
+                                                </span>
+                                            </td>
 
-                                    <td class="px-4 py-3 text-slate-700">
-                                        <div
-                                            class="[display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] overflow-hidden">
-                                            <?php echo $safePaket; ?>
-                                        </div>
-                                    </td>
+                                            <td class="px-4 py-3 text-slate-700">
+                                                <div
+                                                    class="[display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] overflow-hidden">
+                                                    <?php echo $safePaket; ?>
+                                                </div>
+                                            </td>
 
-                                    <td class="px-4 py-3">
-                                        <div class="font-bold text-slate-900"><?php echo $safeGedung; ?></div>
-                                        <div class="text-xs text-slate-500 mt-0.5">Ruangan</div>
-                                    </td>
+                                            <td class="px-4 py-3">
+                                                <div class="font-bold text-slate-900"><?php echo $safeGedung; ?></div>
+                                                <div class="text-xs text-slate-500 mt-0.5">Ruangan</div>
+                                            </td>
 
-                                    <td class="px-4 py-3">
-                                        <span
-                                            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold <?php echo $badge; ?>">
-                                            <?php echo $safeStatus; ?>
-                                        </span>
-                                    </td>
+                                            <td class="px-4 py-3">
+                                                <span
+                                                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold <?php echo $badge; ?>">
+                                                    <?php echo $safeStatus; ?>
+                                                </span>
+                                            </td>
 
-                                    <td class="px-4 py-3">
-                                        <a class="inline-flex items-center justify-center w-10 h-10 rounded-2xl border border-slate-200 bg-white
+                                            <td class="px-4 py-3">
+                                                <a class="inline-flex items-center justify-center w-10 h-10 rounded-2xl border border-slate-200 bg-white
                               hover:bg-sky-50 hover:border-sky-200 active:scale-[0.99] transition"
-                                            href="<?php echo $detailUrl; ?>" title="Detail">
-                                            <span class="material-icons text-slate-700">open_in_new</span>
-                                        </a>
-                                    </td>
-                                </tr>
+                                                    href="<?php echo $detailUrl; ?>" title="Detail">
+                                                    <span class="material-icons text-slate-700">open_in_new</span>
+                                                </a>
+                                            </td>
+                                        </tr>
                                 <?php
-                  }
-                }
-                ?>
+                                    }
+                                }
+                                ?>
                             </tbody>
                         </table>
 
                         <?php
-            if (isset($rows) && (int)$rows < 1) {
-              echo '<div class="p-6 text-center text-slate-600">---------- ' . $no_data . ' ----------</div>';
-            }
-            ?>
+                        if (isset($rows) && (int)$rows < 1) {
+                            echo '<div class="p-6 text-center text-slate-600">---------- ' . $no_data . ' ----------</div>';
+                        }
+                        ?>
                     </div>
                 </div>
 
@@ -296,128 +296,128 @@ $id_gedung = $this->uri->segment(3);
     <?php $this->load->view('components/footer'); ?>
 
     <script>
-    (function() {
-        var tbody = document.getElementById('tableBody');
-        var allRows = Array.prototype.slice.call(document.querySelectorAll('.table-row'));
+        (function() {
+            var tbody = document.getElementById('tableBody');
+            var allRows = Array.prototype.slice.call(document.querySelectorAll('.table-row'));
 
-        var rowsSelect = document.getElementById('rowsPerPage');
-        var prevBtn = document.getElementById('prevBtn');
-        var nextBtn = document.getElementById('nextBtn');
-        var pageInfo = document.getElementById('pageInfo');
-        var resultInfo = document.getElementById('resultInfo');
+            var rowsSelect = document.getElementById('rowsPerPage');
+            var prevBtn = document.getElementById('prevBtn');
+            var nextBtn = document.getElementById('nextBtn');
+            var pageInfo = document.getElementById('pageInfo');
+            var resultInfo = document.getElementById('resultInfo');
 
-        var idFilter = document.getElementById('idFilter');
-        var statusFilter = document.getElementById('statusFilter');
-        var resetBtn = document.getElementById('resetBtn');
+            var idFilter = document.getElementById('idFilter');
+            var statusFilter = document.getElementById('statusFilter');
+            var resetBtn = document.getElementById('resetBtn');
 
-        var rowsPerPage = parseInt(rowsSelect.value, 10);
-        if (!rowsPerPage || rowsPerPage < 1) rowsPerPage = 10;
+            var rowsPerPage = parseInt(rowsSelect.value, 10);
+            if (!rowsPerPage || rowsPerPage < 1) rowsPerPage = 10;
 
-        var currentPage = 1;
+            var currentPage = 1;
 
-        // sort terbaru
-        allRows.sort(function(a, b) {
-            var da = new Date(a.getAttribute('data-date') || '1970-01-01');
-            var db = new Date(b.getAttribute('data-date') || '1970-01-01');
-            return db - da;
-        });
-
-        tbody.innerHTML = '';
-        for (var i = 0; i < allRows.length; i++) tbody.appendChild(allRows[i]);
-
-        function norm(str) {
-            var s = '';
-            if (str !== null && str !== undefined) s = String(str);
-            return s.toUpperCase().replace(/^\s+|\s+$/g, '');
-        }
-
-        function getFilteredRows() {
-            var qId = norm(idFilter.value);
-            var st = norm(statusFilter.value);
-
-            return allRows.filter(function(row) {
-                var rid = norm(row.getAttribute('data-id'));
-                var rstatus = norm(row.getAttribute('data-status'));
-
-                if (qId !== '' && rid.indexOf(qId) === -1) return false;
-                if (st !== '' && rstatus !== st) return false;
-                return true;
+            // sort terbaru
+            allRows.sort(function(a, b) {
+                var da = new Date(a.getAttribute('data-date') || '1970-01-01');
+                var db = new Date(b.getAttribute('data-date') || '1970-01-01');
+                return db - da;
             });
-        }
 
-        function render() {
-            var filtered = getFilteredRows();
-            var total = filtered.length;
+            tbody.innerHTML = '';
+            for (var i = 0; i < allRows.length; i++) tbody.appendChild(allRows[i]);
 
-            var totalPages = Math.ceil(total / rowsPerPage);
-            if (!totalPages || totalPages < 1) totalPages = 1;
+            function norm(str) {
+                var s = '';
+                if (str !== null && str !== undefined) s = String(str);
+                return s.toUpperCase().replace(/^\s+|\s+$/g, '');
+            }
 
-            if (currentPage > totalPages) currentPage = totalPages;
-            if (currentPage < 1) currentPage = 1;
+            function getFilteredRows() {
+                var qId = norm(idFilter.value);
+                var st = norm(statusFilter.value);
 
-            var start = (currentPage - 1) * rowsPerPage;
-            var end = start + rowsPerPage;
+                return allRows.filter(function(row) {
+                    var rid = norm(row.getAttribute('data-id'));
+                    var rstatus = norm(row.getAttribute('data-status'));
 
-            for (var k = 0; k < allRows.length; k++) allRows[k].style.display = 'none';
-            var slice = filtered.slice(start, end);
-            for (var j = 0; j < slice.length; j++) slice[j].style.display = '';
+                    if (qId !== '' && rid.indexOf(qId) === -1) return false;
+                    if (st !== '' && rstatus !== st) return false;
+                    return true;
+                });
+            }
 
-            var shownFrom = (total > 0) ? (start + 1) : 0;
-            var shownTo = end;
-            if (shownTo > total) shownTo = total;
+            function render() {
+                var filtered = getFilteredRows();
+                var total = filtered.length;
 
-            resultInfo.textContent = 'Show ' + shownFrom + '-' + shownTo + ' of ' + total;
-            pageInfo.textContent = 'Page ' + currentPage + ' of ' + totalPages;
+                var totalPages = Math.ceil(total / rowsPerPage);
+                if (!totalPages || totalPages < 1) totalPages = 1;
 
-            prevBtn.disabled = (currentPage === 1);
-            nextBtn.disabled = (currentPage === totalPages);
-        }
+                if (currentPage > totalPages) currentPage = totalPages;
+                if (currentPage < 1) currentPage = 1;
 
-        function resetToFirstPage() {
-            currentPage = 1;
-            render();
-        }
+                var start = (currentPage - 1) * rowsPerPage;
+                var end = start + rowsPerPage;
 
-        idFilter.addEventListener('input', resetToFirstPage);
-        statusFilter.addEventListener('change', resetToFirstPage);
+                for (var k = 0; k < allRows.length; k++) allRows[k].style.display = 'none';
+                var slice = filtered.slice(start, end);
+                for (var j = 0; j < slice.length; j++) slice[j].style.display = '';
 
-        resetBtn.addEventListener('click', function() {
-            idFilter.value = '';
-            statusFilter.value = '';
-            rowsSelect.value = '10';
-            rowsPerPage = 10;
-            currentPage = 1;
-            render();
-        });
+                var shownFrom = (total > 0) ? (start + 1) : 0;
+                var shownTo = end;
+                if (shownTo > total) shownTo = total;
 
-        prevBtn.addEventListener('click', function() {
-            if (currentPage > 1) {
-                currentPage = currentPage - 1;
+                resultInfo.textContent = 'Show ' + shownFrom + '-' + shownTo + ' of ' + total;
+                pageInfo.textContent = 'Page ' + currentPage + ' of ' + totalPages;
+
+                prevBtn.disabled = (currentPage === 1);
+                nextBtn.disabled = (currentPage === totalPages);
+            }
+
+            function resetToFirstPage() {
+                currentPage = 1;
                 render();
             }
-        });
 
-        nextBtn.addEventListener('click', function() {
-            var filtered = getFilteredRows();
-            var totalPages = Math.ceil(filtered.length / rowsPerPage);
-            if (!totalPages || totalPages < 1) totalPages = 1;
+            idFilter.addEventListener('input', resetToFirstPage);
+            statusFilter.addEventListener('change', resetToFirstPage);
 
-            if (currentPage < totalPages) {
-                currentPage = currentPage + 1;
+            resetBtn.addEventListener('click', function() {
+                idFilter.value = '';
+                statusFilter.value = '';
+                rowsSelect.value = '10';
+                rowsPerPage = 10;
+                currentPage = 1;
                 render();
-            }
-        });
+            });
 
-        rowsSelect.addEventListener('change', function() {
-            var v = parseInt(rowsSelect.value, 10);
-            if (!v || v < 1) v = 10;
-            rowsPerPage = v;
-            currentPage = 1;
+            prevBtn.addEventListener('click', function() {
+                if (currentPage > 1) {
+                    currentPage = currentPage - 1;
+                    render();
+                }
+            });
+
+            nextBtn.addEventListener('click', function() {
+                var filtered = getFilteredRows();
+                var totalPages = Math.ceil(filtered.length / rowsPerPage);
+                if (!totalPages || totalPages < 1) totalPages = 1;
+
+                if (currentPage < totalPages) {
+                    currentPage = currentPage + 1;
+                    render();
+                }
+            });
+
+            rowsSelect.addEventListener('change', function() {
+                var v = parseInt(rowsSelect.value, 10);
+                if (!v || v < 1) v = 10;
+                rowsPerPage = v;
+                currentPage = 1;
+                render();
+            });
+
             render();
-        });
-
-        render();
-    })();
+        })();
     </script>
 
 </body>

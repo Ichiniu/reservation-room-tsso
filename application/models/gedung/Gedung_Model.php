@@ -47,7 +47,7 @@ class Gedung_Model extends CI_Model
                 END
           )
 				WHERE LOWER(v.USERNAME)=LOWER(?)
-					AND v.STATUS IN ('PROPOSAL APPROVE','SUBMITED','PROCESS')
+					AND v.STATUS IN ('APPROVE','SUBMITED','PROCESS')
           AND p.FLAG IN (1,3)
         ORDER BY p.ID_PEMESANAN DESC
         LIMIT ?
@@ -321,7 +321,7 @@ class Gedung_Model extends CI_Model
         SET p.FLAG = 2
 				WHERE LOWER(v.USERNAME) = LOWER(?)
 					AND p.FLAG = 1
-					AND v.STATUS IN ('PROPOSAL APPROVE','SUBMITED','REJECTED','PROCESS')
+					AND v.STATUS IN ('APPROVE','SUBMITED','REJECTED','PROCESS')
     ";
 
 		return $this->db->query($sql, [$username]);
@@ -604,7 +604,7 @@ TIME_FORMAT(
                     WHEN vp.ID_PEMESANAN LIKE 'PMSN%' THEN CAST(SUBSTRING(vp.ID_PEMESANAN, 5) AS UNSIGNED)
                     ELSE CAST(vp.ID_PEMESANAN AS UNSIGNED)
                   END)
-            WHERE vp.STATUS IN ('PROCESS','PROPOSAL APPROVE','PAID')
+            WHERE vp.STATUS IN ('PROCESS','APPROVE','PAID')
             ORDER BY vp.TANGGAL_PEMESANAN DESC";
 
 		$q = $this->db->query($sql);
@@ -960,7 +960,7 @@ TIME_FORMAT(
 		$sql = "
 			SELECT 1
 			FROM V_PEMESANAN v
-			WHERE v.STATUS IN ('PROPOSAL APPROVE','APPROVE & PAID','PAID')
+			WHERE v.STATUS IN ('APPROVE','APPROVE & PAID','PAID')
 			AND v.ID_GEDUNG = ?
 			AND v.TANGGAL_PEMESANAN = ?
 			AND v.JAM_PEMESANAN < ?

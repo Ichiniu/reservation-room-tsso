@@ -469,7 +469,7 @@ class Home extends CI_Controller
 		$conflict = $this->gedung_model->check_date($tgl_pesan, $id_gedung, $jam_pesan, $jam_selesai, $exclude_id ? $exclude_id : 0);
 
 		if ($conflict > 0) {
-			$this->session->set_flashdata('error', 'Tanggal/gedung sudah terbooking. Silakan pilih tanggal atau jam lain.');
+			$this->session->set_flashdata('error', 'Ruangan sudah terbooking / Sudah ditahap payment. Silakan pilih tanggal atau jam lain.');
 			redirect('home/order-gedung/' . $id_gedung);
 			return;
 		}

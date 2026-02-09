@@ -191,7 +191,7 @@ function formatTanggalIndo($tgl)
 
                                     // badge status
                                     $badge = 'bg-slate-100 text-slate-700';
-                                    if ($statusUpper === 'PROPOSAL APPROVE') $badge = 'bg-lime-100 text-lime-700';
+                                    if ($statusUpper === 'APPROVE') $badge = 'bg-lime-100 text-lime-700';
                                     else if ($statusUpper === 'PROCESS') $badge = 'bg-yellow-100 text-yellow-700';
                                     else if ($statusUpper === 'REJECTED') $badge = 'bg-red-100 text-red-700';
                                     else if ($statusUpper === 'APPROVE & PAID') $badge = 'bg-emerald-100 text-emerald-700';

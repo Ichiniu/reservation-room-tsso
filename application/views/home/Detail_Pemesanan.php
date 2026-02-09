@@ -33,7 +33,7 @@ $statusText = isset($result->STATUS)
 
 $map = array(
     'PROCESS' => 0,
-    'PROPOSAL APPROVE' => 1,
+    'APPROVE' => 1,
     'APPROVE & PAID' => 2,
     'SUBMITED' => 3,
     'REJECTED' => 4,
@@ -59,7 +59,7 @@ $dotClass   = 'bg-slate-500';
 if ($statusText === 'PROCESS') {
     $badgeClass = 'bg-amber-50 text-amber-800 border-amber-200';
     $dotClass   = 'bg-amber-500';
-} elseif ($statusText === 'PROPOSAL APPROVE') {
+} elseif ($statusText === 'APPROVE') {
     $badgeClass = 'bg-sky-50 text-sky-800 border-sky-200';
     $dotClass   = 'bg-sky-500';
 } elseif ($statusText === 'APPROVE & PAID') {
@@ -313,7 +313,7 @@ function e($v)
                                 </a>
                             <?php endif; ?>
 
-                            <?php if ($statusText === 'PROPOSAL APPROVE'): ?>
+                            <?php if ($statusText === 'APPROVE'): ?>
                                 <button type="button" onclick="openModal()"
                                     class="inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-2 text-white
                                                bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] transition shadow-md">

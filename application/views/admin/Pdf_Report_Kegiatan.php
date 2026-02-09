@@ -4,14 +4,55 @@ $date = date_create(); // tanggal sekarang
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
-</head>
-<body>
-  <center><b><h3>Laporan Aktivitas Kegiatan</h3></b></center>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+    }
 
-  <font face="courier" size="13px">
-    <table border="1" cellpadding="6" cellspacing="0" width="100%">
+    h3 {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    table,
+    th,
+    td {
+      border: 1px solid #000;
+    }
+
+    th,
+    td {
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f0f0f0;
+      font-weight: bold;
+    }
+
+    .footer {
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+  <h3>Laporan Aktivitas Kegiatan</h3>
+
+  <table>
+    <thead>
       <tr>
         <th>No</th>
         <th>Gedung</th>
@@ -21,28 +62,29 @@ $date = date_create(); // tanggal sekarang
         <th>Jam Kegiatan</th>
         <th>Nama Penyewa</th>
       </tr>
-
-      <?php foreach($report as $row): ?>
+    </thead>
+    <tbody>
+      <?php foreach ($report as $row): ?>
 
         <?php
-          $jamMulai = '';
-          if (isset($row['JAM_MULAI']) && $row['JAM_MULAI'] != '') {
-              $jamMulai = $row['JAM_MULAI'];
-          } elseif (isset($row['JAM_PEMESANAN']) && $row['JAM_PEMESANAN'] != '') {
-              $jamMulai = $row['JAM_PEMESANAN'];
-          }
+        $jamMulai = '';
+        if (isset($row['JAM_MULAI']) && $row['JAM_MULAI'] != '') {
+          $jamMulai = $row['JAM_MULAI'];
+        } elseif (isset($row['JAM_PEMESANAN']) && $row['JAM_PEMESANAN'] != '') {
+          $jamMulai = $row['JAM_PEMESANAN'];
+        }
 
-          $jamSelesai = '';
-          if (isset($row['JAM_SELESAI']) && $row['JAM_SELESAI'] != '') {
-              $jamSelesai = $row['JAM_SELESAI'];
-          }
+        $jamSelesai = '';
+        if (isset($row['JAM_SELESAI']) && $row['JAM_SELESAI'] != '') {
+          $jamSelesai = $row['JAM_SELESAI'];
+        }
 
-          $jamText = '-';
-          if ($jamMulai != '' && $jamSelesai != '') {
-              $jamText = date('H:i', strtotime($jamMulai)) . ' - ' . date('H:i', strtotime($jamSelesai));
-          } elseif ($jamMulai != '') {
-              $jamText = date('H:i', strtotime($jamMulai));
-          }
+        $jamText = '-';
+        if ($jamMulai != '' && $jamSelesai != '') {
+          $jamText = date('H:i', strtotime($jamMulai)) . ' - ' . date('H:i', strtotime($jamSelesai));
+        } elseif ($jamMulai != '') {
+          $jamText = date('H:i', strtotime($jamMulai));
+        }
         ?>
 
         <tr>
@@ -56,19 +98,20 @@ $date = date_create(); // tanggal sekarang
         </tr>
 
       <?php endforeach; ?>
+    </tbody>
+  </table>
 
-    </table>
-
-    <br>
-    <b>Periode</b>
+  <div class="footer">
+    <strong>Periode</strong>
     <?php echo date_format(date_create($start_date), 'd F Y'); ?>
     -
     <?php echo date_format(date_create($end_date), 'd F Y'); ?>
     <br>
 
-    <b>Dicetak pada:</b> <?php echo date_format($date, "d M Y"); ?><br>
-    <b>Dicetak untuk:</b> Administrator
-  </font>
+    <strong>Dicetak pada:</strong> <?php echo date_format($date, "d M Y"); ?><br>
+    <strong>Dicetak untuk:</strong> Administrator
+  </div>
 
 </body>
+
 </html>
