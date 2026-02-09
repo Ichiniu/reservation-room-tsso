@@ -95,9 +95,9 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
 
                 <div class="p-5 sm:p-6">
                     <?php if ($this->session->flashdata('error')): ?>
-                    <div class="p-3 mb-4 rounded bg-red-100 text-red-700">
-                        <?php echo $this->session->flashdata('error'); ?>
-                    </div>
+                        <div class="p-3 mb-4 rounded bg-red-100 text-red-700">
+                            <?php echo $this->session->flashdata('error'); ?>
+                        </div>
                     <?php endif; ?>
 
                     <form id="orderFormEl" action="<?php echo site_url('home/home/order/' . (int)$id_gedung); ?>"
@@ -134,7 +134,7 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                     RUANGAN</label>
                                 <div class="mt-2 text-sm font-semibold text-slate-900">
                                     <?php foreach ($hasil as $gedung): ?>
-                                    <?php echo htmlspecialchars($gedung['NAMA_GEDUNG'], ENT_QUOTES, 'UTF-8'); ?>
+                                        <?php echo htmlspecialchars($gedung['NAMA_GEDUNG'], ENT_QUOTES, 'UTF-8'); ?>
                                     <?php endforeach; ?>
                                 </div>
                             </div>
@@ -154,11 +154,11 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                 <!-- input display + tombol kalender -->
                                 <div class="mt-2 relative">
                                     <input type="text" id="tgl_pesan_display" x-model="tglDisplay" readonly
-                                        placeholder="Pilih tanggal" @click="openDatePicker()"
+                                        placeholder="Pilih tanggal" @click="toggleCalendar()"
                                         class="w-full rounded-xl bg-white border border-slate-300 px-4 py-3 pr-12 text-slate-900 cursor-pointer
                                         focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40" />
 
-                                    <button type="button" @click="openDatePicker()" class="absolute right-3 top-1/2 -translate-y-1/2 inline-flex items-center justify-center
+                                    <button type="button" @click="toggleCalendar()" class="absolute right-3 top-1/2 -translate-y-1/2 inline-flex items-center justify-center
                                         h-9 w-9 rounded-lg hover:bg-slate-100 text-slate-600">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24"
                                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -169,6 +169,102 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                             <line x1="3" y1="10" x2="21" y2="10"></line>
                                         </svg>
                                     </button>
+
+                                    <!-- DROPDOWN KALENDER -->
+                                    <div x-show="calOpen" @click.outside="calOpen=false" x-transition
+                                        class="absolute left-0 mt-2 w-[320px] bg-white rounded-2xl border border-slate-200 shadow-xl z-30 p-4">
+
+                                        <!-- Header: Navigasi + Month/Year -->
+                                        <div class="flex items-center justify-between mb-4">
+                                            <button type="button" @click="prevMonth()" class="p-2 hover:bg-slate-100 rounded-lg text-slate-600">
+                                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="15 18 9 12 15 6"></polyline>
+                                                </svg>
+                                            </button>
+
+                                            <div class="flex items-center gap-3 font-medium text-slate-900">
+                                                <!-- Month Selector (Custom Dropdown) -->
+                                                <div class="relative" x-data="{ mOpen: false }">
+                                                    <button type="button" @click="mOpen = !mOpen"
+                                                        class="flex items-center gap-1 pl-2 pr-1 py-1 hover:text-blue-600 transition-colors">
+                                                        <span x-text="months[viewMonth]"></span>
+                                                        <svg class="h-3 w-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                                        </svg>
+                                                    </button>
+
+                                                    <div x-show="mOpen" @click.outside="mOpen = false" x-transition
+                                                        class="absolute left-0 mt-1 w-32 bg-white border border-slate-200 rounded-xl shadow-lg z-40 py-1 max-h-60 overflow-y-auto">
+                                                        <template x-for="(m, idx) in months" :key="idx">
+                                                            <button type="button"
+                                                                @click="viewMonth = idx; generateDays(); mOpen = false"
+                                                                class="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors"
+                                                                :class="viewMonth === idx ? 'text-blue-600 font-semibold' : 'text-slate-700'">
+                                                                <span x-text="m"></span>
+                                                            </button>
+                                                        </template>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Year Selector (Custom Dropdown) -->
+                                                <div class="relative" x-data="{ yOpen: false }">
+                                                    <button type="button" @click="yOpen = !yOpen"
+                                                        class="flex items-center gap-1 pl-2 pr-1 py-1 hover:text-blue-600 transition-colors">
+                                                        <span x-text="viewYear"></span>
+                                                        <svg class="h-3 w-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                                        </svg>
+                                                    </button>
+
+                                                    <div x-show="yOpen" @click.outside="yOpen = false" x-transition
+                                                        class="absolute left-0 mt-1 w-32 bg-white border border-slate-200 rounded-xl shadow-lg z-40 py-1 max-h-60 overflow-y-auto">
+                                                        <template x-for="y in years" :key="y">
+                                                            <button type="button"
+                                                                @click="viewYear = y; generateDays(); yOpen = false"
+                                                                class="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors"
+                                                                :class="viewYear === y ? 'text-blue-600 font-semibold' : 'text-slate-700'">
+                                                                <span x-text="y"></span>
+                                                            </button>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <button type="button" @click="nextMonth()" class="p-2 hover:bg-slate-100 rounded-lg text-slate-600">
+                                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="9 18 15 12 9 6"></polyline>
+                                                </svg>
+                                            </button>
+                                        </div>
+
+                                        <!-- Days Header -->
+                                        <div class="grid grid-cols-7 mb-2">
+                                            <template x-for="d in ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']">
+                                                <div class="text-center text-sm text-slate-400 py-1" x-text="d"></div>
+                                            </template>
+                                        </div>
+
+                                        <!-- Days Grid -->
+                                        <div class="grid grid-cols-7 gap-y-1">
+                                            <template x-for="day in days" :key="day.id">
+                                                <div class="relative h-10 w-full flex items-center justify-center">
+                                                    <button type="button"
+                                                        x-show="day.date"
+                                                        @click="selectDate(day)"
+                                                        :disabled="!day.enabled"
+                                                        class="h-9 w-9 rounded-xl flex items-center justify-center text-sm transition-all relative overflow-hidden"
+                                                        :class="{
+                                                            'cursor-not-allowed opacity-20': !day.enabled,
+                                                            'hover:bg-slate-50 text-slate-900': day.enabled && !day.selected,
+                                                            'bg-[#1a1a1a] text-white font-semibold': day.selected,
+                                                            'text-slate-400': !day.enabled && day.isWeekend
+                                                        }">
+                                                        <span x-text="day.dayNum"></span>
+                                                    </button>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- ✅ baris "📅 13 Februari 2026" DIHILANGKAN -->
@@ -223,9 +319,9 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                     );
                                     ?>
                                     <?php foreach ($allowed_tipe_jam as $opt): ?>
-                                    <option value="<?php echo htmlspecialchars($opt, ENT_QUOTES, 'UTF-8'); ?>">
-                                        <?php echo htmlspecialchars(isset($labels_tipe_jam[$opt]) ? $labels_tipe_jam[$opt] : $opt, ENT_QUOTES, 'UTF-8'); ?>
-                                    </option>
+                                        <option value="<?php echo htmlspecialchars($opt, ENT_QUOTES, 'UTF-8'); ?>">
+                                            <?php echo htmlspecialchars(isset($labels_tipe_jam[$opt]) ? $labels_tipe_jam[$opt] : $opt, ENT_QUOTES, 'UTF-8'); ?>
+                                        </option>
                                     <?php endforeach; ?>
                                 </select>
 
@@ -458,9 +554,9 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                     ?>
 
                                     <?php foreach ($groups as $jenis => $items): ?>
-                                    <optgroup label="<?php echo htmlspecialchars($jenis, ENT_QUOTES, 'UTF-8'); ?>">
-                                        <?php foreach ($items as $row): ?>
-                                        <?php
+                                        <optgroup label="<?php echo htmlspecialchars($jenis, ENT_QUOTES, 'UTF-8'); ?>">
+                                            <?php foreach ($items as $row): ?>
+                                                <?php
                                                 $id      = (int)$row['ID_CATERING'];
                                                 $nama    = isset($row['NAMA_PAKET']) ? $row['NAMA_PAKET'] : '';
                                                 $harga   = isset($row['HARGA']) ? (int)$row['HARGA'] : 0;
@@ -470,16 +566,16 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                                 $menujson = isset($row['MENU_JSON']) ? trim($row['MENU_JSON']) : '';
                                                 $menujson_attr = str_replace(array("\r", "\n"), ' ', $menujson);
                                                 ?>
-                                        <option value="<?php echo $id; ?>" data-harga="<?php echo $harga; ?>"
-                                            data-minpax="<?php echo $minp; ?>"
-                                            data-nama="<?php echo htmlspecialchars($nama, ENT_QUOTES, 'UTF-8'); ?>"
-                                            data-menujson="<?php echo htmlspecialchars($menujson_attr, ENT_QUOTES, 'UTF-8'); ?>">
-                                            <?php echo htmlspecialchars($nama, ENT_QUOTES, 'UTF-8'); ?>
-                                            — Rp <?php echo number_format($harga, 0, ',', '.'); ?>/pax (min
-                                            <?php echo $minp; ?>)
-                                        </option>
-                                        <?php endforeach; ?>
-                                    </optgroup>
+                                                <option value="<?php echo $id; ?>" data-harga="<?php echo $harga; ?>"
+                                                    data-minpax="<?php echo $minp; ?>"
+                                                    data-nama="<?php echo htmlspecialchars($nama, ENT_QUOTES, 'UTF-8'); ?>"
+                                                    data-menujson="<?php echo htmlspecialchars($menujson_attr, ENT_QUOTES, 'UTF-8'); ?>">
+                                                    <?php echo htmlspecialchars($nama, ENT_QUOTES, 'UTF-8'); ?>
+                                                    — Rp <?php echo number_format($harga, 0, ',', '.'); ?>/pax (min
+                                                    <?php echo $minp; ?>)
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </optgroup>
                                     <?php endforeach; ?>
                                 </select>
 
@@ -591,505 +687,584 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
     <?php $this->load->view('components/footer'); ?>
 
     <script>
-    function orderForm() {
-        return {
-            // ==== state umum ====
-            isInternal: <?php echo json_encode(!empty($is_internal_view)); ?>,
-            pricingMode: <?php echo json_encode($pricing_mode_view); ?>,
-            totalPeserta: '',
-            podcastType: '',
-            extraError: '',
-            catering: 'tidak',
-            tipeJam: <?php echo json_encode($default_tipe_jam); ?>,
-            allowedTipeJam: <?php echo json_encode(array_values($allowed_tipe_jam)); ?>,
-            defaultTipeJam: <?php echo json_encode($default_tipe_jam); ?>,
+        function orderForm() {
+            return {
+                // ==== state umum ====
+                isInternal: <?php echo json_encode(!empty($is_internal_view)); ?>,
+                pricingMode: <?php echo json_encode($pricing_mode_view); ?>,
+                totalPeserta: '',
+                podcastType: '',
+                extraError: '',
+                catering: 'tidak',
+                tipeJam: <?php echo json_encode($default_tipe_jam); ?>,
+                allowedTipeJam: <?php echo json_encode(array_values($allowed_tipe_jam)); ?>,
+                defaultTipeJam: <?php echo json_encode($default_tipe_jam); ?>,
 
-            // ✅ display tanggal Indonesia
-            tglDisplay: '',
+                // ✅ display tanggal Indonesia
+                tglDisplay: '',
 
-            RULES: {
-                HALF_DAY_PAGI: {
-                    start: '08:00',
-                    end: '12:00',
-                    label: 'HALF DAY (08:00 - 12:00)'
+                // ==== CALENDAR STATE ====
+                calOpen: false,
+                viewMonth: new Date().getMonth(),
+                viewYear: String(new Date().getFullYear()),
+                days: [],
+                months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                years: [
+                    String(new Date().getFullYear()),
+                    String(new Date().getFullYear() + 1),
+                    String(new Date().getFullYear() + 2),
+                    String(new Date().getFullYear() + 3),
+                    String(new Date().getFullYear() + 4)
+                ],
+                minDateStr: <?php echo json_encode($min_pesan); ?>,
+
+                RULES: {
+                    HALF_DAY_PAGI: {
+                        start: '08:00',
+                        end: '12:00',
+                        label: 'HALF DAY (08:00 - 12:00)'
+                    },
+                    HALF_DAY_SIANG: {
+                        start: '13:00',
+                        end: '16:00',
+                        label: 'HALF DAY (13:00 - 16:00)'
+                    },
+                    FULL_DAY: {
+                        start: '08:00',
+                        end: '17:00',
+                        label: 'FULL DAY (08:00 - 17:00)'
+                    }
                 },
-                HALF_DAY_SIANG: {
-                    start: '13:00',
-                    end: '16:00',
-                    label: 'HALF DAY (13:00 - 16:00)'
+
+                jamMulai: '',
+                jamSelesai: '',
+                profileOpen: false,
+                customError: '',
+
+                // ==== jadwal by date ====
+                jadwalLoading: false,
+                jadwalError: '',
+                jadwalItems: [],
+
+                // ==== WHEEL ====
+                wheelOpen: false,
+                wheelTarget: 'start',
+                hours: [],
+                minutes: [],
+                selectedHour: '08',
+                selectedMinute: '00',
+                itemHeight: 40,
+                _scrollRAF: null,
+                _scrollTimer: null,
+
+                // ==== catering state ====
+                categories: [],
+                addons: [],
+                selectedHarga: 0,
+                selectedMinPax: 1,
+                selectedNama: '',
+                jumlahPorsi: '',
+
+                get cateringEnabled() {
+                    return this.catering === 'ya';
                 },
-                FULL_DAY: {
-                    start: '08:00',
-                    end: '17:00',
-                    label: 'FULL DAY (08:00 - 17:00)'
-                }
-            },
+                get isCustom() {
+                    return this.tipeJam === 'CUSTOM';
+                },
+                get showPeserta() {
+                    return !this.isInternal && this.pricingMode === 'PER_PESERTA';
+                },
+                get showPodcast() {
+                    return !this.isInternal && this.pricingMode === 'PODCAST_PER_JAM';
+                },
 
-            jamMulai: '',
-            jamSelesai: '',
-            profileOpen: false,
-            customError: '',
+                // ✅ format tanggal Indonesia
+                formatTanggalIndonesia(dateStr) {
+                    const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September',
+                        'Oktober', 'November', 'Desember'
+                    ];
+                    const parts = String(dateStr || '').split('-');
+                    if (parts.length !== 3) return '';
+                    const y = parts[0];
+                    const m = parseInt(parts[1], 10) - 1;
+                    const d = parseInt(parts[2], 10);
+                    if (isNaN(d) || isNaN(m) || m < 0 || m > 11) return '';
+                    return d + ' ' + months[m] + ' ' + y;
+                },
 
-            // ==== jadwal by date ====
-            jadwalLoading: false,
-            jadwalError: '',
-            jadwalItems: [],
+                setTanggalDisplay(dateStr) {
+                    this.tglDisplay = dateStr ? this.formatTanggalIndonesia(dateStr) : '';
+                    const el = this.$refs.tglDate;
+                    if (el && el.value !== dateStr) el.value = dateStr || '';
+                },
 
-            // ==== WHEEL ====
-            wheelOpen: false,
-            wheelTarget: 'start',
-            hours: [],
-            minutes: [],
-            selectedHour: '08',
-            selectedMinute: '00',
-            itemHeight: 40,
-            _scrollRAF: null,
-            _scrollTimer: null,
-
-            // ==== catering state ====
-            categories: [],
-            addons: [],
-            selectedHarga: 0,
-            selectedMinPax: 1,
-            selectedNama: '',
-            jumlahPorsi: '',
-
-            get cateringEnabled() {
-                return this.catering === 'ya';
-            },
-            get isCustom() {
-                return this.tipeJam === 'CUSTOM';
-            },
-            get showPeserta() {
-                return !this.isInternal && this.pricingMode === 'PER_PESERTA';
-            },
-            get showPodcast() {
-                return !this.isInternal && this.pricingMode === 'PODCAST_PER_JAM';
-            },
-
-            // ✅ format tanggal Indonesia
-            formatTanggalIndonesia(dateStr) {
-                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September',
-                    'Oktober', 'November', 'Desember'
-                ];
-                const parts = String(dateStr || '').split('-');
-                if (parts.length !== 3) return '';
-                const y = parts[0];
-                const m = parseInt(parts[1], 10) - 1;
-                const d = parseInt(parts[2], 10);
-                if (isNaN(d) || isNaN(m) || m < 0 || m > 11) return '';
-                return d + ' ' + months[m] + ' ' + y;
-            },
-
-            setTanggalDisplay(dateStr) {
-                this.tglDisplay = dateStr ? this.formatTanggalIndonesia(dateStr) : '';
-                const el = this.$refs.tglDate;
-                if (el && el.value !== dateStr) el.value = dateStr || '';
-            },
-
-            // ✅ tombol kalender FIX
-            openDatePicker() {
-                const el = this.$refs.tglDate || document.getElementById('tgl_pesan');
-                if (!el) return;
-
-                // pastikan fokus dulu
-                el.focus({
-                    preventScroll: true
-                });
-
-                // Chrome/Edge support showPicker()
-                try {
-                    if (typeof el.showPicker === 'function') {
-                        el.showPicker();
-                        return;
-                    }
-                } catch (e) {}
-
-                // fallback: trigger click (beberapa browser akan buka date picker)
-                try {
-                    el.click();
-                } catch (e) {}
-            },
-
-            init() {
-                // build hours 00-23
-                this.hours = [];
-                for (let h = 0; h < 24; h++) this.hours.push(String(h).padStart(2, '0'));
-
-                // build minutes 00-59
-                this.minutes = [];
-                for (let m = 0; m < 60; m++) this.minutes.push(String(m).padStart(2, '0'));
-
-                // guard tipeJam
-                if (this.allowedTipeJam && this.allowedTipeJam.indexOf(this.tipeJam) === -1) {
-                    this.tipeJam = this.defaultTipeJam;
-                }
-
-                // set jam default jika bukan CUSTOM
-                if (!this.isCustom) this.applyJam();
-
-                this.$watch('catering', (v) => {
-                    if (v !== 'ya') this.resetCatering();
-                });
-                this.$watch('tipeJam', () => {
-                    this.customError = '';
-                    if (!this.isCustom) this.applyJam();
-                });
-
-                // autofill date -> set display + fetch jadwal (kalau ada value)
-                this.$nextTick(() => {
-                    const tgl = this.$refs.tglDate || document.getElementById('tgl_pesan');
-                    if (tgl && tgl.value) {
-                        this.setTanggalDisplay(tgl.value);
-                        this.onDatePicked(tgl.value);
-                    }
-                });
-            },
-
-            // ✅ submit handler
-            handleSubmit(e) {
-                if (!this.validateCustomTime()) {
-                    e.preventDefault();
-                    return;
-                }
-
-                this.extraError = '';
-
-                if (this.showPeserta) {
-                    const n = parseInt(this.totalPeserta || '0', 10);
-                    if (!n || n < 1) {
-                        this.extraError = 'Total peserta wajib diisi (minimal 1).';
-                        e.preventDefault();
-                        return;
-                    }
-                    if (this.tipeJam === 'CUSTOM') {
-                        this.extraError =
-                            'Untuk ruangan ini (eksternal), tipe jam tidak boleh CUSTOM. Pilih HALF/FULL DAY.';
-                        e.preventDefault();
-                        return;
-                    }
-                }
-
-                if (this.showPodcast) {
-                    if (!this.podcastType) {
-                        this.extraError = 'Pilih jenis podcast (Audio atau Video).';
-                        e.preventDefault();
-                        return;
-                    }
-                    if (this.tipeJam !== 'CUSTOM') {
-                        this.extraError = 'Studio Podcast (eksternal) wajib memilih tipe jam CUSTOM (per jam).';
-                        e.preventDefault();
-                        return;
-                    }
-                }
-
-                const btn = document.getElementById('submit');
-                if (btn) {
-                    btn.disabled = true;
-                    btn.style.opacity = '0.7';
-                }
-            },
-
-            timeToMinutes(t) {
-                if (!t || !t.includes(':')) return -1;
-                const p = t.split(':');
-                const hh = parseInt(p[0], 10);
-                const mm = parseInt(p[1], 10);
-                if (isNaN(hh) || isNaN(mm)) return -1;
-                return (hh * 60) + mm;
-            },
-
-            validateCustomTime() {
-                this.customError = '';
-                if (!this.isCustom) return true;
-
-                if (!this.jamMulai || !this.jamSelesai) {
-                    this.customError = 'Jam mulai dan jam selesai wajib diisi.';
-                    return false;
-                }
-
-                const a = this.timeToMinutes(this.jamMulai);
-                const b = this.timeToMinutes(this.jamSelesai);
-
-                if (a < 0 || b < 0) {
-                    this.customError = 'Format jam tidak valid. Gunakan HH:MM (24 jam).';
-                    return false;
-                }
-                if (b <= a) {
-                    this.customError = 'Jam selesai harus lebih besar dari jam mulai.';
-                    return false;
-                }
-                return true;
-            },
-
-            applyJam() {
-                if (this.allowedTipeJam && this.allowedTipeJam.indexOf(this.tipeJam) === -1) {
-                    this.tipeJam = this.defaultTipeJam;
-                }
-                if (this.isCustom) return;
-
-                const rule = this.RULES[this.tipeJam];
-                if (!rule) return;
-
-                this.jamMulai = rule.start;
-                this.jamSelesai = rule.end;
-            },
-
-            // ✅ fetch jadwal by date
-            async onDatePicked(dateStr) {
-                this.jadwalError = '';
-                this.jadwalItems = [];
-                if (!dateStr) return;
-
-                this.jadwalLoading = true;
-
-                try {
-                    const base = <?php echo json_encode($jadwalEndpoint); ?>;
-                    const url = base + '?date=' + encodeURIComponent(dateStr);
-
-                    const res = await fetch(url, {
-                        headers: {
-                            'Accept': 'application/json'
+                // ==== CALENDAR LOGIC ====
+                toggleCalendar() {
+                    this.calOpen = !this.calOpen;
+                    if (this.calOpen) {
+                        // sync view with current selection or today
+                        const current = this.$refs.tglDate.value;
+                        if (current) {
+                            const d = new Date(current);
+                            this.viewMonth = d.getMonth();
+                            this.viewYear = d.getFullYear();
+                        } else {
+                            const d = new Date();
+                            this.viewMonth = d.getMonth();
+                            this.viewYear = d.getFullYear();
                         }
-                    });
-                    const rawText = await res.text();
-
-                    let json = null;
-                    try {
-                        json = JSON.parse(rawText);
-                    } catch (e) {
-                        json = null;
+                        this.generateDays();
                     }
+                },
 
-                    if (!res.ok) {
-                        this.jadwalError = (json && json.message) ? json.message : ('Error ' + res.status);
-                        return;
+                prevMonth() {
+                    if (this.viewMonth === 0) {
+                        this.viewMonth = 11;
+                        this.viewYear--;
+                    } else {
+                        this.viewMonth--;
                     }
-                    if (!json || !json.ok) {
-                        this.jadwalError = (json && json.message) ? json.message : 'Gagal mengambil jadwal.';
-                        return;
+                    this.generateDays();
+                },
+
+                nextMonth() {
+                    if (this.viewMonth === 11) {
+                        this.viewMonth = 0;
+                        this.viewYear++;
+                    } else {
+                        this.viewMonth++;
                     }
-                    this.jadwalItems = Array.isArray(json.data) ? json.data : [];
-                } catch (e) {
-                    this.jadwalError = 'Terjadi error saat mengambil jadwal.';
-                } finally {
-                    this.jadwalLoading = false;
-                }
-            },
+                    this.generateDays();
+                },
 
-            // ===== WHEEL helpers =====
-            _setWheelPad(el) {
-                if (!el) return;
-                const pad = Math.max(0, Math.round((el.clientHeight - this.itemHeight) / 2));
-                el.style.setProperty('--wheel-pad', pad + 'px');
-            },
+                generateDays() {
+                    this.days = [];
+                    const firstDay = new Date(this.viewYear, this.viewMonth, 1).getDay(); // 0(Su) - 6(Sa)
+                    const daysInMonth = new Date(this.viewYear, this.viewMonth + 1, 0).getDate();
 
-            _scrollToValue(el, val, smooth = true) {
-                if (!el) return;
-                const item = el.querySelector(`[data-value="${val}"]`);
-                if (!item) return;
-                item.scrollIntoView({
-                    block: 'center',
-                    behavior: smooth ? 'smooth' : 'auto'
-                });
-            },
+                    const minD = this.minDateStr ? new Date(this.minDateStr) : null;
+                    if (minD) minD.setHours(0, 0, 0, 0);
 
-            _syncFromCenter(type) {
-                const el = (type === 'hours') ? this.$refs.wheelHours : this.$refs.wheelMinutes;
-                if (!el) return;
+                    const selectedStr = this.$refs.tglDate.value;
 
-                const r = el.getBoundingClientRect();
-                const cx = Math.round(r.left + r.width / 2);
-                const cy = Math.round(r.top + r.height / 2);
-
-                let node = document.elementFromPoint(cx, cy);
-                while (node && node !== el && !(node.dataset && node.dataset.value)) node = node.parentNode;
-                if (!node || !(node.dataset && node.dataset.value)) return;
-
-                const v = node.dataset.value;
-                if (type === 'hours') this.selectedHour = v;
-                else this.selectedMinute = v;
-            },
-
-            openWheel(target) {
-                this.customError = '';
-                this.wheelTarget = target || 'start';
-
-                const current = (this.wheelTarget === 'start') ? this.jamMulai : this.jamSelesai;
-                if (current && current.includes(':')) {
-                    const p = current.split(':');
-                    this.selectedHour = String(p[0] || '08').padStart(2, '0');
-                    this.selectedMinute = String(p[1] || '00').padStart(2, '0');
-                } else {
-                    this.selectedHour = '08';
-                    this.selectedMinute = '00';
-                }
-
-                this.wheelOpen = true;
-
-                this.$nextTick(() => {
-                    this._setWheelPad(this.$refs.wheelHours);
-                    this._setWheelPad(this.$refs.wheelMinutes);
-
-                    this._scrollToValue(this.$refs.wheelHours, this.selectedHour, false);
-                    this._scrollToValue(this.$refs.wheelMinutes, this.selectedMinute, false);
-
-                    this._syncFromCenter('hours');
-                    this._syncFromCenter('minutes');
-                });
-            },
-
-            closeWheel() {
-                this.wheelOpen = false;
-            },
-
-            onWheelScroll(type) {
-                if (this._scrollRAF) cancelAnimationFrame(this._scrollRAF);
-                this._scrollRAF = requestAnimationFrame(() => this._syncFromCenter(type));
-
-                clearTimeout(this._scrollTimer);
-                this._scrollTimer = setTimeout(() => {
-                    const el = (type === 'hours') ? this.$refs.wheelHours : this.$refs.wheelMinutes;
-                    const v = (type === 'hours') ? this.selectedHour : this.selectedMinute;
-                    this._scrollToValue(el, v, true);
-                }, 120);
-            },
-
-            applyWheel() {
-                const value = this.selectedHour + ':' + this.selectedMinute;
-                if (this.wheelTarget === 'start') this.jamMulai = value;
-                else this.jamSelesai = value;
-                this.wheelOpen = false;
-            },
-
-            // ===== catering =====
-            resetCatering() {
-                this.selectedHarga = 0;
-                this.selectedMinPax = 1;
-                this.selectedNama = '';
-                this.jumlahPorsi = '';
-                this.categories = [];
-                this.addons = [];
-                const sel = document.getElementById('selected_catering');
-                if (sel) sel.value = '';
-            },
-
-            onCateringChange(e) {
-                const opt = e.target.options[e.target.selectedIndex];
-                this.selectedHarga = parseInt(opt.getAttribute('data-harga') || '0', 10);
-                this.selectedMinPax = parseInt(opt.getAttribute('data-minpax') || '1', 10);
-                this.selectedNama = opt.getAttribute('data-nama') || '';
-
-                const raw = opt.getAttribute('data-menujson') || '';
-                this.parseMenuJson(raw);
-
-                const jp = parseInt(this.jumlahPorsi || '0', 10);
-                if (!jp || jp < this.selectedMinPax) this.jumlahPorsi = this.selectedMinPax;
-            },
-
-            parseMenuJson(raw) {
-                this.categories = [];
-                this.addons = [];
-                if (!raw) return;
-
-                let obj = null;
-                try {
-                    obj = JSON.parse(raw);
-                } catch (e) {
-                    obj = null;
-                }
-                if (!obj) return;
-
-                if (obj.categories && Array.isArray(obj.categories)) {
-                    for (let i = 0; i < obj.categories.length; i++) {
-                        const c = obj.categories[i] || {};
-                        const key = c.key || ('cat_' + i);
-                        const label = c.label || ('Kategori ' + (i + 1));
-                        const pick = parseInt(c.pick || 0, 10);
-                        const note = c.note || '';
-                        const items = (c.items && Array.isArray(c.items)) ? c.items : [];
-
-                        let exclude = false;
-                        if (items.length === 0 && note && note.toLowerCase().includes('tidak termasuk')) exclude = true;
-
-                        let noteText = '';
-                        if (pick > 0) noteText = 'Bebas memilih ' + pick + ' macam';
-                        if (note) noteText = noteText ? (noteText + ' • ' + note) : note;
-
-                        const example = items.length ? items.slice(0, 2).join(', ') : 'Tulis pilihan kamu di sini';
-
-                        let placeholder = '';
-                        if (pick > 0) placeholder = 'Pilih maksimal ' + pick + ' (contoh: ' + example + ')';
-                        else if (note) placeholder = note + ' (contoh: ' + example + ')';
-                        else placeholder = 'Contoh: ' + example;
-
-                        this.categories.push({
-                            key,
-                            label,
-                            pick,
-                            note,
-                            noteText,
-                            items,
-                            example,
-                            placeholder,
-                            exclude
-                        });
-                    }
-                }
-
-                if (obj.addons && Array.isArray(obj.addons)) {
-                    for (let j = 0; j < obj.addons.length; j++) {
-                        const a = obj.addons[j] || {};
-                        const key = a.key || ('addon_' + j);
-                        const label = a.label || ('Add-on ' + (j + 1));
-                        const pick = parseInt(a.pick || 0, 10);
-                        const price = parseInt(a.price || 0, 10);
-                        const note = a.note || '';
-                        const items = (a.items && Array.isArray(a.items)) ? a.items : [];
-
-                        const example = items.length ? items.slice(0, 2).join(', ') : 'Tulis pilihan add-on';
-
-                        let placeholder = '';
-                        if (pick > 0) placeholder = 'Pilih maksimal ' + pick + ' (contoh: ' + example + ')';
-                        else if (note) placeholder = note + ' (contoh: ' + example + ')';
-                        else placeholder = 'Contoh: ' + example;
-
-                        this.addons.push({
-                            key,
-                            label,
-                            pick,
-                            price,
-                            note,
-                            items,
-                            example,
-                            placeholder,
+                    // padding
+                    for (let i = 0; i < firstDay; i++) {
+                        this.days.push({
+                            id: 'p' + i,
+                            date: null,
+                            dayNum: '',
                             enabled: false
                         });
                     }
+
+                    for (let d = 1; d <= daysInMonth; d++) {
+                        const dateObj = new Date(this.viewYear, this.viewMonth, d);
+                        const dateIso = this.viewYear + '-' + String(this.viewMonth + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+
+                        const dayOfWeek = dateObj.getDay();
+                        const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+
+                        let enabled = true;
+                        if (isWeekend) enabled = false;
+                        if (minD && dateObj < minD) enabled = false;
+
+                        this.days.push({
+                            id: dateIso,
+                            date: dateIso,
+                            dayNum: d,
+                            enabled: enabled,
+                            isWeekend: isWeekend,
+                            selected: dateIso === selectedStr
+                        });
+                    }
+                },
+
+                selectDate(day) {
+                    if (!day.enabled) return;
+                    this.setTanggalDisplay(day.date);
+                    this.onDatePicked(day.date);
+                    this.calOpen = false;
+                },
+
+                init() {
+                    // build hours 00-23
+                    this.hours = [];
+                    for (let h = 0; h < 24; h++) this.hours.push(String(h).padStart(2, '0'));
+
+                    // build minutes 00-59
+                    this.minutes = [];
+                    for (let m = 0; m < 60; m++) this.minutes.push(String(m).padStart(2, '0'));
+
+                    // guard tipeJam
+                    if (this.allowedTipeJam && this.allowedTipeJam.indexOf(this.tipeJam) === -1) {
+                        this.tipeJam = this.defaultTipeJam;
+                    }
+
+                    // set jam default jika bukan CUSTOM
+                    if (!this.isCustom) this.applyJam();
+
+                    this.$watch('catering', (v) => {
+                        if (v !== 'ya') this.resetCatering();
+                    });
+                    this.$watch('tipeJam', () => {
+                        this.customError = '';
+                        if (!this.isCustom) this.applyJam();
+                    });
+
+                    // autofill date -> set display + fetch jadwal (kalau ada value)
+                    this.$nextTick(() => {
+                        const tgl = this.$refs.tglDate || document.getElementById('tgl_pesan');
+                        if (tgl && tgl.value) {
+                            this.setTanggalDisplay(tgl.value);
+                            this.onDatePicked(tgl.value);
+                        }
+                    });
+                },
+
+                // ✅ submit handler
+                handleSubmit(e) {
+                    if (!this.validateCustomTime()) {
+                        e.preventDefault();
+                        return;
+                    }
+
+                    this.extraError = '';
+
+                    if (this.showPeserta) {
+                        const n = parseInt(this.totalPeserta || '0', 10);
+                        if (!n || n < 1) {
+                            this.extraError = 'Total peserta wajib diisi (minimal 1).';
+                            e.preventDefault();
+                            return;
+                        }
+                        if (this.tipeJam === 'CUSTOM') {
+                            this.extraError =
+                                'Untuk ruangan ini (eksternal), tipe jam tidak boleh CUSTOM. Pilih HALF/FULL DAY.';
+                            e.preventDefault();
+                            return;
+                        }
+                    }
+
+                    if (this.showPodcast) {
+                        if (!this.podcastType) {
+                            this.extraError = 'Pilih jenis podcast (Audio atau Video).';
+                            e.preventDefault();
+                            return;
+                        }
+                        if (this.tipeJam !== 'CUSTOM') {
+                            this.extraError = 'Studio Podcast (eksternal) wajib memilih tipe jam CUSTOM (per jam).';
+                            e.preventDefault();
+                            return;
+                        }
+                    }
+
+                    const btn = document.getElementById('submit');
+                    if (btn) {
+                        btn.disabled = true;
+                        btn.style.opacity = '0.7';
+                    }
+                },
+
+                timeToMinutes(t) {
+                    if (!t || !t.includes(':')) return -1;
+                    const p = t.split(':');
+                    const hh = parseInt(p[0], 10);
+                    const mm = parseInt(p[1], 10);
+                    if (isNaN(hh) || isNaN(mm)) return -1;
+                    return (hh * 60) + mm;
+                },
+
+                validateCustomTime() {
+                    this.customError = '';
+                    if (!this.isCustom) return true;
+
+                    if (!this.jamMulai || !this.jamSelesai) {
+                        this.customError = 'Jam mulai dan jam selesai wajib diisi.';
+                        return false;
+                    }
+
+                    const a = this.timeToMinutes(this.jamMulai);
+                    const b = this.timeToMinutes(this.jamSelesai);
+
+                    if (a < 0 || b < 0) {
+                        this.customError = 'Format jam tidak valid. Gunakan HH:MM (24 jam).';
+                        return false;
+                    }
+                    if (b <= a) {
+                        this.customError = 'Jam selesai harus lebih besar dari jam mulai.';
+                        return false;
+                    }
+                    return true;
+                },
+
+                applyJam() {
+                    if (this.allowedTipeJam && this.allowedTipeJam.indexOf(this.tipeJam) === -1) {
+                        this.tipeJam = this.defaultTipeJam;
+                    }
+                    if (this.isCustom) return;
+
+                    const rule = this.RULES[this.tipeJam];
+                    if (!rule) return;
+
+                    this.jamMulai = rule.start;
+                    this.jamSelesai = rule.end;
+                },
+
+                // ✅ fetch jadwal by date
+                async onDatePicked(dateStr) {
+                    this.jadwalError = '';
+                    this.jadwalItems = [];
+                    if (!dateStr) return;
+
+                    this.jadwalLoading = true;
+
+                    try {
+                        const base = <?php echo json_encode($jadwalEndpoint); ?>;
+                        const url = base + '?date=' + encodeURIComponent(dateStr);
+
+                        const res = await fetch(url, {
+                            headers: {
+                                'Accept': 'application/json'
+                            }
+                        });
+                        const rawText = await res.text();
+
+                        let json = null;
+                        try {
+                            json = JSON.parse(rawText);
+                        } catch (e) {
+                            json = null;
+                        }
+
+                        if (!res.ok) {
+                            this.jadwalError = (json && json.message) ? json.message : ('Error ' + res.status);
+                            return;
+                        }
+                        if (!json || !json.ok) {
+                            this.jadwalError = (json && json.message) ? json.message : 'Gagal mengambil jadwal.';
+                            return;
+                        }
+                        this.jadwalItems = Array.isArray(json.data) ? json.data : [];
+                    } catch (e) {
+                        this.jadwalError = 'Terjadi error saat mengambil jadwal.';
+                    } finally {
+                        this.jadwalLoading = false;
+                    }
+                },
+
+                // ===== WHEEL helpers =====
+                _setWheelPad(el) {
+                    if (!el) return;
+                    const pad = Math.max(0, Math.round((el.clientHeight - this.itemHeight) / 2));
+                    el.style.setProperty('--wheel-pad', pad + 'px');
+                },
+
+                _scrollToValue(el, val, smooth = true) {
+                    if (!el) return;
+                    const item = el.querySelector(`[data-value="${val}"]`);
+                    if (!item) return;
+                    item.scrollIntoView({
+                        block: 'center',
+                        behavior: smooth ? 'smooth' : 'auto'
+                    });
+                },
+
+                _syncFromCenter(type) {
+                    const el = (type === 'hours') ? this.$refs.wheelHours : this.$refs.wheelMinutes;
+                    if (!el) return;
+
+                    const r = el.getBoundingClientRect();
+                    const cx = Math.round(r.left + r.width / 2);
+                    const cy = Math.round(r.top + r.height / 2);
+
+                    let node = document.elementFromPoint(cx, cy);
+                    while (node && node !== el && !(node.dataset && node.dataset.value)) node = node.parentNode;
+                    if (!node || !(node.dataset && node.dataset.value)) return;
+
+                    const v = node.dataset.value;
+                    if (type === 'hours') this.selectedHour = v;
+                    else this.selectedMinute = v;
+                },
+
+                openWheel(target) {
+                    this.customError = '';
+                    this.wheelTarget = target || 'start';
+
+                    const current = (this.wheelTarget === 'start') ? this.jamMulai : this.jamSelesai;
+                    if (current && current.includes(':')) {
+                        const p = current.split(':');
+                        this.selectedHour = String(p[0] || '08').padStart(2, '0');
+                        this.selectedMinute = String(p[1] || '00').padStart(2, '0');
+                    } else {
+                        this.selectedHour = '08';
+                        this.selectedMinute = '00';
+                    }
+
+                    this.wheelOpen = true;
+
+                    this.$nextTick(() => {
+                        this._setWheelPad(this.$refs.wheelHours);
+                        this._setWheelPad(this.$refs.wheelMinutes);
+
+                        this._scrollToValue(this.$refs.wheelHours, this.selectedHour, false);
+                        this._scrollToValue(this.$refs.wheelMinutes, this.selectedMinute, false);
+
+                        this._syncFromCenter('hours');
+                        this._syncFromCenter('minutes');
+                    });
+                },
+
+                closeWheel() {
+                    this.wheelOpen = false;
+                },
+
+                onWheelScroll(type) {
+                    if (this._scrollRAF) cancelAnimationFrame(this._scrollRAF);
+                    this._scrollRAF = requestAnimationFrame(() => this._syncFromCenter(type));
+
+                    clearTimeout(this._scrollTimer);
+                    this._scrollTimer = setTimeout(() => {
+                        const el = (type === 'hours') ? this.$refs.wheelHours : this.$refs.wheelMinutes;
+                        const v = (type === 'hours') ? this.selectedHour : this.selectedMinute;
+                        this._scrollToValue(el, v, true);
+                    }, 120);
+                },
+
+                applyWheel() {
+                    const value = this.selectedHour + ':' + this.selectedMinute;
+                    if (this.wheelTarget === 'start') this.jamMulai = value;
+                    else this.jamSelesai = value;
+                    this.wheelOpen = false;
+                },
+
+                // ===== catering =====
+                resetCatering() {
+                    this.selectedHarga = 0;
+                    this.selectedMinPax = 1;
+                    this.selectedNama = '';
+                    this.jumlahPorsi = '';
+                    this.categories = [];
+                    this.addons = [];
+                    const sel = document.getElementById('selected_catering');
+                    if (sel) sel.value = '';
+                },
+
+                onCateringChange(e) {
+                    const opt = e.target.options[e.target.selectedIndex];
+                    this.selectedHarga = parseInt(opt.getAttribute('data-harga') || '0', 10);
+                    this.selectedMinPax = parseInt(opt.getAttribute('data-minpax') || '1', 10);
+                    this.selectedNama = opt.getAttribute('data-nama') || '';
+
+                    const raw = opt.getAttribute('data-menujson') || '';
+                    this.parseMenuJson(raw);
+
+                    const jp = parseInt(this.jumlahPorsi || '0', 10);
+                    if (!jp || jp < this.selectedMinPax) this.jumlahPorsi = this.selectedMinPax;
+                },
+
+                parseMenuJson(raw) {
+                    this.categories = [];
+                    this.addons = [];
+                    if (!raw) return;
+
+                    let obj = null;
+                    try {
+                        obj = JSON.parse(raw);
+                    } catch (e) {
+                        obj = null;
+                    }
+                    if (!obj) return;
+
+                    if (obj.categories && Array.isArray(obj.categories)) {
+                        for (let i = 0; i < obj.categories.length; i++) {
+                            const c = obj.categories[i] || {};
+                            const key = c.key || ('cat_' + i);
+                            const label = c.label || ('Kategori ' + (i + 1));
+                            const pick = parseInt(c.pick || 0, 10);
+                            const note = c.note || '';
+                            const items = (c.items && Array.isArray(c.items)) ? c.items : [];
+
+                            let exclude = false;
+                            if (items.length === 0 && note && note.toLowerCase().includes('tidak termasuk')) exclude = true;
+
+                            let noteText = '';
+                            if (pick > 0) noteText = 'Bebas memilih ' + pick + ' macam';
+                            if (note) noteText = noteText ? (noteText + ' • ' + note) : note;
+
+                            const example = items.length ? items.slice(0, 2).join(', ') : 'Tulis pilihan kamu di sini';
+
+                            let placeholder = '';
+                            if (pick > 0) placeholder = 'Pilih maksimal ' + pick + ' (contoh: ' + example + ')';
+                            else if (note) placeholder = note + ' (contoh: ' + example + ')';
+                            else placeholder = 'Contoh: ' + example;
+
+                            this.categories.push({
+                                key,
+                                label,
+                                pick,
+                                note,
+                                noteText,
+                                items,
+                                example,
+                                placeholder,
+                                exclude
+                            });
+                        }
+                    }
+
+                    if (obj.addons && Array.isArray(obj.addons)) {
+                        for (let j = 0; j < obj.addons.length; j++) {
+                            const a = obj.addons[j] || {};
+                            const key = a.key || ('addon_' + j);
+                            const label = a.label || ('Add-on ' + (j + 1));
+                            const pick = parseInt(a.pick || 0, 10);
+                            const price = parseInt(a.price || 0, 10);
+                            const note = a.note || '';
+                            const items = (a.items && Array.isArray(a.items)) ? a.items : [];
+
+                            const example = items.length ? items.slice(0, 2).join(', ') : 'Tulis pilihan add-on';
+
+                            let placeholder = '';
+                            if (pick > 0) placeholder = 'Pilih maksimal ' + pick + ' (contoh: ' + example + ')';
+                            else if (note) placeholder = note + ' (contoh: ' + example + ')';
+                            else placeholder = 'Contoh: ' + example;
+
+                            this.addons.push({
+                                key,
+                                label,
+                                pick,
+                                price,
+                                note,
+                                items,
+                                example,
+                                placeholder,
+                                enabled: false
+                            });
+                        }
+                    }
+                },
+
+                get subtotal() {
+                    const jp = parseInt(this.jumlahPorsi || '0', 10);
+                    if (!jp || !this.selectedHarga) return 0;
+                    return jp * this.selectedHarga;
+                },
+
+                get addonsTotal() {
+                    let jp = parseInt(this.jumlahPorsi || '0', 10);
+                    if (!jp) jp = 0;
+                    let total = 0;
+                    for (let i = 0; i < this.addons.length; i++) {
+                        if (this.addons[i].enabled) total += (parseInt(this.addons[i].price || 0, 10) * jp);
+                    }
+                    return total;
+                },
+
+                get grandTotal() {
+                    return this.subtotal + this.addonsTotal;
                 }
-            },
-
-            get subtotal() {
-                const jp = parseInt(this.jumlahPorsi || '0', 10);
-                if (!jp || !this.selectedHarga) return 0;
-                return jp * this.selectedHarga;
-            },
-
-            get addonsTotal() {
-                let jp = parseInt(this.jumlahPorsi || '0', 10);
-                if (!jp) jp = 0;
-                let total = 0;
-                for (let i = 0; i < this.addons.length; i++) {
-                    if (this.addons[i].enabled) total += (parseInt(this.addons[i].price || 0, 10) * jp);
-                }
-                return total;
-            },
-
-            get grandTotal() {
-                return this.subtotal + this.addonsTotal;
             }
         }
-    }
     </script>
 
 </body>
