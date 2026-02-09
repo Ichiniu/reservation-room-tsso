@@ -21,7 +21,7 @@ $this->load->helper('text');
     <?php $this->load->view('admin/components/sidebar'); ?>
 
     <!-- MAIN -->
-    <main class="pt-24 pl-0 md:pl-64 px-4 md:px-6 pb-10">
+    <main class="pt-24 md:pl-64 px-4 md:px-6 pb-10 transition-all duration-300">
 
         <!-- HEADER -->
         <div class="max-w-6xl mx-auto mb-6">

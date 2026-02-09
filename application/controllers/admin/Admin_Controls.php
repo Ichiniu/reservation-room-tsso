@@ -131,16 +131,32 @@ class Admin_Controls extends CI_Controller
 		$this->load->view('admin/rekap_aktivitas', $data);
 	}
 
-	function rekap_aktivitas_det($tanggal_awal, $tanggal_akhir)
+	function rekap_aktivitas_det($tanggal_awal = null, $tanggal_akhir = null)
 	{
-		$first_date = $this->input->get('start_date');
-		$second_date = $this->input->get('end_date');
 		$this->load->model('gedung/gedung_model');
+
+		$start_date = $this->input->get('start_date');
+		$end_date   = $this->input->get('end_date');
+		$bulan      = $this->input->get('bulan');
+		$tahun      = $this->input->get('tahun');
+
+		// Fallback ke segment jika GET kosong
+		if (empty($start_date) && !empty($tanggal_awal)) $start_date = $tanggal_awal;
+		if (empty($end_date) && !empty($tanggal_akhir)) $end_date = $tanggal_akhir;
+
+		// Jika hanya bulan/tahun yang dipilih
+		if (empty($start_date) && !empty($bulan) && !empty($tahun)) {
+			$start_date = $tahun . '-' . str_pad($bulan, 2, '0', STR_PAD_LEFT) . '-01';
+			$last_day   = date('t', strtotime($start_date));
+			$end_date   = $tahun . '-' . str_pad($bulan, 2, '0', STR_PAD_LEFT) . '-' . $last_day;
+		}
+
 		$data['result'] = $this->gedung_model->get_pending_transaction();
 		$data['get_transaction'] = $this->gedung_model->get_unread_transaction();
-		$data['hasil'] = $this->gedung_model->jadwal_gedung($first_date, $second_date);
-		$data['first_period'] = $first_date;
-		$data['last_period'] = $second_date;
+		$data['hasil'] = $this->gedung_model->jadwal_gedung($start_date, $end_date);
+		$data['first_period'] = $start_date;
+		$data['last_period'] = $end_date;
+
 		$this->load->view('admin/rekap_aktivitas_det', $data);
 	}
 
@@ -679,9 +695,14 @@ class Admin_Controls extends CI_Controller
 		// Pakai fungsi yang kamu pakai di halaman "transaksi/inbox"
 		$data['inbox'] = $this->gedung_model->get_all_pending_transaction(); // array pending
 
-		// ===== TOTAL REVENUE (berdasarkan transaksi) =====
-		// Ambil semua pembayaran lalu jumlahkan field numeriknya (aman tanpa asumsi nama kolom)
-		$data['transaksi'] = $this->gedung_model->get_all_pembayaran(); // array pembayaran
+		// ===== TOTAL REVENUE (berdasarkan transaksi per bulan) =====
+		$selected_month = $this->input->get('bulan') ? (int)$this->input->get('bulan') : (int)date('m');
+		$selected_year  = $this->input->get('tahun') ? (int)$this->input->get('tahun') : (int)date('Y');
+
+		$data['selected_month'] = $selected_month;
+		$data['selected_year']  = $selected_year;
+		$data['total_revenue']  = $this->gedung_model->get_total_revenue($selected_month, $selected_year);
+		$data['transaksi']      = $this->gedung_model->get_all_pembayaran(); // tetap ada jika view butuh loop manual
 
 		// ===== RECENT BOOKING (invoice terbaru) =====
 		// Pakai semua pemesanan lalu sort by invoice numeric DESC (terbaru di atas)

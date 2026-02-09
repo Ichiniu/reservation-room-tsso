@@ -41,54 +41,48 @@ $jumlah_trx = (int)$jumlah_trx;
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
-        .sidebar-mini {
-            width: 72px !important;
+        [x-cloak] {
+            display: none !important;
         }
 
-        .sidebar-mini .menu-text {
-            display: none;
+        #sidebar {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .sidebar-mini nav a {
-            justify-content: center;
+        .sidebar-closed #sidebar {
+            transform: translateX(-100%);
+            width: 0 !important;
+            opacity: 0;
+            pointer-events: none;
         }
 
-        .sidebar-mini .material-icons-outlined {
-            margin-right: 0 !important;
-        }
-
-        .content-mini {
-            margin-left: 72px !important;
+        /* Override padding/margin on main content when sidebar is closed */
+        .sidebar-closed main,
+        .sidebar-closed #content,
+        .sidebar-closed .md\:pl-64 {
+            margin-left: 0 !important;
+            padding-left: 1.5rem !important;
+            /* default px-6 */
         }
 
         .menu-active {
             background-color: #fff;
             font-weight: 600;
-        }
-
-        .badge {
-            margin-left: auto;
-        }
-
-        .sidebar-mini .badge {
-            position: absolute;
-            top: 8px;
-            right: 12px;
-            width: 18px;
-            height: 18px;
-            font-size: 10px;
-            margin-left: 0;
+            color: #2563eb !important;
         }
     </style>
 </head>
 
 <body class="bg-white text-gray-800">
 
-    <header class="fixed top-0 left-0 right-0 z-40 bg-white border-b h-16">
+    <header class="fixed top-0 left-0 right-0 z-40 bg-white border-b h-16" x-data>
         <div class="flex items-center px-6 h-full gap-4">
-            <span id="toggleSidebar" class="material-icons cursor-pointer select-none">menu</span>
-            <span class="font-semibold text-lg">Administrator</span>
+            <button @click="$store.sidebar.toggle()" class="p-2 hover:bg-gray-100 rounded-xl transition-colors">
+                <span class="material-icons text-gray-600 block">menu</span>
+            </button>
+            <span class="font-bold text-slate-800 text-lg tracking-tight">Administrator</span>
 
             <!-- tombol aktifkan notif -->
             <button id="enableNotifBtn"
@@ -110,7 +104,9 @@ $jumlah_trx = (int)$jumlah_trx;
         </div>
     </header>
 
-    <aside id="sidebar" class="fixed top-16 left-0 z-30 w-64 h-full bg-[#f9f7f2] border-r transition-all duration-300">
+    <aside id="sidebar"
+        :class="$store.sidebar.open ? 'w-64' : 'w-0 -translate-x-full opacity-0'"
+        class="fixed top-16 left-0 z-30 h-full bg-[#f9f7f2] border-r transition-all duration-300 overflow-y-auto">
         <nav class="px-3 py-6 space-y-1 text-sm">
 
             <a href="<?php echo site_url('admin/dashboard'); ?>"
@@ -149,7 +145,7 @@ $jumlah_trx = (int)$jumlah_trx;
                 <span class="material-icons-outlined">inbox</span>
                 <span class="menu-text">Inbox</span>
                 <span id="badge-inbox"
-                    class="badge bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                    class="badge ml-auto bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
                     <?php if ($jumlah_inbox <= 0) echo 'style="display:none"'; ?>>
                     <?php echo $jumlah_inbox; ?>
                 </span>
@@ -161,7 +157,7 @@ $jumlah_trx = (int)$jumlah_trx;
                 <span class="material-icons">payments</span>
                 <span class="menu-text">Transaksi</span>
                 <span id="badge-trx"
-                    class="badge bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                    class="badge ml-auto bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
                     <?php if ($jumlah_trx <= 0) echo 'style="display:none"'; ?>>
                     <?php echo $jumlah_trx; ?>
                 </span>
@@ -201,16 +197,29 @@ $jumlah_trx = (int)$jumlah_trx;
     </audio>
 
     <script>
-        /* =============== UI basic =============== */
-        const toggleBtn = document.getElementById('toggleSidebar');
-        const sidebar = document.getElementById('sidebar');
-        const content = document.getElementById('content');
-        toggleBtn.addEventListener('click', function() {
-            sidebar.classList.toggle('sidebar-mini');
-            content.classList.toggle('content-mini');
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('sidebar', {
+                open: localStorage.getItem('sidebar-open') !== 'false',
+                toggle() {
+                    this.open = !this.open;
+                    localStorage.setItem('sidebar-open', this.open);
+                    this.updateBodyClass();
+                },
+                updateBodyClass() {
+                    if (this.open) {
+                        document.body.classList.remove('sidebar-closed');
+                    } else {
+                        document.body.classList.add('sidebar-closed');
+                    }
+                }
+            });
+            // Initial call
+            Alpine.store('sidebar').updateBodyClass();
         });
+    </script>
 
-        const toast = document.getElementById('toast');
+    <script>
+        /* =============== UI basic =============== */
         const badgeInbox = document.getElementById('badge-inbox');
         const badgeTrx = document.getElementById('badge-trx');
 

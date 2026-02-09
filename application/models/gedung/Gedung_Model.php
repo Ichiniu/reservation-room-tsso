@@ -257,6 +257,24 @@ class Gedung_Model extends CI_Model
 		return $this->db->query($sql)->result_array();
 	}
 
+	public function get_total_revenue($month = null, $year = null)
+	{
+		$sql = "SELECT SUM(NOMINAL_TRANSFER) as total FROM pembayaran WHERE STATUS_VERIF = 'CONFIRMED'";
+		$binds = [];
+
+		if ($month && $year) {
+			$sql .= " AND MONTH(TANGGAL_TRANSFER) = ? AND YEAR(TANGGAL_TRANSFER) = ?";
+			$binds[] = (int)$month;
+			$binds[] = (int)$year;
+		} elseif ($year) {
+			$sql .= " AND YEAR(TANGGAL_TRANSFER) = ?";
+			$binds[] = (int)$year;
+		}
+
+		$row = $this->db->query($sql, $binds)->row();
+		return $row ? (float)$row->total : 0;
+	}
+
 
 	// atau pending saja:
 	public function get_all_pembayaran_pending()
