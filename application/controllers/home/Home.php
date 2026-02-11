@@ -385,9 +385,9 @@ class Home extends CI_Controller
 		}
 
 		if (method_exists($this->catering_model, 'get_all')) {
-			$data['res'] = $this->catering_model->get_all();
+			$data['catering_list'] = $this->catering_model->get_all();
 		} else {
-			$data['res'] = $this->catering_model->get_catering_full();
+			$data['catering_list'] = $this->catering_model->get_catering_full();
 		}
 
 		$data['email'] = $this->gedung_model->get_email_address($username);
@@ -559,6 +559,38 @@ class Home extends CI_Controller
 			}
 		}
 
+		// ✅ HITUNG HARGA SEWA RUANGAN (BERDASARKAN MODE BARU)
+		$this->load->helper('pricing');
+		$obj_calc = new stdClass();
+		$obj_calc->ID_GEDUNG = $id_gedung;
+		$obj_calc->TIPE_JAM = $tipe_jam;
+		$obj_calc->JAM_PEMESANAN = $jam_pesan;
+		$obj_calc->JAM_SELESAI = $jam_selesai;
+		$obj_calc->TOTAL_PESERTA = $total_peserta;
+		$obj_calc->PODCAST_TYPE = $podcast_type;
+
+		// Ambil data gedung untuk pricing
+		$g_price = $this->db->get_where('gedung', array('ID_GEDUNG' => $id_gedung))->row();
+		if ($g_price) {
+			$obj_calc->HARGA_SEWA = $g_price->HARGA_SEWA;
+			$obj_calc->PRICING_MODE = isset($g_price->PRICING_MODE) ? $g_price->PRICING_MODE : '';
+			$obj_calc->HARGA_HALF_DAY_PP = isset($g_price->HARGA_HALF_DAY_PP) ? $g_price->HARGA_HALF_DAY_PP : 0;
+			$obj_calc->HARGA_FULL_DAY_PP = isset($g_price->HARGA_FULL_DAY_PP) ? $g_price->HARGA_FULL_DAY_PP : 0;
+			$obj_calc->HARGA_AUDIO_PER_JAM = isset($g_price->HARGA_AUDIO_PER_JAM) ? $g_price->HARGA_AUDIO_PER_JAM : 0;
+			$obj_calc->HARGA_VIDEO_PER_JAM = isset($g_price->HARGA_VIDEO_PER_JAM) ? $g_price->HARGA_VIDEO_PER_JAM : 0;
+		}
+
+		$harga_sewa_ruangan = bs_calc_room_sewa($obj_calc, $is_internal);
+
+		// ✅ HITUNG HARGA CATERING
+		$total_harga_catering = 0;
+		if ($id_catering > 0 && $jumlah_catering > 0) {
+			$c_data = $this->db->get_where('catering', array('ID_CATERING' => $id_catering))->row();
+			if ($c_data) {
+				$total_harga_catering = (float)$c_data->HARGA * (int)$jumlah_catering;
+			}
+		}
+
 		// ===== BUILD PEMESANAN DATA =====
 		$data_pemesanan = array(
 			'USERNAME'          => $username,
@@ -587,16 +619,6 @@ class Home extends CI_Controller
 		if ($podcast_type !== null) {
 			if ($this->db->field_exists('PODCAST_TYPE', 'pemesanan')) {
 				$data_pemesanan['PODCAST_TYPE'] = $podcast_type;
-			}
-		}
-		// ✅ FALLBACK: pastikan TOTAL_PESERTA tersimpan jika ada di POST
-		if (!isset($data_pemesanan['TOTAL_PESERTA'])) {
-			$peserta_post = $this->input->post('total_peserta');
-			if ($peserta_post !== null && $peserta_post !== '') {
-				$peserta_val = (int)$peserta_post;
-				if ($peserta_val > 0) {
-					$data_pemesanan['TOTAL_PESERTA'] = $peserta_val;
-				}
 			}
 		}
 		// ===== INSERT PEMESANAN =====

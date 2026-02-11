@@ -730,7 +730,46 @@ TIME_FORMAT(
 				OR ID_PEMESANAN = ?
 				LIMIT 1";
 
-		return $this->db->query($sql, array($num, $kode))->row();
+		$row = $this->db->query($sql, array($num, $kode))->row();
+
+		if ($row) {
+			// ✅ Ambil data yang kurang dari tabel pemesanan (karena VIEW V_PEMESANAN mungkin tidak lengkap)
+			$extra_cols = array();
+			if ($this->db->field_exists('TOTAL_PESERTA', 'pemesanan')) $extra_cols[] = 'TOTAL_PESERTA';
+			if ($this->db->field_exists('PODCAST_TYPE', 'pemesanan'))  $extra_cols[] = 'PODCAST_TYPE';
+			if ($this->db->field_exists('DURASI_JAM', 'pemesanan'))    $extra_cols[] = 'DURASI_JAM';
+
+			if (!empty($extra_cols)) {
+				$raw = $this->db->select(implode(',', $extra_cols))
+					->get_where('pemesanan', array('ID_PEMESANAN' => $num))
+					->row();
+				if ($raw) {
+					if (isset($raw->TOTAL_PESERTA)) $row->TOTAL_PESERTA = (int)$raw->TOTAL_PESERTA;
+					if (isset($raw->PODCAST_TYPE))  $row->PODCAST_TYPE  = $raw->PODCAST_TYPE;
+					if (isset($raw->DURASI_JAM))    $row->DURASI_JAM    = (int)$raw->DURASI_JAM;
+				}
+			}
+
+			// ✅ HITUNG ULANG HARGA SECARA DINAMIS
+			$this->load->helper('pricing');
+			$perusahaan = isset($row->perusahaan) ? $row->perusahaan : '';
+			$is_internal = (strtoupper(trim((string)$perusahaan)) === 'INTERNAL');
+
+			// Hitung Harga Sewa Ruangan (Tingkat Model)
+			$harga_sewa_calc = (int) bs_calc_room_sewa($row, $is_internal);
+			$row->HARGA_SEWA = $harga_sewa_calc;
+
+			// Hitung Total Harga Catering (Gunakan HARGA_SATUAN dari View)
+			$total_catering = 0;
+			$harga_pax = isset($row->HARGA_SATUAN) ? (float)$row->HARGA_SATUAN : 0;
+			$jumlah_porsi = isset($row->JUMLAH_CATERING) ? (int)$row->JUMLAH_CATERING : 0;
+			$total_catering = $harga_pax * $jumlah_porsi;
+
+			$row->TOTAL_HARGA = $total_catering;
+			$row->TOTAL_KESELURUHAN = (float)$harga_sewa_calc + (float)$total_catering;
+		}
+
+		return $row;
 	}
 
 
@@ -1023,7 +1062,7 @@ TIME_FORMAT(
 			ORDER BY total DESC
 			LIMIT ?
 		";
-		
+
 		$query = $this->db->query($sql, array((int)$limit));
 		return $query->result_array();
 	}

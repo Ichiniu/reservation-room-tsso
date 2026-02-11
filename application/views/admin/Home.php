@@ -245,9 +245,9 @@ if ($selM !== '' && $selY !== '') {
                                 <?php
                                 $shortMonths = [1 => 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
                                 foreach ($shortMonths as $num => $name): ?>
-                                <option value="<?= $num; ?>" <?= ((string)$num === (string)$selM) ? 'selected' : ''; ?>>
-                                    <?= $name; ?>
-                                </option>
+                                    <option value="<?= $num; ?>" <?= ((string)$num === (string)$selM) ? 'selected' : ''; ?>>
+                                        <?= $name; ?>
+                                    </option>
                                 <?php endforeach; ?>
                             </select>
 
@@ -255,9 +255,9 @@ if ($selM !== '' && $selY !== '') {
                                 class="bg-transparent border-none text-[10px] font-bold text-slate-700 focus:ring-0 outline-none cursor-pointer p-0 px-1">
                                 <!-- <option value="" <?= ($selY === '') ? 'selected' : ''; ?>>Semua</option> -->
                                 <?php for ($y = (int)date('Y'); $y >= 2023; $y--): ?>
-                                <option value="<?= $y; ?>" <?= ((string)$y === (string)$selY) ? 'selected' : ''; ?>>
-                                    <?= $y; ?>
-                                </option>
+                                    <option value="<?= $y; ?>" <?= ((string)$y === (string)$selY) ? 'selected' : ''; ?>>
+                                        <?= $y; ?>
+                                    </option>
                                 <?php endfor; ?>
                             </select>
                         </form>
@@ -276,11 +276,11 @@ if ($selM !== '' && $selY !== '') {
             </div>
         </div>
 
-        <!-- CHART & RECENT BOOKINGS GRID -->
-        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- CHART & RECENT BOOKINGS (STACKED FULL WIDTH) -->
+        <div class="max-w-7xl mx-auto flex flex-col gap-6">
 
-            <!-- CHART SECTION (Left Col) -->
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col">
+            <!-- CHART SECTION (Statistik Perusahaan) -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col w-full">
                 <div class="p-5 border-b border-slate-200">
                     <h2 class="text-lg font-bold text-slate-900">Statistik Perusahaan</h2>
                     <p class="text-sm text-slate-500">Grafik jumlah booking berdasarkan perusahaan.</p>
@@ -292,377 +292,377 @@ if ($selM !== '' && $selY !== '') {
                 </div>
             </div>
 
-            <!-- RECENT BOOKINGS (Right Col) -->
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm">
+            <!-- RECENT BOOKINGS -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm w-full">
 
-            <div class="p-5 border-b border-slate-200 flex items-center justify-between">
-                <div>
-                    <h2 class="text-lg font-bold text-slate-900">Recent Bookings</h2>
-                    <p class="text-sm text-slate-500">Jadwal ruangan yang sudah ter-booking (SUBMITTED).</p>
-                </div>
-                <a href="<?= site_url('admin/pemesanan2'); ?>"
-                    class="text-sm font-semibold text-slate-700 hover:text-slate-900">
-                    View All
-                </a>
-            </div>
-
-            <!-- FILTER -->
-            <div class="px-5 pt-4">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="p-5 border-b border-slate-200 flex items-center justify-between">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Filter Invoice / ID</label>
-                        <input id="filterKode" type="text" placeholder="contoh: PMSN00094 / 94"
-                            class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-300">
+                        <h2 class="text-lg font-bold text-slate-900">Recent Bookings</h2>
+                        <p class="text-sm text-slate-500">Jadwal ruangan yang sudah ter-booking (SUBMITTED).</p>
                     </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Filter User</label>
-                        <select id="filterUser"
-                            class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-slate-300">
-                            <option value="">Semua User</option>
-                        </select>
-                    </div>
-
-                    <div class="flex items-end">
-                        <button id="resetFilter"
-                            class="w-full px-4 py-2 rounded-xl bg-slate-200 text-slate-800 text-sm hover:bg-slate-300">
-                            Reset
-                        </button>
-                    </div>
+                    <a href="<?= site_url('admin/pemesanan2'); ?>"
+                        class="text-sm font-semibold text-slate-700 hover:text-slate-900">
+                        View All
+                    </a>
                 </div>
 
-                <p class="mt-3 text-xs text-slate-500">
-                    * Filter berjalan otomatis saat mengetik / memilih dropdown. Pagination mengikuti hasil filter.
-                </p>
-            </div>
+                <!-- FILTER -->
+                <div class="px-5 pt-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Filter Invoice / ID</label>
+                            <input id="filterKode" type="text" placeholder="contoh: PMSN00094 / 94"
+                                class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-300">
+                        </div>
 
-            <!-- TABLE -->
-            <div class="px-5 pb-5">
-                <div id="tableScroll"
-                    class="overflow-x-auto max-h-[420px] overflow-y-auto relative border border-slate-200 rounded-xl">
-                    <table class="w-full text-sm bg-white">
-                        <thead class="sticky top-0 z-20 bg-slate-100 shadow-sm">
-                            <tr class="border-b border-slate-200">
-                                <th class="px-4 py-3 text-center">No</th>
-                                <th class="px-4 py-3 text-center">Invoice</th>
-                                <th class="px-4 py-3 text-center">Ruangan</th>
-                                <th class="px-4 py-3 text-center">User</th>
-                                <th class="px-4 py-3 text-center">Tanggal</th>
-                                <th class="px-4 py-3 text-center">Jam</th>
-                                <th class="px-4 py-3 text-center">Aksi</th>
-                            </tr>
-                        </thead>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Filter User</label>
+                            <select id="filterUser"
+                                class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-slate-300">
+                                <option value="">Semua User</option>
+                            </select>
+                        </div>
 
-                        <tbody id="tableBody">
-                            <?php if (!empty($front_data)): ?>
-                            <?php foreach ($front_data as $data): ?>
-                            <?php
-                                    $rawId = isset($data->ID_PEMESANAN) ? $data->ID_PEMESANAN : '';
-                                    $idNum = (int)preg_replace('/\D+/', '', (string)$rawId);
+                        <div class="flex items-end">
+                            <button id="resetFilter"
+                                class="w-full px-4 py-2 rounded-xl bg-slate-200 text-slate-800 text-sm hover:bg-slate-300">
+                                Reset
+                            </button>
+                        </div>
+                    </div>
 
-                                    $invoice = (stripos((string)$rawId, 'PMSN') === 0)
-                                        ? (string)$rawId
-                                        : ($idNum ? 'PMSN000' . $idNum : (string)$rawId);
-
-                                    $username   = isset($data->USERNAME) ? $data->USERNAME : '-';
-                                    $namaGedung = isset($data->NAMA_GEDUNG) ? $data->NAMA_GEDUNG : '-';
-
-                                    $tglRaw  = isset($data->TANGGAL_PEMESANAN) ? $data->TANGGAL_PEMESANAN : '';
-                                    $tglIndo = format_tanggal_indo($tglRaw);
-                                    $mulai   = isset($data->JAM_MULAI) ? trim((string)$data->JAM_MULAI) : '';
-                                    $selesai = isset($data->JAM_SELESAI) ? trim((string)$data->JAM_SELESAI) : '';
-
-                                    $DEFAULT_DURASI_JAM = 2;
-                                    $jamFix = '-';
-
-                                    $toDot = function ($hi) {
-                                        $hi = trim((string)$hi);
-                                        if ($hi === '' || $hi === '-') return '';
-                                        return str_replace(':', '.', $hi);
-                                    };
-
-                                    $addHours = function ($hi, $hours) {
-                                        $hi = trim((string)$hi);
-                                        if ($hi === '') return '';
-                                        $dt = DateTime::createFromFormat('H:i', $hi);
-                                        if (!$dt) return '';
-                                        $dt->modify('+' . (int)$hours . ' hours');
-                                        return $dt->format('H:i');
-                                    };
-
-                                    if ($mulai !== '' && strpos($mulai, '-') !== false) {
-                                        $parts = array_map('trim', preg_split('/\s*-\s*/', $mulai, 2));
-                                        $a = isset($parts[0]) ? _time_to_hi($parts[0]) : '';
-                                        $b = isset($parts[1]) ? _time_to_hi($parts[1]) : '';
-                                        if ($a !== '' && $b === '') $b = $addHours($a, $DEFAULT_DURASI_JAM);
-                                        $a = $toDot($a);
-                                        $b = $toDot($b);
-                                        if ($a !== '' && $b !== '') $jamFix = $a . ' - ' . $b;
-                                        elseif ($a !== '') $jamFix = $a;
-                                    } else {
-                                        $a = _time_to_hi($mulai);
-                                        $b = _time_to_hi($selesai);
-                                        if ($a !== '' && $b === '') $b = $addHours($a, $DEFAULT_DURASI_JAM);
-                                        $a = $toDot($a);
-                                        $b = $toDot($b);
-                                        if ($a !== '' && $b !== '') $jamFix = $a . ' - ' . $b;
-                                        elseif ($a !== '') $jamFix = $a;
-                                    }
-                                    ?>
-
-                            <tr class="table-row hover:bg-slate-50" data-idnum="<?= (int)$idNum; ?>"
-                                data-kode="<?= htmlspecialchars($invoice, ENT_QUOTES, 'UTF-8'); ?>"
-                                data-user="<?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8'); ?>">
-                                <td class="px-4 py-3 text-center cell-no">1</td>
-
-                                <td class="px-4 py-3 text-center font-semibold cell-kode">
-                                    <?= htmlspecialchars($invoice, ENT_QUOTES, 'UTF-8'); ?>
-                                </td>
-
-                                <td class="px-4 py-3 text-center">
-                                    <?= htmlspecialchars($namaGedung, ENT_QUOTES, 'UTF-8'); ?>
-                                </td>
-
-                                <td class="px-4 py-3 text-center cell-user">
-                                    <?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8'); ?>
-                                </td>
-
-                                <td class="px-4 py-3 text-center">
-                                    <?= htmlspecialchars($tglIndo, ENT_QUOTES, 'UTF-8'); ?>
-                                </td>
-
-                                <td class="px-4 py-3 text-center">
-                                    <?= htmlspecialchars($jamFix, ENT_QUOTES, 'UTF-8'); ?>
-                                </td>
-
-                                <td class="px-4 py-3 text-center">
-                                    <?php if ($idNum > 0): ?>
-                                    <a href="<?= site_url('admin/detail_pemesanan/' . $idNum); ?>"
-                                        class="inline-flex items-center justify-center px-3 py-1.5 bg-blue-600 text-white text-xs rounded hover:bg-blue-700">
-                                        Detail
-                                    </a>
-                                    <?php else: ?>
-                                    <span class="text-xs text-slate-400">-</span>
-                                    <?php endif; ?>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                            <?php else: ?>
-                            <tr>
-                                <td colspan="7" class="px-4 py-6 text-center text-slate-500">
-                                    Belum ada jadwal terbooking (SUBMITTED).
-                                </td>
-                            </tr>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
+                    <p class="mt-3 text-xs text-slate-500">
+                        * Filter berjalan otomatis saat mengetik / memilih dropdown. Pagination mengikuti hasil filter.
+                    </p>
                 </div>
 
-                <!-- PAGINATION -->
-                <div class="mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <button id="prevBtn"
-                        class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 disabled:opacity-40 disabled:cursor-not-allowed">
-                        Prev
-                    </button>
+                <!-- TABLE -->
+                <div class="px-5 pb-5">
+                    <div id="tableScroll"
+                        class="overflow-x-auto max-h-[420px] overflow-y-auto relative border border-slate-200 rounded-xl">
+                        <table class="w-full text-sm bg-white">
+                            <thead class="sticky top-0 z-20 bg-slate-100 shadow-sm">
+                                <tr class="border-b border-slate-200">
+                                    <th class="px-4 py-3 text-center">No</th>
+                                    <th class="px-4 py-3 text-center">Invoice</th>
+                                    <th class="px-4 py-3 text-center">Ruangan</th>
+                                    <th class="px-4 py-3 text-center">User</th>
+                                    <th class="px-4 py-3 text-center">Tanggal</th>
+                                    <th class="px-4 py-3 text-center">Jam</th>
+                                    <th class="px-4 py-3 text-center">Aksi</th>
+                                </tr>
+                            </thead>
 
-                    <span id="pageInfo" class="text-sm text-slate-600 text-center"></span>
+                            <tbody id="tableBody">
+                                <?php if (!empty($front_data)): ?>
+                                    <?php foreach ($front_data as $data): ?>
+                                        <?php
+                                        $rawId = isset($data->ID_PEMESANAN) ? $data->ID_PEMESANAN : '';
+                                        $idNum = (int)preg_replace('/\D+/', '', (string)$rawId);
 
-                    <div class="flex items-center gap-3">
-                        <select id="rowsPerPage" class="rounded-xl border border-slate-200 px-3 py-2 text-sm bg-white">
-                            <option value="5">5 rows</option>
-                            <option value="10" selected>10 rows</option>
-                            <option value="25">25 rows</option>
-                        </select>
+                                        $invoice = (stripos((string)$rawId, 'PMSN') === 0)
+                                            ? (string)$rawId
+                                            : ($idNum ? 'PMSN000' . $idNum : (string)$rawId);
 
-                        <button id="nextBtn"
+                                        $username   = isset($data->USERNAME) ? $data->USERNAME : '-';
+                                        $namaGedung = isset($data->NAMA_GEDUNG) ? $data->NAMA_GEDUNG : '-';
+
+                                        $tglRaw  = isset($data->TANGGAL_PEMESANAN) ? $data->TANGGAL_PEMESANAN : '';
+                                        $tglIndo = format_tanggal_indo($tglRaw);
+                                        $mulai   = isset($data->JAM_MULAI) ? trim((string)$data->JAM_MULAI) : '';
+                                        $selesai = isset($data->JAM_SELESAI) ? trim((string)$data->JAM_SELESAI) : '';
+
+                                        $DEFAULT_DURASI_JAM = 2;
+                                        $jamFix = '-';
+
+                                        $toDot = function ($hi) {
+                                            $hi = trim((string)$hi);
+                                            if ($hi === '' || $hi === '-') return '';
+                                            return str_replace(':', '.', $hi);
+                                        };
+
+                                        $addHours = function ($hi, $hours) {
+                                            $hi = trim((string)$hi);
+                                            if ($hi === '') return '';
+                                            $dt = DateTime::createFromFormat('H:i', $hi);
+                                            if (!$dt) return '';
+                                            $dt->modify('+' . (int)$hours . ' hours');
+                                            return $dt->format('H:i');
+                                        };
+
+                                        if ($mulai !== '' && strpos($mulai, '-') !== false) {
+                                            $parts = array_map('trim', preg_split('/\s*-\s*/', $mulai, 2));
+                                            $a = isset($parts[0]) ? _time_to_hi($parts[0]) : '';
+                                            $b = isset($parts[1]) ? _time_to_hi($parts[1]) : '';
+                                            if ($a !== '' && $b === '') $b = $addHours($a, $DEFAULT_DURASI_JAM);
+                                            $a = $toDot($a);
+                                            $b = $toDot($b);
+                                            if ($a !== '' && $b !== '') $jamFix = $a . ' - ' . $b;
+                                            elseif ($a !== '') $jamFix = $a;
+                                        } else {
+                                            $a = _time_to_hi($mulai);
+                                            $b = _time_to_hi($selesai);
+                                            if ($a !== '' && $b === '') $b = $addHours($a, $DEFAULT_DURASI_JAM);
+                                            $a = $toDot($a);
+                                            $b = $toDot($b);
+                                            if ($a !== '' && $b !== '') $jamFix = $a . ' - ' . $b;
+                                            elseif ($a !== '') $jamFix = $a;
+                                        }
+                                        ?>
+
+                                        <tr class="table-row hover:bg-slate-50" data-idnum="<?= (int)$idNum; ?>"
+                                            data-kode="<?= htmlspecialchars($invoice, ENT_QUOTES, 'UTF-8'); ?>"
+                                            data-user="<?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8'); ?>">
+                                            <td class="px-4 py-3 text-center cell-no">1</td>
+
+                                            <td class="px-4 py-3 text-center font-semibold cell-kode">
+                                                <?= htmlspecialchars($invoice, ENT_QUOTES, 'UTF-8'); ?>
+                                            </td>
+
+                                            <td class="px-4 py-3 text-center">
+                                                <?= htmlspecialchars($namaGedung, ENT_QUOTES, 'UTF-8'); ?>
+                                            </td>
+
+                                            <td class="px-4 py-3 text-center cell-user">
+                                                <?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8'); ?>
+                                            </td>
+
+                                            <td class="px-4 py-3 text-center">
+                                                <?= htmlspecialchars($tglIndo, ENT_QUOTES, 'UTF-8'); ?>
+                                            </td>
+
+                                            <td class="px-4 py-3 text-center">
+                                                <?= htmlspecialchars($jamFix, ENT_QUOTES, 'UTF-8'); ?>
+                                            </td>
+
+                                            <td class="px-4 py-3 text-center">
+                                                <?php if ($idNum > 0): ?>
+                                                    <a href="<?= site_url('admin/detail_pemesanan/' . $idNum); ?>"
+                                                        class="inline-flex items-center justify-center px-3 py-1.5 bg-blue-600 text-white text-xs rounded hover:bg-blue-700">
+                                                        Detail
+                                                    </a>
+                                                <?php else: ?>
+                                                    <span class="text-xs text-slate-400">-</span>
+                                                <?php endif; ?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td colspan="7" class="px-4 py-6 text-center text-slate-500">
+                                            Belum ada jadwal terbooking (SUBMITTED).
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- PAGINATION -->
+                    <div class="mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <button id="prevBtn"
                             class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 disabled:opacity-40 disabled:cursor-not-allowed">
-                            Next
+                            Prev
                         </button>
+
+                        <span id="pageInfo" class="text-sm text-slate-600 text-center"></span>
+
+                        <div class="flex items-center gap-3">
+                            <select id="rowsPerPage" class="rounded-xl border border-slate-200 px-3 py-2 text-sm bg-white">
+                                <option value="5">5 rows</option>
+                                <option value="10" selected>10 rows</option>
+                                <option value="25">25 rows</option>
+                            </select>
+
+                            <button id="nextBtn"
+                                class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 disabled:opacity-40 disabled:cursor-not-allowed">
+                                Next
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="p-4 flex items-center justify-between text-xs text-slate-500 border-t border-slate-200">
-                <span>© <?= date('Y'); ?> Smart Office • Admin Panel</span>
-                <span class="hidden sm:inline">Modern Dashboard</span>
-            </div>
+                <div class="p-4 flex items-center justify-between text-xs text-slate-500 border-t border-slate-200">
+                    <span>© <?= date('Y'); ?> Smart Office • Admin Panel</span>
+                    <span class="hidden sm:inline">Modern Dashboard</span>
+                </div>
             </div>
         </div>
 
         <script>
-        // AUTO SUBMIT FILTER REVENUE (tanpa tombol)
-        (function() {
-            var f = document.getElementById('revFilterForm');
-            if (!f) return;
+            // AUTO SUBMIT FILTER REVENUE (tanpa tombol)
+            (function() {
+                var f = document.getElementById('revFilterForm');
+                if (!f) return;
 
-            var m = document.getElementById('revMonth');
-            var y = document.getElementById('revYear');
+                var m = document.getElementById('revMonth');
+                var y = document.getElementById('revYear');
 
-            function submitNow() {
-                // langsung submit saat pilih dropdown
-                f.submit();
-            }
+                function submitNow() {
+                    // langsung submit saat pilih dropdown
+                    f.submit();
+                }
 
-            if (m) m.addEventListener('change', submitNow);
-            if (y) y.addEventListener('change', submitNow);
-        })();
+                if (m) m.addEventListener('change', submitNow);
+                if (y) y.addEventListener('change', submitNow);
+            })();
         </script>
 
         <script>
-        (function() {
-            var tbody = document.getElementById('tableBody');
-            if (!tbody) return;
+            (function() {
+                var tbody = document.getElementById('tableBody');
+                if (!tbody) return;
 
-            var allRows = Array.prototype.slice.call(document.querySelectorAll('.table-row'));
-            var rowsPerPageSelect = document.getElementById('rowsPerPage');
-            var pageInfo = document.getElementById('pageInfo');
-            var prevBtn = document.getElementById('prevBtn');
-            var nextBtn = document.getElementById('nextBtn');
-            var scrollBox = document.getElementById('tableScroll');
+                var allRows = Array.prototype.slice.call(document.querySelectorAll('.table-row'));
+                var rowsPerPageSelect = document.getElementById('rowsPerPage');
+                var pageInfo = document.getElementById('pageInfo');
+                var prevBtn = document.getElementById('prevBtn');
+                var nextBtn = document.getElementById('nextBtn');
+                var scrollBox = document.getElementById('tableScroll');
 
-            var filterKode = document.getElementById('filterKode');
-            var filterUser = document.getElementById('filterUser');
-            var resetFilterBtn = document.getElementById('resetFilter');
+                var filterKode = document.getElementById('filterKode');
+                var filterUser = document.getElementById('filterUser');
+                var resetFilterBtn = document.getElementById('resetFilter');
 
-            if (!allRows.length) return;
+                if (!allRows.length) return;
 
-            var currentPage = 1;
-            var rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
-            var activeRows = allRows.slice();
+                var currentPage = 1;
+                var rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
+                var activeRows = allRows.slice();
 
-            // SORT by invoice numeric DESC (terbaru dulu)
-            function sortRowsByIdDesc() {
-                allRows.sort(function(a, b) {
-                    var ida = parseInt(a.getAttribute('data-idnum') || '0', 10);
-                    var idb = parseInt(b.getAttribute('data-idnum') || '0', 10);
-                    return idb - ida;
+                // SORT by invoice numeric DESC (terbaru dulu)
+                function sortRowsByIdDesc() {
+                    allRows.sort(function(a, b) {
+                        var ida = parseInt(a.getAttribute('data-idnum') || '0', 10);
+                        var idb = parseInt(b.getAttribute('data-idnum') || '0', 10);
+                        return idb - ida;
+                    });
+
+                    allRows.forEach(function(r) {
+                        tbody.appendChild(r);
+                    });
+                }
+
+                function buildUserDropdown() {
+                    var users = {};
+                    allRows.forEach(function(r) {
+                        var u = (r.getAttribute('data-user') || '').trim();
+                        if (u && u !== '-') users[u] = true;
+                    });
+
+                    var keys = Object.keys(users).sort(function(a, b) {
+                        return a.localeCompare(b);
+                    });
+                    filterUser.innerHTML = '<option value="">Semua User</option>';
+                    keys.forEach(function(u) {
+                        var opt = document.createElement('option');
+                        opt.value = u;
+                        opt.textContent = u;
+                        filterUser.appendChild(opt);
+                    });
+                }
+
+                function normalize(s) {
+                    return (s || '').toString().trim().toLowerCase().replace(/\s+/g, '');
+                }
+
+                function applyFilter() {
+                    var kodeVal = normalize(filterKode.value);
+                    var userVal = (filterUser.value || '').trim();
+
+                    activeRows = allRows.filter(function(row) {
+                        var kode = normalize(row.getAttribute('data-kode'));
+                        var user = (row.getAttribute('data-user') || '').trim();
+
+                        var okKode = !kodeVal ? true : (kode.indexOf(kodeVal) !== -1);
+                        var okUser = !userVal ? true : (user === userVal);
+
+                        return okKode && okUser;
+                    });
+
+                    currentPage = 1;
+                    renderTable();
+                }
+
+                function resetFilter() {
+                    filterKode.value = '';
+                    filterUser.value = '';
+                    activeRows = allRows.slice();
+                    currentPage = 1;
+                    renderTable();
+                }
+
+                function renderTable() {
+                    var total = activeRows.length;
+                    var totalPages = Math.max(1, Math.ceil(total / rowsPerPage));
+                    if (currentPage > totalPages) currentPage = totalPages;
+
+                    allRows.forEach(function(r) {
+                        r.style.display = 'none';
+                    });
+
+                    var start = (currentPage - 1) * rowsPerPage;
+                    var end = start + rowsPerPage;
+
+                    var visibleNo = start + 1;
+                    activeRows.forEach(function(row, idx) {
+                        if (idx >= start && idx < end) {
+                            row.style.display = '';
+                            var cell = row.querySelector('.cell-no');
+                            if (cell) cell.textContent = visibleNo++;
+                        }
+                    });
+
+                    prevBtn.disabled = (currentPage === 1);
+                    nextBtn.disabled = (currentPage === totalPages);
+
+                    var showingFrom = (total === 0) ? 0 : (start + 1);
+                    var showingTo = Math.min(end, total);
+                    pageInfo.textContent = 'Page ' + currentPage + ' of ' + totalPages + ' • Showing ' + showingFrom +
+                        '-' + showingTo + ' of ' + total;
+
+                    if (scrollBox) scrollBox.scrollTop = 0;
+                }
+
+                filterKode.addEventListener('input', applyFilter);
+                filterUser.addEventListener('change', applyFilter);
+                resetFilterBtn.addEventListener('click', resetFilter);
+
+                rowsPerPageSelect.addEventListener('change', function() {
+                    rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
+                    currentPage = 1;
+                    renderTable();
                 });
 
-                allRows.forEach(function(r) {
-                    tbody.appendChild(r);
-                });
-            }
-
-            function buildUserDropdown() {
-                var users = {};
-                allRows.forEach(function(r) {
-                    var u = (r.getAttribute('data-user') || '').trim();
-                    if (u && u !== '-') users[u] = true;
-                });
-
-                var keys = Object.keys(users).sort(function(a, b) {
-                    return a.localeCompare(b);
-                });
-                filterUser.innerHTML = '<option value="">Semua User</option>';
-                keys.forEach(function(u) {
-                    var opt = document.createElement('option');
-                    opt.value = u;
-                    opt.textContent = u;
-                    filterUser.appendChild(opt);
-                });
-            }
-
-            function normalize(s) {
-                return (s || '').toString().trim().toLowerCase().replace(/\s+/g, '');
-            }
-
-            function applyFilter() {
-                var kodeVal = normalize(filterKode.value);
-                var userVal = (filterUser.value || '').trim();
-
-                activeRows = allRows.filter(function(row) {
-                    var kode = normalize(row.getAttribute('data-kode'));
-                    var user = (row.getAttribute('data-user') || '').trim();
-
-                    var okKode = !kodeVal ? true : (kode.indexOf(kodeVal) !== -1);
-                    var okUser = !userVal ? true : (user === userVal);
-
-                    return okKode && okUser;
-                });
-
-                currentPage = 1;
-                renderTable();
-            }
-
-            function resetFilter() {
-                filterKode.value = '';
-                filterUser.value = '';
-                activeRows = allRows.slice();
-                currentPage = 1;
-                renderTable();
-            }
-
-            function renderTable() {
-                var total = activeRows.length;
-                var totalPages = Math.max(1, Math.ceil(total / rowsPerPage));
-                if (currentPage > totalPages) currentPage = totalPages;
-
-                allRows.forEach(function(r) {
-                    r.style.display = 'none';
-                });
-
-                var start = (currentPage - 1) * rowsPerPage;
-                var end = start + rowsPerPage;
-
-                var visibleNo = start + 1;
-                activeRows.forEach(function(row, idx) {
-                    if (idx >= start && idx < end) {
-                        row.style.display = '';
-                        var cell = row.querySelector('.cell-no');
-                        if (cell) cell.textContent = visibleNo++;
+                prevBtn.addEventListener('click', function() {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        renderTable();
                     }
                 });
 
-                prevBtn.disabled = (currentPage === 1);
-                nextBtn.disabled = (currentPage === totalPages);
+                nextBtn.addEventListener('click', function() {
+                    var totalPages = Math.max(1, Math.ceil(activeRows.length / rowsPerPage));
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        renderTable();
+                    }
+                });
 
-                var showingFrom = (total === 0) ? 0 : (start + 1);
-                var showingTo = Math.min(end, total);
-                pageInfo.textContent = 'Page ' + currentPage + ' of ' + totalPages + ' • Showing ' + showingFrom +
-                    '-' + showingTo + ' of ' + total;
-
-                if (scrollBox) scrollBox.scrollTop = 0;
-            }
-
-            filterKode.addEventListener('input', applyFilter);
-            filterUser.addEventListener('change', applyFilter);
-            resetFilterBtn.addEventListener('click', resetFilter);
-
-            rowsPerPageSelect.addEventListener('change', function() {
-                rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
-                currentPage = 1;
+                // init
+                sortRowsByIdDesc();
+                buildUserDropdown();
+                activeRows = allRows.slice();
                 renderTable();
-            });
-
-            prevBtn.addEventListener('click', function() {
-                if (currentPage > 1) {
-                    currentPage--;
-                    renderTable();
-                }
-            });
-
-            nextBtn.addEventListener('click', function() {
-                var totalPages = Math.max(1, Math.ceil(activeRows.length / rowsPerPage));
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    renderTable();
-                }
-            });
-
-            // init
-            sortRowsByIdDesc();
-            buildUserDropdown();
-            activeRows = allRows.slice();
-            renderTable();
-        })();
+            })();
         </script>
 
 </body>
 
-    <script>
+<script>
     // Data from Controller
     const rawData = <?= json_encode(isset($top_companies) ? $top_companies : []); ?>;
-    
+
     // Process Data
     const labels = rawData.map(item => item.label);
     const dataValues = rawData.map(item => item.total);
@@ -678,9 +678,9 @@ if ($selM !== '' && $selY !== '') {
         '#EC4899', // Pink
         '#14B8A6', // Teal
         '#F97316', // Orange
-        '#64748B'  // Slate
+        '#64748B' // Slate
     ];
-    
+
     // Create color array matching data length by repeating base colors
     const backgroundColors = labels.map((_, i) => baseColors[i % baseColors.length]);
 

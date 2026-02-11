@@ -174,7 +174,14 @@ $id_gedung = $this->uri->segment(4);
                                     <tr class="bg-white">
                                         <td class="w-48 px-4 py-3 font-semibold text-slate-700">Harga Ruangan</td>
                                         <td class="px-2 py-3 text-slate-400">:</td>
-                                        <td class="px-4 py-3 text-slate-900">Rp. <?php echo number_format(isset($order['HARGA_SEWA']) ? (float)$order['HARGA_SEWA'] : 0, 0, ',', '.'); ?></td>
+                                        <td class="px-4 py-3 text-slate-900">
+                                            Rp. <?php echo number_format(isset($order['HARGA_SEWA']) ? (float)$order['HARGA_SEWA'] : 0, 0, ',', '.'); ?>
+                                            <?php if (isset($order['PRICING_MODE']) && $order['PRICING_MODE'] === 'PER_PESERTA'): ?>
+                                                <span class="text-xs text-slate-500">(Per Peserta × <?php echo (int)$order['TOTAL_PESERTA']; ?>)</span>
+                                            <?php elseif (isset($order['PRICING_MODE']) && $order['PRICING_MODE'] === 'PODCAST_PER_JAM'): ?>
+                                                <span class="text-xs text-slate-500">(Podcast × <?php echo (int)$order['DURASI_JAM']; ?> jam)</span>
+                                            <?php endif; ?>
+                                        </td>
                                     </tr>
 
                                     <tr class="bg-white">
