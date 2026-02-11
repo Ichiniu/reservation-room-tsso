@@ -345,16 +345,56 @@ class Admin_Controls extends CI_Controller
 			// URL langsung ke detail pemesanan
 			$detailUrl = 'home/pemesanan/details/PMSN000' . $temp_id;
 
-			// TERIMA PROPOSAL -> PROPOSAL APPROVE (1)
+			// TERIMA PROPOSAL -> Check if internal or external user
 			if ($status === 1) {
-				$this->gedung_model->update_transaksi($temp_id, 1, '');
+				// ✅ Cek apakah user internal atau eksternal
+				$u = $this->db->select('perusahaan')
+					->from('user')
+					->join('pemesanan p', 'p.USERNAME = user.USERNAME', 'left')
+					->where('p.ID_PEMESANAN', $temp_id)
+					->get()
+					->row();
 
-				// badge lama user
-				$this->gedung_model->mark_flag_unread('PMSN000' . $temp_id);
+				$perusahaan = ($u && isset($u->perusahaan)) ? $u->perusahaan : '';
+				$is_internal = (strtoupper(trim((string)$perusahaan)) === 'INTERNAL');
 
-				// notif + email user
-				if (!empty($username_user)) {
-					$this->notification_service->notifyProposalApproved($username_user, $temp_id, true);
+				if ($is_internal) {
+					// ✅ USER INTERNAL: Langsung SUBMITTED (status 3) karena tidak ada pembayaran
+					$this->gedung_model->update_transaksi($temp_id, 3, '');
+
+					// Update pembayaran juga ke CONFIRMED
+					$this->db->where('ID_PEMESANAN_RAW', $temp_id)
+						->update('pembayaran', [
+							'STATUS_VERIF' => 'CONFIRMED',
+							'CATATAN_ADMIN' => 'INTERNAL - Disetujui admin (gratis)',
+							'CONFIRMED_AT' => date('Y-m-d H:i:s')
+						]);
+
+					// badge lama user
+					$this->gedung_model->mark_flag_unread('PMSN000' . $temp_id);
+
+					// notif user bahwa pemesanan sudah CONFIRMED (langsung siap digunakan)
+					if (!empty($username_user)) {
+						$this->notification_service->notifyUser(
+							$username_user,
+							'USER_TRANSAKSI_CONFIRMED',
+							'Pemesanan dikonfirmasi',
+							'Pemesanan PMSN000' . $temp_id . ' telah disetujui dan siap digunakan.',
+							'home/pembayaran',
+							true
+						);
+					}
+				} else {
+					// ✅ USER EKSTERNAL: Status APPROVE (1) untuk lanjut ke pembayaran
+					$this->gedung_model->update_transaksi($temp_id, 1, '');
+
+					// badge lama user
+					$this->gedung_model->mark_flag_unread('PMSN000' . $temp_id);
+
+					// notif + email user
+					if (!empty($username_user)) {
+						$this->notification_service->notifyProposalApproved($username_user, $temp_id, true);
+					}
 				}
 
 				redirect('admin/transaksi');

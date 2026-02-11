@@ -79,19 +79,10 @@ class Pembayaran extends CI_Controller
 
         $total_tagihan = $harga_sewa + ($harga_catering_satuan * $jumlah_catering);
 
-        // ===== AUTO CONFIRM kalau total tagihan 0 =====
+        // ===== AUTO CREATE PAYMENT RECORD for internal users (tagihan 0) =====
+        // ✅ PERUBAHAN: Internal user TIDAK auto-confirm, tetap butuh approval admin
         if ($total_tagihan === 0) {
             $this->load->library('notification_service');
-
-            // ✅ user transaksi confirmed (sesuai kebutuhan user: confirmed di halaman transaksi)
-            $this->notification_service->notifyUser(
-                $pesanan->USERNAME,
-                'USER_TRANSAKSI_CONFIRMED',
-                'Pembayaran dikonfirmasi',
-                'Pemesanan PMSN000' . $id_pemesanan_raw . ' otomatis CONFIRMED (tagihan 0).',
-                'home/pembayaran',
-                true
-            );
 
             // cegah dobel insert
             $exists = $this->db->select('ID_PEMBAYARAN')
@@ -110,7 +101,7 @@ class Pembayaran extends CI_Controller
                     'NAMA_PAKET'         => !empty($pesanan->NAMA_PAKET) ? $pesanan->NAMA_PAKET : '-',
                     'TOTAL_TAGIHAN'      => 0,
 
-                    // kolom tujuan transfer (boleh dihapus kalau mau pakai default DB, tapi ini bikin rapi di admin)
+                    // kolom tujuan transfer
                     'BANK_TUJUAN'        => 'BCA',
                     'NO_REKENING_TUJUAN' => '1234567890',
                     'ATAS_NAMA_TUJUAN'   => 'Tiga Serangkai Smart Office',
@@ -121,36 +112,52 @@ class Pembayaran extends CI_Controller
                     'BANK_PENGIRIM'      => '-',
                     'NOMINAL_TRANSFER'   => 0,
 
-                    // WAJIB NOT NULL di tabel kamu
+                    // WAJIB NOT NULL di tabel
                     'BUKTI_PATH'         => '-',
                     'BUKTI_NAME'         => '-',
-                    'BUKTI_MIME'         => NULL, // ini boleh NULL
+                    'BUKTI_MIME'         => NULL,
 
-                    'STATUS_VERIF'       => 'CONFIRMED',
-                    'CATATAN_ADMIN'      => 'AUTO: INTERNAL - Langsung confirmed (gratis)',
-                    'CONFIRMED_AT'       => date('Y-m-d H:i:s'),
+                    // ✅ PERUBAHAN: STATUS PENDING, bukan CONFIRMED
+                    'STATUS_VERIF'       => 'PENDING',
+                    'CATATAN_ADMIN'      => 'INTERNAL - Menunggu approval admin',
+                    // ✅ CONFIRMED_AT tidak di-set (NULL), karena belum diconfirm
                 );
 
                 $this->db->trans_begin();
 
                 $this->pembayaran_model->insert_pembayaran($data_free);
 
-                // status pemesanan jadi confirmed
-                $this->db->where('ID_PEMESANAN', $id_pemesanan_raw);
-                $this->db->update('pemesanan', array('STATUS' => 3));
+                // ✅ PERUBAHAN: STATUS tetap 0 (PROCESS), TIDAK diubah jadi 3 (SUBMITTED)
+                // Status akan diubah oleh admin saat approve
 
                 if ($this->db->trans_status() === FALSE) {
                     $this->db->trans_rollback();
                     $err = $this->db->error();
                     $msg = isset($err['message']) ? $err['message'] : 'unknown';
-                    show_error('Gagal auto-confirm internal: ' . $msg);
+                    show_error('Gagal menyimpan data pembayaran internal: ' . $msg);
                     return;
                 }
 
                 $this->db->trans_commit();
-                // kirim permintaan review ke user (notifikasi + email)
-                $this->load->library('notification_service');
-                $this->notification_service->notifyReviewRequest($pesanan->USERNAME, $id_pemesanan_raw);
+
+                // ✅ Notifikasi ADMIN untuk inbox (bukan auto-confirm lagi)
+                $this->notification_service->notifyAdmin(
+                    'ADMIN_INBOX',
+                    'Pemesanan internal baru menunggu approval',
+                    'Pemesanan PMSN000' . $id_pemesanan_raw . ' dari user INTERNAL menunggu approval.',
+                    'admin/transaksi',
+                    true
+                );
+
+                // ✅ Notifikasi USER bahwa pemesanan menunggu approval (bukan confirmed)
+                $this->notification_service->notifyUser(
+                    $pesanan->USERNAME,
+                    'USER_PEMESANAN_PENDING',
+                    'Pemesanan menunggu approval',
+                    'Pemesanan PMSN000' . $id_pemesanan_raw . ' berhasil dibuat dan menunggu approval admin.',
+                    'home/pemesanan',
+                    true
+                );
             }
 
             redirect('home/pemesanan');
