@@ -1,5 +1,9 @@
 <?php
 $session_id = $this->session->userdata('admin_username');
+
+/* =======================
+   BULAN (untuk label)
+======================= */
 $months = [
     1 => 'Januari',
     2 => 'Februari',
@@ -15,7 +19,31 @@ $months = [
     12 => 'Desember'
 ];
 
-/* ===== helper format tanggal Indonesia (11 Januari 2026) ===== */
+/* =======================
+   AMBIL PARAM FILTER (GET)
+   - Default: bulan & tahun saat ini
+   - Jika user pilih "Semua": value="" => query jadi bulan= / tahun=
+======================= */
+$hasMonthParam = array_key_exists('bulan', $_GET);
+$hasYearParam  = array_key_exists('tahun', $_GET);
+
+$getMonth = $hasMonthParam ? trim((string)$_GET['bulan']) : null; // bisa "" untuk Semua
+$getYear  = $hasYearParam  ? trim((string)$_GET['tahun'])  : null;
+
+if ($getMonth !== null && $getMonth !== '' && !ctype_digit($getMonth)) $getMonth = '';
+if ($getYear  !== null && $getYear  !== '' && !ctype_digit($getYear))  $getYear  = '';
+
+/* kalau controller sudah set $selected_month/$selected_year, gunakan itu,
+   tapi jika user mengirim GET, GET lebih diprioritaskan agar dropdown konsisten */
+if ($hasMonthParam) $selected_month = $getMonth;
+elseif (!isset($selected_month)) $selected_month = (string)(int)date('m');
+
+if ($hasYearParam) $selected_year = $getYear;
+elseif (!isset($selected_year)) $selected_year = (string)(int)date('Y');
+
+/* =======================
+   helper format tanggal Indonesia (11 Januari 2026)
+======================= */
 function formatTanggalIndo($tgl)
 {
     if (empty($tgl)) return '-';
@@ -45,7 +73,9 @@ function formatTanggalIndo($tgl)
     return $d . ' ' . $bulan[$m] . ' ' . $y;
 }
 
-/* ===== helper rupiah ===== */
+/* =======================
+   helper rupiah
+======================= */
 function rupiah($n)
 {
     if ($n === null || $n === '') return 'Rp 0';
@@ -53,24 +83,23 @@ function rupiah($n)
     return 'Rp ' . number_format((float)$n, 0, ',', '.');
 }
 
-/* ===== helper jam HH:II (support 08:00:00 / 8 / 0800 / 08:00 - 17:00) ===== */
+/* =======================
+   helper jam HH:II (support 08:00:00 / 8 / 0800 / 08:00 - 17:00)
+======================= */
 function _time_to_hi($t)
 {
     $t = trim((string)$t);
     if ($t === '') return '';
 
-    // 08:00:00 atau 08:00
     if (preg_match('/^\d{1,2}:\d{2}(:\d{2})?$/', $t)) {
         return substr($t, 0, 5);
     }
 
-    // "8" atau "08"
     if (preg_match('/^\d{1,2}$/', $t)) {
         $h = (int)$t;
         return sprintf('%02d:00', $h);
     }
 
-    // "800" / "0800" / "1730"
     if (preg_match('/^\d{3,4}$/', $t)) {
         $t = str_pad($t, 4, '0', STR_PAD_LEFT);
         $h = substr($t, 0, 2);
@@ -78,7 +107,6 @@ function _time_to_hi($t)
         return $h . ':' . $m;
     }
 
-    // coba parse via strtotime
     $ts = strtotime('1970-01-01 ' . $t);
     if ($ts) return date('H:i', $ts);
 
@@ -90,7 +118,6 @@ function formatJamHHII($jam)
     $jam = trim((string)$jam);
     if ($jam === '') return '-';
 
-    // kalau range: "08:00 - 17:00" atau "08:00-17:00"
     if (strpos($jam, '-') !== false) {
         $parts = preg_split('/\s*-\s*/', $jam);
         $a = isset($parts[0]) ? _time_to_hi($parts[0]) : '';
@@ -100,12 +127,13 @@ function formatJamHHII($jam)
         if ($b !== '') return $b;
     }
 
-    // single time
     $single = _time_to_hi($jam);
     return $single !== '' ? $single : '-';
 }
 
-/* ===== hitung ringkasan (ambil dari data yang dikirim controller) ===== */
+/* =======================
+   hitung ringkasan (ambil dari data yang dikirim controller)
+======================= */
 $totalUsers  = isset($total_users) ? (int)$total_users : (isset($list_user) ? (int)count($list_user) : 0);
 $totalGedung = isset($total_gedung) ? (int)$total_gedung : (isset($list_gedung) ? (int)count($list_gedung) : 0);
 
@@ -158,6 +186,20 @@ if (isset($recent_invoices) && is_array($recent_invoices)) {
 } elseif (isset($front_data) && is_array($front_data)) {
     $recent = $front_data;
 }
+
+/* label periode */
+$selM = (string)$selected_month; // bisa ""
+$selY = (string)$selected_year;  // bisa ""
+$periodeLabel = 'Semua Periode';
+if ($selM !== '' && $selY !== '') {
+    $mInt = (int)$selM;
+    $periodeLabel = (isset($months[$mInt]) ? $months[$mInt] : $selM) . ' ' . $selY;
+} elseif ($selM === '' && $selY !== '') {
+    $periodeLabel = 'Tahun ' . $selY;
+} elseif ($selM !== '' && $selY === '') {
+    $mInt = (int)$selM;
+    $periodeLabel = (isset($months[$mInt]) ? $months[$mInt] : $selM) . ' • Semua Tahun';
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -183,8 +225,6 @@ if (isset($recent_invoices) && is_array($recent_invoices)) {
                 </h1>
                 <p class="text-sm text-slate-500 mt-1">Ringkasan data booking & transaksi.</p>
             </div>
-
-
         </div>
 
         <!-- STAT CARDS -->
@@ -222,41 +262,49 @@ if (isset($recent_invoices) && is_array($recent_invoices)) {
                 </a>
             </div>
 
+            <!-- REVENUE + FILTER (AUTO SUBMIT, TANPA TOMBOL) -->
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex flex-col justify-between">
                 <div>
                     <div class="flex items-center justify-between gap-2 mb-2">
                         <p class="text-xs font-semibold text-slate-500">Revenue</p>
 
-                        <!-- MINI FILTER -->
-                        <form action="<?= site_url('admin/dashboard'); ?>" method="GET" class="flex items-center gap-1 bg-slate-50 p-1 rounded-lg border border-slate-200">
-                            <select name="bulan" class="bg-transparent border-none text-[10px] font-bold text-slate-700 focus:ring-0 outline-none cursor-pointer p-0 px-1">
+                        <!-- MINI FILTER (ICON SAJA) -->
+                        <form id="revFilterForm" action="<?= site_url('admin/dashboard'); ?>" method="GET"
+                            class="flex items-center gap-1 bg-slate-50 p-1 rounded-lg border border-slate-200">
+
+                            <!-- icon filter (bukan tombol) -->
+                            <span class="material-icons-outlined text-[14px] text-slate-500 ml-1">filter_alt</span>
+
+                            <select id="revMonth" name="bulan"
+                                class="bg-transparent border-none text-[10px] font-bold text-slate-700 focus:ring-0 outline-none cursor-pointer p-0 px-1">
+                                <!-- <option value="" <?= ($selM === '') ? 'selected' : ''; ?>>Semua</option> -->
                                 <?php
                                 $shortMonths = [1 => 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-                                $curM = isset($selected_month) ? $selected_month : (int)date('m');
                                 foreach ($shortMonths as $num => $name): ?>
-                                    <option value="<?= $num; ?>" <?= ($num == $curM) ? 'selected' : ''; ?>><?= $name; ?></option>
+                                <option value="<?= $num; ?>" <?= ((string)$num === (string)$selM) ? 'selected' : ''; ?>>
+                                    <?= $name; ?>
+                                </option>
                                 <?php endforeach; ?>
                             </select>
-                            <select name="tahun" class="bg-transparent border-none text-[10px] font-bold text-slate-700 focus:ring-0 outline-none cursor-pointer p-0 px-1">
-                                <?php
-                                $curY = isset($selected_year) ? $selected_year : (int)date('Y');
-                                for ($y = date('Y'); $y >= 2023; $y--): ?>
-                                    <option value="<?= $y; ?>" <?= ($y == $curY) ? 'selected' : ''; ?>><?= $y; ?></option>
+
+                            <select id="revYear" name="tahun"
+                                class="bg-transparent border-none text-[10px] font-bold text-slate-700 focus:ring-0 outline-none cursor-pointer p-0 px-1">
+                                <!-- <option value="" <?= ($selY === '') ? 'selected' : ''; ?>>Semua</option> -->
+                                <?php for ($y = (int)date('Y'); $y >= 2023; $y--): ?>
+                                <option value="<?= $y; ?>" <?= ((string)$y === (string)$selY) ? 'selected' : ''; ?>>
+                                    <?= $y; ?>
+                                </option>
                                 <?php endfor; ?>
                             </select>
-                            <button type="submit" class="text-blue-600 hover:text-blue-800 p-0.5">
-                                <span class="material-icons-outlined text-[14px]">filter_alt</span>
-                            </button>
                         </form>
                     </div>
 
-                    <?php
-                    $dispMonth = isset($selected_month) && isset($months[$selected_month]) ? $months[$selected_month] : date('F');
-                    $dispYear  = isset($selected_year) ? $selected_year : date('Y');
-                    ?>
-                    <p class="text-[10px] font-medium text-slate-400 uppercase tracking-wider mb-1">Periode <?= $dispMonth . ' ' . $dispYear; ?></p>
+                    <p class="text-[10px] font-medium text-slate-400 uppercase tracking-wider mb-1">
+                        Periode <?= htmlspecialchars($periodeLabel, ENT_QUOTES, 'UTF-8'); ?>
+                    </p>
                     <p class="text-2xl font-bold text-slate-900 break-words"><?= rupiah($totalRevenue); ?></p>
                 </div>
+
                 <a href="<?= site_url('admin/pembayaran'); ?>"
                     class="mt-4 inline-flex w-full items-center justify-center px-3 py-2 rounded-xl bg-rose-600 text-white text-xs font-bold hover:bg-rose-700 shadow-sm shadow-rose-200">
                     View Transaksi
@@ -327,14 +375,14 @@ if (isset($recent_invoices) && is_array($recent_invoices)) {
 
                         <tbody id="tableBody">
                             <?php if (!empty($front_data)): ?>
-                                <?php foreach ($front_data as $data): ?>
-                                    <?php
-                                    // AMAN: jangan panggil properti sebagai function
+                            <?php foreach ($front_data as $data): ?>
+                            <?php
                                     $rawId = isset($data->ID_PEMESANAN) ? $data->ID_PEMESANAN : '';
                                     $idNum = (int)preg_replace('/\D+/', '', (string)$rawId);
 
-                                    // invoice PMSN000xx
-                                    $invoice = (stripos((string)$rawId, 'PMSN') === 0) ? (string)$rawId : ($idNum ? 'PMSN000' . $idNum : (string)$rawId);
+                                    $invoice = (stripos((string)$rawId, 'PMSN') === 0)
+                                        ? (string)$rawId
+                                        : ($idNum ? 'PMSN000' . $idNum : (string)$rawId);
 
                                     $username   = isset($data->USERNAME) ? $data->USERNAME : '-';
                                     $namaGedung = isset($data->NAMA_GEDUNG) ? $data->NAMA_GEDUNG : '-';
@@ -344,7 +392,7 @@ if (isset($recent_invoices) && is_array($recent_invoices)) {
                                     $mulai   = isset($data->JAM_MULAI) ? trim((string)$data->JAM_MULAI) : '';
                                     $selesai = isset($data->JAM_SELESAI) ? trim((string)$data->JAM_SELESAI) : '';
 
-                                    $DEFAULT_DURASI_JAM = 2; // <-- ubah kalau mau default lain
+                                    $DEFAULT_DURASI_JAM = 2;
                                     $jamFix = '-';
 
                                     $toDot = function ($hi) {
@@ -354,7 +402,6 @@ if (isset($recent_invoices) && is_array($recent_invoices)) {
                                     };
 
                                     $addHours = function ($hi, $hours) {
-                                        // $hi format "HH:II"
                                         $hi = trim((string)$hi);
                                         if ($hi === '') return '';
                                         $dt = DateTime::createFromFormat('H:i', $hi);
@@ -364,76 +411,68 @@ if (isset($recent_invoices) && is_array($recent_invoices)) {
                                     };
 
                                     if ($mulai !== '' && strpos($mulai, '-') !== false) {
-                                        // Kalau JAM_MULAI sudah berupa range: "08:00 - 10:00" atau "08.00 - 10.00"
                                         $parts = array_map('trim', preg_split('/\s*-\s*/', $mulai, 2));
                                         $a = isset($parts[0]) ? _time_to_hi($parts[0]) : '';
                                         $b = isset($parts[1]) ? _time_to_hi($parts[1]) : '';
-
                                         if ($a !== '' && $b === '') $b = $addHours($a, $DEFAULT_DURASI_JAM);
-
                                         $a = $toDot($a);
                                         $b = $toDot($b);
-
                                         if ($a !== '' && $b !== '') $jamFix = $a . ' - ' . $b;
-                                        elseif ($a !== '') $jamFix = $a; // fallback terakhir
+                                        elseif ($a !== '') $jamFix = $a;
                                     } else {
-                                        // Kalau JAM_MULAI & JAM_SELESAI terpisah
                                         $a = _time_to_hi($mulai);
                                         $b = _time_to_hi($selesai);
-
                                         if ($a !== '' && $b === '') $b = $addHours($a, $DEFAULT_DURASI_JAM);
-
                                         $a = $toDot($a);
                                         $b = $toDot($b);
-
                                         if ($a !== '' && $b !== '') $jamFix = $a . ' - ' . $b;
-                                        elseif ($a !== '') $jamFix = $a; // fallback terakhir
+                                        elseif ($a !== '') $jamFix = $a;
                                     }
                                     ?>
 
-                                    <tr class="table-row hover:bg-slate-50" data-idnum="<?= (int)$idNum; ?>"
-                                        data-kode="<?= htmlspecialchars($invoice, ENT_QUOTES, 'UTF-8'); ?>"
-                                        data-user="<?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8'); ?>">
-                                        <td class="px-4 py-3 text-center cell-no">1</td>
+                            <tr class="table-row hover:bg-slate-50" data-idnum="<?= (int)$idNum; ?>"
+                                data-kode="<?= htmlspecialchars($invoice, ENT_QUOTES, 'UTF-8'); ?>"
+                                data-user="<?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8'); ?>">
+                                <td class="px-4 py-3 text-center cell-no">1</td>
 
-                                        <td class="px-4 py-3 text-center font-semibold cell-kode">
-                                            <?= htmlspecialchars($invoice, ENT_QUOTES, 'UTF-8'); ?>
-                                        </td>
+                                <td class="px-4 py-3 text-center font-semibold cell-kode">
+                                    <?= htmlspecialchars($invoice, ENT_QUOTES, 'UTF-8'); ?>
+                                </td>
 
-                                        <td class="px-4 py-3 text-center">
-                                            <?= htmlspecialchars($namaGedung, ENT_QUOTES, 'UTF-8'); ?>
-                                        </td>
+                                <td class="px-4 py-3 text-center">
+                                    <?= htmlspecialchars($namaGedung, ENT_QUOTES, 'UTF-8'); ?>
+                                </td>
 
-                                        <td class="px-4 py-3 text-center cell-user">
-                                            <?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8'); ?>
-                                        </td>
+                                <td class="px-4 py-3 text-center cell-user">
+                                    <?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8'); ?>
+                                </td>
 
-                                        <td class="px-4 py-3 text-center">
-                                            <?= htmlspecialchars($tglIndo, ENT_QUOTES, 'UTF-8'); ?>
-                                        </td>
+                                <td class="px-4 py-3 text-center">
+                                    <?= htmlspecialchars($tglIndo, ENT_QUOTES, 'UTF-8'); ?>
+                                </td>
 
-                                        <td class="px-4 py-3 text-center">
-                                            <?= htmlspecialchars($jamFix, ENT_QUOTES, 'UTF-8'); ?>
-                                        </td>
+                                <td class="px-4 py-3 text-center">
+                                    <?= htmlspecialchars($jamFix, ENT_QUOTES, 'UTF-8'); ?>
+                                </td>
 
-                                        <td class="px-4 py-3 text-center">
-                                            <?php if ($idNum > 0): ?>
-                                                <a href="<?= site_url('admin/detail_pemesanan/' . $idNum); ?>"
-                                                    class="inline-flex items-center justify-center px-3 py-1.5 bg-blue-600 text-white text-xs rounded hover:bg-blue-700">
-                                                    Detail
-                                                </a>
-                                            <?php else: ?>
-                                                <span class="text-xs text-slate-400">-</span>
-                                            <?php endif; ?>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
+                                <td class="px-4 py-3 text-center">
+                                    <?php if ($idNum > 0): ?>
+                                    <a href="<?= site_url('admin/detail_pemesanan/' . $idNum); ?>"
+                                        class="inline-flex items-center justify-center px-3 py-1.5 bg-blue-600 text-white text-xs rounded hover:bg-blue-700">
+                                        Detail
+                                    </a>
+                                    <?php else: ?>
+                                    <span class="text-xs text-slate-400">-</span>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
                             <?php else: ?>
-                                <tr>
-                                    <td colspan="7" class="px-4 py-6 text-center text-slate-500">
-                                        Belum ada jadwal terbooking (SUBMITTED).
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td colspan="7" class="px-4 py-6 text-center text-slate-500">
+                                    Belum ada jadwal terbooking (SUBMITTED).
+                                </td>
+                            </tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
@@ -470,158 +509,172 @@ if (isset($recent_invoices) && is_array($recent_invoices)) {
         </div>
 
         <script>
-            (function() {
-                var tbody = document.getElementById('tableBody');
-                if (!tbody) return;
+        // AUTO SUBMIT FILTER REVENUE (tanpa tombol)
+        (function() {
+            var f = document.getElementById('revFilterForm');
+            if (!f) return;
 
-                var allRows = Array.prototype.slice.call(document.querySelectorAll('.table-row'));
-                var rowsPerPageSelect = document.getElementById('rowsPerPage');
-                var pageInfo = document.getElementById('pageInfo');
-                var prevBtn = document.getElementById('prevBtn');
-                var nextBtn = document.getElementById('nextBtn');
-                var scrollBox = document.getElementById('tableScroll');
+            var m = document.getElementById('revMonth');
+            var y = document.getElementById('revYear');
 
-                var filterKode = document.getElementById('filterKode');
-                var filterUser = document.getElementById('filterUser');
-                var resetFilterBtn = document.getElementById('resetFilter');
+            function submitNow() {
+                // langsung submit saat pilih dropdown
+                f.submit();
+            }
 
-                if (!allRows.length) return;
-
-                var currentPage = 1;
-                var rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
-                var activeRows = allRows.slice();
-
-                // SORT by invoice numeric DESC (terbaru dulu)
-                function sortRowsByIdDesc() {
-                    allRows.sort(function(a, b) {
-                        var ida = parseInt(a.getAttribute('data-idnum') || '0', 10);
-                        var idb = parseInt(b.getAttribute('data-idnum') || '0', 10);
-                        return idb - ida;
-                    });
-
-                    // urutkan DOM sesuai sort
-                    allRows.forEach(function(r) {
-                        tbody.appendChild(r);
-                    });
-                }
-
-                function buildUserDropdown() {
-                    var users = {};
-                    allRows.forEach(function(r) {
-                        var u = (r.getAttribute('data-user') || '').trim();
-                        if (u && u !== '-') users[u] = true;
-                    });
-
-                    var keys = Object.keys(users).sort(function(a, b) {
-                        return a.localeCompare(b);
-                    });
-                    filterUser.innerHTML = '<option value="">Semua User</option>';
-                    keys.forEach(function(u) {
-                        var opt = document.createElement('option');
-                        opt.value = u;
-                        opt.textContent = u;
-                        filterUser.appendChild(opt);
-                    });
-                }
-
-                function normalize(s) {
-                    return (s || '').toString().trim().toLowerCase().replace(/\s+/g, '');
-                }
-
-                function applyFilter() {
-                    var kodeVal = normalize(filterKode.value); // bisa PMSN00094 atau 94
-                    var userVal = (filterUser.value || '').trim();
-
-                    activeRows = allRows.filter(function(row) {
-                        var kode = normalize(row.getAttribute('data-kode'));
-                        var user = (row.getAttribute('data-user') || '').trim();
-
-                        var okKode = !kodeVal ? true : (kode.indexOf(kodeVal) !== -1);
-                        var okUser = !userVal ? true : (user === userVal);
-
-                        return okKode && okUser;
-                    });
-
-                    currentPage = 1;
-                    renderTable();
-                }
-
-                function resetFilter() {
-                    filterKode.value = '';
-                    filterUser.value = '';
-                    activeRows = allRows.slice();
-                    currentPage = 1;
-                    renderTable();
-                }
-
-                function renderTable() {
-                    var total = activeRows.length;
-                    var totalPages = Math.max(1, Math.ceil(total / rowsPerPage));
-                    if (currentPage > totalPages) currentPage = totalPages;
-
-                    // hide all
-                    allRows.forEach(function(r) {
-                        r.style.display = 'none';
-                    });
-
-                    var start = (currentPage - 1) * rowsPerPage;
-                    var end = start + rowsPerPage;
-
-                    // show active in page
-                    var visibleNo = start + 1;
-                    activeRows.forEach(function(row, idx) {
-                        if (idx >= start && idx < end) {
-                            row.style.display = '';
-                            var cell = row.querySelector('.cell-no');
-                            if (cell) cell.textContent = visibleNo++;
-                        }
-                    });
-
-                    prevBtn.disabled = (currentPage === 1);
-                    nextBtn.disabled = (currentPage === totalPages);
-
-                    var showingFrom = (total === 0) ? 0 : (start + 1);
-                    var showingTo = Math.min(end, total);
-                    pageInfo.textContent = 'Page ' + currentPage + ' of ' + totalPages + ' • Showing ' + showingFrom +
-                        '-' + showingTo + ' of ' + total;
-
-                    if (scrollBox) scrollBox.scrollTop = 0;
-                }
-
-                // events
-                filterKode.addEventListener('input', applyFilter);
-                filterUser.addEventListener('change', applyFilter);
-                resetFilterBtn.addEventListener('click', resetFilter);
-
-                rowsPerPageSelect.addEventListener('change', function() {
-                    rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
-                    currentPage = 1;
-                    renderTable();
-                });
-
-                prevBtn.addEventListener('click', function() {
-                    if (currentPage > 1) {
-                        currentPage--;
-                        renderTable();
-                    }
-                });
-
-                nextBtn.addEventListener('click', function() {
-                    var totalPages = Math.max(1, Math.ceil(activeRows.length / rowsPerPage));
-                    if (currentPage < totalPages) {
-                        currentPage++;
-                        renderTable();
-                    }
-                });
-
-                // init
-                sortRowsByIdDesc();
-                buildUserDropdown();
-                activeRows = allRows.slice();
-                renderTable();
-            })();
+            if (m) m.addEventListener('change', submitNow);
+            if (y) y.addEventListener('change', submitNow);
+        })();
         </script>
 
+        <script>
+        (function() {
+            var tbody = document.getElementById('tableBody');
+            if (!tbody) return;
+
+            var allRows = Array.prototype.slice.call(document.querySelectorAll('.table-row'));
+            var rowsPerPageSelect = document.getElementById('rowsPerPage');
+            var pageInfo = document.getElementById('pageInfo');
+            var prevBtn = document.getElementById('prevBtn');
+            var nextBtn = document.getElementById('nextBtn');
+            var scrollBox = document.getElementById('tableScroll');
+
+            var filterKode = document.getElementById('filterKode');
+            var filterUser = document.getElementById('filterUser');
+            var resetFilterBtn = document.getElementById('resetFilter');
+
+            if (!allRows.length) return;
+
+            var currentPage = 1;
+            var rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
+            var activeRows = allRows.slice();
+
+            // SORT by invoice numeric DESC (terbaru dulu)
+            function sortRowsByIdDesc() {
+                allRows.sort(function(a, b) {
+                    var ida = parseInt(a.getAttribute('data-idnum') || '0', 10);
+                    var idb = parseInt(b.getAttribute('data-idnum') || '0', 10);
+                    return idb - ida;
+                });
+
+                allRows.forEach(function(r) {
+                    tbody.appendChild(r);
+                });
+            }
+
+            function buildUserDropdown() {
+                var users = {};
+                allRows.forEach(function(r) {
+                    var u = (r.getAttribute('data-user') || '').trim();
+                    if (u && u !== '-') users[u] = true;
+                });
+
+                var keys = Object.keys(users).sort(function(a, b) {
+                    return a.localeCompare(b);
+                });
+                filterUser.innerHTML = '<option value="">Semua User</option>';
+                keys.forEach(function(u) {
+                    var opt = document.createElement('option');
+                    opt.value = u;
+                    opt.textContent = u;
+                    filterUser.appendChild(opt);
+                });
+            }
+
+            function normalize(s) {
+                return (s || '').toString().trim().toLowerCase().replace(/\s+/g, '');
+            }
+
+            function applyFilter() {
+                var kodeVal = normalize(filterKode.value);
+                var userVal = (filterUser.value || '').trim();
+
+                activeRows = allRows.filter(function(row) {
+                    var kode = normalize(row.getAttribute('data-kode'));
+                    var user = (row.getAttribute('data-user') || '').trim();
+
+                    var okKode = !kodeVal ? true : (kode.indexOf(kodeVal) !== -1);
+                    var okUser = !userVal ? true : (user === userVal);
+
+                    return okKode && okUser;
+                });
+
+                currentPage = 1;
+                renderTable();
+            }
+
+            function resetFilter() {
+                filterKode.value = '';
+                filterUser.value = '';
+                activeRows = allRows.slice();
+                currentPage = 1;
+                renderTable();
+            }
+
+            function renderTable() {
+                var total = activeRows.length;
+                var totalPages = Math.max(1, Math.ceil(total / rowsPerPage));
+                if (currentPage > totalPages) currentPage = totalPages;
+
+                allRows.forEach(function(r) {
+                    r.style.display = 'none';
+                });
+
+                var start = (currentPage - 1) * rowsPerPage;
+                var end = start + rowsPerPage;
+
+                var visibleNo = start + 1;
+                activeRows.forEach(function(row, idx) {
+                    if (idx >= start && idx < end) {
+                        row.style.display = '';
+                        var cell = row.querySelector('.cell-no');
+                        if (cell) cell.textContent = visibleNo++;
+                    }
+                });
+
+                prevBtn.disabled = (currentPage === 1);
+                nextBtn.disabled = (currentPage === totalPages);
+
+                var showingFrom = (total === 0) ? 0 : (start + 1);
+                var showingTo = Math.min(end, total);
+                pageInfo.textContent = 'Page ' + currentPage + ' of ' + totalPages + ' • Showing ' + showingFrom +
+                    '-' + showingTo + ' of ' + total;
+
+                if (scrollBox) scrollBox.scrollTop = 0;
+            }
+
+            filterKode.addEventListener('input', applyFilter);
+            filterUser.addEventListener('change', applyFilter);
+            resetFilterBtn.addEventListener('click', resetFilter);
+
+            rowsPerPageSelect.addEventListener('change', function() {
+                rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
+                currentPage = 1;
+                renderTable();
+            });
+
+            prevBtn.addEventListener('click', function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderTable();
+                }
+            });
+
+            nextBtn.addEventListener('click', function() {
+                var totalPages = Math.max(1, Math.ceil(activeRows.length / rowsPerPage));
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderTable();
+                }
+            });
+
+            // init
+            sortRowsByIdDesc();
+            buildUserDropdown();
+            activeRows = allRows.slice();
+            renderTable();
+        })();
+        </script>
 
 </body>
 
