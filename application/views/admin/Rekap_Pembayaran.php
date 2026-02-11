@@ -18,6 +18,11 @@ $this->load->helper('text');
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
        
         <link href="<?php echo base_url(); ?>assets/home/template.css" rel="stylesheet" type="text/css">
+        
+        <!-- Flatpickr -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>
     </head>
     <body>
         <header>
@@ -138,6 +143,22 @@ $this->load->helper('text');
         
         <script src="<?php echo base_url(); ?>assets/home/index.js"></script>
         <script type="text/javascript">
+            // Init Flatpickr
+            flatpickr("#start_date", {
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "j F Y",
+                locale: "id",
+                allowInput: true
+            });
+            flatpickr("#end_date", {
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "j F Y",
+                locale: "id",
+                allowInput: true
+            });
+
             var startDate = document.getElementById("start_date");
             var label = document.getElementById("labelDari");
             var labelsampai = document.getElementById("labelSampai");

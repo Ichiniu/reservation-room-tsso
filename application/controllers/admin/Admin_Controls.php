@@ -128,6 +128,7 @@ class Admin_Controls extends CI_Controller
 		$this->load->model('gedung/gedung_model');
 		$data['result'] = $this->gedung_model->get_pending_transaction();
 		$data['get_transaction'] = $this->gedung_model->get_unread_transaction();
+		$data['gedung_list'] = $this->gedung_model->get_gedung();
 		$this->load->view('admin/rekap_aktivitas', $data);
 	}
 
@@ -139,6 +140,7 @@ class Admin_Controls extends CI_Controller
 		$end_date   = $this->input->get('end_date');
 		$bulan      = $this->input->get('bulan');
 		$tahun      = $this->input->get('tahun');
+		$id_gedung  = $this->input->get('id_gedung');
 
 		// Fallback ke segment jika GET kosong
 		if (empty($start_date) && !empty($tanggal_awal)) $start_date = $tanggal_awal;
@@ -153,9 +155,22 @@ class Admin_Controls extends CI_Controller
 
 		$data['result'] = $this->gedung_model->get_pending_transaction();
 		$data['get_transaction'] = $this->gedung_model->get_unread_transaction();
-		$data['hasil'] = $this->gedung_model->jadwal_gedung($start_date, $end_date);
+		$data['hasil'] = $this->gedung_model->jadwal_gedung($start_date, $end_date, $id_gedung);
 		$data['first_period'] = $start_date;
 		$data['last_period'] = $end_date;
+		$data['id_gedung'] = $id_gedung;
+		$data['gedung_list'] = $this->gedung_model->get_gedung();
+
+		// Cari nama gedung yang difilter
+		$data['nama_gedung_filter'] = '';
+		if (!empty($id_gedung)) {
+			foreach ($data['gedung_list'] as $g) {
+				if ($g['ID_GEDUNG'] == $id_gedung) {
+					$data['nama_gedung_filter'] = $g['NAMA_GEDUNG'];
+					break;
+				}
+			}
+		}
 
 		$this->load->view('admin/rekap_aktivitas_det', $data);
 	}
@@ -624,13 +639,26 @@ class Admin_Controls extends CI_Controller
 	}
 
 
-	function kegiatan_export_pdf($start_date, $end_date)
+	function kegiatan_export_pdf($start_date, $end_date, $id_gedung = null)
 	{
 		$this->load->model('gedung/gedung_model');
 		$this->load->helper('warsito_pdf_helper');
 		$data['start_date'] = $start_date;
 		$data['end_date'] = $end_date;
-		$data['report'] = $this->gedung_model->jadwal_gedung($start_date, $end_date);
+		$data['report'] = $this->gedung_model->jadwal_gedung($start_date, $end_date, $id_gedung);
+
+		// Cari nama gedung untuk header PDF
+		$data['nama_gedung_filter'] = '';
+		if (!empty($id_gedung)) {
+			$gedung_list = $this->gedung_model->get_gedung();
+			foreach ($gedung_list as $g) {
+				if ($g['ID_GEDUNG'] == $id_gedung) {
+					$data['nama_gedung_filter'] = $g['NAMA_GEDUNG'];
+					break;
+				}
+			}
+		}
+
 		$object = $this->load->view('admin/pdf_report_kegiatan', $data, true);
 		$filename = "Report Kegiatan.pdf";
 		generate_pdf($object, $filename, true);
@@ -711,7 +739,10 @@ class Admin_Controls extends CI_Controller
 		$data['result']          = $this->gedung_model->get_pending_transaction();
 		$data['get_transaction'] = $this->gedung_model->get_unread_transaction();
 
-
+		// ===== TOP COMPANIES (CHART) =====
+		// User request: Show ALL companies (limit increased to 100 as safe 'all')
+		$data['top_companies'] = $this->gedung_model->get_top_companies_booking(100);
+		
 		// Pastikan view yang kamu load sesuai nama file (Home.php vs home.php)
 		$this->load->view('admin/home', $data);
 	}

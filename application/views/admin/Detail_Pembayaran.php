@@ -70,7 +70,7 @@ if ($statusText === 'SUBMITED') {
                 <div>
                     <div class="text-slate-500">Tanggal Transfer</div>
                     <div class="font-semibold">
-                        <?= !empty($d->TANGGAL_TRANSFER) ? date('d F Y', strtotime($d->TANGGAL_TRANSFER)) : '-'; ?>
+                        <?= !empty($d->TANGGAL_TRANSFER) ? format_tanggal_indo($d->TANGGAL_TRANSFER) : '-'; ?>
                     </div>
                 </div>
 

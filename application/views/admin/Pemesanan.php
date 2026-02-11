@@ -3,34 +3,7 @@ $session_id = $this->session->userdata('username');
 $this->load->helper('text');
 
 /* ===== helper format tanggal Indonesia: 11 Januari 2026 ===== */
-function formatTanggalIndo($tgl)
-{
-    if (empty($tgl)) return '-';
-
-    $bulan = array(
-        1 => 'Januari',
-        'Februari',
-        'Maret',
-        'April',
-        'Mei',
-        'Juni',
-        'Juli',
-        'Agustus',
-        'September',
-        'Oktober',
-        'November',
-        'Desember'
-    );
-
-    $ts = strtotime($tgl);
-    if (!$ts) return $tgl;
-
-    $d = date('d', $ts);
-    $m = (int) date('n', $ts);
-    $y = date('Y', $ts);
-
-    return $d . ' ' . $bulan[$m] . ' ' . $y;
-}
+// Helper format_tanggal_indo sudah di-autoload
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -174,7 +147,7 @@ function formatTanggalIndo($tgl)
                                     $id = isset($row['ID_PEMESANAN']) ? $row['ID_PEMESANAN'] : '-';
                                     $user = isset($row['USERNAME']) ? $row['USERNAME'] : '-';
                                     $tglRaw = isset($row['TANGGAL_PEMESANAN']) ? $row['TANGGAL_PEMESANAN'] : '';
-                                    $tglIndo = formatTanggalIndo($tglRaw);
+                                    $tglIndo = format_tanggal_indo($tglRaw);
 
                                     // buat filter tanggal (yyyy-mm-dd)
                                     $tglForFilter = !empty($tglRaw) ? date('Y-m-d', strtotime($tglRaw)) : '';

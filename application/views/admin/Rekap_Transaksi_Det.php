@@ -8,24 +8,7 @@ $total = 0;
 $rows = (isset($row) && is_array($row)) ? $row : array();
 
 /* ===== Format tanggal Indonesia ===== */
-function formatTanggalIndo($tgl)
-{
-    if (empty($tgl)) return '-';
-
-    $bulan = [
-        1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-    ];
-
-    $ts = strtotime($tgl);
-    if (!$ts) return '-';
-
-    $d = date('d', $ts);      // 01, 02, ...
-    $m = (int) date('n', $ts);
-    $y = date('Y', $ts);
-
-    return $d . ' ' . $bulan[$m] . ' ' . $y;
-}
+// Helper formatTanggalIndo sudah di-autoload (tanggal_helper)
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -57,9 +40,9 @@ function formatTanggalIndo($tgl)
 
             <div class="text-sm text-slate-600 mb-5">
                 <span class="font-semibold text-slate-800">Periode:</span>
-                <?= formatTanggalIndo($start_date); ?>
+                <?= format_tanggal_indo($start_date); ?>
                 <span class="mx-2"> - </span>
-                <?= formatTanggalIndo($end_date); ?>
+                <?= format_tanggal_indo($end_date); ?>
             </div>
 
             <!-- CARD -->
@@ -135,7 +118,7 @@ function formatTanggalIndo($tgl)
                                             $kodePembayaran = $kodePembayaranPrefix . $idPembayaran;
 
                                             // Tanggal Transfer versi Indonesia
-                                            $tglIndo = !empty($r['TANGGAL_TRANSFER']) ? formatTanggalIndo($r['TANGGAL_TRANSFER']) : '-';
+                                            $tglIndo = !empty($r['TANGGAL_TRANSFER']) ? format_tanggal_indo($r['TANGGAL_TRANSFER']) : '-';
 
                                             $nominal = isset($r['NOMINAL_TRANSFER']) ? (float)$r['NOMINAL_TRANSFER'] : 0;
                                             $total  += $nominal;

@@ -63,7 +63,7 @@ $this->load->helper('text');
                                 <td class="px-4 py-3 text-center"><?= !empty($row['departemen']) ? $row['departemen'] : '-'; ?></td>
                                 <td class="px-4 py-3 text-center"><?= $row['ALAMAT']; ?></td>
                                 <td class="px-4 py-3 text-center">
-                                    <?= date_format($date, "d F Y"); ?>
+                                    <?= format_tanggal_indo($row['TANGGAL_LAHIR']); ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

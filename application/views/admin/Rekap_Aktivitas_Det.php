@@ -8,6 +8,8 @@ $no = 1;
 $first_period = isset($first_period) ? $first_period : '';
 $last_period  = isset($last_period) ? $last_period : '';
 $hasil        = isset($hasil) ? $hasil : array();
+$id_gedung    = isset($id_gedung) ? $id_gedung : '';
+$nama_gedung_filter = isset($nama_gedung_filter) ? $nama_gedung_filter : '';
 
 // fallback: ambil dari GET / URI kalau periode belum kebawa
 $CI = &get_instance();
@@ -38,9 +40,14 @@ function formatTanggalIndo($tgl)
 
 /* ===== PDF link aktif kalau periode lengkap ===== */
 $hasPeriod = (!empty($first_period) && !empty($last_period));
-$pdfUrl = $hasPeriod
-    ? site_url('admin/kegiatan_download_pdf/' . rawurlencode($first_period) . '/' . rawurlencode($last_period))
-    : '#';
+$pdfUrl = '#';
+if ($hasPeriod) {
+    $pdfSegment = site_url('admin/kegiatan_download_pdf/' . rawurlencode($first_period) . '/' . rawurlencode($last_period));
+    if (!empty($id_gedung)) {
+        $pdfSegment .= '/' . rawurlencode($id_gedung);
+    }
+    $pdfUrl = $pdfSegment;
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -74,6 +81,11 @@ $pdfUrl = $hasPeriod
                         <?= formatTanggalIndo($last_period); ?>
                         <?php else: ?>
                         -
+                        <?php endif; ?>
+                        <?php if (!empty($nama_gedung_filter)): ?>
+                        <span class="mx-2">|</span>
+                        <span class="font-semibold text-slate-800">Gedung:</span>
+                        <?= htmlspecialchars($nama_gedung_filter, ENT_QUOTES, 'UTF-8') ?>
                         <?php endif; ?>
                     </div>
 
@@ -144,15 +156,15 @@ $pdfUrl = $hasPeriod
                                         </td>
 
                                         <td class="px-4 py-3 whitespace-nowrap">
-                                            <?= $date_pemesanan ? date_format($date_pemesanan, 'd M Y') : '-'; ?>
+                                            <?= !empty($row['TANGGAL_FINAL_PEMESANAN']) ? format_tanggal_indo($row['TANGGAL_FINAL_PEMESANAN']) : '-'; ?>
                                         </td>
 
                                         <td class="px-4 py-3 whitespace-nowrap">
-                                            <?= $date_approval ? date_format($date_approval, 'd M Y') : '-'; ?>
+                                            <?= !empty($row['TANGGAL_APPROVAL']) ? format_tanggal_indo($row['TANGGAL_APPROVAL']) : '-'; ?>
                                         </td>
 
                                         <td class="px-4 py-3 whitespace-nowrap">
-                                            <?= $date_kegiatan ? date_format($date_kegiatan, 'd M Y') : '-'; ?>
+                                            <?= !empty($row['TANGGAL_KEGIATAN']) ? format_tanggal_indo($row['TANGGAL_KEGIATAN']) : '-'; ?>
                                         </td>
 
                                         <td class="px-4 py-3 whitespace-normal break-words">
