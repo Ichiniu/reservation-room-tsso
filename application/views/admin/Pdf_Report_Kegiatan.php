@@ -1,6 +1,7 @@
 <?php
 $no = 1;
 $date = date_create(); // tanggal sekarang
+$nama_gedung_filter = isset($nama_gedung_filter) ? $nama_gedung_filter : '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,7 +17,14 @@ $date = date_create(); // tanggal sekarang
     h3 {
       text-align: center;
       font-weight: bold;
-      margin-bottom: 20px;
+      margin-bottom: 5px;
+    }
+
+    .filter-info {
+      text-align: center;
+      margin-bottom: 15px;
+      font-size: 11px;
+      color: #555;
     }
 
     table {
@@ -50,6 +58,9 @@ $date = date_create(); // tanggal sekarang
 
 <body>
   <h3>Laporan Aktivitas Kegiatan</h3>
+  <?php if (!empty($nama_gedung_filter)): ?>
+  <p class="filter-info"><strong>Gedung:</strong> <?php echo htmlspecialchars($nama_gedung_filter, ENT_QUOTES, 'UTF-8'); ?></p>
+  <?php endif; ?>
 
   <table>
     <thead>
@@ -103,12 +114,12 @@ $date = date_create(); // tanggal sekarang
 
   <div class="footer">
     <strong>Periode</strong>
-    <?php echo date_format(date_create($start_date), 'd F Y'); ?>
+    <?php echo format_tanggal_indo($start_date); ?>
     -
-    <?php echo date_format(date_create($end_date), 'd F Y'); ?>
+    <?php echo format_tanggal_indo($end_date); ?>
     <br>
 
-    <strong>Dicetak pada:</strong> <?php echo date_format($date, "d M Y"); ?><br>
+    <strong>Dicetak pada:</strong> <?php echo format_tanggal_indo(date('Y-m-d')); ?><br>
     <strong>Dicetak untuk:</strong> Administrator
   </div>
 

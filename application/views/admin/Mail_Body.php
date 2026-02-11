@@ -23,7 +23,7 @@ $min_dp = ($tax + $jumlah_pembayaran) * 0.1;
 		<tr>
 			<td><font face="verdana"><b>Tanggal Pemesanan</b></font></td>
 			<td><font face="verdana">:</font></td>
-			<td><font face="verdana"><?php echo date_format($c_tgl_pesan, 'd F Y') ?></font></td>
+			<td><font face="verdana"><?php echo format_tanggal_indo($c_tgl_pesan) ?></font></td>
 		</tr>
 		<tr>
 			<td><font face="verdana"><b>Nama Gedung</b></font></td>
@@ -33,7 +33,7 @@ $min_dp = ($tax + $jumlah_pembayaran) * 0.1;
 		<tr>
 			<td><font face="verdana"><b>Tanggal Deadline Pembayaran</b></font></td>
 			<td><font face="verdana">:</font></td>
-			<td><font face="verdana"><?php echo date_format($c_tgl_deadline, 'd F Y') ?></font></td>
+			<td><font face="verdana"><?php echo format_tanggal_indo($c_tgl_deadline) ?></font></td>
 		</tr>
 		<tr>
 			<td><font face="verdana"><b>Jumlah Minimum Down Payment(DP)</b></font></td>

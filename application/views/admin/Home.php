@@ -44,34 +44,7 @@ elseif (!isset($selected_year)) $selected_year = (string)(int)date('Y');
 /* =======================
    helper format tanggal Indonesia (11 Januari 2026)
 ======================= */
-function formatTanggalIndo($tgl)
-{
-    if (empty($tgl)) return '-';
-
-    $bulan = array(
-        1 => 'Januari',
-        'Februari',
-        'Maret',
-        'April',
-        'Mei',
-        'Juni',
-        'Juli',
-        'Agustus',
-        'September',
-        'Oktober',
-        'November',
-        'Desember'
-    );
-
-    $ts = strtotime($tgl);
-    if (!$ts) return $tgl;
-
-    $d = date('d', $ts);
-    $m = (int) date('n', $ts);
-    $y = date('Y', $ts);
-
-    return $d . ' ' . $bulan[$m] . ' ' . $y;
-}
+// Helper format_tanggal_indo sudah di-autoload
 
 /* =======================
    helper rupiah
@@ -211,6 +184,7 @@ if ($selM !== '' && $selY !== '') {
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body class="bg-slate-100 min-h-screen">
@@ -228,7 +202,7 @@ if ($selM !== '' && $selY !== '') {
         </div>
 
         <!-- STAT CARDS -->
-        <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex flex-col justify-between">
                 <div>
                     <p class="text-xs font-semibold text-slate-500">Total Users</p>
@@ -240,16 +214,6 @@ if ($selM !== '' && $selY !== '') {
                 </a>
             </div>
 
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex flex-col justify-between">
-                <div>
-                    <p class="text-xs font-semibold text-slate-500">Total Ruangan</p>
-                    <p class="text-3xl font-bold text-slate-900 mt-1"><?= (int)$totalGedung; ?></p>
-                </div>
-                <a href="<?= site_url('admin/gedung'); ?>"
-                    class="mt-4 inline-flex w-full items-center justify-center px-3 py-2 rounded-xl bg-emerald-600 text-white text-sm hover:bg-emerald-700">
-                    View Ruangan
-                </a>
-            </div>
 
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex flex-col justify-between">
                 <div>
@@ -312,8 +276,24 @@ if ($selM !== '' && $selY !== '') {
             </div>
         </div>
 
-        <!-- RECENT BOOKINGS (JADWAL TERBOOKING - SUBMITTED) -->
-        <div class="max-w-7xl mx-auto bg-white rounded-2xl border border-slate-200 shadow-sm">
+        <!-- CHART & RECENT BOOKINGS GRID -->
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            <!-- CHART SECTION (Left Col) -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col">
+                <div class="p-5 border-b border-slate-200">
+                    <h2 class="text-lg font-bold text-slate-900">Statistik Perusahaan</h2>
+                    <p class="text-sm text-slate-500">Grafik jumlah booking berdasarkan perusahaan.</p>
+                </div>
+                <div class="p-5 flex-1 min-h-[400px]">
+                    <div class="w-full h-full relative">
+                        <canvas id="companyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RECENT BOOKINGS (Right Col) -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm">
 
             <div class="p-5 border-b border-slate-200 flex items-center justify-between">
                 <div>
@@ -388,7 +368,7 @@ if ($selM !== '' && $selY !== '') {
                                     $namaGedung = isset($data->NAMA_GEDUNG) ? $data->NAMA_GEDUNG : '-';
 
                                     $tglRaw  = isset($data->TANGGAL_PEMESANAN) ? $data->TANGGAL_PEMESANAN : '';
-                                    $tglIndo = formatTanggalIndo($tglRaw);
+                                    $tglIndo = format_tanggal_indo($tglRaw);
                                     $mulai   = isset($data->JAM_MULAI) ? trim((string)$data->JAM_MULAI) : '';
                                     $selesai = isset($data->JAM_SELESAI) ? trim((string)$data->JAM_SELESAI) : '';
 
@@ -505,6 +485,7 @@ if ($selM !== '' && $selY !== '') {
             <div class="p-4 flex items-center justify-between text-xs text-slate-500 border-t border-slate-200">
                 <span>© <?= date('Y'); ?> Smart Office • Admin Panel</span>
                 <span class="hidden sm:inline">Modern Dashboard</span>
+            </div>
             </div>
         </div>
 
@@ -677,5 +658,81 @@ if ($selM !== '' && $selY !== '') {
         </script>
 
 </body>
+
+    <script>
+    // Data from Controller
+    const rawData = <?= json_encode(isset($top_companies) ? $top_companies : []); ?>;
+    
+    // Process Data
+    const labels = rawData.map(item => item.label);
+    const dataValues = rawData.map(item => item.total);
+
+    // Generate Colors (Dynamic & Repeating)
+    const baseColors = [
+        '#3B82F6', // Blue
+        '#10B981', // Emerald
+        '#F59E0B', // Amber
+        '#EF4444', // Red
+        '#8B5CF6', // Violet
+        '#6366F1', // Indigo
+        '#EC4899', // Pink
+        '#14B8A6', // Teal
+        '#F97316', // Orange
+        '#64748B'  // Slate
+    ];
+    
+    // Create color array matching data length by repeating base colors
+    const backgroundColors = labels.map((_, i) => baseColors[i % baseColors.length]);
+
+    const ctx = document.getElementById('companyChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar', // CHANGED TO BAR
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Jumlah Booking',
+                data: dataValues,
+                backgroundColor: backgroundColors,
+                borderRadius: 5,
+                borderSkipped: false,
+                barThickness: 'flex',
+                maxBarThickness: 40
+            }]
+        },
+        options: {
+            indexAxis: 'x', // Vertical bars (standard)
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false // Hide legend
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.label + ': ' + context.raw + ' Booking';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: '#f1f5f9'
+                    },
+                    ticks: {
+                        precision: 0
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+</script>
 
 </html>

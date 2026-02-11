@@ -108,18 +108,40 @@ $this->load->helper('text');
         </div>
     </main>
 
+    <!-- Flatpickr -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>
+
     <script>
+        // Init Flatpickr
+        const fpConfig = {
+            dateFormat: "Y-m-d",     // format value (dikirim ke server)
+            altInput: true,          // aktifkan input alternatif untuk display
+            altFormat: "j F Y",      // format display (CONTOH: 14 Januari 2026)
+            locale: "id",            // bahasa indonesia
+            allowInput: true         // boleh ketik manual
+        };
+
+        const fpStart = flatpickr("#start_date", fpConfig);
+        const fpEnd = flatpickr("#end_date", fpConfig);
+
         function syncFromBT() {
             const b = document.getElementById('bulanSelect').value;
             const t = document.getElementById('tahunSelect').value;
             if (b && t) {
                 const lastDay = new Date(t, b, 0).getDate();
-                document.getElementById('start_date').value = `${t}-${b.padStart(2, '0')}-01`;
-                document.getElementById('end_date').value = `${t}-${b.padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
+                const strStart = `${t}-${b.padStart(2, '0')}-01`;
+                const strEnd = `${t}-${b.padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
+                
+                // Update flatpickr
+                fpStart.setDate(strStart);
+                fpEnd.setDate(strEnd);
             }
         }
 
         function validateRekap(form) {
+            // Flatpickr handles the hidden input value update
             const s = form.start_date.value;
             const e = form.end_date.value;
             const b = form.bulan.value;
@@ -137,12 +159,14 @@ $this->load->helper('text');
         }
 
         // Clear BT if date manual change
-        const clearBT = () => {
+        fpStart.set('onChange', function(){
             document.getElementById('bulanSelect').value = '';
             document.getElementById('tahunSelect').value = '';
-        };
-        document.getElementById('start_date').addEventListener('change', clearBT);
-        document.getElementById('end_date').addEventListener('change', clearBT);
+        });
+        fpEnd.set('onChange', function(){
+            document.getElementById('bulanSelect').value = '';
+            document.getElementById('tahunSelect').value = '';
+        });
     </script>
 </body>
 

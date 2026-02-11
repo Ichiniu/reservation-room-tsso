@@ -76,6 +76,7 @@ $route['admin/pembayaran-kebersihan'] = 'admin/admin_controls/pembayaran_kebersi
 $route['admin/list'] = 'admin/admin_controls/list_user';
 $route['admin/gedung'] = 'admin/admin_controls/list_gedung';
 $route['admin/catering'] = 'admin/admin_controls/list_catering';
+$route['admin/kegiatan_download_pdf/(:any)/(:any)/(:num)'] = 'admin/admin_controls/kegiatan_export_pdf/$1/$2/$3';
 $route['admin/kegiatan_download_pdf/(:any)/(:any)'] = 'admin/admin_controls/kegiatan_export_pdf/$1/$2';
 $route['admin/perawatan_download_pdf/(:any)/(:any)'] = 'admin/admin_controls/perawatan_export_pdf/$1/$2';
 $route['admin/rekap_transaksi'] = 'admin/admin_controls/rekap_transaksi';

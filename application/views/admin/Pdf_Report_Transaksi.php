@@ -11,10 +11,7 @@ $report_rows = (isset($report) && is_array($report)) ? $report : array();
 // helper format tanggal (aman kalau kosong)
 function fmtTanggal($tgl)
 {
-	if (!isset($tgl) || $tgl == '') return '-';
-	$dt = date_create($tgl);
-	if ($dt === false) return $tgl;
-	return date_format($dt, 'd M Y');
+	return format_tanggal_indo($tgl);
 }
 
 // helper format uang
@@ -160,14 +157,14 @@ function fmtRupiah($angka)
     <br>
     <b>
         Periode
-        <?php echo date_format(date_create($start_date), 'd F Y'); ?>
+        <?php echo format_tanggal_indo($start_date); ?>
         -
-        <?php echo date_format(date_create($end_date), 'd F Y'); ?>
+        <?php echo format_tanggal_indo($end_date); ?>
     </b>
     <br>
 
     <b>Dicetak pada: </b>
-    <b><?php echo date_format($date, "d M y"); ?></b>
+    <b><?php echo format_tanggal_indo(date('Y-m-d')); ?></b>
     <br>
 
     <b>Dicetak untuk: Administrator</b>

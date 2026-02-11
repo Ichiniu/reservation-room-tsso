@@ -263,13 +263,11 @@ class Gedung_Model extends CI_Model
 		$binds = [];
 
 		if ($month && $year) {
-			// Gunakan TANGGAL_TRANSFER jika ada, jika tidak gunakan TANGGAL_PEMESANAN
-			$sql .= " AND MONTH(COALESCE(TANGGAL_TRANSFER, TANGGAL_PEMESANAN)) = ? 
-			          AND YEAR(COALESCE(TANGGAL_TRANSFER, TANGGAL_PEMESANAN)) = ?";
+			$sql .= " AND MONTH(TANGGAL_TRANSFER) = ? AND YEAR(TANGGAL_TRANSFER) = ?";
 			$binds[] = (int)$month;
 			$binds[] = (int)$year;
 		} elseif ($year) {
-			$sql .= " AND YEAR(COALESCE(TANGGAL_TRANSFER, TANGGAL_PEMESANAN)) = ?";
+			$sql .= " AND YEAR(TANGGAL_TRANSFER) = ?";
 			$binds[] = (int)$year;
 		}
 
@@ -360,7 +358,7 @@ class Gedung_Model extends CI_Model
 	/**
 	 * Jadwal penggunaan gedung = PEMESANAN yang sudah DIBAYAR & diverifikasi (STATUS_VERIF = CONFIRMED).
 	 */
-	public function jadwal_gedung($first_date = null, $second_date = null)
+	public function jadwal_gedung($first_date = null, $second_date = null, $id_gedung = null)
 	{
 		$sql = "
         SELECT
@@ -388,6 +386,11 @@ class Gedung_Model extends CI_Model
 			$sql .= " AND ps.TANGGAL_PEMESANAN BETWEEN ? AND ?";
 			$binds[] = $first_date;
 			$binds[] = $second_date;
+		}
+
+		if (!empty($id_gedung)) {
+			$sql .= " AND ps.ID_GEDUNG = ?";
+			$binds[] = $id_gedung;
 		}
 
 		$sql .= "
@@ -1000,5 +1003,28 @@ TIME_FORMAT(
 			->order_by('ID_PEMESANAN', 'DESC')
 			->get()
 			->result_array();
+	}
+
+	public function get_top_companies_booking($limit = 5)
+	{
+		// Hitung jumlah booking per perusahaan (berdasarkan user yang booking)
+		// Booking yang dihitung: PROCESS (0), APPROVE (1)
+		// Logic status di DB: 0=PENDING/PROCESS, 1=APPROVE/PAID/DISETUJUI, 2=DITOLAK
+		// Kita ambil status 0 dan 1.
+
+		$sql = "
+			SELECT 
+				COALESCE(NULLIF(TRIM(u.nama_perusahaan), ''), 'Personal / Individu') as label,
+				COUNT(p.ID_PEMESANAN) as total
+			FROM pemesanan p
+			JOIN user u ON u.USERNAME = p.USERNAME
+			WHERE p.STATUS IN (0, 1) 
+			GROUP BY label
+			ORDER BY total DESC
+			LIMIT ?
+		";
+		
+		$query = $this->db->query($sql, array((int)$limit));
+		return $query->result_array();
 	}
 }

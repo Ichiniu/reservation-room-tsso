@@ -154,8 +154,7 @@ $total_transaksi = (int) $hasil->TOTAL_KESELURUHAN;
                 <div class="cardhead">
                     <div class="font-semibold text-gray-900">ID Pemesanan: <?php echo $hasil->ID_PEMESANAN; ?></div>
                     <div class="text-sm text-gray-500 mt-1">
-                        <?php $date = date_create($hasil->TANGGAL_PEMESANAN);
-                        echo date_format($date, 'd F Y'); ?>
+                        <?php echo format_tanggal_indo($hasil->TANGGAL_PEMESANAN); ?>
                     </div>
                     <div class="text-sm text-gray-600 mt-2">
                         Total: <b>Rp. <?php echo number_format($total_transaksi); ?></b>
@@ -192,8 +191,7 @@ $total_transaksi = (int) $hasil->TOTAL_KESELURUHAN;
                                         <tr>
                                             <td><b>Tanggal Kegiatan</b></td>
                                             <td>:</td>
-                                            <td><?php $date = date_create($hasil->TANGGAL_PEMESANAN);
-                                                echo date_format($date, 'd F Y'); ?>
+                                            <td><?php echo format_tanggal_indo($hasil->TANGGAL_PEMESANAN); ?>
                                             </td>
                                         </tr>
                                         <tr>

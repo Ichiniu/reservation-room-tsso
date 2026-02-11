@@ -48,7 +48,7 @@ if (!empty($result->JAM_PEMESANAN) && !empty($result->JAM_SELESAI)) {
 
 $tanggal_text = '-';
 if (!empty($result->TANGGAL_PEMESANAN)) {
-    $tanggal_text = date('d F Y', strtotime($result->TANGGAL_PEMESANAN));
+    $tanggal_text = format_tanggal_indo($result->TANGGAL_PEMESANAN);
 }
 ?>
 <!DOCTYPE html>

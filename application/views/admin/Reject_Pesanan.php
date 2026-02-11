@@ -21,7 +21,7 @@ $c_tgl_approval = date_create($tgl_approval);
 		<tr>
 			<td><font face="verdana"><b>Tanggal Pemesanan</b></font></td>
 			<td><font face="verdana">:</font></td>
-			<td><font face="verdana"><?php echo date_format($c_tgl_pesan, 'd F Y') ?></font></td>
+			<td><font face="verdana"><?php echo format_tanggal_indo($c_tgl_pesan) ?></font></td>
 		</tr>
 		<tr>
 			<td><font face="verdana"><b>Nama Gedung</b></font></td>
@@ -31,7 +31,7 @@ $c_tgl_approval = date_create($tgl_approval);
 		<tr>
 			<td><font face="verdana"><b>Tanggal Approval</b></font></td>
 			<td><font face="verdana">:</font></td>
-			<td><font face="verdana"><?php echo date_format($c_tgl_approval, 'd F Y') ?></font></td>
+			<td><font face="verdana"><?php echo format_tanggal_indo($c_tgl_approval) ?></font></td>
 		</tr>
 		<tr>
 			<td><font face="verdana"><b>Deskripsi Acara</b></font></td>
