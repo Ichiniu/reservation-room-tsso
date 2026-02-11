@@ -155,26 +155,26 @@ function e($v)
 
                     <!-- CATATAN ADMIN -->
                     <?php if ($isShowRemarks): ?>
-                        <?php
+                    <?php
                         $remarkBoxClass = ($statusText === 'REJECTED') ? 'border-rose-200 bg-rose-50/80' : 'border-indigo-200 bg-indigo-50/80';
                         $remarkTitleClass = ($statusText === 'REJECTED') ? 'text-rose-800' : 'text-indigo-800';
                         $remarkIcon = ($statusText === 'REJECTED') ? 'report' : 'info';
                         ?>
-                        <div class="mt-5 rounded-2xl border p-4 text-sm <?php echo $remarkBoxClass; ?>">
-                            <div class="flex items-start gap-2">
-                                <span
-                                    class="material-icons text-[18px] <?php echo $remarkTitleClass; ?>"><?php echo $remarkIcon; ?></span>
-                                <div>
-                                    <div class="font-semibold <?php echo $remarkTitleClass; ?>">Catatan Admin</div>
-                                    <?php if ($remarksSafe !== ''): ?>
-                                        <div class="mt-1 text-slate-800 whitespace-pre-line"><?php echo e($remarksSafe); ?>
-                                        </div>
-                                    <?php else: ?>
-                                        <div class="mt-1 text-slate-500">Tidak ada catatan admin.</div>
-                                    <?php endif; ?>
+                    <div class="mt-5 rounded-2xl border p-4 text-sm <?php echo $remarkBoxClass; ?>">
+                        <div class="flex items-start gap-2">
+                            <span
+                                class="material-icons text-[18px] <?php echo $remarkTitleClass; ?>"><?php echo $remarkIcon; ?></span>
+                            <div>
+                                <div class="font-semibold <?php echo $remarkTitleClass; ?>">Catatan Admin</div>
+                                <?php if ($remarksSafe !== ''): ?>
+                                <div class="mt-1 text-slate-800 whitespace-pre-line"><?php echo e($remarksSafe); ?>
                                 </div>
+                                <?php else: ?>
+                                <div class="mt-1 text-slate-500">Tidak ada catatan admin.</div>
+                                <?php endif; ?>
                             </div>
                         </div>
+                    </div>
                     <?php endif; ?>
 
                     <!-- GRID SUMMARY (mini cards) -->
@@ -236,24 +236,28 @@ function e($v)
                                     </tr>
 
                                     <?php if (isset($result->PRICING_MODE) && $result->PRICING_MODE === 'PER_PESERTA'): ?>
-                                        <tr>
-                                            <td class="px-5 py-3 font-semibold text-slate-700">Total Peserta</td>
-                                            <td class="px-5 py-3 text-slate-800"><?php echo isset($result->TOTAL_PESERTA) ? (int)$result->TOTAL_PESERTA : 0; ?> orang</td>
-                                        </tr>
+                                    <tr>
+                                        <td class="px-5 py-3 font-semibold text-slate-700">Total Peserta</td>
+                                        <td class="px-5 py-3 text-slate-800">
+                                            <?php echo isset($result->TOTAL_PESERTA) ? (int)$result->TOTAL_PESERTA : 0; ?>
+                                            orang</td>
+                                    </tr>
                                     <?php elseif (isset($result->PRICING_MODE) && $result->PRICING_MODE === 'PODCAST_PER_JAM'): ?>
-                                        <tr>
-                                            <td class="px-5 py-3 font-semibold text-slate-700">Jenis Podcast</td>
-                                            <td class="px-5 py-3 text-slate-800">
-                                                <?php
+                                    <tr>
+                                        <td class="px-5 py-3 font-semibold text-slate-700">Jenis Podcast</td>
+                                        <td class="px-5 py-3 text-slate-800">
+                                            <?php
                                                 $pt = isset($result->PODCAST_TYPE) ? strtoupper(trim((string)$result->PODCAST_TYPE)) : '';
                                                 echo ($pt === 'VIDEO') ? 'Video Streaming' : 'Audio Podcast';
                                                 ?>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="px-5 py-3 font-semibold text-slate-700">Durasi</td>
-                                            <td class="px-5 py-3 text-slate-800"><?php echo isset($result->DURASI_JAM) ? (int)$result->DURASI_JAM : 0; ?> jam</td>
-                                        </tr>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-5 py-3 font-semibold text-slate-700">Durasi</td>
+                                        <td class="px-5 py-3 text-slate-800">
+                                            <?php echo isset($result->DURASI_JAM) ? (int)$result->DURASI_JAM : 0; ?> jam
+                                        </td>
+                                    </tr>
                                     <?php endif; ?>
 
                                     <tr>
@@ -305,21 +309,21 @@ function e($v)
 
                         <div class="flex flex-col sm:flex-row gap-3 sm:justify-end">
                             <?php if ($statusCode !== 2 && $statusCode !== 3 && $statusCode !== 4): ?>
-                                <a href="<?php echo site_url('home/cancel-order/' . $temp_id); ?>"
-                                    onclick="return dialog();" class="inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2 text-white
+                            <a href="<?php echo site_url('home/cancel-order/' . $temp_id); ?>"
+                                onclick="return dialog();" class="inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2 text-white
                                           bg-rose-600 hover:bg-rose-700 active:scale-[0.99] transition shadow-md">
-                                    <span class="material-icons text-[18px]">cancel</span>
-                                    Batalkan Pesanan
-                                </a>
+                                <span class="material-icons text-[18px]">cancel</span>
+                                Batalkan Pesanan
+                            </a>
                             <?php endif; ?>
 
                             <?php if ($statusText === 'APPROVE'): ?>
-                                <button type="button" onclick="openModal()"
-                                    class="inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-2 text-white
+                            <button type="button" onclick="openModal()"
+                                class="inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-2 text-white
                                                bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] transition shadow-md">
-                                    <span class="material-icons text-[18px]">payments</span>
-                                    Bayar
-                                </button>
+                                <span class="material-icons text-[18px]">payments</span>
+                                Bayar
+                            </button>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -329,18 +333,18 @@ function e($v)
 
             <!-- FOOTNOTE (proposal optional) -->
             <?php if ($proposal_file_url): ?>
-                <div
-                    class="mt-4 rounded-2xl border border-slate-200 bg-white/70 backdrop-blur p-4 text-sm text-slate-700 flex items-center justify-between gap-3">
-                    <div class="flex items-center gap-2">
-                        <span class="material-icons text-[18px] text-slate-500">attach_file</span>
-                        <span>Proposal: <span class="font-semibold"><?php echo e($proposal_file_name); ?></span></span>
-                    </div>
-                    <a href="<?php echo e($proposal_file_url); ?>" target="_blank"
-                        class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 hover:bg-slate-50 transition">
-                        <span class="material-icons text-[18px] text-slate-600">open_in_new</span>
-                        Buka
-                    </a>
+            <div
+                class="mt-4 rounded-2xl border border-slate-200 bg-white/70 backdrop-blur p-4 text-sm text-slate-700 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                    <span class="material-icons text-[18px] text-slate-500">attach_file</span>
+                    <span>Proposal: <span class="font-semibold"><?php echo e($proposal_file_name); ?></span></span>
                 </div>
+                <a href="<?php echo e($proposal_file_url); ?>" target="_blank"
+                    class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 hover:bg-slate-50 transition">
+                    <span class="material-icons text-[18px] text-slate-600">open_in_new</span>
+                    Buka
+                </a>
+            </div>
             <?php endif; ?>
 
         </div>
@@ -437,33 +441,33 @@ function e($v)
     </div>
 
     <script>
-        function dialog() {
-            var statusCode = <?php echo (int)$statusCode; ?>;
-            if (statusCode === 0) return confirm("YAKIN HAPUS RESERVASI INI?");
-            if (statusCode === 2 || statusCode === 3) {
-                return confirm("Pesanan sudah dibayar. Jika dibatalkan, dana tidak dapat dikembalikan. Lanjutkan?");
-            }
-            return confirm("Yakin batalkan pesanan ini?");
+    function dialog() {
+        var statusCode = <?php echo (int)$statusCode; ?>;
+        if (statusCode === 0) return confirm("YAKIN HAPUS RESERVASI INI?");
+        if (statusCode === 2 || statusCode === 3) {
+            return confirm("Pesanan sudah dibayar. Jika dibatalkan, dana tidak dapat dikembalikan. Lanjutkan?");
         }
+        return confirm("Yakin batalkan pesanan ini?");
+    }
 
-        function openModal() {
-            var m = document.getElementById('modalBayar');
-            m.classList.remove('hidden');
-            m.classList.add('flex');
-            document.body.classList.add('overflow-hidden');
-        }
+    function openModal() {
+        var m = document.getElementById('modalBayar');
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+        document.body.classList.add('overflow-hidden');
+    }
 
-        function closeModal() {
-            var m = document.getElementById('modalBayar');
-            m.classList.add('hidden');
-            m.classList.remove('flex');
-            document.body.classList.remove('overflow-hidden');
-        }
+    function closeModal() {
+        var m = document.getElementById('modalBayar');
+        m.classList.add('hidden');
+        m.classList.remove('flex');
+        document.body.classList.remove('overflow-hidden');
+    }
 
-        document.addEventListener('click', function(e) {
-            var m = document.getElementById('modalBayar');
-            if (!m.classList.contains('hidden') && e.target === m) closeModal();
-        });
+    document.addEventListener('click', function(e) {
+        var m = document.getElementById('modalBayar');
+        if (!m.classList.contains('hidden') && e.target === m) closeModal();
+    });
     </script>
 </body>
 
