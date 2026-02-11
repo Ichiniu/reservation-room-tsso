@@ -340,6 +340,9 @@ class Home extends CI_Controller
 			$days = 2;
 		} elseif (strpos($nama, 'smart office studio photo') !== false || strpos($nama, 'studio photo') !== false) {
 			$days = 3;
+		} elseif (strpos($nama, 'studio podcast') !== false || strpos($nama, 'podcast') !== false) {
+			// ✅ Studio Podcast: H-3
+			$days = 3;
 		}
 
 		return [
@@ -357,11 +360,29 @@ class Home extends CI_Controller
 
 		$gedung['hasil'] = $this->gedung_model->get_gedung_name($id_gedung);
 
+		// ✅ Check if user is internal first (before applying booking rules)
+		$u = $this->db->select('perusahaan')
+			->from('user')
+			->where('USERNAME', $username)
+			->get()
+			->row();
 
-		$rule = $this->_min_booking_rule($id_gedung);
-		$gedung['min_pesan'] = date('Y-m-d', strtotime('+' . $rule['days'] . ' day'));
-		$gedung['min_text']  = $rule['text'];
-		$gedung['min_days']  = $rule['days'];
+		$perusahaan = ($u && isset($u->perusahaan)) ? $u->perusahaan : '';
+		$data['is_internal'] = (strtoupper(trim((string)$perusahaan)) === 'INTERNAL');
+
+		// ✅ Apply different minimum booking rules based on user type
+		if (!empty($data['is_internal'])) {
+			// INTERNAL: Can book on the same day (H+0)
+			$gedung['min_pesan'] = date('Y-m-d');
+			$gedung['min_text']  = 'Anda dapat melakukan pemesanan pada hari yang sama';
+			$gedung['min_days']  = 0;
+		} else {
+			// EXTERNAL: Apply standard booking rules (H+2, H+3, H+10)
+			$rule = $this->_min_booking_rule($id_gedung);
+			$gedung['min_pesan'] = date('Y-m-d', strtotime('+' . $rule['days'] . ' day'));
+			$gedung['min_text']  = $rule['text'];
+			$gedung['min_days']  = $rule['days'];
+		}
 
 		if (method_exists($this->catering_model, 'get_all')) {
 			$data['res'] = $this->catering_model->get_all();
@@ -372,15 +393,6 @@ class Home extends CI_Controller
 		$data['email'] = $this->gedung_model->get_email_address($username);
 		$data['flag']  = $this->gedung_model->get_pemesanan_flag($username);
 		$data['trx_flag'] = $this->gedung_model->get_transaksi_flag($username);
-
-		$u = $this->db->select('perusahaan')
-			->from('user')
-			->where('USERNAME', $username)
-			->get()
-			->row();
-
-		$perusahaan = ($u && isset($u->perusahaan)) ? $u->perusahaan : '';
-		$data['is_internal'] = (strtoupper(trim((string)$perusahaan)) === 'INTERNAL');
 
 		// Ambil nama ruangan untuk deteksi STUDIO
 		$nama_gedung = '';
@@ -577,7 +589,16 @@ class Home extends CI_Controller
 				$data_pemesanan['PODCAST_TYPE'] = $podcast_type;
 			}
 		}
-
+		// ✅ FALLBACK: pastikan TOTAL_PESERTA tersimpan jika ada di POST
+		if (!isset($data_pemesanan['TOTAL_PESERTA'])) {
+			$peserta_post = $this->input->post('total_peserta');
+			if ($peserta_post !== null && $peserta_post !== '') {
+				$peserta_val = (int)$peserta_post;
+				if ($peserta_val > 0) {
+					$data_pemesanan['TOTAL_PESERTA'] = $peserta_val;
+				}
+			}
+		}
 		// ===== INSERT PEMESANAN =====
 		$id_pemesanan = $this->gedung_model->insert_pemesanan($data_pemesanan);
 
@@ -1071,6 +1092,21 @@ class Home extends CI_Controller
 
 				$total_catering_val = isset($hasil['res'][0]['TOTAL_HARGA']) ? (float)$hasil['res'][0]['TOTAL_HARGA'] : 0;
 				$hasil['res'][0]['TOTAL_KESELURUHAN'] = (float)$harga_sewa_calc + (float)$total_catering_val;
+
+				// ✅ FALLBACK: pastikan TOTAL_PESERTA terambil dari database
+				if (!isset($hasil['res'][0]['TOTAL_PESERTA']) || $hasil['res'][0]['TOTAL_PESERTA'] == 0) {
+					if ($this->db->field_exists('TOTAL_PESERTA', 'pemesanan')) {
+						$peserta_row = $this->db->select('TOTAL_PESERTA')
+							->from('pemesanan')
+							->where('ID_PEMESANAN', (int)$id_pemesanan)
+							->get()
+							->row();
+
+						if ($peserta_row && isset($peserta_row->TOTAL_PESERTA) && $peserta_row->TOTAL_PESERTA > 0) {
+							$hasil['res'][0]['TOTAL_PESERTA'] = (int)$peserta_row->TOTAL_PESERTA;
+						}
+					}
+				}
 			}
 		}
 

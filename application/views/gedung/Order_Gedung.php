@@ -533,132 +533,56 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                 </p>
                             </div>
 
-                            <!-- Paket Catering + Porsi + Input Kategori -->
+                            <!-- Paket Gedung + Minimal Order -->
                             <div class="rounded-xl border border-slate-300 bg-white p-5 ring-1 ring-slate-200">
                                 <label class="block text-xs font-semibold tracking-widest text-slate-500">PAKET
-                                    CATERING</label>
+                                    GEDUNG</label>
 
-                                <select id="selected_catering" name="catering" :disabled="!cateringEnabled"
-                                    :required="cateringEnabled" @change="onCateringChange($event)" class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
+                                <select id="paket_gedung" name="paket_gedung" :disabled="!cateringEnabled"
+                                    :required="cateringEnabled" @change="onPaketGedungChange($event)" class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
                                     focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40
                                     disabled:opacity-50 disabled:cursor-not-allowed">
                                     <option value="">Pilih Paket</option>
-
-                                    <?php
-                                    $groups = array();
-                                    foreach ($res as $row) {
-                                        $jenis = isset($row['JENIS']) ? $row['JENIS'] : 'LAINNYA';
-                                        if (!isset($groups[$jenis])) $groups[$jenis] = array();
-                                        $groups[$jenis][] = $row;
-                                    }
-                                    ?>
-
-                                    <?php foreach ($groups as $jenis => $items): ?>
-                                        <optgroup label="<?php echo htmlspecialchars($jenis, ENT_QUOTES, 'UTF-8'); ?>">
-                                            <?php foreach ($items as $row): ?>
-                                                <?php
-                                                $id      = (int)$row['ID_CATERING'];
-                                                $nama    = isset($row['NAMA_PAKET']) ? $row['NAMA_PAKET'] : '';
-                                                $harga   = isset($row['HARGA']) ? (int)$row['HARGA'] : 0;
-                                                $minp    = isset($row['MIN_PAX']) ? (int)$row['MIN_PAX'] : 1;
-                                                if ($minp < 1) $minp = 1;
-
-                                                $menujson = isset($row['MENU_JSON']) ? trim($row['MENU_JSON']) : '';
-                                                $menujson_attr = str_replace(array("\r", "\n"), ' ', $menujson);
-                                                ?>
-                                                <option value="<?php echo $id; ?>" data-harga="<?php echo $harga; ?>"
-                                                    data-minpax="<?php echo $minp; ?>"
-                                                    data-nama="<?php echo htmlspecialchars($nama, ENT_QUOTES, 'UTF-8'); ?>"
-                                                    data-menujson="<?php echo htmlspecialchars($menujson_attr, ENT_QUOTES, 'UTF-8'); ?>">
-                                                    <?php echo htmlspecialchars($nama, ENT_QUOTES, 'UTF-8'); ?>
-                                                    — Rp <?php echo number_format($harga, 0, ',', '.'); ?>/pax (min
-                                                    <?php echo $minp; ?>)
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </optgroup>
-                                    <?php endforeach; ?>
+                                    <option value="CB_10000" data-harga="10000">Coffee Break Rp.10.000</option>
+                                    <option value="CB_20000" data-harga="20000">Coffee Break Rp.20.000</option>
+                                    <option value="HD_40000" data-harga="40000">Halfday (Coffee Break + Lunch) Rp.40.000</option>
+                                    <option value="HD_50000" data-harga="50000">Halfday (Coffee Break + Lunch) Rp.50.000</option>
+                                    <option value="HD_60000" data-harga="60000">Halfday (Coffee Break + Lunch) Rp.60.000</option>
+                                    <option value="FD_80000" data-harga="80000">Fullday (Coffee Break 2x + Lunch) Rp.80.000</option>
+                                    <option value="FD_90000" data-harga="90000">Fullday (Coffee Break 2x + Lunch) Rp.90.000</option>
+                                    <option value="FD_100000" data-harga="100000">Fullday (Coffee Break 2x + Lunch) Rp.100.000</option>
                                 </select>
 
-                                <label class="block mt-4 text-xs font-semibold tracking-widest text-slate-500">JUMLAH
-                                    PORSI</label>
-                                <input type="number" name="jumlah-porsi" id="jumlah-porsi" x-model="jumlahPorsi"
-                                    :min="selectedMinPax" :disabled="!cateringEnabled" :required="cateringEnabled"
-                                    placeholder="Masukkan jumlah porsi" class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400
+                                <label class="block mt-4 text-xs font-semibold tracking-widest text-slate-500">MINIMAL
+                                    ORDER</label>
+                                <input type="number" name="minimal_order" id="minimal_order" x-model="minimalOrder"
+                                    min="1" :disabled="!cateringEnabled" :required="cateringEnabled"
+                                    placeholder="Masukkan minimal order" class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400
                                     focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40
                                     disabled:opacity-50 disabled:cursor-not-allowed" />
 
-                                <!-- Kategori Menu -->
-                                <div x-show="cateringEnabled && categories.length" x-transition
-                                    class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
-                                    <div class="text-sm font-semibold text-slate-900 mb-2">Isi Pilihan Menu per Kategori
-                                    </div>
-
-                                    <template x-for="cat in categories" :key="cat.key">
-                                        <div class="mb-4 last:mb-0" x-show="!cat.exclude">
-                                            <div class="flex items-baseline justify-between gap-3">
-                                                <div class="font-semibold text-slate-800" x-text="cat.label"></div>
-                                                <div class="text-xs text-slate-500" x-text="cat.noteText"></div>
-                                            </div>
-
-                                            <textarea
-                                                class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400
-                                                focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40"
-                                                rows="2" :name="'menu_input[' + cat.key + ']'"
-                                                :placeholder="cat.placeholder"></textarea>
-
-                                            <div class="mt-1 text-xs text-slate-500">
-                                                Isi pilihan kamu (mis: “Nasi Putih, Mie Goreng Jawa”).
-                                            </div>
-                                        </div>
-                                    </template>
-
-                                    <!-- Add-on -->
-                                    <div x-show="addons.length" class="mt-5 pt-4 border-t border-slate-200">
-                                        <div class="text-sm font-semibold text-slate-900 mb-2">Add-on (Opsional)</div>
-
-                                        <template x-for="a in addons" :key="a.key">
-                                            <div class="mb-4 last:mb-0">
-                                                <label
-                                                    class="flex items-center gap-2 text-sm font-semibold text-slate-800">
-                                                    <input type="checkbox" class="h-4 w-4" x-model="a.enabled"
-                                                        :name="'addon_enabled['+a.key+']'" value="1">
-                                                    <span x-text="a.label"></span>
-                                                    <span class="text-xs font-normal text-slate-500" x-show="a.price">
-                                                        (+Rp <span x-text="a.price.toLocaleString('id-ID')"></span>/pax)
-                                                    </span>
-                                                </label>
-
-                                                <div class="text-xs text-slate-500 mt-1" x-text="a.note"></div>
-
-                                                <textarea x-show="a.enabled"
-                                                    class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400
-                                                    focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40" rows="2"
-                                                    :name="'addon_input[' + a.key + ']'"
-                                                    :placeholder="a.placeholder"></textarea>
-                                            </div>
-                                        </template>
-                                    </div>
-                                </div>
-
-                                <div x-show="cateringEnabled && selectedHarga > 0"
+                                <div x-show="cateringEnabled && paketGedungHarga > 0"
                                     class="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm">
-                                    <div class="font-semibold text-slate-900" x-text="selectedNama"></div>
+                                    <div class="font-semibold text-slate-900" x-text="paketGedungNama"></div>
 
                                     <div class="mt-1 text-slate-700">
                                         Harga/pax:
                                         <span class="font-semibold">Rp <span
-                                                x-text="selectedHarga.toLocaleString('id-ID')"></span></span>
-                                        · Min pax: <span class="font-semibold" x-text="selectedMinPax"></span>
+                                                x-text="paketGedungHarga.toLocaleString('id-ID')"></span></span>
+                                    </div>
+
+                                    <div class="mt-1 text-slate-700">
+                                        Minimal Order: <span class="font-semibold" x-text="minimalOrder || '-'"></span>
                                     </div>
 
                                     <div class="mt-1 text-slate-700">
                                         Estimasi total:
                                         <span class="font-semibold">Rp <span
-                                                x-text="grandTotal.toLocaleString('id-ID')"></span></span>
+                                                x-text="totalPaketGedung.toLocaleString('id-ID')"></span></span>
                                     </div>
 
                                     <div class="mt-1 text-xs text-slate-500">
-                                        *Estimasi = (harga * porsi) + add-on (jika dicentang, dihitung per pax).*
+                                        *Estimasi = harga x minimal order*
                                     </div>
                                 </div>
                             </div>
@@ -765,6 +689,11 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                 selectedNama: '',
                 jumlahPorsi: '',
 
+                // ==== paket gedung state ====
+                paketGedungHarga: 0,
+                paketGedungNama: '',
+                minimalOrder: '',
+
                 get cateringEnabled() {
                     return this.catering === 'ya';
                 },
@@ -776,6 +705,11 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                 },
                 get showPodcast() {
                     return !this.isInternal && this.pricingMode === 'PODCAST_PER_JAM';
+                },
+                get totalPaketGedung() {
+                    const harga = parseInt(this.paketGedungHarga || 0, 10);
+                    const minimal = parseInt(this.minimalOrder || 0, 10);
+                    return harga * minimal;
                 },
 
                 // ✅ format tanggal Indonesia
@@ -1160,6 +1094,12 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
 
                     const jp = parseInt(this.jumlahPorsi || '0', 10);
                     if (!jp || jp < this.selectedMinPax) this.jumlahPorsi = this.selectedMinPax;
+                },
+
+                onPaketGedungChange(e) {
+                    const opt = e.target.options[e.target.selectedIndex];
+                    this.paketGedungHarga = parseInt(opt.getAttribute('data-harga') || '0', 10);
+                    this.paketGedungNama = opt.text || '';
                 },
 
                 parseMenuJson(raw) {
