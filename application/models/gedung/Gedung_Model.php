@@ -263,11 +263,13 @@ class Gedung_Model extends CI_Model
 		$binds = [];
 
 		if ($month && $year) {
-			$sql .= " AND MONTH(TANGGAL_TRANSFER) = ? AND YEAR(TANGGAL_TRANSFER) = ?";
+			// Gunakan TANGGAL_TRANSFER jika ada, jika tidak gunakan TANGGAL_PEMESANAN
+			$sql .= " AND MONTH(COALESCE(TANGGAL_TRANSFER, TANGGAL_PEMESANAN)) = ? 
+			          AND YEAR(COALESCE(TANGGAL_TRANSFER, TANGGAL_PEMESANAN)) = ?";
 			$binds[] = (int)$month;
 			$binds[] = (int)$year;
 		} elseif ($year) {
-			$sql .= " AND YEAR(TANGGAL_TRANSFER) = ?";
+			$sql .= " AND YEAR(COALESCE(TANGGAL_TRANSFER, TANGGAL_PEMESANAN)) = ?";
 			$binds[] = (int)$year;
 		}
 
