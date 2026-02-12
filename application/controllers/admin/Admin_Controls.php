@@ -931,8 +931,8 @@ class Admin_Controls extends CI_Controller
 		$this->load->library('notification_service');
 
 		// types sesuai DB kamu
-		$typesI = array('ADMIN_INBOX_PROCESS');
-		$typesT = array('ADMIN_TRANSAKSI_PENDING');
+		$typesI = array('ADMIN_INBOX', 'ADMIN_INBOX_PROCESS');
+		$typesT = array('ADMIN_TRANSAKSI', 'ADMIN_TRANSAKSI_PENDING');
 
 		try {
 			$adminKey = 'admin'; // sesuai DB kamu

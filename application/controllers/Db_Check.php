@@ -9,9 +9,9 @@ class Db_Check extends CI_Controller
             echo "- $field\n";
         }
 
-        $fields_gedung = $this->db->list_fields('gedung');
-        echo "\nFields in gedung:\n";
-        foreach ($fields_gedung as $field) {
+        $fields_notif = $this->db->list_fields('notifications');
+        echo "\nFields in notifications:\n";
+        foreach ($fields_notif as $field) {
             echo "- $field\n";
         }
     }

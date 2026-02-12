@@ -93,7 +93,7 @@ class Notification_service
     $this->CI->email->message($html);
 
     // Suppress notices (seperti errno 10053 pada Windows) agar tidak merusak UI jika smtp gagal
-    $ok = @$this->CI->email->send();
+    $ok = $this->CI->email->send();
 
     if (!$ok) {
       log_message('error', 'EMAIL FAIL: ' . $this->CI->email->print_debugger(['headers', 'subject', 'body']));

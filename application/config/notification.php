@@ -2,21 +2,20 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 $config['admin_emails'] = [
-    'bookingsmarts@gmail.com'
+    getenv('SMTP_USER') ?: 'bookingsmarts@gmail.com'
 ];
-$config['smtp']['smtp_auth'] = true;
-$config['smtp']['useragent'] = 'CodeIgniter';
-$config['mail_from']      = 'bookingsmarts@gmail.com';
+$config['mail_from']      = getenv('SMTP_USER') ?: 'bookingsmarts@gmail.com';
 $config['mail_from_name'] = 'Booking Smarts';
-
 
 $config['smtp'] = [
     'protocol'    => 'smtp',
-    'smtp_host'   => 'ssl://smtp.gmail.com',
-    'smtp_user'   => 'bookingsmarts@gmail.com',
-    'smtp_pass'   => 'lwmkpwviazobsgkc',
-    'smtp_port'   => 465,
-    'smtp_crypto' => 'ssl',
+    'smtp_host'   => getenv('SMTP_HOST') ?: 'smtp.gmail.com',
+    'smtp_user'   => getenv('SMTP_USER') ?: 'bookingsmarts@gmail.com',
+    'smtp_pass'   => getenv('SMTP_PASS') ?: '',
+    'smtp_port'   => (int) getenv('SMTP_PORT') ?: 465,
+    'smtp_crypto' => getenv('SMTP_CRYPTO') ?: 'ssl',
+    'smtp_auth'   => true,
+    'useragent'   => 'CodeIgniter',
 
     'mailtype'    => 'html',
     'charset'     => 'utf-8',
@@ -24,10 +23,20 @@ $config['smtp'] = [
     'crlf'        => "\r\n",
     'smtp_timeout' => 30,
     'smtp_keepalive' => TRUE,
+
+    // Tambahan untuk bypass SSL verification di localhost jika perlu
+    'smtp_conn_options' => [
+        'ssl' => [
+            'verify_peer' => false,
+            'verify_peer_name' => false,
+            'allow_self_signed' => true
+        ]
+    ]
 ];
-$config['payment_bank_name']    = 'BCA';
-$config['payment_bank_account'] = '62954742756724';
-$config['payment_bank_holder']  = 'PAK EKO TIGA SERANGKAI';
-$config['payment_due_days']     = 7; // optional
-// secret key to allow web-trigger of auto-review cron (optional). Keep empty to allow CLI only.
-$config['auto_review_key'] = 'CHANGE_ME_SECRET_KEY';
+
+$config['payment_bank_name']    = getenv('PAYMENT_BANK_NAME') ?: 'BCA';
+$config['payment_bank_account'] = getenv('PAYMENT_BANK_ACCOUNT') ?: '';
+$config['payment_bank_holder']  = getenv('PAYMENT_BANK_HOLDER') ?: '';
+$config['payment_due_days']     = 7;
+
+$config['auto_review_key']      = getenv('AUTO_REVIEW_KEY') ?: '';

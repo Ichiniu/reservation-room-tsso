@@ -48,7 +48,7 @@ $this->load->helper('text');
                     Kegiatan Ruangan</a>
             </li>
             <li class="bold">
-                <a href="<?php echo site_url('admin/log_out') ?>" class="waves-effect waves-teal">Sign Out</a>
+                <a href="<?php echo site_url('manage/log_out') ?>" class="waves-effect waves-teal">Sign Out</a>
             </li>
         </ul>
         <main class="">
