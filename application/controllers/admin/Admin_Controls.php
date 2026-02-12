@@ -779,10 +779,10 @@ class Admin_Controls extends CI_Controller
 		$data['result']          = $this->gedung_model->get_pending_transaction();
 		$data['get_transaction'] = $this->gedung_model->get_unread_transaction();
 
-		// ===== TOP COMPANIES (CHART) =====
-		// User request: Show ALL companies (limit increased to 100 as safe 'all')
-		$data['top_companies'] = $this->gedung_model->get_top_companies_booking(100);
-		
+		// ===== TOP DEPARTMENTS (CHART) =====
+		// Hanya pemesanan status CONFIRMED (1)
+		$data['top_departments'] = $this->gedung_model->get_booking_stats_by_dept(100);
+
 		// Pastikan view yang kamu load sesuai nama file (Home.php vs home.php)
 		$this->load->view('admin/home', $data);
 	}

@@ -22,7 +22,7 @@ $no = 1;
     <link rel="icon" href="<?php echo base_url(); ?>assets/home/assets/img/favicon/favicon-32x32.png" sizes="32x32">
     <title>Laporan Kegiatan</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-   
+
     <link href="<?php echo base_url(); ?>assets/home/template.css" rel="stylesheet" type="text/css">
 </head>
 
@@ -69,27 +69,39 @@ $no = 1;
                             <th>No</th>
                             <th>Ruangan</th>
                             <th>Tanggal</th>
+                            <th>Total Peserta</th>
                             <th>Acara</th>
                             <th>Nama Penyewa</th>
                         </tr>
-                        <?php foreach($report as $row): ?>
-                        <tr>
-                            <td><?php echo $no++ ?></td>
-                            <td><?php echo $row['NAMA_GEDUNG'] ?></td>
-                            <td><?php echo date_format(date_create($row['TANGGAL_FINAL_PEMESANAN']), 'm/d/y') ?></td>
-                            <td><?php echo $row['DESKRIPSI_ACARA'] ?></td>
-                            <td><?php echo $row['NAMA_LENGKAP'] ?></td>
-                        </tr>
+                        <?php
+                        $grand_total_peserta = 0;
+                        foreach ($report as $row):
+                            $tp = !empty($row['TOTAL_PESERTA']) ? (int)$row['TOTAL_PESERTA'] : 0;
+                            $grand_total_peserta += $tp;
+                        ?>
+                            <tr>
+                                <td><?php echo $no++ ?></td>
+                                <td><?php echo $row['NAMA_GEDUNG'] ?></td>
+                                <td><?php echo date_format(date_create($row['TANGGAL_FINAL_PEMESANAN']), 'm/d/y') ?></td>
+                                <td style="text-align: center;"><?php echo $tp; ?></td>
+                                <td><?php echo $row['DESKRIPSI_ACARA'] ?></td>
+                                <td><?php echo $row['NAMA_LENGKAP'] ?></td>
+                            </tr>
                         <?php endforeach; ?>
+                        <tr style="background-color: #f9f9f9; font-weight: bold;">
+                            <td colspan="3" style="text-align: right;">GRAND TOTAL PESERTA</td>
+                            <td style="text-align: center;"><?php echo $grand_total_peserta; ?></td>
+                            <td colspan="2"></td>
+                        </tr>
                     </table>
-                    <a href="<?php echo site_url('manage/kegiatan_download_pdf/'.$start_date.'/'.$end_date.'') ?>">Ekspor
+                    <a href="<?php echo site_url('manage/kegiatan_download_pdf/' . $start_date . '/' . $end_date . '') ?>">Ekspor
                         ke PDF</a>
                 </div>
             </div>
         </div>
         <main class="">
         </main>
-       
+
         <script src="<?php echo base_url(); ?>assets/home/index.js"></script>
 </body>
 

@@ -279,15 +279,15 @@ if ($selM !== '' && $selY !== '') {
         <!-- CHART & RECENT BOOKINGS (STACKED FULL WIDTH) -->
         <div class="max-w-7xl mx-auto flex flex-col gap-6">
 
-            <!-- CHART SECTION (Statistik Perusahaan) -->
+            <!-- CHART SECTION (Statistik Departemen) -->
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col w-full">
                 <div class="p-5 border-b border-slate-200">
-                    <h2 class="text-lg font-bold text-slate-900">Statistik Perusahaan</h2>
-                    <p class="text-sm text-slate-500">Grafik jumlah booking berdasarkan perusahaan.</p>
+                    <h2 class="text-lg font-bold text-slate-900">Statistik Departemen</h2>
+                    <p class="text-sm text-slate-500">Grafik jumlah booking per departemen (Status: Confirmed).</p>
                 </div>
                 <div class="p-5 flex-1 min-h-[400px]">
                     <div class="w-full h-full relative">
-                        <canvas id="companyChart"></canvas>
+                        <canvas id="deptChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -323,6 +323,14 @@ if ($selM !== '' && $selY !== '') {
                             </select>
                         </div>
 
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Filter Departemen</label>
+                            <select id="filterDept"
+                                class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-slate-300">
+                                <option value="">Semua Departemen</option>
+                            </select>
+                        </div>
+
                         <div class="flex items-end">
                             <button id="resetFilter"
                                 class="w-full px-4 py-2 rounded-xl bg-slate-200 text-slate-800 text-sm hover:bg-slate-300">
@@ -347,6 +355,7 @@ if ($selM !== '' && $selY !== '') {
                                     <th class="px-4 py-3 text-center">Invoice</th>
                                     <th class="px-4 py-3 text-center">Ruangan</th>
                                     <th class="px-4 py-3 text-center">User</th>
+                                    <th class="px-4 py-3 text-center">Departemen</th>
                                     <th class="px-4 py-3 text-center">Tanggal</th>
                                     <th class="px-4 py-3 text-center">Jam</th>
                                     <th class="px-4 py-3 text-center">Aksi</th>
@@ -412,7 +421,8 @@ if ($selM !== '' && $selY !== '') {
 
                                         <tr class="table-row hover:bg-slate-50" data-idnum="<?= (int)$idNum; ?>"
                                             data-kode="<?= htmlspecialchars($invoice, ENT_QUOTES, 'UTF-8'); ?>"
-                                            data-user="<?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8'); ?>">
+                                            data-user="<?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8'); ?>"
+                                            data-dept="<?= htmlspecialchars(isset($data->departemen) ? $data->departemen : '-', ENT_QUOTES, 'UTF-8'); ?>">
                                             <td class="px-4 py-3 text-center cell-no">1</td>
 
                                             <td class="px-4 py-3 text-center font-semibold cell-kode">
@@ -425,6 +435,12 @@ if ($selM !== '' && $selY !== '') {
 
                                             <td class="px-4 py-3 text-center cell-user">
                                                 <?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8'); ?>
+                                            </td>
+
+                                            <td class="px-4 py-3 text-center">
+                                                <span class="px-2 py-1 rounded-lg bg-slate-100 text-slate-700 text-[10px] font-bold uppercase">
+                                                    <?= htmlspecialchars(isset($data->departemen) && !empty($data->departemen) ? $data->departemen : '-', ENT_QUOTES, 'UTF-8'); ?>
+                                                </span>
                                             </td>
 
                                             <td class="px-4 py-3 text-center">
@@ -522,6 +538,7 @@ if ($selM !== '' && $selY !== '') {
 
                 var filterKode = document.getElementById('filterKode');
                 var filterUser = document.getElementById('filterUser');
+                var filterDept = document.getElementById('filterDept');
                 var resetFilterBtn = document.getElementById('resetFilter');
 
                 if (!allRows.length) return;
@@ -545,11 +562,16 @@ if ($selM !== '' && $selY !== '') {
 
                 function buildUserDropdown() {
                     var users = {};
+                    var depts = {};
                     allRows.forEach(function(r) {
                         var u = (r.getAttribute('data-user') || '').trim();
                         if (u && u !== '-') users[u] = true;
+
+                        var d = (r.getAttribute('data-dept') || '').trim();
+                        if (d && d !== '-') depts[d] = true;
                     });
 
+                    // User select
                     var keys = Object.keys(users).sort(function(a, b) {
                         return a.localeCompare(b);
                     });
@@ -560,6 +582,18 @@ if ($selM !== '' && $selY !== '') {
                         opt.textContent = u;
                         filterUser.appendChild(opt);
                     });
+
+                    // Dept select
+                    var dkeys = Object.keys(depts).sort(function(a, b) {
+                        return a.localeCompare(b);
+                    });
+                    filterDept.innerHTML = '<option value="">Semua Departemen</option>';
+                    dkeys.forEach(function(d) {
+                        var opt = document.createElement('option');
+                        opt.value = d;
+                        opt.textContent = d;
+                        filterDept.appendChild(opt);
+                    });
                 }
 
                 function normalize(s) {
@@ -569,15 +603,18 @@ if ($selM !== '' && $selY !== '') {
                 function applyFilter() {
                     var kodeVal = normalize(filterKode.value);
                     var userVal = (filterUser.value || '').trim();
+                    var deptVal = (filterDept.value || '').trim();
 
                     activeRows = allRows.filter(function(row) {
                         var kode = normalize(row.getAttribute('data-kode'));
                         var user = (row.getAttribute('data-user') || '').trim();
+                        var dept = (row.getAttribute('data-dept') || '').trim();
 
                         var okKode = !kodeVal ? true : (kode.indexOf(kodeVal) !== -1);
                         var okUser = !userVal ? true : (user === userVal);
+                        var okDept = !deptVal ? true : (dept === deptVal);
 
-                        return okKode && okUser;
+                        return okKode && okUser && okDept;
                     });
 
                     currentPage = 1;
@@ -587,6 +624,7 @@ if ($selM !== '' && $selY !== '') {
                 function resetFilter() {
                     filterKode.value = '';
                     filterUser.value = '';
+                    filterDept.value = '';
                     activeRows = allRows.slice();
                     currentPage = 1;
                     renderTable();
@@ -626,6 +664,7 @@ if ($selM !== '' && $selY !== '') {
 
                 filterKode.addEventListener('input', applyFilter);
                 filterUser.addEventListener('change', applyFilter);
+                filterDept.addEventListener('change', applyFilter);
                 resetFilterBtn.addEventListener('click', resetFilter);
 
                 rowsPerPageSelect.addEventListener('change', function() {
@@ -661,7 +700,7 @@ if ($selM !== '' && $selY !== '') {
 
 <script>
     // Data from Controller
-    const rawData = <?= json_encode(isset($top_companies) ? $top_companies : []); ?>;
+    const rawData = <?= json_encode(isset($top_departments) ? $top_departments : []); ?>;
 
     // Process Data
     const labels = rawData.map(item => item.label);
@@ -684,9 +723,9 @@ if ($selM !== '' && $selY !== '') {
     // Create color array matching data length by repeating base colors
     const backgroundColors = labels.map((_, i) => baseColors[i % baseColors.length]);
 
-    const ctx = document.getElementById('companyChart').getContext('2d');
+    const ctx = document.getElementById('deptChart').getContext('2d');
     new Chart(ctx, {
-        type: 'bar', // CHANGED TO BAR
+        type: 'bar',
         data: {
             labels: labels,
             datasets: [{
@@ -700,12 +739,12 @@ if ($selM !== '' && $selY !== '') {
             }]
         },
         options: {
-            indexAxis: 'x', // Vertical bars (standard)
+            indexAxis: 'x',
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    display: false // Hide legend
+                    display: false
                 },
                 tooltip: {
                     callbacks: {

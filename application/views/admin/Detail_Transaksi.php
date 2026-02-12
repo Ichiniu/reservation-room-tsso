@@ -57,6 +57,8 @@ $total_transaksi = (int) $hasil->TOTAL_KESELURUHAN;
 
         table.bordered {
             margin: 0;
+            width: 100%;
+            border-collapse: collapse;
         }
 
         .btn-blue700 {
@@ -242,7 +244,7 @@ $total_transaksi = (int) $hasil->TOTAL_KESELURUHAN;
                                             <td>:</td>
                                             <td>Rp. <?php echo number_format($hasil->HARGA_SEWA); ?></td>
                                         </tr>
-                                        <?php if (isset($hasil->PRICING_MODE) && $hasil->PRICING_MODE === 'PER_PESERTA' && isset($hasil->TOTAL_PESERTA)): ?>
+                                        <?php if (isset($hasil->TOTAL_PESERTA) && $hasil->TOTAL_PESERTA > 0): ?>
                                             <tr>
                                                 <td><b>Total Peserta</b></td>
                                                 <td>:</td>

@@ -12,17 +12,18 @@ $config['mail_from_name'] = 'Booking Smarts';
 
 $config['smtp'] = [
     'protocol'    => 'smtp',
-    'smtp_host'   => 'smtp.gmail.com',
+    'smtp_host'   => 'ssl://smtp.gmail.com',
     'smtp_user'   => 'bookingsmarts@gmail.com',
     'smtp_pass'   => 'lwmkpwviazobsgkc',
-    'smtp_port'   => 587,
-    'smtp_crypto' => 'tls',
+    'smtp_port'   => 465,
+    'smtp_crypto' => 'ssl',
 
     'mailtype'    => 'html',
     'charset'     => 'utf-8',
     'newline'     => "\r\n",
     'crlf'        => "\r\n",
     'smtp_timeout' => 30,
+    'smtp_keepalive' => TRUE,
 ];
 $config['payment_bank_name']    = 'BCA';
 $config['payment_bank_account'] = '62954742756724';

@@ -494,8 +494,7 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                     :required="showPeserta" placeholder="Masukkan jumlah peserta" class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400
                                     focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40" />
                                 <p class="mt-2 text-xs text-slate-500">
-                                    *Khusus user eksternal untuk Meeting Room &amp; Amphitheater (harga dihitung per
-                                    peserta).*
+                                    *Untuk Meeting Room &amp; Amphitheater. (Harga terhitung 0 untuk user Internal).*
                                 </p>
                             </div>
 
@@ -720,10 +719,14 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                     return this.tipeJam === 'CUSTOM';
                 },
                 get showPeserta() {
-                    return !this.isInternal && this.pricingMode === 'PER_PESERTA';
+                    // Tampilkan jika mode per peserta, atau jika internal, atau jika mode FLAT (kecuali podcast)
+                    if (this.pricingMode === 'PER_PESERTA') return true;
+                    if (this.isInternal) return true;
+                    if (this.pricingMode === 'FLAT' && this.pricingMode !== 'PODCAST_PER_JAM') return true;
+                    return false;
                 },
                 get showPodcast() {
-                    return !this.isInternal && this.pricingMode === 'PODCAST_PER_JAM';
+                    return this.pricingMode === 'PODCAST_PER_JAM';
                 },
                 get totalPaketGedung() {
                     const harga = parseInt(this.paketGedungHarga || 0, 10);

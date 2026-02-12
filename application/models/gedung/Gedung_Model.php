@@ -372,7 +372,8 @@ class Gedung_Model extends CI_Model
             u.NAMA_LENGKAP,
             TIME_FORMAT(ps.JAM_PEMESANAN, '%H:%i') AS JAM_MULAI,
             TIME_FORMAT(ps.JAM_SELESAI,  '%H:%i') AS JAM_SELESAI,
-            ps.TIPE_JAM AS TIPE_JAM
+            ps.TIPE_JAM AS TIPE_JAM,
+            ps.TOTAL_PESERTA
         FROM PEMBAYARAN p
         JOIN PEMESANAN ps ON ps.ID_PEMESANAN = p.ID_PEMESANAN_RAW
         LEFT JOIN USER u ON u.USERNAME = ps.USERNAME
@@ -446,35 +447,36 @@ class Gedung_Model extends CI_Model
 	public function fixed_date()
 	{
 		$sql = "
-        SELECT
-            v.ID_PEMESANAN,
-            v.USERNAME,
-            v.NAMA_GEDUNG,
-            v.TANGGAL_PEMESANAN,
+       SELECT
+           v.ID_PEMESANAN,
+           v.USERNAME,
+           v.NAMA_GEDUNG,
+           v.TANGGAL_PEMESANAN,
+           u.departemen,
 
-            -- jam mulai: dari fix_detail kalau ada, kalau tidak dari V_PEMESANAN
-            TIME_FORMAT(
-                COALESCE(f.JAM_MULAI, v.JAM_PEMESANAN),
-                '%H:%i'
-            ) AS JAM_MULAI,
+           -- jam mulai: dari fix_detail kalau ada, kalau tidak dari V_PEMESANAN
+           TIME_FORMAT(
+               COALESCE(f.JAM_MULAI, v.JAM_PEMESANAN),
+               '%H:%i'
+           ) AS JAM_MULAI,
 
-           -- jam selesai: dari fix_detail kalau ada, kalau tidak dari V_PEMESANAN
+          -- jam selesai: dari fix_detail kalau ada, kalau tidak dari V_PEMESANAN
 TIME_FORMAT(
-    COALESCE(f.JAM_SELESAI, v.JAM_SELESAI),
-    '%H:%i'
+   COALESCE(f.JAM_SELESAI, v.JAM_SELESAI),
+   '%H:%i'
 ) AS JAM_SELESAI
 
-        FROM V_PEMESANAN v
+       FROM V_PEMESANAN v
+       JOIN user u ON u.USERNAME = v.USERNAME
+       LEFT JOIN pemesanan_fix_detail f
+           ON f.ID_PEMESANAN =
+              CAST(REPLACE(REPLACE(REPLACE(UPPER(TRIM(v.ID_PEMESANAN)), 'PMSN', ''), ' ', ''), '0', '0') AS UNSIGNED)
+           AND f.FINAL_STATUS = 1
 
-        LEFT JOIN pemesanan_fix_detail f
-            ON f.ID_PEMESANAN =
-               CAST(REPLACE(REPLACE(REPLACE(UPPER(TRIM(v.ID_PEMESANAN)), 'PMSN', ''), ' ', ''), '0', '0') AS UNSIGNED)
-            AND f.FINAL_STATUS = 1
-
-        WHERE UPPER(TRIM(v.STATUS)) = 'SUBMITED'
-        ORDER BY
-            CAST(REPLACE(REPLACE(REPLACE(UPPER(TRIM(v.ID_PEMESANAN)), 'PMSN', ''), ' ', ''), '0', '0') AS UNSIGNED) DESC
-    ";
+       WHERE UPPER(TRIM(v.STATUS)) = 'SUBMITED'
+       ORDER BY
+           CAST(REPLACE(REPLACE(REPLACE(UPPER(TRIM(v.ID_PEMESANAN)), 'PMSN', ''), ' ', ''), '0', '0') AS UNSIGNED) DESC
+   ";
 
 		return $this->db->query($sql)->result();
 	}
@@ -752,7 +754,10 @@ TIME_FORMAT(
 
 			// ✅ HITUNG ULANG HARGA SECARA DINAMIS
 			$this->load->helper('pricing');
-			$perusahaan = isset($row->perusahaan) ? $row->perusahaan : '';
+
+			// Ambil info perusahaan dari tabel user (karena tidak ada di V_PEMESANAN)
+			$user_data = $this->db->select('perusahaan')->get_where('user', array('USERNAME' => $row->USERNAME))->row();
+			$perusahaan = $user_data ? $user_data->perusahaan : '';
 			$is_internal = (strtoupper(trim((string)$perusahaan)) === 'INTERNAL');
 
 			// Hitung Harga Sewa Ruangan (Tingkat Model)
@@ -1062,6 +1067,28 @@ TIME_FORMAT(
 			ORDER BY total DESC
 			LIMIT ?
 		";
+
+		$query = $this->db->query($sql, array((int)$limit));
+		return $query->result_array();
+	}
+
+	/**
+	 * Mendapatkan statistik booking per departemen
+	 * Hanya untuk pemesanan yang statusnya CONFIRMED (1)
+	 */
+	public function get_booking_stats_by_dept($limit = 100)
+	{
+		$sql = "
+		SELECT 
+			COALESCE(NULLIF(TRIM(u.departemen), ''), 'Dinas Terkait') as label,
+			COUNT(p.ID_PEMESANAN) as total
+		FROM pemesanan p
+		JOIN user u ON u.USERNAME = p.USERNAME
+		WHERE p.STATUS = 1 
+		GROUP BY label
+		ORDER BY total DESC
+		LIMIT ?
+	";
 
 		$query = $this->db->query($sql, array((int)$limit));
 		return $query->result_array();

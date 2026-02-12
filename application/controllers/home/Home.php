@@ -528,34 +528,30 @@ class Home extends CI_Controller
 		$u = $this->db->select('perusahaan')->from('user')->where('USERNAME', $username)->get()->row();
 		$is_internal = ($u && strtoupper(trim((string)$u->perusahaan)) === 'INTERNAL');
 
-		if (!$is_internal) {
-			$gedung_data = $this->gedung_model->get_gedung_name($id_gedung);
-			$nama_gedung = '';
-			if (!empty($gedung_data) && is_array($gedung_data) && is_array($gedung_data[0])) {
-				$nama_gedung = isset($gedung_data[0]['NAMA_GEDUNG']) ? (string)$gedung_data[0]['NAMA_GEDUNG'] : '';
-			}
+		$gedung_data = $this->gedung_model->get_gedung_name($id_gedung);
+		$nama_gedung = '';
+		if (!empty($gedung_data) && is_array($gedung_data) && is_array($gedung_data[0])) {
+			$nama_gedung = isset($gedung_data[0]['NAMA_GEDUNG']) ? (string)$gedung_data[0]['NAMA_GEDUNG'] : '';
+		}
 
-			$pm_db = '';
-			if (!empty($gedung_data) && is_array($gedung_data) && is_array($gedung_data[0]) && isset($gedung_data[0]['PRICING_MODE'])) {
-				$pm_db = (string)$gedung_data[0]['PRICING_MODE'];
-			}
+		$pm_db = '';
+		if (!empty($gedung_data) && is_array($gedung_data) && is_array($gedung_data[0]) && isset($gedung_data[0]['PRICING_MODE'])) {
+			$pm_db = (string)$gedung_data[0]['PRICING_MODE'];
+		}
 
-			$pricing_mode = bs_detect_pricing_mode($nama_gedung, $pm_db);
+		$pricing_mode = bs_detect_pricing_mode($nama_gedung, $pm_db);
 
-			if ($pricing_mode === 'PER_PESERTA') {
-				$total_peserta = (int)$this->input->post('total_peserta');
-				if ($total_peserta <= 0) {
-					$this->session->set_flashdata('error', 'Total peserta wajib diisi.');
-					redirect('home/order-gedung/' . $id_gedung);
-					return;
-				}
-			} elseif ($pricing_mode === 'PODCAST_PER_JAM') {
-				$podcast_type = trim((string)$this->input->post('podcast_type', TRUE));
-				if (empty($podcast_type)) {
-					$this->session->set_flashdata('error', 'Pilih jenis podcast.');
-					redirect('home/order-gedung/' . $id_gedung);
-					return;
-				}
+		$total_peserta = (int)$this->input->post('total_peserta');
+		if ($pricing_mode === 'PER_PESERTA' && $total_peserta <= 0) {
+			$this->session->set_flashdata('error', 'Total peserta wajib diisi.');
+			redirect('home/order-gedung/' . $id_gedung);
+			return;
+		} elseif ($pricing_mode === 'PODCAST_PER_JAM') {
+			$podcast_type = trim((string)$this->input->post('podcast_type', TRUE));
+			if (empty($podcast_type)) {
+				$this->session->set_flashdata('error', 'Pilih jenis podcast.');
+				redirect('home/order-gedung/' . $id_gedung);
+				return;
 			}
 		}
 
@@ -1111,6 +1107,7 @@ class Home extends CI_Controller
 				if (isset($extra->PODCAST_TYPE)) $hasil['res'][0]['PODCAST_TYPE'] = (string)$extra->PODCAST_TYPE;
 				$durasi_jam = bs_duration_hours_ceil($extra->JAM_PEMESANAN, $extra->JAM_SELESAI);
 				$hasil['res'][0]['DURASI_JAM'] = (int)$durasi_jam;
+				$hasil['res'][0]['perusahaan'] = $perusahaan_val; // Pastikan info perusahaan terbawa ke view
 
 				$total_catering_val = isset($hasil['res'][0]['TOTAL_HARGA']) ? (float)$hasil['res'][0]['TOTAL_HARGA'] : 0;
 				$hasil['res'][0]['TOTAL_KESELURUHAN'] = (float)$harga_sewa_calc + (float)$total_catering_val;
