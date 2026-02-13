@@ -34,7 +34,7 @@ $rows = (isset($row) && is_array($row)) ? $row : array();
     <?php $this->load->view('admin/components/sidebar'); ?>
 
     <!-- MAIN -->
-    <main class="pt-24 pl-0 md:pl-64 px-6 pb-10">
+    <main class="pt-24 pl-0 md:pl-64 px-4 md:px-6 pb-10">
         <div class="max-w-6xl mx-auto">
             <h1 class="text-xl font-semibold mb-2">Rekapitulasi Transaksi</h1>
 

@@ -340,7 +340,7 @@ if ($selM !== '' && $selY !== '') {
             <div class="px-5 pb-5">
                 <div id="tableScroll"
                     class="overflow-x-auto max-h-[420px] overflow-y-auto relative border border-slate-200 rounded-xl">
-                    <table class="w-full text-sm bg-white">
+                    <table class="min-w-[800px] w-full text-sm bg-white">
                         <thead class="sticky top-0 z-20 bg-slate-100 shadow-sm">
                             <tr class="border-b border-slate-200">
                                 <th class="px-4 py-3 text-center">No</th>

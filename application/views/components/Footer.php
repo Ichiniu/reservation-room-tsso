@@ -1,6 +1,6 @@
 <!-- ================= FOOTER ================= -->
 <footer class="bg-white border-t border-black/5 mt-10">
-    <div class="max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-5 gap-4 text-sm text-slate-900">
+    <div class="max-w-6xl mx-auto px-4 py-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 text-sm text-slate-900">
 
         <a href="<?= site_url('how-to-order'); ?>" class="hover:text-slate-700 flex items-center gap-2">
             <i class="bi bi-question-circle"></i> How to Order
