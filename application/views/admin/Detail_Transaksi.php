@@ -57,6 +57,8 @@ $total_transaksi = (int) $hasil->TOTAL_KESELURUHAN;
 
         table.bordered {
             margin: 0;
+            width: 100%;
+            border-collapse: collapse;
         }
 
         .btn-blue700 {
@@ -242,6 +244,25 @@ $total_transaksi = (int) $hasil->TOTAL_KESELURUHAN;
                                             <td>:</td>
                                             <td>Rp. <?php echo number_format($hasil->HARGA_SEWA); ?></td>
                                         </tr>
+                                        <?php if (isset($hasil->TOTAL_PESERTA) && $hasil->TOTAL_PESERTA > 0): ?>
+                                            <tr>
+                                                <td><b>Total Peserta</b></td>
+                                                <td>:</td>
+                                                <td><?php echo (int)$hasil->TOTAL_PESERTA; ?> orang</td>
+                                            </tr>
+                                        <?php endif; ?>
+                                        <?php if (isset($hasil->PRICING_MODE) && $hasil->PRICING_MODE === 'PODCAST_PER_JAM'): ?>
+                                            <tr>
+                                                <td><b>Jenis Podcast</b></td>
+                                                <td>:</td>
+                                                <td><?php echo (isset($hasil->PODCAST_TYPE) && strtoupper($hasil->PODCAST_TYPE) === 'VIDEO') ? 'Video Streaming' : 'Audio Podcast'; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Durasi</b></td>
+                                                <td>:</td>
+                                                <td><?php echo isset($hasil->DURASI_JAM) ? (int)$hasil->DURASI_JAM : 0; ?> jam</td>
+                                            </tr>
+                                        <?php endif; ?>
                                         <!-- Combined total removed per request -->
 
                                         <!-- PAJAK DIHAPUS -->

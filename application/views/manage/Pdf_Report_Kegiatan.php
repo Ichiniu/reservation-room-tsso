@@ -1,5 +1,5 @@
-<?php 
-$no = 1; 
+<?php
+$no = 1;
 $date = date_create(strtotime(time()));
 ?>
 <!DOCTYPE html>
@@ -19,18 +19,30 @@ $date = date_create(strtotime(time()));
                 <th>No</th>
                 <th>Ruangan</th>
                 <th>Tanggal</th>
+                <th>Total Peserta</th>
                 <th>Acara</th>
                 <th>Nama Penyewa</th>
             </tr>
-            <?php foreach($report as $row):?>
-            <tr>
-                <td><?php echo $no++?></td>
-                <td><?php echo $row['NAMA_GEDUNG']?></td>
-                <td><?php echo $row['TANGGAL_FINAL_PEMESANAN']?></td>
-                <td><?php echo $row['DESKRIPSI_ACARA'] ?></td>
-                <td><?php echo $row['NAMA_LENGKAP']?></td>
+            <?php
+            $grand_total_peserta = 0;
+            foreach ($report as $row):
+                $tp = !empty($row['TOTAL_PESERTA']) ? (int)$row['TOTAL_PESERTA'] : 0;
+                $grand_total_peserta += $tp;
+            ?>
+                <tr>
+                    <td><?php echo $no++ ?></td>
+                    <td><?php echo $row['NAMA_GEDUNG'] ?></td>
+                    <td><?php echo $row['TANGGAL_FINAL_PEMESANAN'] ?></td>
+                    <td style="text-align: center;"><?php echo $tp; ?></td>
+                    <td><?php echo $row['DESKRIPSI_ACARA'] ?></td>
+                    <td><?php echo $row['NAMA_LENGKAP'] ?></td>
+                </tr>
+            <?php endforeach; ?>
+            <tr style="background-color: #f0f0f0; font-weight: bold;">
+                <td colspan="3" style="text-align: right;">GRAND TOTAL PESERTA</td>
+                <td style="text-align: center;"><?php echo $grand_total_peserta; ?></td>
+                <td colspan="2"></td>
             </tr>
-            <?php endforeach;?>
         </table>
         <b>Periode
             <?php echo date_format(date_create($start_date), 'd F Y') ?>-<?php echo date_format(date_create($end_date), 'd F Y') ?></b><br>

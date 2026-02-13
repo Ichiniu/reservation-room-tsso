@@ -28,9 +28,16 @@ class Login extends CI_Controller
 			return;
 		}
 
-		if ($username === 'admin' && $password === 'admin') {
+		// Query database (tabel admins baru)
+		$admin = $this->db->get_where('admins', [
+			'username' => $username,
+			'role'     => 'ADMIN'
+		])->row();
+
+		if ($admin && password_verify($password, $admin->password)) {
 			$this->session->set_userdata([
-				'admin_username'   => $username,
+				'admin_username'   => $admin->username,
+				'admin_nama'       => $admin->nama_lengkap,
 				'admin_logged_in'  => TRUE,
 				'admin_session_id' => session_id()
 			]);

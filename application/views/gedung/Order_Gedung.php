@@ -494,8 +494,7 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                     :required="showPeserta" placeholder="Masukkan jumlah peserta" class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400
                                     focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40" />
                                 <p class="mt-2 text-xs text-slate-500">
-                                    *Khusus user eksternal untuk Meeting Room &amp; Amphitheater (harga dihitung per
-                                    peserta).*
+                                    *Untuk Meeting Room &amp; Amphitheater. (Harga terhitung 0 untuk user Internal).*
                                 </p>
                             </div>
 
@@ -533,57 +532,73 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                 </p>
                             </div>
 
-                            <!-- Paket Gedung + Minimal Order -->
+                            <!-- Paket Catering + Jumlah Porsi -->
                             <div class="rounded-xl border border-slate-300 bg-white p-5 ring-1 ring-slate-200">
                                 <label class="block text-xs font-semibold tracking-widest text-slate-500">PAKET
-                                    GEDUNG</label>
+                                    CATERING</label>
 
-                                <select id="paket_gedung" name="paket_gedung" :disabled="!cateringEnabled"
-                                    :required="cateringEnabled" @change="onPaketGedungChange($event)" class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
+                                <select id="catering" name="catering" :disabled="!cateringEnabled"
+                                    :required="cateringEnabled" x-model="cateringId" @change="onCateringChange($event)"
+                                    class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
                                     focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40
                                     disabled:opacity-50 disabled:cursor-not-allowed">
                                     <option value="">Pilih Paket</option>
-                                    <option value="CB_10000" data-harga="10000">Coffee Break Rp.10.000</option>
-                                    <option value="CB_20000" data-harga="20000">Coffee Break Rp.20.000</option>
-                                    <option value="HD_40000" data-harga="40000">Halfday (Coffee Break + Lunch) Rp.40.000</option>
-                                    <option value="HD_50000" data-harga="50000">Halfday (Coffee Break + Lunch) Rp.50.000</option>
-                                    <option value="HD_60000" data-harga="60000">Halfday (Coffee Break + Lunch) Rp.60.000</option>
-                                    <option value="FD_80000" data-harga="80000">Fullday (Coffee Break 2x + Lunch) Rp.80.000</option>
-                                    <option value="FD_90000" data-harga="90000">Fullday (Coffee Break 2x + Lunch) Rp.90.000</option>
-                                    <option value="FD_100000" data-harga="100000">Fullday (Coffee Break 2x + Lunch) Rp.100.000</option>
+                                    <?php if (isset($catering_list) && is_array($catering_list)): ?>
+                                        <?php foreach ($catering_list as $r): ?>
+                                            <option value="<?php echo $r['ID_CATERING']; ?>"
+                                                data-harga="<?php echo (float)$r['HARGA']; ?>"
+                                                data-nama="<?php echo htmlspecialchars($r['NAMA_PAKET']); ?>">
+                                                <?php echo htmlspecialchars($r['NAMA_PAKET']); ?> - Rp <?php echo number_format((float)$r['HARGA'], 0, ',', '.'); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
                                 </select>
 
-                                <label class="block mt-4 text-xs font-semibold tracking-widest text-slate-500">MINIMAL
-                                    ORDER</label>
-                                <input type="number" name="minimal_order" id="minimal_order" x-model="minimalOrder"
+                                <label class="block mt-4 text-xs font-semibold tracking-widest text-slate-500">JUMLAH
+                                    PORSI</label>
+                                <input type="number" name="jumlah-porsi" id="jumlah-porsi" x-model="jumlahPorsi"
                                     min="1" :disabled="!cateringEnabled" :required="cateringEnabled"
-                                    placeholder="Masukkan minimal order" class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400
+                                    placeholder="Masukkan jumlah porsi" class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400
                                     focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40
                                     disabled:opacity-50 disabled:cursor-not-allowed" />
 
-                                <div x-show="cateringEnabled && paketGedungHarga > 0"
-                                    class="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm">
-                                    <div class="font-semibold text-slate-900" x-text="paketGedungNama"></div>
+                                <!-- Preview Total Catering -->
+                                <div x-show="cateringEnabled && cateringHarga > 0 && jumlahPorsi > 0"
+                                    class="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm">
+                                    <div class="font-semibold text-blue-900" x-text="cateringNama"></div>
 
-                                    <div class="mt-1 text-slate-700">
+                                    <div class="mt-2 text-blue-800">
                                         Harga/pax:
                                         <span class="font-semibold">Rp <span
-                                                x-text="paketGedungHarga.toLocaleString('id-ID')"></span></span>
+                                                x-text="cateringHarga.toLocaleString('id-ID')"></span></span>
                                     </div>
 
-                                    <div class="mt-1 text-slate-700">
-                                        Minimal Order: <span class="font-semibold" x-text="minimalOrder || '-'"></span>
+                                    <div class="mt-1 text-blue-800">
+                                        Jumlah Porsi: <span class="font-semibold" x-text="jumlahPorsi"></span>
                                     </div>
 
-                                    <div class="mt-1 text-slate-700">
-                                        Estimasi total:
-                                        <span class="font-semibold">Rp <span
-                                                x-text="totalPaketGedung.toLocaleString('id-ID')"></span></span>
+                                    <div class="mt-2 pt-2 border-t border-blue-300 text-blue-900 font-semibold">
+                                        Estimasi Total:
+                                        <span class="text-lg">Rp <span
+                                                x-text="totalCatering.toLocaleString('id-ID')"></span></span>
                                     </div>
 
-                                    <div class="mt-1 text-xs text-slate-500">
-                                        *Estimasi = harga x minimal order*
+                                    <div class="mt-1 text-xs text-blue-600">
+                                        *Estimasi = harga per pax × jumlah porsi*
                                     </div>
+                                </div>
+
+                                <p class="mt-3 text-xs text-slate-500">*Pilih paket catering dan masukkan jumlah porsi yang dibutuhkan*</p>
+
+                                <div class="mt-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
+                                    <p class="text-xs font-semibold text-slate-700">NB : Untuk Spesifikasi Pilihan menu bisa hubungi admin.</p>
+                                    <a href="https://wa.me/62089649261851" target="_blank"
+                                        class="inline-flex items-center gap-1 mt-1 text-xs font-semibold text-green-700 hover:text-green-800">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                                        </svg>
+                                        089649261851
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -688,8 +703,11 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                 selectedMinPax: 1,
                 selectedNama: '',
                 jumlahPorsi: '',
+                cateringId: '',
+                cateringHarga: 0,
+                cateringNama: '',
 
-                // ==== paket gedung state ====
+                // ==== paket gedung state (deprecated) ====
                 paketGedungHarga: 0,
                 paketGedungNama: '',
                 minimalOrder: '',
@@ -701,15 +719,24 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                     return this.tipeJam === 'CUSTOM';
                 },
                 get showPeserta() {
-                    return !this.isInternal && this.pricingMode === 'PER_PESERTA';
+                    // Tampilkan jika mode per peserta, atau jika internal, atau jika mode FLAT (kecuali podcast)
+                    if (this.pricingMode === 'PER_PESERTA') return true;
+                    if (this.isInternal) return true;
+                    if (this.pricingMode === 'FLAT' && this.pricingMode !== 'PODCAST_PER_JAM') return true;
+                    return false;
                 },
                 get showPodcast() {
-                    return !this.isInternal && this.pricingMode === 'PODCAST_PER_JAM';
+                    return this.pricingMode === 'PODCAST_PER_JAM';
                 },
                 get totalPaketGedung() {
                     const harga = parseInt(this.paketGedungHarga || 0, 10);
                     const minimal = parseInt(this.minimalOrder || 0, 10);
                     return harga * minimal;
+                },
+                get totalCatering() {
+                    const harga = parseInt(this.cateringHarga || 0, 10);
+                    const porsi = parseInt(this.jumlahPorsi || 0, 10);
+                    return harga * porsi;
                 },
 
                 // ✅ format tanggal Indonesia
@@ -1100,6 +1127,11 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                     const opt = e.target.options[e.target.selectedIndex];
                     this.paketGedungHarga = parseInt(opt.getAttribute('data-harga') || '0', 10);
                     this.paketGedungNama = opt.text || '';
+                },
+                onCateringChange(e) {
+                    const opt = e.target.options[e.target.selectedIndex];
+                    this.cateringHarga = parseInt(opt.getAttribute('data-harga') || '0', 10);
+                    this.cateringNama = opt.getAttribute('data-nama') || '';
                 },
 
                 parseMenuJson(raw) {

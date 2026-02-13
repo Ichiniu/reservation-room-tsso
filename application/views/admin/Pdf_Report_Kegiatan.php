@@ -59,7 +59,7 @@ $nama_gedung_filter = isset($nama_gedung_filter) ? $nama_gedung_filter : '';
 <body>
   <h3>Laporan Aktivitas Kegiatan</h3>
   <?php if (!empty($nama_gedung_filter)): ?>
-  <p class="filter-info"><strong>Gedung:</strong> <?php echo htmlspecialchars($nama_gedung_filter, ENT_QUOTES, 'UTF-8'); ?></p>
+    <p class="filter-info"><strong>Gedung:</strong> <?php echo htmlspecialchars($nama_gedung_filter, ENT_QUOTES, 'UTF-8'); ?></p>
   <?php endif; ?>
 
   <table>
@@ -69,13 +69,19 @@ $nama_gedung_filter = isset($nama_gedung_filter) ? $nama_gedung_filter : '';
         <th>Gedung</th>
         <th>Tanggal Penyewaan</th>
         <th>Tanggal Approval</th>
+        <th>Total Peserta</th>
         <th>Kegiatan</th>
         <th>Jam Kegiatan</th>
         <th>Nama Penyewa</th>
       </tr>
     </thead>
     <tbody>
-      <?php foreach ($report as $row): ?>
+      <?php
+      $totalSum = 0;
+      foreach ($report as $row):
+        $tp = !empty($row['TOTAL_PESERTA']) ? (int)$row['TOTAL_PESERTA'] : 0;
+        $totalSum += $tp;
+      ?>
 
         <?php
         $jamMulai = '';
@@ -103,12 +109,18 @@ $nama_gedung_filter = isset($nama_gedung_filter) ? $nama_gedung_filter : '';
           <td><?php echo $row['NAMA_GEDUNG']; ?></td>
           <td><?php echo $row['TANGGAL_FINAL_PEMESANAN']; ?></td>
           <td><?php echo $row['TANGGAL_APPROVAL']; ?></td>
+          <td style="text-align: center;"><?php echo $tp; ?></td>
           <td><?php echo $row['DESKRIPSI_ACARA']; ?></td>
           <td><?php echo $jamText; ?></td>
           <td><?php echo $row['NAMA_LENGKAP']; ?></td>
         </tr>
 
       <?php endforeach; ?>
+      <tr style="background-color: #f0f0f0; font-weight: bold;">
+        <td colspan="4" style="text-align: right;">GRAND TOTAL PESERTA</td>
+        <td style="text-align: center;"><?php echo $totalSum; ?></td>
+        <td colspan="3"></td>
+      </tr>
     </tbody>
   </table>
 

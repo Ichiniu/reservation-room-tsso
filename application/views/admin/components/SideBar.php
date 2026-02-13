@@ -229,7 +229,6 @@ $jumlah_trx = (int)$jumlah_trx;
                     }
                 }
             });
-            // Initial call
             Alpine.store('sidebar').updateBodyClass();
             // Close sidebar on resize to desktop if it was mobile-opened
             window.addEventListener('resize', () => {
@@ -244,451 +243,143 @@ $jumlah_trx = (int)$jumlah_trx;
             });
         });
     </script>
-
     <script>
-        /* =============== UI basic =============== */
-        const badgeInbox = document.getElementById('badge-inbox');
-        const badgeTrx = document.getElementById('badge-trx');
-
-        function showToast(message, bgClass) {
-            toast.className = "fixed bottom-5 right-5 px-4 py-3 rounded-lg shadow-lg text-white text-sm z-50 " + bgClass;
-            toast.innerText = message;
-            toast.style.display = "block";
-            setTimeout(function() {
-                toast.style.display = "none";
-            }, 3500);
-        }
-
-        function setBadge(el, count) {
-            if (!el) return;
-            if (count > 0) {
-                el.innerText = count;
-                el.style.display = "flex";
-            } else {
-                el.style.display = "none";
-            }
-        }
-
-        /* =============== IMPORTANT: HTTPS check (desktop notif usually requires secure context) =============== */
         /*
-          Browser modern biasanya butuh secure context untuk Notification:
-          - OK: https://... atau http://localhost
-          - NOT OK: http://192.168.x.x atau http://nama-host (dianggap tidak secure)
+           ========================================================================
+           UNIFIED NOTIFICATION SYSTEM (SOUND + DESKTOP)
+           ========================================================================
         */
-        function isSecureForNotif() {
-            if (window.isSecureContext) return true;
-            // fallback check
-            const host = location.hostname;
-            if (host === "localhost" || host === "127.0.0.1") return true;
-            return false;
-        }
+        (function() {
+            const ADMIN_KEY = "admin";
+            const SITE_URL = "<?= rtrim(site_url(), '/') ?>";
+            const POLL_URL = "<?= site_url('admin/admin_controls/notif_poll_v2') ?>";
+            const COUNTER_URL = "<?= site_url('admin/notif_counter') ?>";
 
-        /* =============== AUDIO =============== */
-        const notifSound = document.getElementById('notifSound');
+            // LocalStorage Keys
+            const KEY_ENABLED = "bm_notif_enabled_" + ADMIN_KEY;
+            const KEY_LAST_I = "bm_last_admin_i_id_" + ADMIN_KEY;
+            const KEY_LAST_T = "bm_last_admin_t_id_" + ADMIN_KEY;
 
-        function playNotifSound() {
-            if (!notifEnabled) return;
+            // DOM Elements
+            const badgeInbox = document.getElementById('badge-inbox');
+            const badgeTrx = document.getElementById('badge-trx');
+            const enableBtn = document.getElementById('enableNotifBtn');
+            const notifSound = document.getElementById('notifSound');
+            const toast = document.getElementById('toast');
 
-            try {
-                notifSound.currentTime = 0;
-                const p = notifSound.play();
-                if (p && p.catch) {
-                    p.catch(function(err) {
-                        console.log("AUDIO BLOCKED:", err);
-                        showToast("🔇 Sound diblokir browser (cek Console F12)", "bg-yellow-600");
+            let sessionNotifEnabled = localStorage.getItem(KEY_ENABLED) === "1";
+
+            // Helper: show toast
+            function showToast(message, bgClass) {
+                if (!toast) return;
+                toast.className = "fixed bottom-5 right-5 px-4 py-3 rounded-lg shadow-lg text-white text-sm z-50 " + bgClass;
+                toast.innerText = message;
+                toast.style.display = "block";
+                setTimeout(() => {
+                    toast.style.display = "none";
+                }, 4000);
+            }
+
+            // Helper: secure check
+            function isSecure() {
+                if (window.isSecureContext) return true;
+                const host = location.hostname;
+                return (host === "localhost" || host === "127.0.0.1");
+            }
+
+            // Helper: play sound
+            function playSound() {
+                if (!sessionNotifEnabled) return;
+                try {
+                    notifSound.currentTime = 0;
+                    notifSound.play().catch(e => console.warn("Audio play blocked", e));
+                } catch (e) {}
+            }
+
+            // Helper: Desktop Notification
+            function showDesktop(title, body, tag, url) {
+                if (!sessionNotifEnabled) return;
+                if (!("Notification" in window) || Notification.permission !== "granted") return;
+                if (!isSecure()) return;
+
+                try {
+                    const n = new Notification(title || "Booking Smarts", {
+                        body: body || "",
+                        tag: tag,
+                        renotify: true
                     });
-                }
-            } catch (e) {
-                console.log("AUDIO ERROR:", e);
-            }
-        }
-
-        /* =============== DESKTOP NOTIF =============== */
-        function showDesktopNotif(title, body, tag) {
-            if (!notifEnabled) return;
-
-            if (!("Notification" in window)) {
-                console.log("Notification API not supported");
-                return;
-            }
-            if (!isSecureForNotif()) {
-                console.log("Not secure context. Need https or localhost. Current:", location.origin);
-                showToast("⚠️ Desktop notif butuh HTTPS / localhost", "bg-yellow-600");
-                return;
-            }
-            if (Notification.permission !== "granted") {
-                console.log("Notification permission:", Notification.permission);
-                return;
-            }
-
-            try {
-                const n = new Notification(title, {
-                    body: body,
-                    tag: tag,
-                    renotify: true
-                });
-                n.onclick = function() {
-                    try {
+                    n.onclick = function() {
                         window.focus();
-                    } catch (e) {}
-                    n.close();
-                };
-                setTimeout(function() {
-                    n.close();
-                }, 6000);
-            } catch (e) {
-                console.log("NOTIF ERROR:", e);
+                        if (url) window.location.href = SITE_URL + "/" + url.replace(/^\/+/, '');
+                        n.close();
+                    };
+                } catch (e) {
+                    console.error("Desktop Notif Error:", e);
+                }
             }
-        }
 
-        /* =============== ENABLE + TEST BUTTONS =============== */
-        const enableBtn = document.getElementById('enableNotifBtn');
-        const testSoundBtn = document.getElementById('testSoundBtn');
-        const testDesktopBtn = document.getElementById('testDesktopBtn');
-
-        let notifEnabled = false;
-
-        enableBtn.addEventListener('click', function() {
-            // 1) unlock audio
-            try {
-                const p = notifSound.play();
-                if (p && p.then) {
-                    p.then(function() {
+            // Button: Aktifkan Notifikasi
+            enableBtn.onclick = async function() {
+                // 1) Unlock Audio
+                try {
+                    notifSound.play().then(() => {
                         notifSound.pause();
                         notifSound.currentTime = 0;
-                        console.log("Audio unlocked");
-                    }).catch(function(err) {
-                        console.log("Audio unlock failed:", err);
-                    });
-                }
-            } catch (e) {}
-
-            // 2) request notif permission
-            if (!("Notification" in window)) {
-                notifEnabled = true; // sound only
-                showToast("⚠️ Browser tidak dukung desktop notif. Sound aktif.", "bg-yellow-600");
-                return;
-            }
-
-            if (!isSecureForNotif()) {
-                notifEnabled = true; // sound only
-                showToast("⚠️ Desktop notif butuh HTTPS/localhost. Sound aktif.", "bg-yellow-600");
-                return;
-            }
-
-            Notification.requestPermission().then(function(permission) {
-                console.log("Notification permission result:", permission);
-                notifEnabled = true; // minimal sound aktif
-                if (permission === "granted") {
-                    showToast("✅ Notifikasi aktif (sound + desktop)", "bg-green-600");
-                    showDesktopNotif("Notifikasi aktif", "Desktop notification sudah aktif.", "enabled");
-                    playNotifSound();
-                } else {
-                    showToast("⚠️ Desktop notif ditolak. Sound saja.", "bg-yellow-600");
-                }
-            });
-        });
-
-        testSoundBtn.addEventListener('click', function() {
-            notifEnabled = true;
-            playNotifSound();
-            showToast("🔊 Test sound diputar (cek volume PC)", "bg-blue-600");
-        });
-
-        testDesktopBtn.addEventListener('click', function() {
-            notifEnabled = true;
-
-            if (!("Notification" in window)) {
-                alert("Browser tidak support Notification API");
-                return;
-            }
-            if (!isSecureForNotif()) {
-                alert("Desktop notif butuh HTTPS atau http://localhost\nSekarang: " + location.origin);
-                return;
-            }
-            alert("Permission sekarang: " + Notification.permission + "\nOrigin: " + location.origin);
-
-            if (Notification.permission !== "granted") {
-                Notification.requestPermission().then(function(p) {
-                    alert("Hasil request: " + p);
-                    if (p === "granted") {
-                        showDesktopNotif("TEST Desktop", "Kalau ini tidak muncul, OS/Browser memblokir.",
-                            "test");
-                    }
-                });
-                return;
-            }
-            showDesktopNotif("TEST Desktop", "Kalau ini tidak muncul, OS/Browser memblokir.", "test");
-        });
-
-        /* =============== POLLING =============== */
-        let lastInbox = <?php echo (int)$jumlah_inbox; ?>;
-        let lastTrx = <?php echo (int)$jumlah_trx; ?>;
-
-        function pollNotif() {
-            fetch("<?php echo site_url('admin/notif_counter'); ?>", {
-                    cache: "no-store"
-                })
-                .then(function(r) {
-                    return r.json();
-                })
-                .then(function(d) {
-                    if (!d || d.ok !== true) return;
-
-                    // update badge dulu (biar kelihatan jalan)
-                    setBadge(badgeInbox, d.inbox);
-                    setBadge(badgeTrx, d.transaksi);
-
-                    // INBOX
-                    if (d.inbox > lastInbox) {
-                        const plus = d.inbox - lastInbox;
-                        playNotifSound();
-                        showToast("📩 Inbox baru: +" + plus + " (total " + d.inbox + ")", "bg-red-500");
-                        showDesktopNotif("Notifikasi inbox", "Ada inbox baru (+" + plus + "). Total: " + d.inbox + ".",
-                            "inbox");
-                    }
-
-                    // TRANSAKSI
-                    if (d.transaksi > lastTrx) {
-                        const plus2 = d.transaksi - lastTrx;
-                        playNotifSound();
-                        showToast("💳 Transaksi baru: +" + plus2 + " (total " + d.transaksi + ")", "bg-blue-500");
-                        showDesktopNotif("Notifikasi transaksi", "Ada update transaksi (" + d.transaksi + ").",
-                            "transaksi");
-                    }
-
-                    lastInbox = d.inbox;
-                    lastTrx = d.transaksi;
-                })
-                .catch(function(err) {
-                    console.log("poll error:", err);
-                });
-        }
-
-        setInterval(pollNotif, 2000);
-    </script>
-    <script>
-        (function() {
-            // === kunci admin (samakan dengan username di tabel notifications) ===
-            var ADMIN_KEY = "admin";
-
-            var POLL_URL = "<?= site_url('admin/admin_controls/notif_poll_v2') ?>";
-            var SITE_URL = "<?= rtrim(site_url(), '/') ?>";
-
-            // localStorage keys
-            var KEY_LAST_I = "bm_last_admin_i_id_" + ADMIN_KEY;
-            var KEY_LAST_T = "bm_last_admin_t_id_" + ADMIN_KEY;
-            var KEY_ENABLED = "bm_notif_enabled_" + ADMIN_KEY;
-
-            function getNum(k) {
-                return parseInt(localStorage.getItem(k) || "0", 10) || 0;
-            }
-
-            function setNum(k, v) {
-                localStorage.setItem(k, String(v || 0));
-            }
-
-            function notifEnabled() {
-                return localStorage.getItem(KEY_ENABLED) === "1";
-            }
-
-            // optional: kalau kamu punya <audio id="notifSoundAdmin">
-            function playSound() {
-                var audio = document.getElementById('notifSoundAdmin') || document.getElementById('notifSound');
-                if (!audio) return;
-                try {
-                    audio.currentTime = 0;
-                    audio.play().catch(function() {});
+                    }).catch(e => console.log("Init audio failed", e));
                 } catch (e) {}
-            }
 
-            function showNotif(n) {
-                if (!("Notification" in window)) return;
-                if (Notification.permission !== "granted") return;
-                if (!notifEnabled()) return;
-
-                try {
-                    var notif = new Notification(n.title || "Booking Smarts", {
-                        body: n.message || "",
-                        silent: false,
-                        tag: "bm_admin_" + (n.type || "x") + "_" + (n.id || "0")
-                    });
-
-                    playSound();
-
-                    notif.onclick = function() {
-                        window.focus();
-                        if (n.url) window.location.href = SITE_URL + "/" + String(n.url).replace(/^\/+/, '');
-                        notif.close();
-                    };
-                } catch (e) {}
-            }
-
-            function handle(list, key) {
-                var last = getNum(key);
-                var max = last;
-                if (list && list.length) {
-                    for (var i = 0; i < list.length; i++) {
-                        var n = list[i];
-                        var id = parseInt(n.id, 10) || 0;
-                        if (id > last) {
-                            showNotif(n);
-                            if (id > max) max = id;
-                        }
-                    }
-                }
-                if (max > last) setNum(key, max);
-            }
-
-            async function poll() {
-                try {
-                    var lastI = getNum(KEY_LAST_I);
-                    var lastT = getNum(KEY_LAST_T);
-
-                    var url = POLL_URL + "?since_i=" + encodeURIComponent(lastI) + "&since_t=" + encodeURIComponent(lastT);
-
-                    var res = await fetch(url, {
-                        headers: {
-                            "X-Requested-With": "XMLHttpRequest"
-                        },
-                        credentials: "same-origin"
-                    });
-                    var data = await res.json();
-                    if (!data || !data.ok) return;
-
-                    // update badge (kalau kamu punya id badge)
-                    // contoh:
-                    // updateBadgesAdmin(data.counts);
-
-                    handle(data.items && data.items.inbox ? data.items.inbox : [], KEY_LAST_I);
-                    handle(data.items && data.items.transaksi ? data.items.transaksi : [], KEY_LAST_T);
-
-                } catch (e) {
-                    console.log("admin poll error", e);
-                }
-            }
-
-            // tombol enable (kalau ada)
-            window.aktifkanNotifAdmin = async function() {
-                if (!("Notification" in window)) return alert("Browser tidak mendukung notifikasi.");
-                if (!window.isSecureContext) return alert("Notifikasi butuh HTTPS atau localhost.");
-
-                var perm = Notification.permission;
-                if (perm !== "granted") {
-                    try {
-                        perm = await Notification.requestPermission();
-                    } catch (e) {}
-                }
-                if (perm === "granted") {
+                // 2) Permission
+                if (!("Notification" in window)) {
+                    sessionNotifEnabled = true;
                     localStorage.setItem(KEY_ENABLED, "1");
-                    alert("Notifikasi admin aktif.");
+                    showToast("✅ Sound aktif (Browser tidak dukung pop-up desktop)", "bg-green-600");
+                    return;
+                }
+
+                if (!isSecure()) {
+                    sessionNotifEnabled = true;
+                    localStorage.setItem(KEY_ENABLED, "1");
+                    showToast("✅ Sound aktif. (Desktop pop-up butuh HTTPS/localhost)", "bg-yellow-600");
+                    return;
+                }
+
+                const perm = await Notification.requestPermission();
+                sessionNotifEnabled = true;
+                localStorage.setItem(KEY_ENABLED, "1");
+
+                if (perm === "granted") {
+                    showToast("✅ Notifikasi Suara & Desktop Aktif", "bg-green-600");
+                    showDesktop("Notifikasi Aktif", "Anda akan menerima pemberitahuan di sini.", "init");
+                    playSound();
                 } else {
-                    localStorage.setItem(KEY_ENABLED, "0");
-                    alert("Notifikasi diblokir.");
+                    showToast("✅ Sound aktif (Desktop pop-up ditolak browser)", "bg-yellow-600");
                 }
             };
 
-            // jalan
-            poll();
-            setInterval(poll, 8000);
-        })();
-    </script>
+            // Test Buttons
+            document.getElementById('testSoundBtn').onclick = () => {
+                sessionNotifEnabled = true;
+                playSound();
+                showToast("🔊 Test sound diputar", "bg-blue-600");
+            };
+            document.getElementById('testDesktopBtn').onclick = async () => {
+                if (!isSecure()) return alert("Desktop notif butuh HTTPS atau localhost. Sekarang: " + location.origin);
+                const perm = await Notification.requestPermission();
+                if (perm === "granted") {
+                    sessionNotifEnabled = true;
+                    showDesktop("TEST Desktop", "Cek di pojok layar Anda.", "test");
+                } else {
+                    alert("Akses notifikasi ditolak browser (check site settings).");
+                }
+            };
 
-    <script>
-        (function() {
-            const POLL_URL = "<?= base_url('admin/admin_controls/notif_poll_v2') ?>";
-            const KEY_LAST_INBOX = "bm_last_admin_inbox_id";
-            const KEY_LAST_TRX = "bm_last_admin_trx_id";
-            const LOCK_KEY = "bm_notif_lock_admin";
-            const TAB_ID = Date.now() + "_" + Math.random().toString(16).slice(2);
-
-            function getNum(k) {
-                return parseInt(localStorage.getItem(k) || "0", 10) || 0;
-            }
-
-            function setNum(k, v) {
-                localStorage.setItem(k, String(v || 0));
-            }
-
-            function isLeader() {
-                const now = Date.now();
-                const raw = localStorage.getItem(LOCK_KEY);
-                let lock = null;
+            // POLLING 
+            async function runPoll() {
                 try {
-                    lock = raw ? JSON.parse(raw) : null;
-                } catch (e) {
-                    lock = null;
-                }
-                if (!lock || (now - lock.ts) > 15000) {
-                    localStorage.setItem(LOCK_KEY, JSON.stringify({
-                        id: TAB_ID,
-                        ts: now
-                    }));
-                    return true;
-                }
-                if (lock.id === TAB_ID) {
-                    localStorage.setItem(LOCK_KEY, JSON.stringify({
-                        id: TAB_ID,
-                        ts: now
-                    }));
-                    return true;
-                }
-                return false;
-            }
+                    const lastI = parseInt(localStorage.getItem(KEY_LAST_I) || "0", 10);
+                    const lastT = parseInt(localStorage.getItem(KEY_LAST_T) || "0", 10);
 
-            function ensurePermission() {
-                if (!("Notification" in window)) return;
-                if (Notification.permission === "default") {
-                    window.addEventListener("click", function req() {
-                        Notification.requestPermission();
-                        window.removeEventListener("click", req);
-                    }, {
-                        once: true
-                    });
-                }
-            }
-
-            function showDeviceNotif(n) {
-                if (!("Notification" in window)) return;
-                if (Notification.permission !== "granted") return;
-                const tag = "bm_admin_" + n.type + "_" + n.id;
-
-                try {
-                    const notif = new Notification(n.title || "Notifikasi Admin", {
-                        body: n.message || "",
-                        tag: tag,
-                        renotify: false,
-                        silent: false
-                    });
-
-                    notif.onclick = function() {
-                        window.focus();
-                        if (n.url) window.location.href = "<?= base_url() ?>" + n.url.replace(/^\/+/, '');
-                        notif.close();
-                    };
-                } catch (e) {}
-            }
-
-            function handleList(list, keyLast) {
-                const lastId = getNum(keyLast);
-                const sorted = (list || []).slice().sort((a, b) => (a.id || 0) - (b.id || 0));
-                let maxId = lastId;
-
-                sorted.forEach(n => {
-                    const id = parseInt(n.id, 10) || 0;
-                    if (id > lastId) {
-                        showDeviceNotif(n);
-                        if (id > maxId) maxId = id;
-                    }
-                });
-
-                if (maxId > lastId) setNum(keyLast, maxId);
-            }
-
-            async function poll() {
-                if (!isLeader()) return;
-                try {
-                    const res = await fetch(POLL_URL, {
+                    const res = await fetch(POLL_URL + "?since_i=" + lastI + "&since_t=" + lastT, {
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest'
                         }
@@ -696,14 +387,57 @@ $jumlah_trx = (int)$jumlah_trx;
                     const data = await res.json();
                     if (!data || !data.ok) return;
 
-                    handleList(data.items?.inbox, KEY_LAST_INBOX);
-                    handleList(data.items?.transaksi, KEY_LAST_TRX);
-                } catch (e) {}
+                    // Update Badges
+                    if (data.counts) {
+                        const bInbox = document.getElementById('badge-inbox');
+                        const bTrx = document.getElementById('badge-trx');
+                        if (bInbox) {
+                            bInbox.innerText = data.counts.inbox;
+                            bInbox.style.display = data.counts.inbox > 0 ? "flex" : "none";
+                        }
+                        if (bTrx) {
+                            bTrx.innerText = data.counts.transaksi;
+                            bTrx.style.display = data.counts.transaksi > 0 ? "flex" : "none";
+                        }
+                    }
+
+                    // Handle Items
+                    let maxI = lastI;
+                    if (data.items && data.items.inbox) {
+                        data.items.inbox.forEach(item => {
+                            const id = parseInt(item.id);
+                            if (id > lastI) {
+                                playSound();
+                                showToast("📩 " + item.title, "bg-red-500");
+                                showDesktop(item.title, item.message, "i_" + id, item.url);
+                                if (id > maxI) maxI = id;
+                            }
+                        });
+                    }
+                    if (maxI > lastI) localStorage.setItem(KEY_LAST_I, maxI);
+
+                    let maxT = lastT;
+                    if (data.items && data.items.transaksi) {
+                        data.items.transaksi.forEach(item => {
+                            const id = parseInt(item.id);
+                            if (id > lastT) {
+                                playSound();
+                                showToast("💳 " + item.title, "bg-blue-500");
+                                showDesktop(item.title, item.message, "t_" + id, item.url);
+                                if (id > maxT) maxT = id;
+                            }
+                        });
+                    }
+                    if (maxT > lastT) localStorage.setItem(KEY_LAST_T, maxT);
+
+                } catch (e) {
+                    console.error("Poll Error:", e);
+                }
             }
 
-            ensurePermission();
-            poll();
-            setInterval(poll, 8000);
+            // Start Polling
+            setInterval(runPoll, 5000); // 5 detik sekali
+            runPoll(); // Instant run
         })();
     </script>
 

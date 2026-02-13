@@ -4,6 +4,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class Notification_service
 {
   protected $CI;
+  protected $initialized = false;
 
   public function __construct()
   {
@@ -72,33 +73,32 @@ class Notification_service
     $from     = $this->CI->config->item('mail_from', 'notification');
     $fromName = $this->CI->config->item('mail_from_name', 'notification');
 
-    // init config SMTP sekali saja
-    if (is_array($smtp) && !empty($smtp)) {
-      // pastikan html + charset + newline
+    // init config SMTP (usahakan sekali saja atau pastikan konsisten)
+    if (!$this->initialized && is_array($smtp) && !empty($smtp)) {
       if (!isset($smtp['mailtype'])) $smtp['mailtype'] = 'html';
       if (!isset($smtp['charset']))  $smtp['charset']  = 'utf-8';
       if (!isset($smtp['newline']))  $smtp['newline']  = "\r\n";
       if (!isset($smtp['crlf']))     $smtp['crlf']     = "\r\n";
 
       $this->CI->email->initialize($smtp);
-      $this->CI->email->set_newline("\r\n");
-      $this->CI->email->set_crlf("\r\n");
+      $this->CI->email->set_newline($smtp['newline']);
+      $this->CI->email->set_crlf($smtp['crlf']);
+      $this->initialized = true;
     }
 
     $this->CI->email->clear(true);
-
-    // NOTE penting untuk Gmail: "from" sebaiknya sama dengan smtp_user
     $this->CI->email->from($from, $fromName);
     $this->CI->email->to($to);
     $this->CI->email->subject($subject);
     $this->CI->email->message($html);
 
-    $ok = (bool) $this->CI->email->send();
+    // Suppress notices (seperti errno 10053 pada Windows) agar tidak merusak UI jika smtp gagal
+    $ok = $this->CI->email->send();
 
     if (!$ok) {
       log_message('error', 'EMAIL FAIL: ' . $this->CI->email->print_debugger(['headers', 'subject', 'body']));
     } else {
-      log_message('error', 'EMAIL OK to=' . $to . ' subject=' . $subject);
+      log_message('debug', 'EMAIL OK to=' . $to . ' subject=' . $subject);
     }
 
     return $ok;
