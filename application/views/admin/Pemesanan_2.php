@@ -19,7 +19,7 @@ $this->load->helper('text');
 <body class="bg-gray-100 text-gray-800">
     <?php $this->load->view('admin/components/sidebar'); ?>
 
-    <main class="pt-24 pl-0 md:pl-64 px-6 pb-10">
+    <main class="pt-24 pl-0 md:pl-64 px-4 md:px-6 pb-10">
 
         <div class="max-w-6xl mx-auto mb-6">
             <h1 class="text-2xl font-bold">Data Pemesanan Ruangan</h1>
@@ -63,7 +63,7 @@ $this->load->helper('text');
 
             <div id="tableScroll"
                 class="overflow-x-auto max-h-[420px] overflow-y-auto relative border border-slate-200 rounded-lg">
-                <table class="w-full text-sm bg-white">
+                <table class="min-w-[700px] w-full text-sm bg-white">
                     <thead class="sticky top-0 z-20 bg-gray-100 shadow-sm border-b border-slate-200">
                         <tr>
                             <th class="px-4 py-3 text-center w-[70px]">No</th>

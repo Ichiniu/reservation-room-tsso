@@ -74,7 +74,7 @@ if ($hasPeriod) {
 
     <?php $this->load->view('admin/components/sidebar'); ?>
 
-    <main class="pt-24 pl-0 md:pl-64 px-6 pb-10">
+    <main class="pt-24 pl-0 md:pl-64 px-4 md:px-6 pb-10">
         <div class="max-w-6xl mx-auto">
             <h1 class="text-xl font-semibold mb-4">Rekapitulasi Aktivitas</h1>
 
@@ -110,7 +110,7 @@ if ($hasPeriod) {
                     <div class="border border-slate-200 rounded-xl overflow-hidden">
                         <!-- hanya overflow-x untuk layar kecil -->
                         <div id="tableScroll" class="overflow-x-auto">
-                            <table id="rekapTable" class="w-full text-sm table-auto">
+                            <table id="rekapTable" class="min-w-[900px] w-full text-sm table-auto">
                                 <thead class="bg-slate-50 border-b border-slate-200">
                                     <tr class="text-left">
                                         <th class="px-4 py-3 font-semibold text-slate-700 w-[70px] text-center">No</th>

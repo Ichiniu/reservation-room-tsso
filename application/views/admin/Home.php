@@ -361,6 +361,22 @@ if ($selM !== '' && $selY !== '') {
                                     <th class="px-4 py-3 text-center">Aksi</th>
                                 </tr>
                             </thead>
+            <!-- TABLE -->
+            <div class="px-5 pb-5">
+                <div id="tableScroll"
+                    class="overflow-x-auto max-h-[420px] overflow-y-auto relative border border-slate-200 rounded-xl">
+                    <table class="min-w-[800px] w-full text-sm bg-white">
+                        <thead class="sticky top-0 z-20 bg-slate-100 shadow-sm">
+                            <tr class="border-b border-slate-200">
+                                <th class="px-4 py-3 text-center">No</th>
+                                <th class="px-4 py-3 text-center">Invoice</th>
+                                <th class="px-4 py-3 text-center">Ruangan</th>
+                                <th class="px-4 py-3 text-center">User</th>
+                                <th class="px-4 py-3 text-center">Tanggal</th>
+                                <th class="px-4 py-3 text-center">Jam</th>
+                                <th class="px-4 py-3 text-center">Aksi</th>
+                            </tr>
+                        </thead>
 
                             <tbody id="tableBody">
                                 <?php if (!empty($front_data)): ?>

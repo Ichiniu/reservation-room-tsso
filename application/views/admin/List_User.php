@@ -33,7 +33,7 @@ $this->load->helper('text');
         <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-md p-6">
 
             <div class="overflow-x-auto max-h-[420px] overflow-y-auto relative">
-                <table class="w-full text-sm border border-slate-200 rounded-lg bg-white">
+                <table class="min-w-[900px] w-full text-sm border border-slate-200 rounded-lg bg-white">
                     <thead class="sticky top-0 z-20 bg-slate-100 shadow-sm">
                         <tr>
                             <th class="px-4 py-3 text-center">No</th>

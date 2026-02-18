@@ -22,7 +22,7 @@ $this->load->helper('text');
     <?php $this->load->view('components/navbar'); ?>
     <?php $this->load->view('admin/components/sidebar'); ?>
 
-    <main class="pt-24 pl-0 md:pl-64 px-6 pb-10">
+    <main class="pt-24 pl-0 md:pl-64 px-4 md:px-6 pb-10">
 
         <div class="max-w-6xl mx-auto mb-6">
             <h1 class="text-2xl font-bold">Data Pemesanan Ruangan</h1>

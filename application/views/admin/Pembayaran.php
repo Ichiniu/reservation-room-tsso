@@ -208,7 +208,7 @@ $notifCount = !empty($notifs_admin_trx) ? count($notifs_admin_trx) : 0;
                 <!-- ================= TABLE ================= -->
                 <div class="border border-slate-200 rounded-xl overflow-hidden">
                     <div id="tableScroll" class="max-h-[420px] overflow-auto">
-                        <table class="w-full text-sm bg-white">
+                        <table class="min-w-[800px] w-full text-sm bg-white">
                             <thead class="sticky top-0 z-10 bg-slate-100 border-b border-slate-200">
                                 <tr class="text-center font-semibold text-slate-700">
                                     <th class="px-4 py-3 w-[70px]">No</th>

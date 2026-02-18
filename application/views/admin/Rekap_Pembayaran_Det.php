@@ -19,7 +19,7 @@ $this->load->helper('text');
     <?php $this->load->view('admin/components/sidebar'); ?>
 
     <!-- MAIN -->
-    <main class="pt-24 pl-0 md:pl-64 px-6">
+    <main class="pt-24 pl-0 md:pl-64 px-4 md:px-6">
 
         <h1 class="text-2xl font-semibold text-center mb-6">
             Rekapitulasi Aktivitas

@@ -30,7 +30,7 @@ $catering_data = isset($result) && is_array($result) ? $result : [];
     <?php $this->load->view('admin/components/sidebar'); ?>
 
     <!-- MAIN -->
-    <main id="content" class="pt-24 md:pl-64 px-6 pb-20 transition-all duration-300">
+    <main id="content" class="pt-24 md:pl-64 px-4 md:px-6 pb-20 transition-all duration-300">
 
         <div class="max-w-6xl mx-auto">
             <div class="flex items-center justify-between mb-8">
@@ -48,7 +48,7 @@ $catering_data = isset($result) && is_array($result) ? $result : [];
             <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="p-6">
                     <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left">
+                        <table class="min-w-[700px] w-full text-sm text-left">
                             <thead>
                                 <tr class="border-b border-slate-100 bg-slate-50/50">
                                     <th class="px-4 py-4 font-bold text-slate-700 text-center w-16">No</th>

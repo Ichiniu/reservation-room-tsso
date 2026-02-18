@@ -78,31 +78,44 @@ $jumlah_trx = (int)$jumlah_trx;
 <body class="bg-white text-gray-800">
 
     <header class="fixed top-0 left-0 right-0 z-40 bg-white border-b h-16" x-data>
-        <div class="flex items-center px-6 h-full gap-4">
+        <div class="flex items-center px-4 sm:px-6 h-full gap-2 sm:gap-4">
             <button @click="$store.sidebar.toggle()" class="p-2 hover:bg-gray-100 rounded-xl transition-colors">
                 <span class="material-icons text-gray-600 block">menu</span>
             </button>
-            <span class="font-bold text-slate-800 text-lg tracking-tight">Administrator</span>
+            <span class="font-bold text-slate-800 text-base sm:text-lg tracking-tight">Administrator</span>
 
             <!-- tombol aktifkan notif -->
             <button id="enableNotifBtn"
-                class="ml-3 px-3 py-1 rounded-md text-xs border border-gray-300 hover:bg-gray-50">
+                class="hidden sm:inline-flex ml-3 px-3 py-1 rounded-md text-xs border border-gray-300 hover:bg-gray-50">
                 Aktifkan Notifikasi
             </button>
 
             <!-- tombol tes -->
-            <button id="testSoundBtn" class="px-3 py-1 rounded-md text-xs border border-gray-300 hover:bg-gray-50">
+            <button id="testSoundBtn" class="hidden md:inline-flex px-3 py-1 rounded-md text-xs border border-gray-300 hover:bg-gray-50">
                 Test Sound
             </button>
-            <button id="testDesktopBtn" class="px-3 py-1 rounded-md text-xs border border-gray-300 hover:bg-gray-50">
+            <button id="testDesktopBtn" class="hidden md:inline-flex px-3 py-1 rounded-md text-xs border border-gray-300 hover:bg-gray-50">
                 Test Desktop
             </button>
 
-            <span class="ml-auto text-sm text-gray-500">
+            <span class="ml-auto text-xs sm:text-sm text-gray-500 truncate max-w-[120px] sm:max-w-none">
                 <?php echo htmlspecialchars((string)$username, ENT_QUOTES, 'UTF-8'); ?>
             </span>
         </div>
     </header>
+
+    <!-- Mobile backdrop overlay -->
+    <div x-data
+        x-show="$store.sidebar.open"
+        x-transition:enter="transition-opacity ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition-opacity ease-in duration-200"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        @click="$store.sidebar.toggle()"
+        class="fixed inset-0 bg-black/40 z-20 md:hidden"
+        style="top:64px;"></div>
 
     <aside id="sidebar"
         :class="$store.sidebar.open ? 'w-64' : 'w-0 -translate-x-full opacity-0'"
@@ -198,22 +211,36 @@ $jumlah_trx = (int)$jumlah_trx;
 
     <script>
         document.addEventListener('alpine:init', () => {
+            const isMobile = () => window.innerWidth < 768;
             Alpine.store('sidebar', {
-                open: localStorage.getItem('sidebar-open') !== 'false',
+                open: isMobile() ? false : localStorage.getItem('sidebar-open') !== 'false',
                 toggle() {
                     this.open = !this.open;
-                    localStorage.setItem('sidebar-open', this.open);
+                    if (!isMobile()) localStorage.setItem('sidebar-open', this.open);
                     this.updateBodyClass();
                 },
                 updateBodyClass() {
                     if (this.open) {
                         document.body.classList.remove('sidebar-closed');
+                        if (isMobile()) document.body.style.overflow = 'hidden';
                     } else {
                         document.body.classList.add('sidebar-closed');
+                        document.body.style.overflow = '';
                     }
                 }
             });
             Alpine.store('sidebar').updateBodyClass();
+            // Close sidebar on resize to desktop if it was mobile-opened
+            window.addEventListener('resize', () => {
+                if (!isMobile() && !Alpine.store('sidebar').open) {
+                    // Restore desktop default from localStorage
+                    if (localStorage.getItem('sidebar-open') !== 'false') {
+                        Alpine.store('sidebar').open = true;
+                        Alpine.store('sidebar').updateBodyClass();
+                    }
+                }
+                if (!isMobile()) document.body.style.overflow = '';
+            });
         });
     </script>
     <script>
