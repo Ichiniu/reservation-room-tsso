@@ -34,7 +34,7 @@ class Registration extends CI_Controller
 		$no_telepon = trim($this->input->post('no_telepon', true));
 		$dob = $this->input->post('dob', true);
 
-		// ✅ perusahaan logic
+		//  perusahaan logic
 		$perusahaan = $this->input->post('perusahaan', true); // INTERNAL / EKSTERNAL
 		$nama_perusahaan = null;
 		$departemen = null;
@@ -66,7 +66,7 @@ class Registration extends CI_Controller
 			return;
 		}
 
-		// ✅ data insert (samakan dengan nama kolom DB kamu)
+		// data insert (samakan dengan nama kolom DB kamu)
 		$data = array(
 			'USERNAME'        => $username,
 			'NAMA_LENGKAP'    => $nama_lengkap,

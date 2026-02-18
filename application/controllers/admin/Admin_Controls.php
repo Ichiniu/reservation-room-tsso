@@ -62,7 +62,7 @@ class Admin_Controls extends CI_Controller
 			'KAPASITAS'        => $this->input->post('kapasitas_gedung'),
 			'ALAMAT'           => $this->input->post('alamat_gedung'),
 			'DESKRIPSI_GEDUNG' => $this->input->post('deskripsi_gedung'),
-			'fasilitas'        => $this->input->post('fasilitas_gedung'), // ✅ TAMBAH
+			'fasilitas'        => $this->input->post('fasilitas_gedung'), 
 			'HARGA_SEWA'       => $this->input->post('harga_sewa')
 		);
 
@@ -194,12 +194,6 @@ class Admin_Controls extends CI_Controller
 		// badge sidebar
 		$data['result'] = $this->gedung_model->get_pending_transaction();
 		$data['get_transaction'] = $this->gedung_model->get_unread_transaction();
-
-		/**
-		 * Ambil periode (prioritas GET agar sama kayak rekap_aktivitas_det kamu)
-		 * URL contoh:
-		 * /admin/rekap_transaksi_det?start_date=2026-02-01&end_date=2026-02-05
-		 */
 		$start_date = $this->input->get('start_date');
 		$end_date   = $this->input->get('end_date');
 
@@ -217,14 +211,6 @@ class Admin_Controls extends CI_Controller
 		// arahkan ke view detail transaksi (pakai view yang kamu sudah punya: Rekap_Transaksi_Det.php)
 		$this->load->view('admin/Rekap_Transaksi_Det', $data);
 	}
-
-
-
-	/**
-	 * Hapus gambar gedung (DB + filesystem)
-	 * POST params: id_gedung, img_name
-	 */
-
 
 
 	function transaksi_export_pdf($start_date, $end_date)
@@ -362,7 +348,7 @@ class Admin_Controls extends CI_Controller
 
 			// TERIMA PROPOSAL -> Check if internal or external user
 			if ($status === 1) {
-				// ✅ Cek apakah user internal atau eksternal
+				//  Cek apakah user internal atau eksternal
 				$u = $this->db->select('perusahaan')
 					->from('user')
 					->join('pemesanan p', 'p.USERNAME = user.USERNAME', 'left')
@@ -374,7 +360,7 @@ class Admin_Controls extends CI_Controller
 				$is_internal = (strtoupper(trim((string)$perusahaan)) === 'INTERNAL');
 
 				if ($is_internal) {
-					// ✅ USER INTERNAL: Langsung SUBMITTED (status 3) karena tidak ada pembayaran
+					// USER INTERNAL: Langsung SUBMITTED (status 3) karena tidak ada pembayaran
 					$this->gedung_model->update_transaksi($temp_id, 3, '');
 
 					// Update pembayaran juga ke CONFIRMED
@@ -400,7 +386,7 @@ class Admin_Controls extends CI_Controller
 						);
 					}
 				} else {
-					// ✅ USER EKSTERNAL: Status APPROVE (1) untuk lanjut ke pembayaran
+					//  USER EKSTERNAL: Status APPROVE (1) untuk lanjut ke pembayaran
 					$this->gedung_model->update_transaksi($temp_id, 1, '');
 
 					// badge lama user
@@ -599,7 +585,7 @@ class Admin_Controls extends CI_Controller
 				'KAPASITAS'        => $this->input->post('kapasitas_gedung'),
 				'ALAMAT'           => $this->input->post('alamat_gedung'),
 				'DESKRIPSI_GEDUNG' => $this->input->post('deskripsi_gedung'),
-				'fasilitas'        => $this->input->post('fasilitas_gedung'), // ✅ TAMBAH
+				'fasilitas'        => $this->input->post('fasilitas_gedung'), //  TAMBAH
 				'HARGA_SEWA'       => $this->input->post('harga_sewa')
 			);
 

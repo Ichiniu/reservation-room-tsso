@@ -38,7 +38,7 @@ $notifCount = !empty($notifs_admin_trx) ? count($notifs_admin_trx) : 0;
                     Data pembayaran ditampilkan berdasarkan filter yang dipilih.
                 </div>
 
-                <!-- ✅ tombol notifikasi (toggle) -->
+                <!--  tombol notifikasi (toggle) -->
                 <button id="notifToggle" type="button"
                     class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-sm text-slate-700">
                     <i class="material-icons text-base">notifications</i>
@@ -59,7 +59,7 @@ $notifCount = !empty($notifs_admin_trx) ? count($notifs_admin_trx) : 0;
 
             <div class="p-5">
 
-                <!-- ✅ NOTIFIKASI DIPINDAH KE SINI (DI ATAS FILTER) -->
+                <!--  NOTIFIKASI DIPINDAH KE SINI (DI ATAS FILTER) -->
                 <?php if (!empty($notifs_admin_trx)): ?>
                 <div id="notifPanel" class="mb-5 hidden">
                     <div class="rounded-xl border border-yellow-200 bg-yellow-50 overflow-hidden">

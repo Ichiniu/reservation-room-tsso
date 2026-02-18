@@ -55,7 +55,7 @@ $this->load->helper('text');
                         class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300">
                 </div>
 
-                <!-- ✅ SORT BY BUTTON (seperti gambar) -->
+                <!--  SORT BY BUTTON (seperti gambar) -->
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1">Urutkan</label>
 

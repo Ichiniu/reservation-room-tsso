@@ -216,13 +216,13 @@ class Home extends CI_Controller
 				if ($rating < 1) $rating = 1;
 				if ($rating > 5) $rating = 5;
 
-				// ✅ tanggal ulasan (created_at) format indo
+				//  tanggal ulasan (created_at) format indo
 				$date_disp = '-';
 				if (!empty($r['CREATED_AT'])) {
 					$date_disp = $tgl_indo($r['CREATED_AT']);
 				}
 
-				// ✅ title jadi 3 baris kalau formatnya cocok
+				// title jadi 3 baris kalau formatnya cocok
 				$title_disp = isset($r['TITLE']) ? $title_3baris($r['TITLE']) : '';
 
 				$ulasan_home[] = array(
@@ -341,7 +341,7 @@ class Home extends CI_Controller
 		} elseif (strpos($nama, 'smart office studio photo') !== false || strpos($nama, 'studio photo') !== false) {
 			$days = 3;
 		} elseif (strpos($nama, 'studio podcast') !== false || strpos($nama, 'podcast') !== false) {
-			// ✅ Studio Podcast: H-3
+			//  Studio Podcast: H-3
 			$days = 3;
 		}
 
@@ -360,7 +360,7 @@ class Home extends CI_Controller
 
 		$gedung['hasil'] = $this->gedung_model->get_gedung_name($id_gedung);
 
-		// ✅ Check if user is internal first (before applying booking rules)
+		//  Check if user is internal first (before applying booking rules)
 		$u = $this->db->select('perusahaan')
 			->from('user')
 			->where('USERNAME', $username)
@@ -370,7 +370,7 @@ class Home extends CI_Controller
 		$perusahaan = ($u && isset($u->perusahaan)) ? $u->perusahaan : '';
 		$data['is_internal'] = (strtoupper(trim((string)$perusahaan)) === 'INTERNAL');
 
-		// ✅ Apply different minimum booking rules based on user type
+		//  Apply different minimum booking rules based on user type
 		if (!empty($data['is_internal'])) {
 			// INTERNAL: Can book on the same day (H+0)
 			$gedung['min_pesan'] = date('Y-m-d');
@@ -429,7 +429,7 @@ class Home extends CI_Controller
 		$data['default_tipe_jam'] = $data['allowed_tipe_jam'][0];
 
 
-		// ✅ Pass gedung data as 'res' for view compatibility (jadwal preview needs $res[0]['ID_GEDUNG'])
+		//  Pass gedung data as 'res' for view compatibility (jadwal preview needs $res[0]['ID_GEDUNG'])
 		$data['res'] = $gedung['hasil'];
 
 		$hasil = array_merge($gedung, $data);
@@ -474,7 +474,7 @@ class Home extends CI_Controller
 			return;
 		}
 
-		// ✅ Get user's latest pending booking to exclude from conflict check
+		//  Get user's latest pending booking to exclude from conflict check
 		$exclude_id = $this->gedung_model->get_user_latest_pending_booking($username, $id_gedung);
 
 		// Check for conflicts (excluding user's own pending booking)
@@ -555,7 +555,7 @@ class Home extends CI_Controller
 			}
 		}
 
-		// ✅ HITUNG HARGA SEWA RUANGAN (BERDASARKAN MODE BARU)
+		//  HITUNG HARGA SEWA RUANGAN (BERDASARKAN MODE BARU)
 		$this->load->helper('pricing');
 		$obj_calc = new stdClass();
 		$obj_calc->ID_GEDUNG = $id_gedung;
@@ -578,7 +578,7 @@ class Home extends CI_Controller
 
 		$harga_sewa_ruangan = bs_calc_room_sewa($obj_calc, $is_internal);
 
-		// ✅ HITUNG HARGA CATERING
+		//  HITUNG HARGA CATERING
 		$total_harga_catering = 0;
 		if ($id_catering > 0 && $jumlah_catering > 0) {
 			$c_data = $this->db->get_where('catering', array('ID_CATERING' => $id_catering))->row();
@@ -787,7 +787,7 @@ class Home extends CI_Controller
 		}
 
 		// =========================
-		// ✅ TAMBAHAN: Catatan Admin saat REJECT (dari tabel pembayaran)
+		// TAMBAHAN: Catatan Admin saat REJECT (dari tabel pembayaran)
 		// =========================
 		$cat = $this->db
 			->select('CATATAN_ADMIN')
@@ -870,8 +870,7 @@ class Home extends CI_Controller
 			->row();
 
 		$is_internal = ($u && strtoupper(trim((string)$u->perusahaan)) === 'INTERNAL');
-
-		// ✅ draft session dibuang setelah submit sukses (biar back/edit gak nyangkut)
+		// draft session dibuang setelah submit sukses (biar back/edit gak nyangkut)
 		$this->session->unset_userdata('draft_pemesanan_id');
 
 		// =========================
@@ -1112,7 +1111,7 @@ class Home extends CI_Controller
 				$total_catering_val = isset($hasil['res'][0]['TOTAL_HARGA']) ? (float)$hasil['res'][0]['TOTAL_HARGA'] : 0;
 				$hasil['res'][0]['TOTAL_KESELURUHAN'] = (float)$harga_sewa_calc + (float)$total_catering_val;
 
-				// ✅ FALLBACK: pastikan TOTAL_PESERTA terambil dari database
+				//  FALLBACK: pastikan TOTAL_PESERTA terambil dari database
 				if (!isset($hasil['res'][0]['TOTAL_PESERTA']) || $hasil['res'][0]['TOTAL_PESERTA'] == 0) {
 					if ($this->db->field_exists('TOTAL_PESERTA', 'pemesanan')) {
 						$peserta_row = $this->db->select('TOTAL_PESERTA')
@@ -1316,9 +1315,9 @@ class Home extends CI_Controller
 			$reviews[] = array(
 				'name'    => isset($r['USERNAME']) ? $r['USERNAME'] : '',
 				'rating'  => isset($r['RATING']) ? (int)$r['RATING'] : 0,
-				// ✅ tanggal ulasan sudah Indo
+				//  tanggal ulasan sudah Indo
 				'date'    => $created_at_indo,
-				// ✅ title sudah 3 baris (atau tetap raw kalau formatnya beda)
+				//  title sudah 3 baris (atau tetap raw kalau formatnya beda)
 				'title'   => $title_pretty,
 				'comment' => isset($r['COMMENT']) ? $r['COMMENT'] : ''
 			);
@@ -1363,10 +1362,10 @@ class Home extends CI_Controller
 
 				$range = $selesai ? ($mulai . ' - ' . $selesai . ' wib') : ($mulai . ' wib');
 
-				// ✅ label yang disimpan ke TITLE (sekalian jadi kunci cek sudah diulas)
+				//  label yang disimpan ke TITLE (sekalian jadi kunci cek sudah diulas)
 				$title_key = $nama_gedung . ' - ' . $tanggal_raw . ' (' . $jam_mulai_disp . ($jam_selesai_disp ? ' - ' . $jam_selesai_disp : '') . ')';
 
-				// ✅ label display 3 baris untuk dipakai di view (preview)
+				//  label display 3 baris untuk dipakai di view (preview)
 				$label_3baris = $nama_gedung . "\n" . $tanggal_indo . "\n" . $range;
 
 				if ($has_id_pemesanan_col) {

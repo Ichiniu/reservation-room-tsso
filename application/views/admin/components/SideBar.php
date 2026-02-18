@@ -305,14 +305,14 @@ $jumlah_trx = (int)$jumlah_trx;
                 if (!("Notification" in window)) {
                     sessionNotifEnabled = true;
                     localStorage.setItem(KEY_ENABLED, "1");
-                    showToast("✅ Sound aktif (Browser tidak dukung pop-up desktop)", "bg-green-600");
+                    showToast(" Sound aktif (Browser tidak dukung pop-up desktop)", "bg-green-600");
                     return;
                 }
 
                 if (!isSecure()) {
                     sessionNotifEnabled = true;
                     localStorage.setItem(KEY_ENABLED, "1");
-                    showToast("✅ Sound aktif. (Desktop pop-up butuh HTTPS/localhost)", "bg-yellow-600");
+                    showToast(" Sound aktif. (Desktop pop-up butuh HTTPS/localhost)", "bg-yellow-600");
                     return;
                 }
 
@@ -321,11 +321,11 @@ $jumlah_trx = (int)$jumlah_trx;
                 localStorage.setItem(KEY_ENABLED, "1");
 
                 if (perm === "granted") {
-                    showToast("✅ Notifikasi Suara & Desktop Aktif", "bg-green-600");
+                    showToast(" Notifikasi Suara & Desktop Aktif", "bg-green-600");
                     showDesktop("Notifikasi Aktif", "Anda akan menerima pemberitahuan di sini.", "init");
                     playSound();
                 } else {
-                    showToast("✅ Sound aktif (Desktop pop-up ditolak browser)", "bg-yellow-600");
+                    showToast(" Sound aktif (Desktop pop-up ditolak browser)", "bg-yellow-600");
                 }
             };
 

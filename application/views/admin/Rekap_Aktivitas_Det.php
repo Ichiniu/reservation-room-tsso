@@ -106,7 +106,7 @@ if ($hasPeriod) {
                 </div>
 
                 <div class="p-5">
-                    <!-- ✅ TABLE WRAP: TANPA overflow-y (tidak ada scroll vertikal di box) -->
+                    <!-- TABLE WRAP: TANPA overflow-y (tidak ada scroll vertikal di box) -->
                     <div class="border border-slate-200 rounded-xl overflow-hidden">
                         <!-- hanya overflow-x untuk layar kecil -->
                         <div id="tableScroll" class="overflow-x-auto">
@@ -118,7 +118,7 @@ if ($hasPeriod) {
                                         <th class="px-4 py-3 font-semibold text-slate-700">Tanggal Pemesanan</th>
                                         <th class="px-4 py-3 font-semibold text-slate-700">Tanggal Approval</th>
 
-                                        <!-- ✅ kolom baru -->
+                                        
                                         <th class="px-4 py-3 font-semibold text-slate-700">Total Peserta</th>
 
                                         <th class="px-4 py-3 font-semibold text-slate-700">Kegiatan</th>

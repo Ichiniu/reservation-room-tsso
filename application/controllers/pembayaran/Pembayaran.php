@@ -80,7 +80,7 @@ class Pembayaran extends CI_Controller
         $total_tagihan = $harga_sewa + ($harga_catering_satuan * $jumlah_catering);
 
         // ===== AUTO CREATE PAYMENT RECORD for internal users (tagihan 0) =====
-        // ✅ PERUBAHAN: Internal user TIDAK auto-confirm, tetap butuh approval admin
+        //  PERUBAHAN: Internal user TIDAK auto-confirm, tetap butuh approval admin
         if ($total_tagihan === 0) {
             $this->load->library('notification_service');
 
@@ -117,17 +117,17 @@ class Pembayaran extends CI_Controller
                     'BUKTI_NAME'         => '-',
                     'BUKTI_MIME'         => NULL,
 
-                    // ✅ PERUBAHAN: STATUS PENDING, bukan CONFIRMED
+                    //  PERUBAHAN: STATUS PENDING, bukan CONFIRMED
                     'STATUS_VERIF'       => 'PENDING',
                     'CATATAN_ADMIN'      => 'INTERNAL - Menunggu approval admin',
-                    // ✅ CONFIRMED_AT tidak di-set (NULL), karena belum diconfirm
+                    //  CONFIRMED_AT tidak di-set (NULL), karena belum diconfirm
                 );
 
                 $this->db->trans_begin();
 
                 $this->pembayaran_model->insert_pembayaran($data_free);
 
-                // ✅ PERUBAHAN: STATUS tetap 0 (PROCESS), TIDAK diubah jadi 3 (SUBMITTED)
+                //  PERUBAHAN: STATUS tetap 0 (PROCESS), TIDAK diubah jadi 3 (SUBMITTED)
                 // Status akan diubah oleh admin saat approve
 
                 if ($this->db->trans_status() === FALSE) {
@@ -140,7 +140,7 @@ class Pembayaran extends CI_Controller
 
                 $this->db->trans_commit();
 
-                // ✅ Notifikasi ADMIN untuk inbox (bukan auto-confirm lagi)
+                // Notifikasi ADMIN untuk inbox (bukan auto-confirm lagi)
                 $this->notification_service->notifyAdmin(
                     'ADMIN_INBOX',
                     'Pemesanan internal baru menunggu approval',
@@ -149,7 +149,7 @@ class Pembayaran extends CI_Controller
                     true
                 );
 
-                // ✅ Notifikasi USER bahwa pemesanan menunggu approval (bukan confirmed)
+                //  Notifikasi USER bahwa pemesanan menunggu approval (bukan confirmed)
                 $this->notification_service->notifyUser(
                     $pesanan->USERNAME,
                     'USER_PEMESANAN_PENDING',
@@ -252,19 +252,19 @@ class Pembayaran extends CI_Controller
         $this->load->library('notification_service');
         $orderNo = 'PMSN000' . $id_pemesanan_raw;
 
-        // ✅ Admin transaksi pending (pop-up Windows admin)
+        //  Admin transaksi pending (pop-up Windows admin)
         $this->notification_service->notifyAdmin(
-            'ADMIN_TRANSAKSI', // ✅ WAJIB ini
+            'ADMIN_TRANSAKSI',
             'Pembayaran baru menunggu verifikasi',
             'Ada pembayaran baru (' . $orderNo . ') menunggu verifikasi.',
             'admin/pembayaran',
             true
         );
 
-        // ✅ User transaksi pending (pop-up Windows user)
+        // User transaksi pending (pop-up Windows user)
         $this->notification_service->notifyUser(
             $pesanan->USERNAME,
-            'USER_TRANSAKSI', // ✅ WAJIB ini
+            'USER_TRANSAKSI',
             'Pembayaran menunggu verifikasi',
             'Bukti pembayaran untuk ' . $orderNo . ' berhasil dikirim dan menunggu verifikasi admin.',
             'home/pembayaran',
