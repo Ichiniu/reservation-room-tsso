@@ -24,7 +24,7 @@ $c_tgl_approval = date_create($tgl_approval);
 			<td><font face="verdana"><?php echo format_tanggal_indo($c_tgl_pesan) ?></font></td>
 		</tr>
 		<tr>
-			<td><font face="verdana"><b>Nama Gedung</b></font></td>
+			<td><font face="verdana"><b>Nama Ruang</b></font></td>
 			<td><font face="verdana">:</font></td>
 			<td><font face="verdana"><?php echo $nama_gedung ?></font></td>
 		</tr>

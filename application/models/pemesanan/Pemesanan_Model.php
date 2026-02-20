@@ -4,7 +4,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 /**
  * Model untuk kebutuhan ulasan berbasis pemesanan.
  * - Hanya pemesanan dengan STATUS = 3 (SUBMITTED) yang boleh diulas.
- * - Join ke tabel `gedung` untuk mendapatkan nama gedung.
+ * - Join ke tabel `gedung` untuk mendapatkan Nama Ruang.
  */
 class Pemesanan_model extends CI_Model
 {

@@ -54,10 +54,10 @@ $this->load->helper(['text', 'form']);
                     <!-- Grid -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-                        <!-- Nama Gedung -->
+                        <!-- Nama Ruang -->
                         <div>
                             <label for="nama_gedung" class="block text-xs font-semibold text-slate-600 mb-1">
-                                Nama Gedung
+                                Nama Ruang
                             </label>
                             <input id="nama_gedung" name="nama_gedung" type="text"
                                 placeholder="Contoh: The Ritz Carlton" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm bg-white

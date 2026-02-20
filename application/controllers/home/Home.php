@@ -1439,7 +1439,7 @@ class Home extends CI_Controller
 		$nama_gedung = isset($pesanan['NAMA_GEDUNG']) ? trim((string)$pesanan['NAMA_GEDUNG']) : '';
 		$tanggal     = isset($pesanan['TANGGAL_PEMESANAN']) ? trim((string)$pesanan['TANGGAL_PEMESANAN']) : '';
 
-		// kalau nama gedung / tanggal kosong, stop biar tidak tersimpan "- - (...)"
+		// kalau Nama Ruang / tanggal kosong, stop biar tidak tersimpan "- - (...)"
 		if ($nama_gedung === '' || $tanggal === '') {
 			$this->session->set_flashdata('error', 'Data gedung/tanggal pemesanan tidak ditemukan. Coba pilih pemesanan lain.');
 			redirect('home/ulasan');

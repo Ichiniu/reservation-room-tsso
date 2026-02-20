@@ -161,7 +161,7 @@ class Admin_Controls extends CI_Controller
 		$data['id_gedung'] = $id_gedung;
 		$data['gedung_list'] = $this->gedung_model->get_gedung();
 
-		// Cari nama gedung yang difilter
+		// Cari Nama Ruang yang difilter
 		$data['nama_gedung_filter'] = '';
 		if (!empty($id_gedung)) {
 			foreach ($data['gedung_list'] as $g) {
@@ -687,7 +687,7 @@ class Admin_Controls extends CI_Controller
 		$data['end_date'] = $end_date;
 		$data['report'] = $this->gedung_model->jadwal_gedung($start_date, $end_date, $id_gedung);
 
-		// Cari nama gedung untuk header PDF
+		// Cari Nama Ruang untuk header PDF
 		$data['nama_gedung_filter'] = '';
 		if (!empty($id_gedung)) {
 			$gedung_list = $this->gedung_model->get_gedung();
