@@ -62,7 +62,7 @@ class Admin_Controls extends CI_Controller
 			'KAPASITAS'        => $this->input->post('kapasitas_gedung'),
 			'ALAMAT'           => $this->input->post('alamat_gedung'),
 			'DESKRIPSI_GEDUNG' => $this->input->post('deskripsi_gedung'),
-			'fasilitas'        => $this->input->post('fasilitas_gedung'), 
+			'fasilitas'        => $this->input->post('fasilitas_gedung'),
 			'HARGA_SEWA'       => $this->input->post('harga_sewa')
 		);
 
@@ -551,6 +551,20 @@ class Admin_Controls extends CI_Controller
 		}
 		redirect('admin/catering');
 	}
+
+	/**
+	 * Toggle status aktif/nonaktif catering (POST)
+	 */
+	function toggle_catering_status()
+	{
+		$this->load->helper('url');
+		$this->load->model('catering/catering_model');
+		$id = (int)$this->input->post('id_catering');
+		if ($id > 0) {
+			$this->catering_model->toggle_status($id);
+		}
+		redirect('admin/catering');
+	}
 	function delete_gedung($id_gedung)
 	{
 		$this->load->model('gedung/gedung_model');
@@ -795,9 +809,25 @@ class Admin_Controls extends CI_Controller
 	{
 		$this->load->model('catering/catering_model');
 		$this->load->model('gedung/gedung_model');
+		$this->load->model('settings_model');
 		$data['res'] = $this->gedung_model->get_pending_transaction();
 		$data['result'] = $this->catering_model->get_all();
+		$data['catering_phone'] = $this->settings_model->get('catering_phone', '089649261851');
 		$this->load->view('admin/list_catering', $data);
+	}
+
+	/**
+	 * Simpan nomor telepon catering (POST)
+	 */
+	function save_catering_phone()
+	{
+		$this->load->helper('url');
+		$this->load->model('settings_model');
+		$phone = trim((string)$this->input->post('catering_phone', TRUE));
+		if (!empty($phone)) {
+			$this->settings_model->set('catering_phone', $phone);
+		}
+		redirect('admin/catering');
 	}
 
 	public function verify_pembayaran($id_pembayaran, $action)

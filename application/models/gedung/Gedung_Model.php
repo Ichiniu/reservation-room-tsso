@@ -902,7 +902,7 @@ TIME_FORMAT(
 
 	public function get_menu_catering()
 	{
-		$sql = "SELECT * FROM CATERING";
+		$sql = "SELECT * FROM CATERING WHERE IS_ACTIVE = 1";
 		$query = $this->db->query($sql);
 		$hasil = $query->result_array();
 		return $hasil;

@@ -15,6 +15,16 @@ class Notification_service
     $this->CI->load->config('notification', true);
   }
 
+  /**
+   * Ambil nomor telepon catering dari tabel app_settings
+   */
+  private function getCateringPhone()
+  {
+    $query = $this->CI->db->get_where('app_settings', array('setting_key' => 'catering_phone'), 1);
+    $row = $query->row_array();
+    return ($row && isset($row['setting_value']) && $row['setting_value'] !== '') ? $row['setting_value'] : '085112345548';
+  }
+
   private function insertNotif($username, $type, $title, $message, $url)
   {
     $this->CI->db->insert('notifications', [
@@ -385,7 +395,7 @@ class Notification_service
 
                 <div style="color:#111827;font-weight:bold;margin-top:12px;margin-bottom:6px;">Terima kasih,</div>
                 <div style="margin-bottom:2px;">Admin Booking Smart Office</div>
-                <div>085112345548</div> 
+                <div>' . htmlspecialchars($this->getCateringPhone(), ENT_QUOTES, 'UTF-8') . '</div> 
               </div>
             </div>
           </td>
@@ -583,7 +593,7 @@ class Notification_service
             <div style="margin-bottom:10px;">Admin Booking Smart Office</div>
             Email ini dikirim otomatis oleh sistem Booking Smarts.
           </td>
-          <td> 085112345548</td>
+          <td> ' . htmlspecialchars($this->getCateringPhone(), ENT_QUOTES, 'UTF-8') . '</td>
         </tr>
       </table>
     </td></tr>
@@ -772,7 +782,7 @@ class Notification_service
           <td style="padding:14px 22px;background:#f9fafb;border-top:1px solid #e5e7eb;font-size:12px;color:#6b7280;">
             Email ini dikirim otomatis oleh sistem Booking Smarts.
           </td>
-          <td> 085112345548</td>
+          <td> ' . htmlspecialchars($this->getCateringPhone(), ENT_QUOTES, 'UTF-8') . '</td>
         </tr>
 
       </table>
@@ -930,7 +940,7 @@ class Notification_service
             <div style="margin-bottom:10px;">Admin Booking Smart Office</div>
             Email ini dikirim otomatis oleh sistem Booking Smarts.
           </td>
-          <td> 085112345548</td>
+          <td> ' . htmlspecialchars($this->getCateringPhone(), ENT_QUOTES, 'UTF-8') . '</td>
         </tr>
 
       </table>

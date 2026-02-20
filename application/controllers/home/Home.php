@@ -296,9 +296,11 @@ class Home extends CI_Controller
 	{
 		$username = $this->session->userdata('username');
 		$this->load->model('gedung/gedung_model');
+		$this->load->model('settings_model');
 		$data['res'] = $this->gedung_model->get_menu_catering();
 		$data['flag']     = $this->gedung_model->get_pemesanan_flag($username);
 		$data['trx_flag'] = $this->gedung_model->get_transaksi_flag($username);
+		$data['catering_phone'] = $this->settings_model->get('catering_phone', '089649261851');
 
 		$this->load->view('gedung/View_Catering', $data);
 	}
@@ -357,6 +359,7 @@ class Home extends CI_Controller
 		$username = $this->session->userdata('username');
 		$this->load->model('catering/catering_model');
 		$this->load->model('gedung/gedung_model');
+		$this->load->model('settings_model');
 
 		$gedung['hasil'] = $this->gedung_model->get_gedung_name($id_gedung);
 
@@ -384,7 +387,9 @@ class Home extends CI_Controller
 			$gedung['min_days']  = $rule['days'];
 		}
 
-		if (method_exists($this->catering_model, 'get_all')) {
+		if (method_exists($this->catering_model, 'get_active_only')) {
+			$data['catering_list'] = $this->catering_model->get_active_only();
+		} elseif (method_exists($this->catering_model, 'get_all')) {
 			$data['catering_list'] = $this->catering_model->get_all();
 		} else {
 			$data['catering_list'] = $this->catering_model->get_catering_full();
@@ -393,6 +398,7 @@ class Home extends CI_Controller
 		$data['email'] = $this->gedung_model->get_email_address($username);
 		$data['flag']  = $this->gedung_model->get_pemesanan_flag($username);
 		$data['trx_flag'] = $this->gedung_model->get_transaksi_flag($username);
+		$data['catering_phone'] = $this->settings_model->get('catering_phone', '089649261851');
 
 		// Ambil nama ruangan untuk deteksi STUDIO
 		$nama_gedung = '';
