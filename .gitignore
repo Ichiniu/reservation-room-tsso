@@ -4,3 +4,7 @@ application/logs/*
 
 # Environment files
 .env
+
+# Session cache files
+application/cache/sessions/*
+!application/cache/sessions/index.html

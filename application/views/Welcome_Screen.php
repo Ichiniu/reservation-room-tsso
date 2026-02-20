@@ -6,7 +6,7 @@ $total = (isset($res) && is_array($res)) ? count($res) : 0;
 function e($v){ return html_escape((string)$v); }
 
 /* =========================================================================
-   ✅ PENGATURAN FASILITAS PER RUANGAN (EDIT DI SINI)
+    PENGATURAN FASILITAS PER RUANGAN (EDIT DI SINI)
    -------------------------------------------------------------------------
    - Key array = ID_GEDUNG (ID ruangan di DB)
    - Isi = list badge icon + label (Material Icons)
@@ -38,7 +38,7 @@ $FACILITY_BY_ROOM_ID = array(
 );
 
 /* =========================================================================
-   ✅ PENGATURAN DESKRIPSI PER RUANGAN (EDIT DI SINI)
+    PENGATURAN DESKRIPSI PER RUANGAN (EDIT DI SINI)
    -------------------------------------------------------------------------
    - Ini yang mengganti teks:
      "Ruangan nyaman dengan penataan modern..."
@@ -50,7 +50,7 @@ $DESC_BY_ROOM_ID = array(
 );
 
 /* =========================================================================
-   ✅ PENGATURAN TAGLINE OVERLAY (EDIT DI SINI)
+    PENGATURAN TAGLINE OVERLAY (EDIT DI SINI)
    -------------------------------------------------------------------------
    - Ini yang mengganti teks kecil di overlay bawah nama ruangan.
    ========================================================================= */
@@ -294,7 +294,7 @@ if (!function_exists('get_tagline_for_room')) {
                             <div class="absolute left-4 right-4 bottom-4">
                                 <h3 class="text-lg font-bold text-white drop-shadow"><?= e($nama); ?></h3>
 
-                                <!-- ✅ TAGLINE PER RUANGAN -->
+                                <!--  TAGLINE PER RUANGAN -->
                                 <p
                                     class="mt-1 text-xs text-white/85 [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] overflow-hidden">
                                     <?= e($tagline); ?>
@@ -304,7 +304,7 @@ if (!function_exists('get_tagline_for_room')) {
 
                         <div class="p-5">
 
-                            <!-- ✅ FASILITAS PER RUANGAN -->
+                            <!--  FASILITAS PER RUANGAN -->
                             <div class="flex flex-wrap gap-2">
                                 <?php foreach ($badges as $b): ?>
                                 <span
@@ -315,7 +315,7 @@ if (!function_exists('get_tagline_for_room')) {
                                 <?php endforeach; ?>
                             </div>
 
-                            <!-- ✅ DESKRIPSI PER RUANGAN -->
+                            <!--  DESKRIPSI PER RUANGAN -->
                             <p
                                 class="mt-4 text-sm text-slate-600 [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:3] overflow-hidden">
                                 <?= e($desc); ?>
