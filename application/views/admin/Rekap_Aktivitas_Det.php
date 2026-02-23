@@ -115,7 +115,7 @@ if ($hasPeriod) {
                                     <tr class="text-left">
                                         <th class="px-4 py-3 font-semibold text-slate-700 w-[70px] text-center">No</th>
                                         <th class="px-4 py-3 font-semibold text-slate-700">Nama Ruang</th>
-                                        <th class="px-4 py-3 font-semibold text-slate-700">Tanggal Pelaksana</th>
+                                        <th class="px-4 py-3 font-semibold text-slate-700">Tanggal Pelaksanaan</th>
                                         <th class="px-4 py-3 font-semibold text-slate-700">Tanggal Approval</th>
 
 
