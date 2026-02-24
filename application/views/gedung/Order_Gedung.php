@@ -128,7 +128,7 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                 </div>
                             </div>
 
-                            <!-- Nama Gedung -->
+                            <!-- Nama Ruang -->
                             <div class="rounded-xl border border-slate-300 bg-slate-50 p-5 ring-1 ring-slate-200">
                                 <label class="block text-xs font-semibold tracking-widest text-slate-500">NAMA
                                     RUANGAN</label>

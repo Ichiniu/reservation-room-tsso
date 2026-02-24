@@ -26,7 +26,7 @@ $min_dp = ($tax + $jumlah_pembayaran) * 0.1;
 			<td><font face="verdana"><?php echo format_tanggal_indo($c_tgl_pesan) ?></font></td>
 		</tr>
 		<tr>
-			<td><font face="verdana"><b>Nama Gedung</b></font></td>
+			<td><font face="verdana"><b>Nama Ruang</b></font></td>
 			<td><font face="verdana">:</font></td>
 			<td><font face="verdana"><?php echo $nama_gedung ?></font></td>
 		</tr>

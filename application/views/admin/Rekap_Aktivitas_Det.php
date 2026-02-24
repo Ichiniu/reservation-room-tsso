@@ -86,16 +86,16 @@ if ($hasPeriod) {
                     <div class="text-sm text-slate-600">
                         <span class="font-semibold text-slate-800">Periode:</span>
                         <?php if ($hasPeriod): ?>
-                            <?= formatTanggalIndo($first_period); ?>
-                            <span class="mx-2">—</span>
-                            <?= formatTanggalIndo($last_period); ?>
+                        <?= formatTanggalIndo($first_period); ?>
+                        <span class="mx-2">—</span>
+                        <?= formatTanggalIndo($last_period); ?>
                         <?php else: ?>
-                            -
+                        -
                         <?php endif; ?>
                         <?php if (!empty($nama_gedung_filter)): ?>
-                            <span class="mx-2">|</span>
-                            <span class="font-semibold text-slate-800">Gedung:</span>
-                            <?= htmlspecialchars($nama_gedung_filter, ENT_QUOTES, 'UTF-8') ?>
+                        <span class="mx-2">|</span>
+                        <span class="font-semibold text-slate-800">Gedung:</span>
+                        <?= htmlspecialchars($nama_gedung_filter, ENT_QUOTES, 'UTF-8') ?>
                         <?php endif; ?>
                     </div>
 
@@ -114,11 +114,11 @@ if ($hasPeriod) {
                                 <thead class="bg-slate-50 border-b border-slate-200">
                                     <tr class="text-left">
                                         <th class="px-4 py-3 font-semibold text-slate-700 w-[70px] text-center">No</th>
-                                        <th class="px-4 py-3 font-semibold text-slate-700">Nama Gedung</th>
-                                        <th class="px-4 py-3 font-semibold text-slate-700">Tanggal Pemesanan</th>
+                                        <th class="px-4 py-3 font-semibold text-slate-700">Nama Ruang</th>
+                                        <th class="px-4 py-3 font-semibold text-slate-700">Tanggal Pelaksanaan</th>
                                         <th class="px-4 py-3 font-semibold text-slate-700">Tanggal Approval</th>
 
-                                        
+
                                         <th class="px-4 py-3 font-semibold text-slate-700">Total Peserta</th>
 
                                         <th class="px-4 py-3 font-semibold text-slate-700">Kegiatan</th>
@@ -130,12 +130,12 @@ if ($hasPeriod) {
 
                                 <tbody id="rekapBody" class="divide-y divide-slate-200">
                                     <?php if (!empty($hasil) && is_array($hasil)): ?>
-                                        <?php
+                                    <?php
                                         $totalSumParticipants = 0;
                                         foreach ($hasil as $row):
                                             $tp = !empty($row['TOTAL_PESERTA']) ? (int)$row['TOTAL_PESERTA'] : 0;
                                         ?>
-                                            <?php
+                                    <?php
                                             // Tanggal Pemesanan (final kalau ada)
                                             $date_pemesanan = null;
                                             if (!empty($row['TANGGAL_FINAL_PEMESANAN'])) {
@@ -162,51 +162,52 @@ if ($hasPeriod) {
                                                 $jamText = date('H:i', strtotime($jamMulai));
                                             }
                                             ?>
-                                            <tr class="hover:bg-slate-50">
-                                                <td class="px-4 py-3 text-center"><?= $no++; ?></td>
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="px-4 py-3 text-center"><?= $no++; ?></td>
 
-                                                <td class="px-4 py-3">
-                                                    <?= !empty($row['NAMA_GEDUNG']) ? htmlspecialchars($row['NAMA_GEDUNG'], ENT_QUOTES, 'UTF-8') : '-'; ?>
-                                                </td>
+                                        <td class="px-4 py-3">
+                                            <?= !empty($row['NAMA_GEDUNG']) ? htmlspecialchars($row['NAMA_GEDUNG'], ENT_QUOTES, 'UTF-8') : '-'; ?>
+                                        </td>
 
-                                                <td class="px-4 py-3 whitespace-nowrap">
-                                                    <?= !empty($row['TANGGAL_FINAL_PEMESANAN']) ? format_tanggal_indo($row['TANGGAL_FINAL_PEMESANAN']) : '-'; ?>
-                                                </td>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <?= !empty($row['TANGGAL_FINAL_PEMESANAN']) ? format_tanggal_indo($row['TANGGAL_FINAL_PEMESANAN']) : '-'; ?>
+                                        </td>
 
-                                                <td class="px-4 py-3 whitespace-nowrap">
-                                                    <?= !empty($row['TANGGAL_APPROVAL']) ? format_tanggal_indo($row['TANGGAL_APPROVAL']) : '-'; ?>
-                                                </td>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <?= !empty($row['TANGGAL_APPROVAL']) ? format_tanggal_indo($row['TANGGAL_APPROVAL']) : '-'; ?>
+                                        </td>
 
-                                                <td class="px-4 py-3 whitespace-nowrap text-center">
-                                                    <?= $tp; ?>
-                                                </td>
+                                        <td class="px-4 py-3 whitespace-nowrap text-center">
+                                            <?= $tp; ?>
+                                        </td>
 
-                                                <td class="px-4 py-3 whitespace-normal break-words">
-                                                    <?= !empty($row['DESKRIPSI_ACARA']) ? htmlspecialchars($row['DESKRIPSI_ACARA'], ENT_QUOTES, 'UTF-8') : '-'; ?>
-                                                </td>
+                                        <td class="px-4 py-3 whitespace-normal break-words">
+                                            <?= !empty($row['DESKRIPSI_ACARA']) ? htmlspecialchars($row['DESKRIPSI_ACARA'], ENT_QUOTES, 'UTF-8') : '-'; ?>
+                                        </td>
 
-                                                <td class="px-4 py-3 whitespace-nowrap">
-                                                    <?= htmlspecialchars($jamText, ENT_QUOTES, 'UTF-8'); ?>
-                                                </td>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <?= htmlspecialchars($jamText, ENT_QUOTES, 'UTF-8'); ?>
+                                        </td>
 
-                                                <td class="px-4 py-3">
-                                                    <?= !empty($row['NAMA_LENGKAP']) ? htmlspecialchars($row['NAMA_LENGKAP'], ENT_QUOTES, 'UTF-8') : '-'; ?>
-                                                </td>
-                                            </tr>
-                                        <?php
+                                        <td class="px-4 py-3">
+                                            <?= !empty($row['NAMA_LENGKAP']) ? htmlspecialchars($row['NAMA_LENGKAP'], ENT_QUOTES, 'UTF-8') : '-'; ?>
+                                        </td>
+                                    </tr>
+                                    <?php
                                             $totalSumParticipants += $tp;
                                         endforeach;
                                         ?>
-                                        <tr class="bg-slate-50 font-bold border-t-2 border-slate-300">
-                                            <td colspan="4" class="px-4 py-3 text-right">GRAND TOTAL PESERTA</td>
-                                            <td class="px-4 py-3 text-center text-blue-700"><?= $totalSumParticipants; ?></td>
-                                            <td colspan="3"></td>
-                                        </tr>
+                                    <tr class="bg-slate-50 font-bold border-t-2 border-slate-300">
+                                        <td colspan="4" class="px-4 py-3 text-right">GRAND TOTAL PESERTA</td>
+                                        <td class="px-4 py-3 text-center text-blue-700"><?= $totalSumParticipants; ?>
+                                        </td>
+                                        <td colspan="3"></td>
+                                    </tr>
                                     <?php else: ?>
-                                        <tr>
-                                            <td colspan="8" class="px-4 py-6 text-center text-slate-500">Tidak ada data.
-                                            </td>
-                                        </tr>
+                                    <tr>
+                                        <td colspan="8" class="px-4 py-6 text-center text-slate-500">Tidak ada data.
+                                        </td>
+                                    </tr>
                                     <?php endif; ?>
                                 </tbody>
                             </table>
@@ -243,86 +244,86 @@ if ($hasPeriod) {
     </main>
 
     <script>
-        (function() {
-            const tbody = document.getElementById('rekapBody');
-            if (!tbody) return;
+    (function() {
+        const tbody = document.getElementById('rekapBody');
+        if (!tbody) return;
 
-            let rows = Array.from(tbody.querySelectorAll('tr'));
-            const onlyEmptyRow = rows.length === 1 && rows[0].innerText.toLowerCase().includes('tidak ada data');
-            if (onlyEmptyRow) return;
+        let rows = Array.from(tbody.querySelectorAll('tr'));
+        const onlyEmptyRow = rows.length === 1 && rows[0].innerText.toLowerCase().includes('tidak ada data');
+        if (onlyEmptyRow) return;
 
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            const pageInfo = document.getElementById('pageInfo');
-            const rowsPerPageSelect = document.getElementById('rowsPerPage');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const pageInfo = document.getElementById('pageInfo');
+        const rowsPerPageSelect = document.getElementById('rowsPerPage');
 
-            let currentPage = 1;
-            let rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
+        let currentPage = 1;
+        let rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
 
-            function totalPages() {
-                return Math.max(1, Math.ceil(rows.length / rowsPerPage));
-            }
+        function totalPages() {
+            return Math.max(1, Math.ceil(rows.length / rowsPerPage));
+        }
 
-            function render() {
-                const tp = totalPages();
-                if (currentPage > tp) currentPage = tp;
+        function render() {
+            const tp = totalPages();
+            if (currentPage > tp) currentPage = tp;
 
-                const start = (currentPage - 1) * rowsPerPage;
-                const end = start + rowsPerPage;
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
 
-                rows.forEach((row, idx) => {
-                    row.style.display = (idx >= start && idx < end) ? '' : 'none';
-                });
+            rows.forEach((row, idx) => {
+                row.style.display = (idx >= start && idx < end) ? '' : 'none';
+            });
 
-                prevBtn.disabled = currentPage <= 1;
-                nextBtn.disabled = currentPage >= tp;
+            prevBtn.disabled = currentPage <= 1;
+            nextBtn.disabled = currentPage >= tp;
 
-                const totalRows = rows.length;
-                const showingFrom = totalRows === 0 ? 0 : start + 1;
-                const showingTo = Math.min(end, totalRows);
+            const totalRows = rows.length;
+            const showingFrom = totalRows === 0 ? 0 : start + 1;
+            const showingTo = Math.min(end, totalRows);
 
-                pageInfo.textContent =
-                    `Page ${currentPage} of ${tp} • Showing ${showingFrom}-${showingTo} of ${totalRows}`;
+            pageInfo.textContent =
+                `Page ${currentPage} of ${tp} • Showing ${showingFrom}-${showingTo} of ${totalRows}`;
 
-                // renumber
-                let visibleNo = start + 1;
-                rows.forEach((row, idx) => {
-                    if (idx >= start && idx < end) {
-                        const firstCell = row.querySelector('td');
-                        if (firstCell) firstCell.textContent = visibleNo++;
-                    }
-                });
-
-                // scroll halaman ke atas tabel saat pindah halaman (biar nyaman)
-                const tableTop = document.getElementById('rekapTable');
-                if (tableTop) tableTop.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-
-            prevBtn.addEventListener('click', function() {
-                if (currentPage > 1) {
-                    currentPage--;
-                    render();
+            // renumber
+            let visibleNo = start + 1;
+            rows.forEach((row, idx) => {
+                if (idx >= start && idx < end) {
+                    const firstCell = row.querySelector('td');
+                    if (firstCell) firstCell.textContent = visibleNo++;
                 }
             });
 
-            nextBtn.addEventListener('click', function() {
-                if (currentPage < totalPages()) {
-                    currentPage++;
-                    render();
-                }
+            // scroll halaman ke atas tabel saat pindah halaman (biar nyaman)
+            const tableTop = document.getElementById('rekapTable');
+            if (tableTop) tableTop.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
             });
+        }
 
-            rowsPerPageSelect.addEventListener('change', function() {
-                rowsPerPage = parseInt(this.value, 10) || 10;
-                currentPage = 1;
+        prevBtn.addEventListener('click', function() {
+            if (currentPage > 1) {
+                currentPage--;
                 render();
-            });
+            }
+        });
 
+        nextBtn.addEventListener('click', function() {
+            if (currentPage < totalPages()) {
+                currentPage++;
+                render();
+            }
+        });
+
+        rowsPerPageSelect.addEventListener('change', function() {
+            rowsPerPage = parseInt(this.value, 10) || 10;
+            currentPage = 1;
             render();
-        })();
+        });
+
+        render();
+    })();
     </script>
 
 </body>
