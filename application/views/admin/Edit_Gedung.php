@@ -285,7 +285,12 @@ $this->load->helper('pricing');
                                         <div class="flex gap-3 mt-3 flex-wrap">
                                             <?php foreach ($images as $img): ?>
                                                 <div class="w-40 h-28 rounded overflow-hidden border relative">
-                                                    <img src="<?= htmlspecialchars($img['PATH'] . $img['IMG_NAME'], ENT_QUOTES, 'UTF-8') ?>" alt="Foto" class="w-full h-full object-cover">
+                                                    <?php
+                                                    $raw_src = $img['PATH'] . $img['IMG_NAME'];
+                                                    $clean_src = preg_replace('#^https?://[^/]+/bookingsmarts/#i', '', $raw_src);
+                                                    $img_url = base_url($clean_src);
+                                                    ?>
+                                                    <img src="<?= htmlspecialchars($img_url, ENT_QUOTES, 'UTF-8') ?>" alt="Foto" class="w-full h-full object-cover">
                                                     <button type="button" data-img="<?= htmlspecialchars($img['IMG_NAME'], ENT_QUOTES, 'UTF-8') ?>" data-id="<?= (int)$row['ID_GEDUNG'] ?>" title="Hapus" class="delete-image-btn absolute top-1 right-1 bg-white/90 hover:bg-white text-red-600 rounded-full p-1 shadow z-50" style="pointer-events:auto;">
                                                         <i class="material-icons text-xs">delete</i>
                                                     </button>

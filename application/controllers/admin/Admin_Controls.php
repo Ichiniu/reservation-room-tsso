@@ -95,8 +95,8 @@ class Admin_Controls extends CI_Controller
 		$this->load->library('upload');
 		$this->upload->initialize($config);
 
-		$base_url = base_url();
-		$img_path = $base_url . "assets/images/gedung/";
+		// Simpan PATH relatif saja (tanpa domain) agar gambar tampil dari host manapun
+		$img_path = "assets/images/gedung/";
 
 		foreach ($_FILES as $key => $value) {
 			if (empty($value['name'])) continue; // skip kalau kosong
@@ -623,8 +623,8 @@ class Admin_Controls extends CI_Controller
 			$this->load->library('upload');
 			$this->upload->initialize($config);
 
-			$base_url = base_url();
-			$img_path = $base_url . "assets/images/gedung/";
+			// Simpan PATH relatif saja (tanpa domain) agar gambar tampil dari host manapun
+			$img_path = "assets/images/gedung/";
 
 			foreach ($_FILES as $field => $fileinfo) {
 				if (is_array($fileinfo['name'])) {

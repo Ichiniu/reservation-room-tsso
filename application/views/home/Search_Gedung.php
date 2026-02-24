@@ -20,7 +20,7 @@ $user = $this->uri->segment(2);
     <link rel="icon" href="<?php echo base_url(); ?>assets/home/assets/img/favicon/favicon-32x32.png" sizes="32x32">
     <title>Home</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    
+
     <link href="<?php echo base_url(); ?>assets/home-user/template.css" rel="stylesheet" type="text/css">
 </head>
 
@@ -41,71 +41,71 @@ $user = $this->uri->segment(2);
             <li class="logo">
             </li>
             <li class="bold">
-                <a href="<?php echo site_url('home/'.$session_id.'/') ?>" class="waves-effect waves-teal">Home</a>
+                <a href="<?php echo site_url('home/' . $session_id . '/') ?>" class="waves-effect waves-teal">Home</a>
             </li>
             <li class="bold">
                 <a href="<?php echo site_url('home/jadwal') ?>" class="waves-effect waves-teal">Jadwal Ruangan</a>
             </li>
             <li class="bold">
-                <?php if($flag > 0): ?>
-                <a href="<?php echo site_url('home/pemesanan') ?>" class="waves-effect waves-teal">Pemesanan<span
-                        class="new badge"><?php echo $flag ?></span></a>
-                <?php endif;?>
-                <?php if($flag <= 0): ?>
+                <?php if ($flag > 0): ?>
+                    <a href="<?php echo site_url('home/pemesanan') ?>" class="waves-effect waves-teal">Pemesanan<span
+                            class="new badge"><?php echo $flag ?></span></a>
+                <?php endif; ?>
+                <?php if ($flag <= 0): ?>
             <li class="bold">
                 <a href="<?php echo site_url('home/pemesanan') ?>" class="waves-effect waves-teal">Pemesanan</a>
             </li>
-            <?php endif; ?>
-            </li>
-            <li class="bold">
-                <a href="<?php echo site_url('home/view-catering') ?>" class="waves-effect waves-teal"
-                    target="_blank">Menu Catering</a>
-            </li>
-            <li class="no-padding">
-                <ul class="collapsible collapsible-accordion">
-                    <li class="bold">
-                        <a class="collapsible-header waves-effect waves-teal">Cari Ruangan</a>
-                        <div class="collapsible-body">
-                            <ul>
-                                <li>
-                                    <nav>
-                                        <div class="nav-wrapper">
-                                            <form method="get" action="<?php echo site_url('home/search') ?>">
-                                                <div class="input-field">
-                                                    <input id="search" type="search" name="search_gedung" required
-                                                        placeholder="Cari Gedung">
-                                                    <label for="search">
-                                                        <i class="material-icons">search</i>
-                                                    </label>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </nav>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="bold active">
-                        <a class="collapsible-header waves-effect waves-teal active"><?php echo $session_id ?></a>
-                        <div class="collapsible-body" style="display: block;">
-                            <ul>
-                                <li>
-                                    <a class="waves-effect waves-teal"
-                                        href="<?php echo site_url('edit_data/'.$user.'/'); ?>">Edit Data Diri</a>
-                                </li>
-                                <li>
-                                    <a class="waves-effect waves-teal"
-                                        href="<?php echo site_url('home/pembayaran') ?>">Transaksi</a>
-                                </li>
-                                <li>
-                                    <a class="waves-effect waves-teal"
-                                        href="<?php echo site_url('home/home/logout'); ?>">Sign Out</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                </ul>
-            </li>
+        <?php endif; ?>
+        </li>
+        <li class="bold">
+            <a href="<?php echo site_url('home/view-catering') ?>" class="waves-effect waves-teal"
+                target="_blank">Menu Catering</a>
+        </li>
+        <li class="no-padding">
+            <ul class="collapsible collapsible-accordion">
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-teal">Cari Ruangan</a>
+                    <div class="collapsible-body">
+                        <ul>
+                            <li>
+                                <nav>
+                                    <div class="nav-wrapper">
+                                        <form method="get" action="<?php echo site_url('home/search') ?>">
+                                            <div class="input-field">
+                                                <input id="search" type="search" name="search_gedung" required
+                                                    placeholder="Cari Gedung">
+                                                <label for="search">
+                                                    <i class="material-icons">search</i>
+                                                </label>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </nav>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="bold active">
+                    <a class="collapsible-header waves-effect waves-teal active"><?php echo $session_id ?></a>
+                    <div class="collapsible-body" style="display: block;">
+                        <ul>
+                            <li>
+                                <a class="waves-effect waves-teal"
+                                    href="<?php echo site_url('edit_data/' . $user . '/'); ?>">Edit Data Diri</a>
+                            </li>
+                            <li>
+                                <a class="waves-effect waves-teal"
+                                    href="<?php echo site_url('home/pembayaran') ?>">Transaksi</a>
+                            </li>
+                            <li>
+                                <a class="waves-effect waves-teal"
+                                    href="<?php echo site_url('home/home/logout'); ?>">Sign Out</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </li>
         </ul>
         <div class="container">
             <div class="row">
@@ -129,10 +129,10 @@ $user = $this->uri->segment(2);
                         Berdasarkan</a>
                     <ul id="dropdown54" class="dropdown-content">
                         <li>
-                            <a href="<?php echo site_url('home/'.$user.'/sort-by-name'); ?>">Nama Ruangan</a>
+                            <a href="<?php echo site_url('home/' . $user . '/sort-by-name'); ?>">Nama Ruangan</a>
                         </li>
                         <li>
-                            <a href="<?php echo site_url('home/'.$user.'/sort-by-capacity'); ?>">Kapasitas Ruangan</a>
+                            <a href="<?php echo site_url('home/' . $user . '/sort-by-capacity'); ?>">Kapasitas Ruangan</a>
                         </li>
                     </ul>
                 </div>
@@ -140,22 +140,28 @@ $user = $this->uri->segment(2);
         </div>
         <div class="container">
             <div class="row">
-                <?php foreach($result as $row):
-                $path = $row['PATH']; $img_name = $row['IMG_NAME']; ?>
-                <div class="col s12 m7">
-                    <div class="card medium">
-                        <div class="card-image">
-                            <img src="<?php echo $path . $img_name; ?>">
-                        </div>
-                        <div class="card-content">
-                            <p hidden="true">ID Ruangan: <?php echo $row['ID_GEDUNG']; ?></p>
-                            <span class="card-title"><?php echo $row['NAMA_GEDUNG']; ?></span>
-                        </div>
-                        <div class="card-action">
-                            <a href="<?php echo site_url('home/details/'.$row['ID_GEDUNG']) ?>">Details</a>
+                <?php foreach ($result as $row):
+                    $path = $row['PATH'];
+                    $img_name = $row['IMG_NAME'];
+                    // Normalisasi: hapus domain lama lalu tambahkan base_url()
+                    $raw_img = $path . $img_name;
+                    $clean_img = preg_replace('#^https?://[^/]+/bookingsmarts/#i', '', $raw_img);
+                    $img_src = base_url($clean_img);
+                ?>
+                    <div class="col s12 m7">
+                        <div class="card medium">
+                            <div class="card-image">
+                                <img src="<?php echo $img_src; ?>">
+                            </div>
+                            <div class="card-content">
+                                <p hidden="true">ID Ruangan: <?php echo $row['ID_GEDUNG']; ?></p>
+                                <span class="card-title"><?php echo $row['NAMA_GEDUNG']; ?></span>
+                            </div>
+                            <div class="card-action">
+                                <a href="<?php echo site_url('home/details/' . $row['ID_GEDUNG']) ?>">Details</a>
+                            </div>
                         </div>
                     </div>
-                </div>
                 <?php endforeach; ?>
             </div>
         </div>

@@ -61,19 +61,130 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
             </nav>
 
             <!-- RIGHT -->
-            <div class="flex items-center gap-3">
-                <button id="mobileMenuBtn"
-                    class="md:hidden inline-flex items-center justify-center rounded-lg border border-black/10 p-2 hover:bg-slate-100 transition">
-                    <i class="bi bi-list text-xl"></i>
-                </button>
+            <div class="flex items-center gap-2">
+
+                <!-- MOBILE: PROFILE AVATAR BUTTON (terpisah dari hamburger) -->
+                <div class="relative md:hidden">
+                    <button id="mobileProfileBtn" type="button"
+                        class="inline-flex items-center justify-center rounded-full border border-black/10 h-9 w-9 hover:bg-slate-100 transition overflow-hidden"
+                        aria-expanded="false">
+                        <?php if (!empty($foto_profil)): ?>
+                            <img src="<?= base_url($foto_profil); ?>" class="h-full w-full object-cover rounded-full"
+                                alt="Foto Profil">
+                        <?php else: ?>
+                            <i class="bi bi-person-circle text-lg text-slate-600"></i>
+                        <?php endif; ?>
+                    </button>
+
+                    <!-- MOBILE PROFILE DROPDOWN -->
+                    <div id="mobileProfileMenu"
+                        class="hidden absolute right-0 mt-2 w-64 rounded-2xl border border-black/10 bg-white/95 backdrop-blur-xl shadow-2xl text-sm overflow-hidden z-50
+                               transition-all duration-200 origin-top-right">
+
+                        <!-- Header profil -->
+                        <div class="px-4 py-3 bg-gradient-to-r from-slate-900 to-slate-800 text-white">
+                            <div class="flex items-center gap-3">
+                                <div class="h-10 w-10 rounded-full border-2 border-white/30 overflow-hidden flex-shrink-0">
+                                    <?php if (!empty($foto_profil)): ?>
+                                        <img src="<?= base_url($foto_profil); ?>" class="h-full w-full object-cover"
+                                            alt="Foto Profil">
+                                    <?php else: ?>
+                                        <div class="h-full w-full bg-slate-600 flex items-center justify-center">
+                                            <i class="bi bi-person-fill text-white/80"></i>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="text-sm font-bold truncate"><?= htmlspecialchars($username, ENT_QUOTES, 'UTF-8'); ?></div>
+                                    <div class="text-[11px] text-white/60">Akun Saya</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Menu akun -->
+                        <div class="py-1">
+                            <a href="<?= site_url('edit_data/' . $username); ?>"
+                                class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition">
+                                <i class="bi bi-pencil-square text-slate-500"></i>
+                                <span>Edit Data Diri</span>
+                            </a>
+
+                            <a href="<?= site_url('edit_foto/' . $username); ?>"
+                                class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition">
+                                <i class="bi bi-camera text-slate-500"></i>
+                                <span>Edit Foto Profil</span>
+                            </a>
+
+                            <button type="button" onclick="aktifkanNotif()"
+                                class="w-full text-left flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition">
+                                <i class="bi bi-bell text-slate-500"></i>
+                                <span>Aktifkan Notifikasi</span>
+                            </button>
+                        </div>
+
+                        <div class="border-t border-black/5">
+                            <a href="<?= site_url('home/home/logout'); ?>"
+                                class="flex items-center gap-3 px-4 py-2.5 text-red-600 hover:bg-red-50 transition">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span>Logout</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MOBILE: HAMBURGER (hanya navigasi) -->
+                <div class="relative md:hidden">
+                    <button id="mobileMenuBtn"
+                        class="inline-flex items-center justify-center rounded-lg border border-black/10 p-2 hover:bg-slate-100 transition">
+                        <i class="bi bi-list text-xl"></i>
+                    </button>
+
+                    <!-- MOBILE NAV DROPDOWN (overlay di atas konten) -->
+                    <div id="mobileMenu"
+                        class="hidden absolute right-0 mt-2 w-56 rounded-2xl border border-black/10 bg-white/95 backdrop-blur-xl shadow-2xl text-sm overflow-hidden z-50">
+
+                        <nav class="flex flex-col py-2 font-semibold text-slate-700">
+                            <a href="<?= site_url('home/' . $session_id . '/'); ?>"
+                                class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition">
+                                <i class="bi bi-house-door text-base text-slate-500"></i> HOME
+                            </a>
+
+                            <a href="<?= site_url('home/jadwal'); ?>"
+                                class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition">
+                                <i class="bi bi-calendar-week text-base text-slate-500"></i> JADWAL
+                            </a>
+
+                            <a id="pemesananLinkMobile" href="<?= site_url('home/pemesanan'); ?>"
+                                class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition">
+                                <i class="bi bi-journal-text text-base text-slate-500"></i> PEMESANAN
+                                <span id="notifBadgeMobile" data-count="<?= $flag; ?>"
+                                    class="<?= ($flag > 0) ? '' : 'hidden'; ?> ml-auto rounded-full bg-red-500 text-[10px] text-white px-1.5 py-0.5">
+                                    <?= ($flag > 0) ? $flag : ''; ?>
+                                </span>
+                            </a>
+
+                            <a href="<?= site_url('home/view-catering'); ?>"
+                                class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition">
+                                <i class="bi bi-cup-hot text-base text-slate-500"></i> CATERING
+                            </a>
+
+                            <a id="transaksiLinkMobile" href="<?= site_url('home/pembayaran'); ?>"
+                                class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition">
+                                <i class="bi bi-credit-card text-base text-slate-500"></i> TRANSAKSI
+                                <span id="trxBadgeMobile" data-count="<?= $trx_flag; ?>"
+                                    class="<?= ($trx_flag > 0) ? '' : 'hidden'; ?> ml-auto rounded-full bg-red-500 text-[10px] text-white px-1.5 py-0.5">
+                                    <?= ($trx_flag > 0) ? $trx_flag : ''; ?>
+                                </span>
+                            </a>
+                        </nav>
+                    </div>
+                </div>
 
                 <!-- PROFILE (DESKTOP) -->
                 <div class="relative hidden md:block">
                     <button id="profileToggle" type="button"
                         class="profile-toggle flex items-center gap-2 px-3 py-1 rounded-full bg-white hover:bg-slate-100 border border-black/10 transition"
                         aria-expanded="false">
-
-                        <?php $foto_profil = $this->session->userdata('foto_profil'); ?>
 
                         <?php if (!empty($foto_profil)): ?>
                             <img src="<?= base_url($foto_profil); ?>" class="h-7 w-7 rounded-full object-cover"
@@ -134,55 +245,6 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
         </div>
     </div>
 
-    <!-- MOBILE MENU -->
-    <div id="mobileMenu" class="hidden md:hidden border-t border-black/5 bg-white">
-        <nav class="flex flex-col p-4 text-sm font-semibold text-slate-700 gap-3">
-            <a href="<?= site_url('home/' . $session_id . '/'); ?>" class="flex items-center gap-2">
-                <i class="bi bi-house-door"></i> HOME
-            </a>
-
-            <a href="<?= site_url('home/jadwal'); ?>" class="flex items-center gap-2">
-                <i class="bi bi-calendar-week"></i> JADWAL
-            </a>
-
-            <a id="pemesananLinkMobile" href="<?= site_url('home/pemesanan'); ?>" class="flex items-center gap-2">
-                <i class="bi bi-journal-text"></i> PEMESANAN
-                <span id="notifBadgeMobile" data-count="<?= $flag; ?>"
-                    class="<?= ($flag > 0) ? '' : 'hidden'; ?> ml-1 rounded-full bg-red-500 text-[10px] text-white px-1.5 py-0.5">
-                    <?= ($flag > 0) ? $flag : ''; ?>
-                </span>
-            </a>
-
-            <a href="<?= site_url('home/view-catering'); ?>" class="flex items-center gap-2">
-                <i class="bi bi-cup-hot"></i> CATERING
-            </a>
-
-            <a id="transaksiLinkMobile" href="<?= site_url('home/pembayaran'); ?>" class="flex items-center gap-2">
-                <i class="bi bi-credit-card"></i> TRANSAKSI
-                <span id="trxBadgeMobile" data-count="<?= $trx_flag; ?>"
-                    class="<?= ($trx_flag > 0) ? '' : 'hidden'; ?> ml-1 rounded-full bg-red-500 text-[10px] text-white px-1.5 py-0.5">
-                    <?= ($trx_flag > 0) ? $trx_flag : ''; ?>
-                </span>
-            </a>
-
-            <div class="border-t border-black/10 pt-3 mt-2">
-                <div class="text-xs text-slate-500 mb-2">Akun</div>
-
-                <a href="<?= site_url('edit_data/' . $username); ?>" class="flex items-center gap-2">
-                    <i class="bi bi-pencil-square"></i> Edit Data
-                </a>
-
-                <button type="button" onclick="aktifkanNotif()"
-                    class="flex items-center gap-2 text-left w-full hover:text-slate-900">
-                    <i class="bi bi-bell"></i> Aktifkan Notifikasi
-                </button>
-
-                <a href="<?= site_url('home/home/logout'); ?>" class="flex items-center gap-2 text-red-600">
-                    <i class="bi bi-box-arrow-right"></i> Logout
-                </a>
-            </div>
-        </nav>
-    </div>
 </header>
 
 <!-- AUDIO -->
@@ -332,11 +394,67 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
         const mobileBtn = document.getElementById("mobileMenuBtn");
         const mobileMenu = document.getElementById("mobileMenu");
 
+        // ========= MOBILE PROFILE (deklarasi dulu sebelum dipakai) =========
+        const mobileProfileBtn = document.getElementById("mobileProfileBtn");
+        const mobileProfileMenu = document.getElementById("mobileProfileMenu");
+
         if (mobileBtn && mobileMenu) {
-            mobileBtn.addEventListener("click", () => {
+            mobileBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
                 const isOpen = !mobileMenu.classList.contains("hidden");
                 mobileMenu.classList.toggle("hidden");
                 mobileBtn.setAttribute("aria-expanded", String(!isOpen));
+                // Tutup profile dropdown saat buka hamburger
+                if (mobileProfileMenu && !mobileProfileMenu.classList.contains("hidden")) {
+                    mobileProfileMenu.classList.add("hidden");
+                }
+            });
+
+            // Klik di luar → tutup hamburger dropdown
+            document.addEventListener("click", (e) => {
+                if (!mobileMenu.contains(e.target) && !mobileBtn.contains(e.target)) {
+                    mobileMenu.classList.add("hidden");
+                    mobileBtn.setAttribute("aria-expanded", "false");
+                }
+            });
+
+            // ESC → tutup hamburger dropdown
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "Escape") {
+                    mobileMenu.classList.add("hidden");
+                    mobileBtn.setAttribute("aria-expanded", "false");
+                }
+            });
+        }
+
+        // ========= MOBILE PROFILE DROPDOWN TOGGLE =========
+
+        if (mobileProfileBtn && mobileProfileMenu) {
+            mobileProfileBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const isHidden = mobileProfileMenu.classList.contains("hidden");
+                mobileProfileMenu.classList.toggle("hidden");
+                mobileProfileBtn.setAttribute("aria-expanded", String(isHidden));
+                // Tutup hamburger menu saat buka profile
+                if (mobileMenu && !mobileMenu.classList.contains("hidden")) {
+                    mobileMenu.classList.add("hidden");
+                }
+            });
+
+            // Klik di luar → tutup
+            document.addEventListener("click", (e) => {
+                if (!mobileProfileMenu.contains(e.target) && !mobileProfileBtn.contains(e.target)) {
+                    mobileProfileMenu.classList.add("hidden");
+                    mobileProfileBtn.setAttribute("aria-expanded", "false");
+                }
+            });
+
+            // ESC → tutup
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "Escape") {
+                    mobileProfileMenu.classList.add("hidden");
+                    mobileProfileBtn.setAttribute("aria-expanded", "false");
+                }
             });
         }
 

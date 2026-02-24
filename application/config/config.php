@@ -17,7 +17,25 @@ defined('BASEPATH') or exit('No direct script access allowed');
 | environments.
 |
 */
-$config['base_url'] = 'http://localhost/bookingsmarts';
+/**
+ * Dynamic base_url - Auto-detect protocol & host
+ * Agar bisa diakses dari localhost, Ngrok, maupun IP Address
+ */
+if (isset($_SERVER['HTTP_HOST'])) {
+    // Deteksi protocol: cek HTTPS langsung, atau via proxy header (Ngrok)
+    $protocol = 'http://';
+    if (
+        (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ||
+        (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
+    ) {
+        $protocol = 'https://';
+    }
+
+    $config['base_url'] = $protocol . $_SERVER['HTTP_HOST'] . '/bookingsmarts';
+} else {
+    // Fallback untuk CLI (misal: cron job, migration)
+    $config['base_url'] = 'http://localhost/bookingsmarts';
+}
 
 /*
 |--------------------------------------------------------------------------

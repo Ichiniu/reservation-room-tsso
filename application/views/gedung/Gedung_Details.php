@@ -187,7 +187,10 @@ function e($v)
                                     <?php
                                     $path = isset($images['PATH']) ? $images['PATH'] : '';
                                     $img  = isset($images['IMG_NAME']) ? $images['IMG_NAME'] : '';
-                                    $src  = $path . $img;
+                                    $raw_src = $path . $img;
+                                    // Normalisasi: hapus domain lama lalu tambahkan base_url()
+                                    $clean_src = preg_replace('#^https?://[^/]+/bookingsmarts/#i', '', $raw_src);
+                                    $src = base_url($clean_src);
                                     ?>
                                     <div class="min-w-full">
                                         <img src="<?php echo e($src); ?>" alt="Gallery"
