@@ -66,7 +66,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @property CI_Pagination       $pagination
  * @property CI_Cache            $cache
  */
-// Note: #[AllowDynamicProperties] is handled by CI internally for PHP 8.2+
+// Allow dynamic properties for PHP 8.2+ compatibility
+#[AllowDynamicProperties]
 class CI_Controller
 {
 

@@ -69,7 +69,7 @@ class Manage extends CI_Controller
 
 	public function all_export_to_pdf()
 	{
-		$this->load->helper('warsito_pdf_helper');
+		$this->load->helper('pdf_helper');
 		$this->load->model('gedung/gedung_model');
 		$data['row'] = $this->gedung_model->laporan_perawatan_keseluruhan();
 		$object = $this->load->view('manage/pdf_report_all', $data, true);
@@ -96,7 +96,7 @@ class Manage extends CI_Controller
 	public function kegiatan_export_pdf($start_date, $end_date)
 	{
 		$this->load->model('gedung/gedung_model');
-		$this->load->helper('warsito_pdf_helper');
+		$this->load->helper('pdf_helper');
 		$data['start_date'] = $start_date;
 		$data['end_date'] = $end_date;
 		$data['report'] = $this->gedung_model->jadwal_gedung($start_date, $end_date);

@@ -532,8 +532,8 @@ TIME_FORMAT(
 
 	public function get_email_address($username)
 	{
-		$sql = "SELECT EMAIL FROM USER WHERE USERNAME = '$username'";
-		$query = $this->db->query($sql);
+		$sql = "SELECT EMAIL FROM USER WHERE USERNAME = ?";
+		$query = $this->db->query($sql, [$username]);
 		return $query->row();
 	}
 
@@ -682,23 +682,23 @@ TIME_FORMAT(
 
 	public function get_pemesanan($username)
 	{
-		$sql = "SELECT * FROM V_PEMESANAN WHERE USERNAME = '$username'";
-		$query = $this->db->query($sql);
+		$sql = "SELECT * FROM V_PEMESANAN WHERE USERNAME = ?";
+		$query = $this->db->query($sql, [$username]);
 		$hasil = $query->result_array();
 		return $hasil;
 	}
 
 	public function count_pemesanan($username)
 	{
-		$sql = "SELECT * FROM PEMESANAN WHERE USERNAME = '$username'";
-		$query = $this->db->query($sql);
+		$sql = "SELECT * FROM PEMESANAN WHERE USERNAME = ?";
+		$query = $this->db->query($sql, [$username]);
 		return $query->num_rows();
 	}
 
 	public function get_rejected_pemesanan($id_pemesanan)
 	{
-		$sql = "select * from pemesanan where id_pemesanan = $id_pemesanan";
-		$query = $this->db->query($sql);
+		$sql = "SELECT * FROM pemesanan WHERE id_pemesanan = ?";
+		$query = $this->db->query($sql, [(int)$id_pemesanan]);
 		return $query->row();
 	}
 
@@ -796,8 +796,8 @@ TIME_FORMAT(
 
 	public function update_user_flag($id_pemesanan)
 	{
-		$sql = "UPDATE PEMESANAN SET FLAG = 2 WHERE ID_PEMESANAN = $id_pemesanan";
-		$query = $this->db->query($sql);
+		$sql = "UPDATE PEMESANAN SET FLAG = 2 WHERE ID_PEMESANAN = ?";
+		$query = $this->db->query($sql, [(int)$id_pemesanan]);
 		return $query;
 	}
 

@@ -1,4 +1,5 @@
 <?php
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * 
@@ -216,7 +217,7 @@ class Admin_Controls extends CI_Controller
 	public function transaksi_export_pdf($start_date, $end_date)
 	{
 		$this->load->model('gedung/gedung_model');
-		$this->load->helper('warsito_pdf_helper');
+		$this->load->helper('pdf_helper');
 		$data['start_date'] = $start_date;
 		$data['end_date'] = $end_date;
 		$data['report'] = $this->gedung_model->laporan_pembayaran_periodic($start_date, $end_date);
@@ -682,7 +683,7 @@ class Admin_Controls extends CI_Controller
 	public function kegiatan_export_pdf($start_date, $end_date, $id_gedung = null)
 	{
 		$this->load->model('gedung/gedung_model');
-		$this->load->helper('warsito_pdf_helper');
+		$this->load->helper('pdf_helper');
 		$data['start_date'] = $start_date;
 		$data['end_date'] = $end_date;
 		$data['report'] = $this->gedung_model->jadwal_gedung($start_date, $end_date, $id_gedung);

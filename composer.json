@@ -11,9 +11,13 @@
 		"source": "https://github.com/bcit-ci/CodeIgniter"
 	},
 	"require": {
-		"php": ">=5.4"
+		"php": ">=8.0",
+		"dompdf/dompdf": "^3.1"
 	},
 	"require-dev": {
-		"mikey179/vfsStream": "1.1.*"
+		"mikey179/vfsstream": "1.1.*"
+	},
+	"config": {
+		"optimize-autoloader": true
 	}
 }
