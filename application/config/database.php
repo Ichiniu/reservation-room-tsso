@@ -74,23 +74,24 @@ $active_group = 'development';
 $query_builder = TRUE;
 
 $db['development'] = array(
-	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => 'root',
-	'password' => '',
-	'database' => 'bookingsmarts',
-	'dbdriver' => 'mysqli',
-	'dbprefix' => '',
-	'pconnect' => TRUE,
-	'db_debug' => TRUE,
-	'cache_on' => FALSE,
-	'cachedir' => '',
-	'char_set' => 'utf8',
-	'dbcollat' => 'utf8_general_ci',
-	'swap_pre' => '',
-	'encrypt' => FALSE,
-	'compress' => FALSE,
-	'stricton' => FALSE,
-	'failover' => array(),
-	'save_queries' => TRUE
+	'dsn'	   => '',
+	'hostname'  => getenv('DB_HOSTNAME') ?: 'localhost',
+	'username'  => getenv('DB_USERNAME') ?: 'root',
+	'password'  => getenv('DB_PASSWORD') ?: '',
+	'database'  => getenv('DB_DATABASE') ?: 'bookingsmarts',
+	'dbdriver'  => 'mysqli',
+	'dbprefix'  => '',
+	'pconnect'  => TRUE,
+	// Matikan db_debug di production agar error tidak tampil ke user
+	'db_debug'  => (ENVIRONMENT === 'development'),
+	'cache_on'  => FALSE,
+	'cachedir'  => '',
+	'char_set'  => 'utf8',
+	'dbcollat'  => 'utf8_general_ci',
+	'swap_pre'  => '',
+	'encrypt'   => FALSE,
+	'compress'  => FALSE,
+	'stricton'  => FALSE,
+	'failover'  => array(),
+	'save_queries' => (ENVIRONMENT === 'development')
 );

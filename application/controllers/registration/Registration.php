@@ -73,7 +73,7 @@ class Registration extends CI_Controller
 			'perusahaan'      => $perusahaan,
 			'nama_perusahaan' => $nama_perusahaan,
 			'departemen'      => $departemen,
-			'PASSWORD'        => $password,
+			'PASSWORD'        => password_hash((string)$password, PASSWORD_DEFAULT),
 			'EMAIL'           => $email,
 			'ALAMAT'          => $alamat,
 			'NO_TELEPON'      => $no_telepon,

@@ -316,7 +316,7 @@ $config['cache_query_string'] = FALSE;
 | http://codeigniter.com/user_guide/libraries/encryption.html
 |
 */
-$config['encryption_key'] = 'as5f1a5f2da0f5s2faas5d2a5s4fsa5d2a5s25saf54a';
+$config['encryption_key'] = getenv('ENCRYPTION_KEY') ?: 'as5f1a5f2da0f5s2faas5d2a5s4fsa5d2a5s25saf54a';
 
 /*
 |--------------------------------------------------------------------------
@@ -400,9 +400,9 @@ $config['sess_regenerate_destroy'] = FALSE;
 $config['cookie_prefix']    = '';
 $config['cookie_domain']    = '';
 $config['cookie_path']        = '/';
-$config['cookie_secure']    = FALSE;
-$config['cookie_httponly']     = FALSE;
-$config['cookie_samesite']    = 'Lax';
+$config['cookie_secure']	= FALSE; // Set TRUE if using HTTPS
+$config['cookie_httponly'] 	= TRUE;
+$config['cookie_samesite']	= 'Lax';
 
 /*
 |--------------------------------------------------------------------------
