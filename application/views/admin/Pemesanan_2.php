@@ -80,7 +80,7 @@ $this->load->helper('text');
                             <?php $no = 1; ?>
                             <?php foreach ($pemesanan as $row): ?>
                                 <?php
-                                $statusUpper = isset($row['STATUS']) ? strtoupper(trim($row['STATUS'])) : '';
+                                $statusUpper = strtoupper(trim((string)($row['STATUS'] ?? '')));
                                 $badge = 'bg-gray-100 text-gray-700';
 
                                 if ($statusUpper === 'REJECTED') $badge = 'bg-red-100 text-red-700';
@@ -89,16 +89,16 @@ $this->load->helper('text');
                                 else if ($statusUpper === 'SUBMITED') $badge = 'bg-blue-100 text-blue-700';
                                 else if ($statusUpper === 'PROCESS') $badge = 'bg-yellow-100 text-yellow-700';
 
-                                $idPemesanan = isset($row['ID_PEMESANAN']) ? $row['ID_PEMESANAN'] : '-';
-                                $tanggalRaw  = isset($row['TANGGAL_PEMESANAN']) ? $row['TANGGAL_PEMESANAN'] : '';
-                                $namaGedung  = isset($row['NAMA_GEDUNG']) ? $row['NAMA_GEDUNG'] : '-';
-                                $statusText  = isset($row['STATUS']) ? $row['STATUS'] : '-';
-                                $usernameRow = isset($row['USERNAME']) ? $row['USERNAME'] : '-';
+                                $idPemesanan = $row['ID_PEMESANAN'] ?? '-';
+                                $tanggalRaw  = $row['TANGGAL_PEMESANAN'] ?? '';
+                                $namaGedung  = $row['NAMA_GEDUNG'] ?? '-';
+                                $statusText  = $row['STATUS'] ?? '-';
+                                $usernameRow = $row['USERNAME'] ?? '-';
 
                                 $namaLengkap = !empty($row['USER_NAMA_LENGKAP']) ? $row['USER_NAMA_LENGKAP'] : $usernameRow;
                                 $namaPT      = !empty($row['USER_NAMA_PERUSAHAAN']) ? $row['USER_NAMA_PERUSAHAAN'] : '-';
                                 $departemen  = !empty($row['USER_DEPARTEMEN']) ? $row['USER_DEPARTEMEN'] : '';
-                                $jenis       = !empty($row['USER_JENIS']) ? strtoupper(trim($row['USER_JENIS'])) : '';
+                                $jenis       = !empty($row['USER_JENIS']) ? strtoupper(trim((string)$row['USER_JENIS'])) : '';
 
                                 if ($jenis === 'INTERNAL') {
                                     if ($namaPT === '-' || $namaPT === '') $namaPT = 'PT Tiga Serangkai Pustaka Mandiri';

@@ -3,7 +3,10 @@ $username = $this->session->userdata('username');
 
 /* ========= helper escape ========= */
 if (!function_exists('e')) {
-    function e($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
+    function e($v)
+    {
+        return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
+    }
 }
 
 /* ========= Format tanggal Indo: 07 januari 2026 ========= */
@@ -13,10 +16,20 @@ if (!function_exists('formatTanggalIndoLower')) {
         $tgl = trim((string)$tgl);
         if ($tgl === '') return '-';
 
-        $bulan = array(
-            1 => 'januari', 'februari', 'maret', 'april', 'mei', 'juni',
-            'juli', 'agustus', 'september', 'oktober', 'november', 'desember'
-        );
+        $bulan = [
+            1 => 'januari',
+            'februari',
+            'maret',
+            'april',
+            'mei',
+            'juni',
+            'juli',
+            'agustus',
+            'september',
+            'oktober',
+            'november',
+            'desember'
+        ];
 
         $ts = strtotime($tgl);
         if (!$ts) return $tgl;
@@ -25,7 +38,7 @@ if (!function_exists('formatTanggalIndoLower')) {
         $m = (int)date('n', $ts);
         $y = date('Y', $ts);
 
-        return $d . ' ' . (isset($bulan[$m]) ? $bulan[$m] : '') . ' ' . $y;
+        return $d . ' ' . ($bulan[$m] ?? '') . ' ' . $y;
     }
 }
 
@@ -72,10 +85,10 @@ if (!function_exists('title_to_3_lines')) {
         if ($title === '') return '';
 
         if (preg_match('/^(.*?)\s-\s(\d{4}-\d{2}-\d{2})\s*\((.*?)\)\s*$/', $title, $m)) {
-            $nama = trim($m[1]);
+            $nama = trim((string)$m[1]);
             $tgl  = formatTanggalIndoLower($m[2]);
 
-            $jamRaw = trim($m[3]); // "13:00 - 16:00" / "08:00"
+            $jamRaw = trim((string)$m[3]); // "13:00 - 16:00" / "08:00"
             // ubah semua HH:MM jadi HH.MM
             $jamRaw = preg_replace('/\b(\d{2}):(\d{2})\b/', '$1.$2', $jamRaw);
 
@@ -97,9 +110,9 @@ if (!function_exists('title_to_3_lines')) {
 /* ========= Summary (avg & distribusi) ========= */
 $total = 0;
 $avg = 0;
-$dist = array(1=>0,2=>0,3=>0,4=>0,5=>0);
+$dist = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
 
-if (isset($summary) && is_array($summary) && isset($summary['total'], $summary['avg'], $summary['dist'])) {
+if (is_array($summary ?? null) && isset($summary['total'], $summary['avg'], $summary['dist'])) {
     $total = (int)$summary['total'];
     $avg   = (float)$summary['avg'];
     $dist  = $summary['dist'];
@@ -118,7 +131,7 @@ if (isset($summary) && is_array($summary) && isset($summary['total'], $summary['
 $avgRounded = (int)round($avg);
 
 /* ========= Hak tampil form ========= */
-$reservasi_list = (isset($reservasi_list) && is_array($reservasi_list)) ? $reservasi_list : array();
+$reservasi_list = (array)($reservasi_list ?? []);
 $has_login = !empty($username);
 $can_review = $has_login && count($reservasi_list) > 0;
 ?>
@@ -148,29 +161,29 @@ $can_review = $has_login && count($reservasi_list) > 0;
             </div>
 
             <?php if ($can_review): ?>
-            <a href="#tulis-ulasan" class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold
+                <a href="#tulis-ulasan" class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold
                bg-teal-700 text-white hover:bg-teal-800 transition">
-                Tulis Ulasan
-            </a>
+                    Tulis Ulasan
+                </a>
             <?php else: ?>
-            <button type="button" disabled class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold
+                <button type="button" disabled class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold
                     bg-slate-300 text-slate-600 cursor-not-allowed">
-                Tulis Ulasan
-            </button>
+                    Tulis Ulasan
+                </button>
             <?php endif; ?>
         </div>
 
         <!-- Flash message -->
         <?php if ($this->session->flashdata('success')): ?>
-        <div class="mt-4 rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-800">
-            <?= e($this->session->flashdata('success')); ?>
-        </div>
+            <div class="mt-4 rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-800">
+                <?= e($this->session->flashdata('success')); ?>
+            </div>
         <?php endif; ?>
 
         <?php if ($this->session->flashdata('error')): ?>
-        <div class="mt-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
-            <?= e($this->session->flashdata('error')); ?>
-        </div>
+            <div class="mt-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+                <?= e($this->session->flashdata('error')); ?>
+            </div>
         <?php endif; ?>
 
         <!-- Summary -->
@@ -191,17 +204,17 @@ $can_review = $has_login && count($reservasi_list) > 0;
 
                 <div class="mt-4 space-y-2">
                     <?php for ($s = 5; $s >= 1; $s--): ?>
-                    <?php
-                        $count = isset($dist[$s]) ? (int)$dist[$s] : 0;
+                        <?php
+                        $count = (int)($dist[$s] ?? 0);
                         $pct = $total ? round(($count / $total) * 100) : 0;
-                    ?>
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 text-sm text-slate-700 font-medium"><?= (int)$s; ?>★</div>
-                        <div class="flex-1 h-2 rounded-full bg-slate-100 overflow-hidden">
-                            <div class="h-full bg-amber-400" style="width: <?= (int)$pct; ?>%;"></div>
+                        ?>
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 text-sm text-slate-700 font-medium"><?= (int)$s; ?>★</div>
+                            <div class="flex-1 h-2 rounded-full bg-slate-100 overflow-hidden">
+                                <div class="h-full bg-amber-400" style="width: <?= (int)$pct; ?>%;"></div>
+                            </div>
+                            <div class="w-12 text-right text-sm text-slate-600"><?= (int)$pct; ?>%</div>
                         </div>
-                        <div class="w-12 text-right text-sm text-slate-600"><?= (int)$pct; ?>%</div>
-                    </div>
                     <?php endfor; ?>
                 </div>
             </div>
@@ -215,141 +228,141 @@ $can_review = $has_login && count($reservasi_list) > 0;
 
             <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <?php if (!empty($reviews)): ?>
-                <?php foreach ($reviews as $r): ?>
-                <?php
-                        $name = isset($r['name']) ? $r['name'] : '';
-                        $rating = isset($r['rating']) ? (int)$r['rating'] : 0;
+                    <?php foreach ($reviews as $r): ?>
+                        <?php
+                        $name = $r['name'] ?? '';
+                        $rating = (int)($r['rating'] ?? 0);
 
                         // ✅ paksa date tampil indo, walau dari controller masih Y-m-d
-                        $date_raw = isset($r['date']) ? $r['date'] : '';
+                        $date_raw = $r['date'] ?? '';
                         $date_disp = $date_raw ? formatTanggalIndoLower($date_raw) : '-';
 
-                        $title = isset($r['title']) ? $r['title'] : '';
+                        $title = $r['title'] ?? '';
                         $title_3 = title_to_3_lines($title);
 
-                        $comment = isset($r['comment']) ? $r['comment'] : '';
+                        $comment = $r['comment'] ?? '';
                         $inisial = strtoupper(substr((string)$name, 0, 1));
                         if ($inisial === '') $inisial = 'U';
-                    ?>
-                <article class="bg-white rounded-2xl border border-black/10 shadow-sm p-6 hover:shadow-md transition">
-                    <div class="flex items-start justify-between gap-4">
-                        <div class="flex items-center gap-3 min-w-0">
-                            <div
-                                class="h-10 w-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center font-extrabold text-slate-700">
-                                <?= e($inisial); ?>
+                        ?>
+                        <article class="bg-white rounded-2xl border border-black/10 shadow-sm p-6 hover:shadow-md transition">
+                            <div class="flex items-start justify-between gap-4">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <div
+                                        class="h-10 w-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center font-extrabold text-slate-700">
+                                        <?= e($inisial); ?>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="text-sm font-semibold text-slate-900 truncate"><?= e($name); ?></div>
+                                        <div class="text-xs text-slate-500 mt-0.5"><?= e($date_disp); ?></div>
+                                    </div>
+                                </div>
+
+                                <?= stars_html($rating); ?>
                             </div>
-                            <div class="min-w-0">
-                                <div class="text-sm font-semibold text-slate-900 truncate"><?= e($name); ?></div>
-                                <div class="text-xs text-slate-500 mt-0.5"><?= e($date_disp); ?></div>
-                            </div>
-                        </div>
 
-                        <?= stars_html($rating); ?>
-                    </div>
+                            <?php if ($title !== ''): ?>
+                                <div class="mt-3 text-sm font-semibold text-slate-900 whitespace-pre-line">
+                                    <?= e($title_3); ?>
+                                </div>
+                            <?php endif; ?>
 
-                    <?php if ($title !== ''): ?>
-                    <div class="mt-3 text-sm font-semibold text-slate-900 whitespace-pre-line">
-                        <?= e($title_3); ?>
-                    </div>
-                    <?php endif; ?>
-
-                    <p class="mt-2 text-sm text-slate-600 leading-relaxed">
-                        <?= nl2br(e($comment)); ?>
-                    </p>
-                </article>
-                <?php endforeach; ?>
+                            <p class="mt-2 text-sm text-slate-600 leading-relaxed">
+                                <?= nl2br(e($comment)); ?>
+                            </p>
+                        </article>
+                    <?php endforeach; ?>
                 <?php else: ?>
-                <div
-                    class="col-span-full bg-white rounded-2xl border border-black/10 shadow-sm p-6 text-sm text-slate-600">
-                    Belum ada ulasan.
-                </div>
+                    <div
+                        class="col-span-full bg-white rounded-2xl border border-black/10 shadow-sm p-6 text-sm text-slate-600">
+                        Belum ada ulasan.
+                    </div>
                 <?php endif; ?>
             </div>
         </section>
 
         <!-- Info jika tidak bisa mengulas -->
         <?php if (!$has_login): ?>
-        <div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-            Silakan login untuk menulis ulasan.
-        </div>
+            <div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+                Silakan login untuk menulis ulasan.
+            </div>
         <?php elseif (!$can_review): ?>
-        <div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-            Tidak ada pemesanan dengan status <b>submitted</b> yang bisa diulas (atau sudah diulas semua).
-        </div>
+            <div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+                Tidak ada pemesanan dengan status <b>submitted</b> yang bisa diulas (atau sudah diulas semua).
+            </div>
         <?php endif; ?>
 
         <!-- Form -->
         <?php if ($can_review): ?>
-        <section id="tulis-ulasan" class="mt-8">
-            <div class="bg-white rounded-2xl border border-black/10 shadow-sm p-6">
-                <div class="text-lg font-bold text-slate-900">Tulis Ulasan</div>
-                <p class="mt-1 text-sm text-slate-600">Pilih pemesananmu, lalu beri rating dan komentar.</p>
+            <section id="tulis-ulasan" class="mt-8">
+                <div class="bg-white rounded-2xl border border-black/10 shadow-sm p-6">
+                    <div class="text-lg font-bold text-slate-900">Tulis Ulasan</div>
+                    <p class="mt-1 text-sm text-slate-600">Pilih pemesananmu, lalu beri rating dan komentar.</p>
 
-                <form method="post" action="<?= site_url('home/submit_ulasan'); ?>" class="mt-5 space-y-4">
+                    <form method="post" action="<?= site_url('home/submit_ulasan'); ?>" class="mt-5 space-y-4">
 
-                    <div>
-                        <label class="text-sm font-semibold text-slate-900">Rating</label>
-                        <input type="hidden" name="rating" id="ratingInput" value="5">
+                        <div>
+                            <label class="text-sm font-semibold text-slate-900">Rating</label>
+                            <input type="hidden" name="rating" id="ratingInput" value="5">
 
-                        <div class="mt-2 flex items-center gap-1" id="starPicker">
-                            <?php for ($i = 1; $i <= 5; $i++): ?>
-                            <button type="button"
-                                class="star-btn h-9 w-9 rounded-lg hover:bg-slate-100 flex items-center justify-center"
-                                data-value="<?= (int)$i; ?>" aria-label="<?= (int)$i; ?> bintang">
-                                <span
-                                    class="material-icons text-xl leading-none <?= ($i <= 5 ? 'text-amber-500' : 'text-slate-300'); ?>">star</span>
-                            </button>
-                            <?php endfor; ?>
-                            <span class="ml-2 text-sm text-slate-600" id="ratingLabel">5/5</span>
+                            <div class="mt-2 flex items-center gap-1" id="starPicker">
+                                <?php for ($i = 1; $i <= 5; $i++): ?>
+                                    <button type="button"
+                                        class="star-btn h-9 w-9 rounded-lg hover:bg-slate-100 flex items-center justify-center"
+                                        data-value="<?= (int)$i; ?>" aria-label="<?= (int)$i; ?> bintang">
+                                        <span
+                                            class="material-icons text-xl leading-none <?= ($i <= 5 ? 'text-amber-500' : 'text-slate-300'); ?>">star</span>
+                                    </button>
+                                <?php endfor; ?>
+                                <span class="ml-2 text-sm text-slate-600" id="ratingLabel">5/5</span>
+                            </div>
                         </div>
-                    </div>
 
-                    <div>
-                        <label class="text-sm font-semibold text-slate-900">Pemesanan</label>
+                        <div>
+                            <label class="text-sm font-semibold text-slate-900">Pemesanan</label>
 
-                        <select id="selectPemesanan" name="id_pemesanan" required
-                            class="mt-2 w-full rounded-xl border border-black/10 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-200">
-                            <option value="">-- Pilih Pemesanan --</option>
+                            <select id="selectPemesanan" name="id_pemesanan" required
+                                class="mt-2 w-full rounded-xl border border-black/10 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-200">
+                                <option value="">-- Pilih Pemesanan --</option>
 
-                            <?php foreach ($reservasi_list as $row): ?>
-                            <?php
+                                <?php foreach ($reservasi_list as $row): ?>
+                                    <?php
                                     // option: 1 baris
-                                    $label_one = isset($row['label']) ? $row['label'] : '';
+                                    $label_one = $row['label'] ?? '';
 
                                     // preview: 3 baris (controller sebaiknya kirim "label_3_lines")
-                                    $label_3 = isset($row['label_3_lines']) ? $row['label_3_lines'] : $label_one;
-                                ?>
-                            <option value="<?= (int)$row['ID_PEMESANAN']; ?>" data-preview="<?= e($label_3); ?>">
-                                <?= e($label_one); ?>
-                            </option>
-                            <?php endforeach; ?>
-                        </select>
+                                    $label_3 = $row['label_3_lines'] ?? $label_one;
+                                    ?>
+                                    <option value="<?= (int)($row['ID_PEMESANAN'] ?? 0); ?>" data-preview="<?= e($label_3); ?>">
+                                        <?= e($label_one); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
 
-                        <!-- Preview 3 baris -->
-                        <div id="pemesananPreview"
-                            class="mt-3 rounded-xl border border-black/10 bg-slate-50 px-4 py-3 text-sm text-slate-700 whitespace-pre-line">
-                            Pilih pemesanan untuk melihat detail.
+                            <!-- Preview 3 baris -->
+                            <div id="pemesananPreview"
+                                class="mt-3 rounded-xl border border-black/10 bg-slate-50 px-4 py-3 text-sm text-slate-700 whitespace-pre-line">
+                                Pilih pemesanan untuk melihat detail.
+                            </div>
                         </div>
-                    </div>
 
-                    <div>
-                        <label class="text-sm font-semibold text-slate-900">Komentar</label>
-                        <textarea name="comment" rows="4" required
-                            class="mt-2 w-full rounded-xl border border-black/10 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-200"
-                            placeholder="Ceritakan pengalamanmu..."></textarea>
-                    </div>
+                        <div>
+                            <label class="text-sm font-semibold text-slate-900">Komentar</label>
+                            <textarea name="comment" rows="4" required
+                                class="mt-2 w-full rounded-xl border border-black/10 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-teal-200"
+                                placeholder="Ceritakan pengalamanmu..."></textarea>
+                        </div>
 
-                    <button type="submit" class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold
+                        <button type="submit" class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold
                             bg-teal-700 text-white hover:bg-teal-800 transition">
-                        Kirim Ulasan
-                    </button>
+                            Kirim Ulasan
+                        </button>
 
-                    <p class="text-xs text-slate-500">
-                        Catatan: Ulasan dapat ditinjau terlebih dahulu sebelum submit
-                    </p>
-                </form>
-            </div>
-        </section>
+                        <p class="text-xs text-slate-500">
+                            Catatan: Ulasan dapat ditinjau terlebih dahulu sebelum submit
+                        </p>
+                    </form>
+                </div>
+            </section>
         <?php endif; ?>
 
     </main>
@@ -357,59 +370,59 @@ $can_review = $has_login && count($reservasi_list) > 0;
     <?php $this->load->view('components/footer'); ?>
 
     <script>
-    /* ===== Rating Picker (Material Icons) ===== */
-    (function() {
-        var ratingInput = document.getElementById('ratingInput');
-        var ratingLabel = document.getElementById('ratingLabel');
-        var buttons = document.getElementsByClassName('star-btn');
+        /* ===== Rating Picker (Material Icons) ===== */
+        (function() {
+            var ratingInput = document.getElementById('ratingInput');
+            var ratingLabel = document.getElementById('ratingLabel');
+            var buttons = document.getElementsByClassName('star-btn');
 
-        function setRating(val) {
-            if (!ratingInput || !ratingLabel || !buttons) return;
+            function setRating(val) {
+                if (!ratingInput || !ratingLabel || !buttons) return;
 
-            ratingInput.value = val;
-            ratingLabel.textContent = val + "/5";
+                ratingInput.value = val;
+                ratingLabel.textContent = val + "/5";
 
-            for (var i = 0; i < buttons.length; i++) {
-                var icon = buttons[i].getElementsByTagName('span')[0];
-                if (!icon) continue;
+                for (var i = 0; i < buttons.length; i++) {
+                    var icon = buttons[i].getElementsByTagName('span')[0];
+                    if (!icon) continue;
 
-                var filled = (i + 1) <= val;
-                icon.textContent = filled ? 'star' : 'star_border';
+                    var filled = (i + 1) <= val;
+                    icon.textContent = filled ? 'star' : 'star_border';
 
-                // reset class
-                icon.className = 'material-icons text-xl leading-none ' + (filled ? 'text-amber-500' :
-                    'text-slate-300');
+                    // reset class
+                    icon.className = 'material-icons text-xl leading-none ' + (filled ? 'text-amber-500' :
+                        'text-slate-300');
+                }
             }
-        }
 
-        if (buttons && buttons.length) {
-            for (var j = 0; j < buttons.length; j++) {
-                (function(idx) {
-                    buttons[idx].addEventListener('click', function() {
-                        var v = parseInt(this.getAttribute('data-value'), 10);
-                        setRating(v);
-                    });
-                })(j);
+            if (buttons && buttons.length) {
+                for (var j = 0; j < buttons.length; j++) {
+                    (function(idx) {
+                        buttons[idx].addEventListener('click', function() {
+                            var v = parseInt(this.getAttribute('data-value'), 10);
+                            setRating(v);
+                        });
+                    })(j);
+                }
+                setRating(5);
             }
-            setRating(5);
-        }
-    })();
+        })();
 
-    /* ===== Preview 3 baris dropdown pemesanan ===== */
-    (function() {
-        var sel = document.getElementById('selectPemesanan');
-        var box = document.getElementById('pemesananPreview');
-        if (!sel || !box) return;
+        /* ===== Preview 3 baris dropdown pemesanan ===== */
+        (function() {
+            var sel = document.getElementById('selectPemesanan');
+            var box = document.getElementById('pemesananPreview');
+            if (!sel || !box) return;
 
-        function update() {
-            var opt = sel.options[sel.selectedIndex];
-            var pv = opt ? (opt.getAttribute('data-preview') || '') : '';
-            box.textContent = pv ? pv : 'Pilih pemesanan untuk melihat detail.';
-        }
+            function update() {
+                var opt = sel.options[sel.selectedIndex];
+                var pv = opt ? (opt.getAttribute('data-preview') || '') : '';
+                box.textContent = pv ? pv : 'Pilih pemesanan untuk melihat detail.';
+            }
 
-        sel.addEventListener('change', update);
-        update();
-    })();
+            sel.addEventListener('change', update);
+            update();
+        })();
     </script>
 
 </body>

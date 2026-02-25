@@ -1,9 +1,9 @@
 <?php
 $this->load->helper('form');
 
-$u = (isset($user) && is_array($user)) ? $user : array();
-$username = isset($u['USERNAME']) ? $u['USERNAME'] : '';
-$foto     = isset($u['FOTO_PROFIL']) ? $u['FOTO_PROFIL'] : '';
+$u = (isset($user) && is_array($user)) ? $user : [];
+$username = $u['USERNAME'] ?? '';
+$foto     = $u['FOTO_PROFIL'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -108,11 +108,11 @@ $foto     = isset($u['FOTO_PROFIL']) ? $u['FOTO_PROFIL'] : '';
                     <div class="flex items-center gap-4">
                         <div class="h-28 w-28 rounded-full border bg-slate-100 overflow-hidden">
                             <img id="previewCircle"
-                                src="<?= !empty($foto) ? base_url($foto) : '' ?>"
-                                class="<?= !empty($foto) ? 'h-full w-full object-cover' : 'hidden' ?>"
+                                src="<?= (($foto ?? '') !== '') ? base_url($foto) : '' ?>"
+                                class="<?= (($foto ?? '') !== '') ? 'h-full w-full object-cover' : 'hidden' ?>"
                                 alt="Preview Bulat">
                             <div id="previewPlaceholder"
-                                class="<?= !empty($foto) ? 'hidden' : '' ?> h-full w-full flex items-center justify-center text-slate-500 text-sm">
+                                class="<?= (($foto ?? '') !== '') ? 'hidden' : '' ?> h-full w-full flex items-center justify-center text-slate-500 text-sm">
                                 No Preview
                             </div>
                         </div>

@@ -73,17 +73,17 @@ function pick_label($pick)
                     <?php if (!empty($res) && is_array($res)): ?>
                         <?php foreach ($res as $row): ?>
                             <?php
-                            $nama = (isset($row['NAMA_PAKET']) && $row['NAMA_PAKET'] !== '') ? $row['NAMA_PAKET'] : 'Paket Catering';
-                            $harga = isset($row['HARGA']) ? (int)$row['HARGA'] : 0;
+                            $nama = ($row['NAMA_PAKET'] ?? '') !== '' ? $row['NAMA_PAKET'] : 'Paket Catering';
+                            $harga = (int)($row['HARGA'] ?? 0);
 
-                            $menu = array();
+                            $menu = [];
                             if (!empty($row['MENU_JSON'])) {
                                 $tmp = json_decode($row['MENU_JSON'], true);
                                 if (is_array($tmp)) $menu = $tmp;
                             }
 
                             // badge kecil biar keliatan "kaya"
-                            $hasCategories = (isset($menu['categories']) && is_array($menu['categories']) && !empty($menu['categories']));
+                            $hasCategories = !empty($menu['categories'] ?? null);
                             ?>
 
                             <article
@@ -137,10 +137,10 @@ function pick_label($pick)
 
                                             <?php foreach ($menu['categories'] as $cat): ?>
                                                 <?php
-                                                $label = isset($cat['label']) ? $cat['label'] : '-';
-                                                $pick  = isset($cat['pick']) ? (int)$cat['pick'] : 0;
-                                                $note  = isset($cat['note']) ? $cat['note'] : '';
-                                                $items = (isset($cat['items']) && is_array($cat['items'])) ? $cat['items'] : array();
+                                                $label = $cat['label'] ?? '-';
+                                                $pick  = (int)($cat['pick'] ?? 0);
+                                                $note  = $cat['note'] ?? '';
+                                                $items = $cat['items'] ?? [];
 
                                                 $rule = pick_label($pick);
                                                 ?>
@@ -223,7 +223,7 @@ function pick_label($pick)
                                 </div>
                                 <h4 class="mt-4 text-lg font-bold text-slate-900">Untuk sementara catering belum tersedia</h4>
                                 <p class="mt-2 text-sm text-slate-600">Apabila menghendaki layanan catering, bisa hubungi nomor berikut:</p>
-                                <?php $phone = isset($catering_phone) ? $catering_phone : '089649261851'; ?>
+                                <?php $phone = $catering_phone ?? '089649261851'; ?>
                                 <a href="https://wa.me/62<?= preg_replace('/^0/', '', $phone) ?>" target="_blank"
                                     class="inline-flex items-center gap-2 mt-4 px-5 py-3 bg-green-50 text-green-700 rounded-2xl border border-green-200 font-semibold text-sm hover:bg-green-100 transition">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">

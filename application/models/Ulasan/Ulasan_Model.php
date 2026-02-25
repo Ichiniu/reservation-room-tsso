@@ -65,7 +65,7 @@ class Ulasan_model extends CI_Model
     public function get_reviewed_titles_by_username($username)
     {
         $username = trim((string)$username);
-        if ($username === '') return array();
+        if ($username === '') return [];
 
         $rows = $this->db->select('TITLE')
             ->from('ulasan')
@@ -73,7 +73,7 @@ class Ulasan_model extends CI_Model
             ->get()
             ->result_array();
 
-        $out = array();
+        $out = [];
         foreach ($rows as $r) {
             if (!empty($r['TITLE'])) $out[] = $r['TITLE'];
         }
@@ -85,10 +85,10 @@ class Ulasan_model extends CI_Model
      */
     public function get_reviewed_id_pemesanan_by_username($username)
     {
-        if (!$this->ulasan_has_id_pemesanan()) return array();
+        if (!$this->ulasan_has_id_pemesanan()) return [];
 
         $username = trim((string)$username);
-        if ($username === '') return array();
+        if ($username === '') return [];
 
         $rows = $this->db->select('ID_PEMESANAN')
             ->from('ulasan')
@@ -96,7 +96,7 @@ class Ulasan_model extends CI_Model
             ->get()
             ->result_array();
 
-        $out = array();
+        $out = [];
         foreach ($rows as $r) {
             $out[] = (int)$r['ID_PEMESANAN'];
         }
@@ -116,17 +116,17 @@ class Ulasan_model extends CI_Model
             ->get('ulasan')
             ->result_array();
 
-        $dist = array(1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0);
+        $dist = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
         foreach ($q2 as $row) {
             $r = (int)$row['RATING'];
             $dist[$r] = (int)$row['cnt'];
         }
 
-        return array(
+        return [
             'total' => (int)$q1['total'],
             'avg' => ($q1['avg_rating'] ? round((float)$q1['avg_rating'], 1) : 0),
             'dist' => $dist
-        );
+        ];
     }
     public function exists_by_username($username)
     {

@@ -7,8 +7,8 @@ function h($str)
     return htmlspecialchars((string)$str, ENT_QUOTES, 'UTF-8');
 }
 
-$c = (isset($catering) && is_array($catering)) ? $catering : array();
-$is_edit = (isset($c['ID_CATERING']) && $c['ID_CATERING'] !== '' && $c['ID_CATERING'] !== null);
+$c = ($catering ?? []);
+$is_edit = (!empty($c['ID_CATERING']));
 
 // action URL: create -> admin/add_catering | edit -> admin/tambah_catering/{id}
 $action_url = $is_edit
@@ -16,23 +16,23 @@ $action_url = $is_edit
     : site_url('admin/add_catering');
 
 // nilai form
-$val_nama  = $is_edit ? (isset($c['NAMA_PAKET']) ? $c['NAMA_PAKET'] : '') : set_value('nama_paket');
-$val_harga = $is_edit ? (isset($c['HARGA']) ? $c['HARGA'] : '') : set_value('harga');
-$val_jenis = $is_edit ? (isset($c['JENIS']) ? $c['JENIS'] : 'PAKET_RASA') : set_value('jenis');
-$val_minpax = $is_edit ? (isset($c['MIN_PAX']) ? $c['MIN_PAX'] : 1) : set_value('min_pax', 1);
+$val_nama  = $is_edit ? ($c['NAMA_PAKET'] ?? '') : set_value('nama_paket');
+$val_harga = $is_edit ? ($c['HARGA'] ?? '') : set_value('harga');
+$val_jenis = $is_edit ? ($c['JENIS'] ?? 'PAKET_RASA') : set_value('jenis');
+$val_minpax = $is_edit ? ($c['MIN_PAX'] ?? 1) : set_value('min_pax', 1);
 
 // MENU_JSON awal
 $val_menu_json = '';
 if ($is_edit) {
-    $val_menu_json = isset($c['MENU_JSON']) ? $c['MENU_JSON'] : '';
+    $val_menu_json = $c['MENU_JSON'] ?? '';
 } else {
     // jika controller ngirim default template, pakai itu. kalau tidak, kosong.
-    $default_tpl = isset($menu_json_template) ? $menu_json_template : '';
+    $default_tpl = $menu_json_template ?? '';
     $val_menu_json = set_value('menu_json', $default_tpl);
 }
 
 // templates list untuk tombol (dari controller)
-$tpls = isset($menu_json_templates) && is_array($menu_json_templates) ? $menu_json_templates : array();
+$tpls = $menu_json_templates ?? [];
 ?>
 <!DOCTYPE html>
 <html lang="en">

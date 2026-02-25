@@ -71,15 +71,15 @@ $this->load->helper('pricing');
 
                                 <td class="px-4 py-3 font-semibold">
                                     <?php
-                                    $pm = bs_detect_pricing_mode($row['NAMA_GEDUNG'], isset($row['PRICING_MODE']) ? $row['PRICING_MODE'] : '');
+                                    $pm = bs_detect_pricing_mode($row['NAMA_GEDUNG'], $row['PRICING_MODE'] ?? '');
                                     if ($pm === 'PER_PESERTA') {
-                                        $half = isset($row['HARGA_HALF_DAY_PP']) ? (int)$row['HARGA_HALF_DAY_PP'] : 30000;
-                                        $full = isset($row['HARGA_FULL_DAY_PP']) ? (int)$row['HARGA_FULL_DAY_PP'] : 60000;
+                                        $half = (int)($row['HARGA_HALF_DAY_PP'] ?? 30000);
+                                        $full = (int)($row['HARGA_FULL_DAY_PP'] ?? 60000);
                                         echo '<div class="text-xs text-slate-500">Halfday</div><div>Rp ' . number_format($half, 0, ',', '.') . ' /org</div>';
                                         echo '<div class="mt-1 text-xs text-slate-500">Fullday</div><div>Rp ' . number_format($full, 0, ',', '.') . ' /org</div>';
                                     } elseif ($pm === 'PODCAST_PER_JAM') {
-                                        $audio = isset($row['HARGA_AUDIO_PER_JAM']) ? (int)$row['HARGA_AUDIO_PER_JAM'] : 150000;
-                                        $video = isset($row['HARGA_VIDEO_PER_JAM']) ? (int)$row['HARGA_VIDEO_PER_JAM'] : 200000;
+                                        $audio = (int)($row['HARGA_AUDIO_PER_JAM'] ?? 150000);
+                                        $video = (int)($row['HARGA_VIDEO_PER_JAM'] ?? 200000);
                                         echo '<div class="text-xs text-slate-500">Audio</div><div>Rp ' . number_format($audio, 0, ',', '.') . ' /jam</div>';
                                         echo '<div class="mt-1 text-xs text-slate-500">Video</div><div>Rp ' . number_format($video, 0, ',', '.') . ' /jam</div>';
                                     } else {

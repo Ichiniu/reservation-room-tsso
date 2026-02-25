@@ -7,46 +7,42 @@ $id_gedung = $this->uri->segment(3);
 /** =============================
  * TOTAL (PAJAK DIHILANGKAN)
  * ============================= */
-$total_tagihan = isset($result->TOTAL_KESELURUHUHAN)
-    ? (int)$result->TOTAL_KESELURUHUHAN
-    : (isset($result->TOTAL_KESELURUHAN) ? (int)$result->TOTAL_KESELURUHAN : 0);
+$total_tagihan = (int)($result->TOTAL_KESELURUHUHAN ?? $result->TOTAL_KESELURUHAN ?? 0);
 
 /** =============================
  * INFO USER & PROPOSAL
  * ============================= */
-$display_username = !empty($user_username) ? $user_username : $session_id;
-$display_email    = !empty($user_email) ? $user_email : (isset($result->EMAIL) ? $result->EMAIL : '-');
+$display_username = ($user_username ?? '') !== '' ? $user_username : $session_id;
+$display_email    = ($user_email ?? '') !== '' ? $user_email : ($result->EMAIL ?? '-');
 
-$proposal_obj       = isset($proposal_details) ? $proposal_details : null;
-$deskripsi_acara    = ($proposal_obj && !empty($proposal_obj->DESKRIPSI_ACARA)) ? $proposal_obj->DESKRIPSI_ACARA : '-';
-$proposal_file_name = ($proposal_obj && !empty($proposal_obj->FILE_NAME)) ? $proposal_obj->FILE_NAME : '';
+$proposal_obj       = $proposal_details ?? null;
+$deskripsi_acara    = (($proposal_obj->DESKRIPSI_ACARA ?? '') !== '') ? $proposal_obj->DESKRIPSI_ACARA : '-';
+$proposal_file_name = ($proposal_obj->FILE_NAME ?? '') !== '' ? $proposal_obj->FILE_NAME : '';
 $proposal_file_url  = $proposal_file_name ? base_url('assets/user-proposal/' . $proposal_file_name) : '';
 
 /** =============================
  * STATUS
  * ============================= */
-$temp_id = isset($result->ID_PEMESANAN) ? substr($result->ID_PEMESANAN, 7) : '';
+$temp_id = isset($result->ID_PEMESANAN) ? substr((string)$result->ID_PEMESANAN, 7) : '';
 
-$statusText = isset($result->STATUS)
-    ? strtoupper(trim(preg_replace('/\s+/', ' ', $result->STATUS)))
-    : 'UNKNOWN';
+$statusText = strtoupper(trim(preg_replace('/\s+/', ' ', (string)($result->STATUS ?? 'UNKNOWN'))));
 
-$map = array(
+$map = [
     'PROCESS' => 0,
     'APPROVE' => 1,
     'APPROVE & PAID' => 2,
     'SUBMITED' => 3,
     'REJECTED' => 4,
-);
-$statusCode = isset($map[$statusText]) ? $map[$statusText] : 0;
+];
+$statusCode = $map[$statusText] ?? 0;
 
-$statusDisplay = isset($result->STATUS) ? $result->STATUS : '-';
-$idDisplay     = isset($result->ID_PEMESANAN) ? $result->ID_PEMESANAN : '';
+$statusDisplay = $result->STATUS ?? '-';
+$idDisplay     = $result->ID_PEMESANAN ?? '';
 
 /** =============================
  * REMARKS (CATATAN ADMIN)
  * ============================= */
-$remarksDisplay = isset($result->REMARKS) ? $result->REMARKS : '';
+$remarksDisplay = $result->REMARKS ?? '';
 $remarksSafe    = trim((string)$remarksDisplay);
 $isShowRemarks  = ($statusText === 'SUBMITED' || $statusText === 'REJECTED');
 
@@ -76,21 +72,21 @@ if ($statusText === 'PROCESS') {
 /** =============================
  * DISPLAY (AMAN)
  * ============================= */
-$nama_gedung  = isset($result->NAMA_GEDUNG) ? $result->NAMA_GEDUNG : '-';
-$nama_paket   = isset($result->NAMA_PAKET) ? trim((string)$result->NAMA_PAKET) : '';
-$jumlah_cat   = isset($result->JUMLAH_CATERING) ? (string)$result->JUMLAH_CATERING : '';
+$nama_gedung  = $result->NAMA_GEDUNG ?? '-';
+$nama_paket   = trim((string)($result->NAMA_PAKET ?? ''));
+$jumlah_cat   = (string)($result->JUMLAH_CATERING ?? '');
 
 $nama_paket_display = ($nama_paket !== '' && strtoupper($nama_paket) !== '0') ? $nama_paket : 'Tidak Ada';
 $jumlah_cat_display = ($jumlah_cat !== '' && $jumlah_cat !== '0') ? $jumlah_cat : 'Tidak Ada';
 
-$harga_sewa  = isset($result->HARGA_SEWA) ? (int)$result->HARGA_SEWA : 0;
-$total_harga = isset($result->TOTAL_HARGA) ? (int)$result->TOTAL_HARGA : 0;
+$harga_sewa  = (int)($result->HARGA_SEWA ?? 0);
+$total_harga = (int)($result->TOTAL_HARGA ?? 0);
 
-$tgl_pemesanan_raw = isset($result->TANGGAL_PEMESANAN) ? $result->TANGGAL_PEMESANAN : '';
-$tgl_pemesanan_fmt = $tgl_pemesanan_raw ? date('d F Y', strtotime($tgl_pemesanan_raw)) : '-';
+$tgl_pemesanan_raw = $result->TANGGAL_PEMESANAN ?? '';
+$tgl_pemesanan_fmt = (($tgl_pemesanan_raw ?? '') !== '') ? date('d F Y', strtotime($tgl_pemesanan_raw)) : '-';
 
-$jam_mulai   = !empty($result->JAM_PEMESANAN) ? date('H:i', strtotime($result->JAM_PEMESANAN)) : '';
-$jam_selesai = !empty($result->JAM_SELESAI) ? date('H:i', strtotime($result->JAM_SELESAI)) : '';
+$jam_mulai   = (($result->JAM_PEMESANAN ?? '') !== '') ? date('H:i', strtotime($result->JAM_PEMESANAN)) : '';
+$jam_selesai = (($result->JAM_SELESAI ?? '') !== '') ? date('H:i', strtotime($result->JAM_SELESAI)) : '';
 $jam_fmt     = ($jam_mulai && $jam_selesai) ? ($jam_mulai . ' - ' . $jam_selesai . ' WIB') : '-';
 
 function e($v)
@@ -155,26 +151,26 @@ function e($v)
 
                     <!-- CATATAN ADMIN -->
                     <?php if ($isShowRemarks): ?>
-                    <?php
+                        <?php
                         $remarkBoxClass = ($statusText === 'REJECTED') ? 'border-rose-200 bg-rose-50/80' : 'border-indigo-200 bg-indigo-50/80';
                         $remarkTitleClass = ($statusText === 'REJECTED') ? 'text-rose-800' : 'text-indigo-800';
                         $remarkIcon = ($statusText === 'REJECTED') ? 'report' : 'info';
                         ?>
-                    <div class="mt-5 rounded-2xl border p-4 text-sm <?php echo $remarkBoxClass; ?>">
-                        <div class="flex items-start gap-2">
-                            <span
-                                class="material-icons text-[18px] <?php echo $remarkTitleClass; ?>"><?php echo $remarkIcon; ?></span>
-                            <div>
-                                <div class="font-semibold <?php echo $remarkTitleClass; ?>">Catatan Admin</div>
-                                <?php if ($remarksSafe !== ''): ?>
-                                <div class="mt-1 text-slate-800 whitespace-pre-line"><?php echo e($remarksSafe); ?>
+                        <div class="mt-5 rounded-2xl border p-4 text-sm <?php echo $remarkBoxClass; ?>">
+                            <div class="flex items-start gap-2">
+                                <span
+                                    class="material-icons text-[18px] <?php echo $remarkTitleClass; ?>"><?php echo $remarkIcon; ?></span>
+                                <div>
+                                    <div class="font-semibold <?php echo $remarkTitleClass; ?>">Catatan Admin</div>
+                                    <?php if ($remarksSafe !== ''): ?>
+                                        <div class="mt-1 text-slate-800 whitespace-pre-line"><?php echo e($remarksSafe); ?>
+                                        </div>
+                                    <?php else: ?>
+                                        <div class="mt-1 text-slate-500">Tidak ada catatan admin.</div>
+                                    <?php endif; ?>
                                 </div>
-                                <?php else: ?>
-                                <div class="mt-1 text-slate-500">Tidak ada catatan admin.</div>
-                                <?php endif; ?>
                             </div>
                         </div>
-                    </div>
                     <?php endif; ?>
 
                     <!-- GRID SUMMARY (mini cards) -->
@@ -236,28 +232,28 @@ function e($v)
                                     </tr>
 
                                     <?php if (isset($result->PRICING_MODE) && $result->PRICING_MODE === 'PER_PESERTA'): ?>
-                                    <tr>
-                                        <td class="px-5 py-3 font-semibold text-slate-700">Total Peserta</td>
-                                        <td class="px-5 py-3 text-slate-800">
-                                            <?php echo isset($result->TOTAL_PESERTA) ? (int)$result->TOTAL_PESERTA : 0; ?>
-                                            orang</td>
-                                    </tr>
+                                        <tr>
+                                            <td class="px-5 py-3 font-semibold text-slate-700">Total Peserta</td>
+                                            <td class="px-5 py-3 text-slate-800">
+                                                <?php echo (int)($result->TOTAL_PESERTA ?? 0); ?>
+                                                orang</td>
+                                        </tr>
                                     <?php elseif (isset($result->PRICING_MODE) && $result->PRICING_MODE === 'PODCAST_PER_JAM'): ?>
-                                    <tr>
-                                        <td class="px-5 py-3 font-semibold text-slate-700">Jenis Podcast</td>
-                                        <td class="px-5 py-3 text-slate-800">
-                                            <?php
-                                                $pt = isset($result->PODCAST_TYPE) ? strtoupper(trim((string)$result->PODCAST_TYPE)) : '';
+                                        <tr>
+                                            <td class="px-5 py-3 font-semibold text-slate-700">Jenis Podcast</td>
+                                            <td class="px-5 py-3 text-slate-800">
+                                                <?php
+                                                $pt = strtoupper(trim((string)($result->PODCAST_TYPE ?? '')));
                                                 echo ($pt === 'VIDEO') ? 'Video Streaming' : 'Audio Podcast';
                                                 ?>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-5 py-3 font-semibold text-slate-700">Durasi</td>
-                                        <td class="px-5 py-3 text-slate-800">
-                                            <?php echo isset($result->DURASI_JAM) ? (int)$result->DURASI_JAM : 0; ?> jam
-                                        </td>
-                                    </tr>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-5 py-3 font-semibold text-slate-700">Durasi</td>
+                                            <td class="px-5 py-3 text-slate-800">
+                                                <?php echo (int)($result->DURASI_JAM ?? 0); ?> jam
+                                            </td>
+                                        </tr>
                                     <?php endif; ?>
 
                                     <tr>
@@ -309,21 +305,21 @@ function e($v)
 
                         <div class="flex flex-col sm:flex-row gap-3 sm:justify-end">
                             <?php if ($statusCode !== 2 && $statusCode !== 3 && $statusCode !== 4): ?>
-                            <a href="<?php echo site_url('home/cancel-order/' . $temp_id); ?>"
-                                onclick="return dialog();" class="inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2 text-white
+                                <a href="<?php echo site_url('home/cancel-order/' . $temp_id); ?>"
+                                    onclick="return dialog();" class="inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2 text-white
                                           bg-rose-600 hover:bg-rose-700 active:scale-[0.99] transition shadow-md">
-                                <span class="material-icons text-[18px]">cancel</span>
-                                Batalkan Pesanan
-                            </a>
+                                    <span class="material-icons text-[18px]">cancel</span>
+                                    Batalkan Pesanan
+                                </a>
                             <?php endif; ?>
 
                             <?php if ($statusText === 'APPROVE'): ?>
-                            <button type="button" onclick="openModal()"
-                                class="inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-2 text-white
+                                <button type="button" onclick="openModal()"
+                                    class="inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-2 text-white
                                                bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] transition shadow-md">
-                                <span class="material-icons text-[18px]">payments</span>
-                                Bayar
-                            </button>
+                                    <span class="material-icons text-[18px]">payments</span>
+                                    Bayar
+                                </button>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -333,18 +329,18 @@ function e($v)
 
             <!-- FOOTNOTE (proposal optional) -->
             <?php if ($proposal_file_url): ?>
-            <div
-                class="mt-4 rounded-2xl border border-slate-200 bg-white/70 backdrop-blur p-4 text-sm text-slate-700 flex items-center justify-between gap-3">
-                <div class="flex items-center gap-2">
-                    <span class="material-icons text-[18px] text-slate-500">attach_file</span>
-                    <span>Proposal: <span class="font-semibold"><?php echo e($proposal_file_name); ?></span></span>
+                <div
+                    class="mt-4 rounded-2xl border border-slate-200 bg-white/70 backdrop-blur p-4 text-sm text-slate-700 flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-2">
+                        <span class="material-icons text-[18px] text-slate-500">attach_file</span>
+                        <span>Proposal: <span class="font-semibold"><?php echo e($proposal_file_name); ?></span></span>
+                    </div>
+                    <a href="<?php echo e($proposal_file_url); ?>" target="_blank"
+                        class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 hover:bg-slate-50 transition">
+                        <span class="material-icons text-[18px] text-slate-600">open_in_new</span>
+                        Buka
+                    </a>
                 </div>
-                <a href="<?php echo e($proposal_file_url); ?>" target="_blank"
-                    class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 hover:bg-slate-50 transition">
-                    <span class="material-icons text-[18px] text-slate-600">open_in_new</span>
-                    Buka
-                </a>
-            </div>
             <?php endif; ?>
 
         </div>
@@ -441,33 +437,33 @@ function e($v)
     </div>
 
     <script>
-    function dialog() {
-        var statusCode = <?php echo (int)$statusCode; ?>;
-        if (statusCode === 0) return confirm("YAKIN HAPUS RESERVASI INI?");
-        if (statusCode === 2 || statusCode === 3) {
-            return confirm("Pesanan sudah dibayar. Jika dibatalkan, dana tidak dapat dikembalikan. Lanjutkan?");
+        function dialog() {
+            var statusCode = <?php echo (int)$statusCode; ?>;
+            if (statusCode === 0) return confirm("YAKIN HAPUS RESERVASI INI?");
+            if (statusCode === 2 || statusCode === 3) {
+                return confirm("Pesanan sudah dibayar. Jika dibatalkan, dana tidak dapat dikembalikan. Lanjutkan?");
+            }
+            return confirm("Yakin batalkan pesanan ini?");
         }
-        return confirm("Yakin batalkan pesanan ini?");
-    }
 
-    function openModal() {
-        var m = document.getElementById('modalBayar');
-        m.classList.remove('hidden');
-        m.classList.add('flex');
-        document.body.classList.add('overflow-hidden');
-    }
+        function openModal() {
+            var m = document.getElementById('modalBayar');
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+            document.body.classList.add('overflow-hidden');
+        }
 
-    function closeModal() {
-        var m = document.getElementById('modalBayar');
-        m.classList.add('hidden');
-        m.classList.remove('flex');
-        document.body.classList.remove('overflow-hidden');
-    }
+        function closeModal() {
+            var m = document.getElementById('modalBayar');
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+            document.body.classList.remove('overflow-hidden');
+        }
 
-    document.addEventListener('click', function(e) {
-        var m = document.getElementById('modalBayar');
-        if (!m.classList.contains('hidden') && e.target === m) closeModal();
-    });
+        document.addEventListener('click', function(e) {
+            var m = document.getElementById('modalBayar');
+            if (!m.classList.contains('hidden') && e.target === m) closeModal();
+        });
     </script>
 </body>
 

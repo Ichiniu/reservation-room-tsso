@@ -128,19 +128,18 @@ $id_gedung = $this->uri->segment(3);
                             </thead>
 
                             <tbody id="tableBody" class="divide-y divide-slate-100">
-                                <?php
-                                if (isset($res) && is_array($res)) {
-                                    foreach ($res as $row) {
-
+                                <?php if (is_array($res ?? null)): ?>
+                                    <?php foreach ($res as $row): ?>
+                                        <?php
                                         // ID
-                                        $id_pemesanan = (isset($row['ID_PEMESANAN']) && $row['ID_PEMESANAN'] !== '') ? (string)$row['ID_PEMESANAN'] : '-';
+                                        $id_pemesanan = (string)($row['ID_PEMESANAN'] ?? '-');
 
                                         // STATUS
-                                        $statusRaw = (isset($row['STATUS']) && $row['STATUS'] !== '') ? (string)$row['STATUS'] : '-';
+                                        $statusRaw = (string)($row['STATUS'] ?? '-');
                                         $statusUpper = strtoupper(trim($statusRaw));
 
                                         // TANGGAL RAW (untuk sort)
-                                        $tanggalRaw = (isset($row['TANGGAL_PEMESANAN']) && $row['TANGGAL_PEMESANAN'] !== '') ? (string)$row['TANGGAL_PEMESANAN'] : '';
+                                        $tanggalRaw = (string)($row['TANGGAL_PEMESANAN'] ?? '');
 
                                         // TANGGAL TAMPIL
                                         $tanggalTampil = '-';
@@ -151,19 +150,19 @@ $id_gedung = $this->uri->segment(3);
 
                                         // JAM
                                         $jamText = '-';
-                                        if (isset($row['JAM_PEMESANAN']) && isset($row['JAM_SELESAI'])) {
-                                            if ($row['JAM_PEMESANAN'] !== '' && $row['JAM_SELESAI'] !== '') {
-                                                $jamMulai = date('H:i', strtotime($row['JAM_PEMESANAN']));
-                                                $jamSelesai = date('H:i', strtotime($row['JAM_SELESAI']));
-                                                $jamText = $jamMulai . ' - ' . $jamSelesai . ' WIB';
-                                            }
+                                        $mulai   = $row['JAM_PEMESANAN'] ?? '';
+                                        $selesai = $row['JAM_SELESAI'] ?? '';
+                                        if ($mulai !== '' && $selesai !== '') {
+                                            $jamMulai = date('H:i', strtotime($mulai));
+                                            $jamSelesai = date('H:i', strtotime($selesai));
+                                            $jamText = $jamMulai . ' - ' . $jamSelesai . ' WIB';
                                         }
 
                                         // PAKET
-                                        $paket = (isset($row['NAMA_PAKET']) && $row['NAMA_PAKET'] !== '') ? (string)$row['NAMA_PAKET'] : '-';
+                                        $paket = (string)($row['NAMA_PAKET'] ?? '-');
 
                                         // GEDUNG
-                                        $gedung = (isset($row['NAMA_GEDUNG']) && $row['NAMA_GEDUNG'] !== '') ? (string)$row['NAMA_GEDUNG'] : '-';
+                                        $gedung = (string)($row['NAMA_GEDUNG'] ?? '-');
 
                                         // BADGE
                                         $badge = 'bg-slate-100 text-slate-700 border border-slate-200';
@@ -183,7 +182,7 @@ $id_gedung = $this->uri->segment(3);
                                         $safeJam = htmlspecialchars($jamText, ENT_QUOTES, 'UTF-8');
 
                                         $detailUrl = site_url('home/pemesanan/details/' . $id_pemesanan);
-                                ?>
+                                        ?>
                                         <tr class="table-row hover:bg-slate-50 transition" data-id="<?php echo $safeId; ?>"
                                             data-status="<?php echo $safeStatus; ?>" data-date="<?php echo $safeDate; ?>">
 
@@ -240,16 +239,14 @@ $id_gedung = $this->uri->segment(3);
                                                 </a>
                                             </td>
                                         </tr>
-                                <?php
-                                    }
-                                }
-                                ?>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </tbody>
                         </table>
 
                         <?php
-                        if (isset($rows) && (int)$rows < 1) {
-                            echo '<div class="p-6 text-center text-slate-600">---------- ' . $no_data . ' ----------</div>';
+                        if ((int)($rows ?? 0) < 1) {
+                            echo '<div class="p-6 text-center text-slate-600">---------- ' . ($no_data ?? 'Tidak ada data') . ' ----------</div>';
                         }
                         ?>
                     </div>

@@ -19,7 +19,7 @@ class AutoReview extends CI_Controller
     public function run()
     {
         // protect: allow CLI or valid key
-        $allow = $this->input->is_cli_request();
+        $allow = is_cli();
         $key = $this->input->get('k', true);
         $cfg_key = $this->config->item('auto_review_key', 'notification');
         if (!$allow && (empty($cfg_key) || $key !== $cfg_key)) {
@@ -42,7 +42,7 @@ class AutoReview extends CI_Controller
 
         foreach ($todayRows as $tr) {
             $pid = (int)$tr['ID_PEMESANAN'];
-            $uname = isset($tr['USERNAME']) ? $tr['USERNAME'] : '';
+            $uname = $tr['USERNAME'] ?? '';
             if ($pid <= 0 || $uname === '') continue;
 
             // cek apakah notifikasi review untuk pemesanan ini sudah pernah dikirim
@@ -73,7 +73,7 @@ class AutoReview extends CI_Controller
         $inserted = 0;
         foreach ($rows as $r) {
             $id = (int)$r['ID_PEMESANAN'];
-            $username = isset($r['USERNAME']) ? $r['USERNAME'] : '';
+            $username = $r['USERNAME'] ?? '';
             if ($id <= 0 || $username === '') continue;
 
             // ambil pemesanan detail (status harus SUBMITTED)
@@ -81,10 +81,10 @@ class AutoReview extends CI_Controller
             if (empty($pes)) continue;
 
             // bangun title_key seperti di submit_ulasan()
-            $nama_gedung = isset($pes['NAMA_GEDUNG']) ? trim((string)$pes['NAMA_GEDUNG']) : '';
-            $tanggal = isset($pes['TANGGAL_PEMESANAN']) ? trim((string)$pes['TANGGAL_PEMESANAN']) : '';
-            $jam_mulai = isset($pes['JAM_PEMESANAN']) ? trim((string)$pes['JAM_PEMESANAN']) : '';
-            $jam_selesai = isset($pes['JAM_SELESAI']) ? trim((string)$pes['JAM_SELESAI']) : '';
+            $nama_gedung = trim((string)($pes['NAMA_GEDUNG'] ?? ''));
+            $tanggal = trim((string)($pes['TANGGAL_PEMESANAN'] ?? ''));
+            $jam_mulai = trim((string)($pes['JAM_PEMESANAN'] ?? ''));
+            $jam_selesai = trim((string)($pes['JAM_SELESAI'] ?? ''));
             $range = $jam_selesai ? ($jam_mulai . ' - ' . $jam_selesai) : $jam_mulai;
             $title_key = $nama_gedung . ' - ' . $tanggal . ' (' . $range . ')';
 
@@ -92,14 +92,14 @@ class AutoReview extends CI_Controller
             if ($this->ulasan_model->exists_for_pemesanan($id, $username, $title_key)) continue;
 
             // simpan ulasan otomatis: rating 5, komentar '-' (atau kosong), APPROVED
-            $insert = array(
+            $insert = [
                 'USERNAME' => $username,
                 'RATING'   => 5,
                 'TITLE'    => $title_key,
                 'COMMENT'  => '-',
                 'STATUS'   => 'APPROVED',
                 'CREATED_AT' => date('Y-m-d H:i:s')
-            );
+            ];
             if ($this->db->field_exists('ID_PEMESANAN', 'ulasan')) {
                 $insert['ID_PEMESANAN'] = $id;
             }

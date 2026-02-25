@@ -10,28 +10,28 @@
 class Registration extends CI_Controller
 {
 
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 		$this->load->helper('form');
 	}
 
-	function index()
+	public function index()
 	{
 		$this->load->view('/registration/daftar');
 	}
 
-	function add_user()
+	public function add_user()
 	{
 		$this->load->model('user/user_model');
 
 		// ambil input dasar
-		$username = trim($this->input->post('username', true));
-		$nama_lengkap = trim($this->input->post('nama_lengkap', true));
+		$username = trim((string)$this->input->post('username', true));
+		$nama_lengkap = trim((string)$this->input->post('nama_lengkap', true));
 		$password = $this->input->post('password', true);
-		$email = trim($this->input->post('email', true));
-		$alamat = trim($this->input->post('alamat', true));
-		$no_telepon = trim($this->input->post('no_telepon', true));
+		$email = trim((string)$this->input->post('email', true));
+		$alamat = trim((string)$this->input->post('alamat', true));
+		$no_telepon = trim((string)$this->input->post('no_telepon', true));
 		$dob = $this->input->post('dob', true);
 
 		//  perusahaan logic
@@ -40,7 +40,7 @@ class Registration extends CI_Controller
 		$departemen = null;
 
 		if ($perusahaan === 'INTERNAL') {
-			$departemen = trim($this->input->post('departemen', true));
+			$departemen = trim((string)$this->input->post('departemen', true));
 
 			if ($departemen === '') {
 				echo "Departemen wajib dipilih untuk INTERNAL";
@@ -51,7 +51,7 @@ class Registration extends CI_Controller
 			// set otomatis biar ga NULL
 			$nama_perusahaan = 'PT Tiga Serangkai Pustaka Mandiri';
 		} elseif ($perusahaan === 'EKSTERNAL') {
-			$nama_perusahaan = trim($this->input->post('nama_perusahaan', true));
+			$nama_perusahaan = trim((string)$this->input->post('nama_perusahaan', true));
 
 			if ($nama_perusahaan === '') {
 				echo "Nama perusahaan wajib diisi untuk EKSTERNAL";
@@ -67,7 +67,7 @@ class Registration extends CI_Controller
 		}
 
 		// data insert (samakan dengan nama kolom DB kamu)
-		$data = array(
+		$data = [
 			'USERNAME'        => $username,
 			'NAMA_LENGKAP'    => $nama_lengkap,
 			'perusahaan'      => $perusahaan,
@@ -78,7 +78,7 @@ class Registration extends CI_Controller
 			'ALAMAT'          => $alamat,
 			'NO_TELEPON'      => $no_telepon,
 			'TANGGAL_LAHIR'   => $dob,
-		);
+		];
 
 		// ===== server-side validation =====
 		// email must be valid and use gmail domain

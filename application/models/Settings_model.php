@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Settings_model extends CI_Model
 {
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
     }
@@ -13,9 +13,9 @@ class Settings_model extends CI_Model
      */
     public function get($key, $default = '')
     {
-        $query = $this->db->get_where('app_settings', array('setting_key' => $key), 1);
+        $query = $this->db->get_where('app_settings', ['setting_key' => $key], 1);
         $row = $query->row_array();
-        return ($row && isset($row['setting_value'])) ? $row['setting_value'] : $default;
+        return $row['setting_value'] ?? $default;
     }
 
     /**
@@ -23,15 +23,15 @@ class Settings_model extends CI_Model
      */
     public function set($key, $value)
     {
-        $exists = $this->db->get_where('app_settings', array('setting_key' => $key), 1)->num_rows();
+        $exists = $this->db->get_where('app_settings', ['setting_key' => $key], 1)->num_rows();
         if ($exists > 0) {
             $this->db->where('setting_key', $key);
-            return $this->db->update('app_settings', array('setting_value' => $value));
+            return $this->db->update('app_settings', ['setting_value' => $value]);
         } else {
-            return $this->db->insert('app_settings', array(
+            return $this->db->insert('app_settings', [
                 'setting_key'   => $key,
                 'setting_value' => $value
-            ));
+            ]);
         }
     }
 }

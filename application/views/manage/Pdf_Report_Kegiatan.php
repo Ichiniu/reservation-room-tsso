@@ -1,6 +1,6 @@
 <?php
 $no = 1;
-$date = date_create(strtotime(time()));
+$date = date_create();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -26,7 +26,7 @@ $date = date_create(strtotime(time()));
             <?php
             $grand_total_peserta = 0;
             foreach ($report as $row):
-                $tp = !empty($row['TOTAL_PESERTA']) ? (int)$row['TOTAL_PESERTA'] : 0;
+                $tp = (int)($row['TOTAL_PESERTA'] ?? 0);
                 $grand_total_peserta += $tp;
             ?>
                 <tr>

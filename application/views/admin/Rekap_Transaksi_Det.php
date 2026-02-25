@@ -5,7 +5,7 @@ $this->load->helper('text');
 $no    = 1;
 $total = 0;
 
-$rows = (isset($row) && is_array($row)) ? $row : array();
+$rows = $row ?? [];
 
 /* ===== Format tanggal Indonesia ===== */
 // Helper formatTanggalIndo sudah di-autoload (tanggal_helper)
@@ -22,9 +22,9 @@ $rows = (isset($row) && is_array($row)) ? $row : array();
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-    .scroll-stable {
-        scrollbar-gutter: stable;
-    }
+        .scroll-stable {
+            scrollbar-gutter: stable;
+        }
     </style>
 </head>
 
@@ -81,10 +81,10 @@ $rows = (isset($row) && is_array($row)) ? $row : array();
 
                                 <tbody id="rekapBody" class="divide-y divide-slate-200">
                                     <?php if (count($rows) > 0): ?>
-                                    <?php foreach ($rows as $r): ?>
-                                    <?php
+                                        <?php foreach ($rows as $r): ?>
+                                            <?php
                                             // === ATAS NAMA (INTERNAL: Nama + (PT - Departemen)) ===
-                                            $isInternal = (isset($r['perusahaan']) && strtoupper(trim($r['perusahaan'])) === 'INTERNAL');
+                                            $isInternal = (strtoupper(trim((string)(isset($r['perusahaan']) ? $r['perusahaan'] : ''))) === 'INTERNAL');
 
                                             if ($isInternal) {
                                                 $nama = (!empty($r['NAMA_LENGKAP'])) ? $r['NAMA_LENGKAP'] : '-';
@@ -97,56 +97,52 @@ $rows = (isset($row) && is_array($row)) ? $row : array();
                                                     htmlspecialchars($pt, ENT_QUOTES, 'UTF-8') . " - " . htmlspecialchars($dept, ENT_QUOTES, 'UTF-8') .
                                                     "</div>";
                                             } else {
-                                                $atasNama = '-';
-                                                if (!empty($r['ATAS_NAMA_PENGIRIM'])) $atasNama = $r['ATAS_NAMA_PENGIRIM'];
-                                                else if (!empty($r['ATAS_NAMA'])) $atasNama = $r['ATAS_NAMA'];
+                                                $atasNama = $r['ATAS_NAMA_PENGIRIM'] ?? $r['ATAS_NAMA'] ?? '-';
 
                                                 $atasNamaHtml = htmlspecialchars($atasNama, ENT_QUOTES, 'UTF-8');
                                             }
 
                                             $bank = !empty($r['BANK_PENGIRIM']) ? $r['BANK_PENGIRIM'] : '-';
 
-                                            $idPemesanan = '';
-                                            if (!empty($r['ID_PEMESANAN_RAW'])) $idPemesanan = $r['ID_PEMESANAN_RAW'];
-                                            else if (!empty($r['ID_PEMESANAN'])) $idPemesanan = $r['ID_PEMESANAN'];
+                                            $idPemesanan = $r['ID_PEMESANAN_RAW'] ?? $r['ID_PEMESANAN'] ?? '';
 
-                                            $kodePemesananPrefix = isset($r['KODE_PEMESANAN']) ? $r['KODE_PEMESANAN'] : 'PMSN000';
+                                            $kodePemesananPrefix = $r['KODE_PEMESANAN'] ?? 'PMSN000';
                                             $kodePemesanan = $kodePemesananPrefix . $idPemesanan;
 
-                                            $kodePembayaranPrefix = isset($r['KODE_PEMBAYARAN']) ? $r['KODE_PEMBAYARAN'] : 'PB0000';
-                                            $idPembayaran = isset($r['ID_PEMBAYARAN']) ? $r['ID_PEMBAYARAN'] : '';
+                                            $kodePembayaranPrefix = $r['KODE_PEMBAYARAN'] ?? 'PB0000';
+                                            $idPembayaran = $r['ID_PEMBAYARAN'] ?? '';
                                             $kodePembayaran = $kodePembayaranPrefix . $idPembayaran;
 
                                             // Tanggal Transfer versi Indonesia
                                             $tglIndo = !empty($r['TANGGAL_TRANSFER']) ? format_tanggal_indo($r['TANGGAL_TRANSFER']) : '-';
 
-                                            $nominal = isset($r['NOMINAL_TRANSFER']) ? (float)$r['NOMINAL_TRANSFER'] : 0;
+                                            $nominal = (float)($r['NOMINAL_TRANSFER'] ?? 0);
                                             $total  += $nominal;
                                             ?>
-                                    <tr class="hover:bg-slate-50">
-                                        <td class="px-4 py-3 text-center w-[70px]"><?= $no++; ?></td>
-                                        <td class="px-4 py-3 w-[170px]">
-                                            <?= htmlspecialchars($kodePembayaran, ENT_QUOTES, 'UTF-8'); ?></td>
-                                        <td class="px-4 py-3 w-[170px]">
-                                            <?= htmlspecialchars($kodePemesanan, ENT_QUOTES, 'UTF-8'); ?></td>
+                                            <tr class="hover:bg-slate-50">
+                                                <td class="px-4 py-3 text-center w-[70px]"><?= $no++; ?></td>
+                                                <td class="px-4 py-3 w-[170px]">
+                                                    <?= htmlspecialchars($kodePembayaran, ENT_QUOTES, 'UTF-8'); ?></td>
+                                                <td class="px-4 py-3 w-[170px]">
+                                                    <?= htmlspecialchars($kodePemesanan, ENT_QUOTES, 'UTF-8'); ?></td>
 
-                                        <td class="px-4 py-3 w-[260px] whitespace-normal break-words">
-                                            <?= $atasNamaHtml; ?>
-                                        </td>
+                                                <td class="px-4 py-3 w-[260px] whitespace-normal break-words">
+                                                    <?= $atasNamaHtml; ?>
+                                                </td>
 
-                                        <td class="px-4 py-3 w-[140px]">
-                                            <?= htmlspecialchars($bank, ENT_QUOTES, 'UTF-8'); ?></td>
-                                        <td class="px-4 py-3 w-[180px]"><?= $tglIndo; ?></td>
-                                        <td class="px-4 py-3 w-[160px] text-right">
-                                            <?= "Rp." . number_format($nominal, 0, ',', '.'); ?></td>
-                                    </tr>
-                                    <?php endforeach; ?>
+                                                <td class="px-4 py-3 w-[140px]">
+                                                    <?= htmlspecialchars($bank, ENT_QUOTES, 'UTF-8'); ?></td>
+                                                <td class="px-4 py-3 w-[180px]"><?= $tglIndo; ?></td>
+                                                <td class="px-4 py-3 w-[160px] text-right">
+                                                    <?= "Rp." . number_format($nominal, 0, ',', '.'); ?></td>
+                                            </tr>
+                                        <?php endforeach; ?>
                                     <?php else: ?>
-                                    <tr>
-                                        <td colspan="7" class="px-4 py-6 text-center text-slate-500">
-                                            Tidak ada data transaksi pada periode ini.
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td colspan="7" class="px-4 py-6 text-center text-slate-500">
+                                                Tidak ada data transaksi pada periode ini.
+                                            </td>
+                                        </tr>
                                     <?php endif; ?>
                                 </tbody>
                             </table>
@@ -191,82 +187,82 @@ $rows = (isset($row) && is_array($row)) ? $row : array();
     </main>
 
     <script>
-    (function() {
-        const tbody = document.getElementById('rekapBody');
-        const scrollBox = document.getElementById('tableScroll');
-        if (!tbody) return;
+        (function() {
+            const tbody = document.getElementById('rekapBody');
+            const scrollBox = document.getElementById('tableScroll');
+            if (!tbody) return;
 
-        let rows = Array.from(tbody.querySelectorAll('tr'));
-        const onlyEmptyRow = rows.length === 1 && rows[0].innerText.toLowerCase().includes('tidak ada data');
-        if (onlyEmptyRow) return;
+            let rows = Array.from(tbody.querySelectorAll('tr'));
+            const onlyEmptyRow = rows.length === 1 && rows[0].innerText.toLowerCase().includes('tidak ada data');
+            if (onlyEmptyRow) return;
 
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const pageInfo = document.getElementById('pageInfo');
-        const rowsPerPageSelect = document.getElementById('rowsPerPage');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const pageInfo = document.getElementById('pageInfo');
+            const rowsPerPageSelect = document.getElementById('rowsPerPage');
 
-        let currentPage = 1;
-        let rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
+            let currentPage = 1;
+            let rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
 
-        function totalPages() {
-            return Math.max(1, Math.ceil(rows.length / rowsPerPage));
-        }
+            function totalPages() {
+                return Math.max(1, Math.ceil(rows.length / rowsPerPage));
+            }
 
-        function render() {
-            const tp = totalPages();
-            if (currentPage > tp) currentPage = tp;
+            function render() {
+                const tp = totalPages();
+                if (currentPage > tp) currentPage = tp;
 
-            const start = (currentPage - 1) * rowsPerPage;
-            const end = start + rowsPerPage;
+                const start = (currentPage - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
 
-            rows.forEach((row, idx) => {
-                row.style.display = (idx >= start && idx < end) ? '' : 'none';
-            });
+                rows.forEach((row, idx) => {
+                    row.style.display = (idx >= start && idx < end) ? '' : 'none';
+                });
 
-            prevBtn.disabled = currentPage <= 1;
-            nextBtn.disabled = currentPage >= tp;
+                prevBtn.disabled = currentPage <= 1;
+                nextBtn.disabled = currentPage >= tp;
 
-            const totalRows = rows.length;
-            const showingFrom = totalRows === 0 ? 0 : start + 1;
-            const showingTo = Math.min(end, totalRows);
+                const totalRows = rows.length;
+                const showingFrom = totalRows === 0 ? 0 : start + 1;
+                const showingTo = Math.min(end, totalRows);
 
-            pageInfo.textContent =
-                `Page ${currentPage} of ${tp} • Showing ${showingFrom}-${showingTo} of ${totalRows}`;
+                pageInfo.textContent =
+                    `Page ${currentPage} of ${tp} • Showing ${showingFrom}-${showingTo} of ${totalRows}`;
 
-            // renumber No
-            let visibleNo = start + 1;
-            rows.forEach((row, idx) => {
-                if (idx >= start && idx < end) {
-                    const firstCell = row.querySelector('td');
-                    if (firstCell) firstCell.textContent = visibleNo++;
+                // renumber No
+                let visibleNo = start + 1;
+                rows.forEach((row, idx) => {
+                    if (idx >= start && idx < end) {
+                        const firstCell = row.querySelector('td');
+                        if (firstCell) firstCell.textContent = visibleNo++;
+                    }
+                });
+
+                if (scrollBox) scrollBox.scrollTop = 0;
+            }
+
+            prevBtn.addEventListener('click', function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    render();
                 }
             });
 
-            if (scrollBox) scrollBox.scrollTop = 0;
-        }
+            nextBtn.addEventListener('click', function() {
+                if (currentPage < totalPages()) {
+                    currentPage++;
+                    render();
+                }
+            });
 
-        prevBtn.addEventListener('click', function() {
-            if (currentPage > 1) {
-                currentPage--;
+            rowsPerPageSelect.addEventListener('change', function() {
+                rowsPerPage = parseInt(this.value, 10) || 10;
+                currentPage = 1;
                 render();
-            }
-        });
+            });
 
-        nextBtn.addEventListener('click', function() {
-            if (currentPage < totalPages()) {
-                currentPage++;
-                render();
-            }
-        });
-
-        rowsPerPageSelect.addEventListener('change', function() {
-            rowsPerPage = parseInt(this.value, 10) || 10;
-            currentPage = 1;
             render();
-        });
-
-        render();
-    })();
+        })();
     </script>
 
 </body>

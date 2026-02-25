@@ -30,12 +30,12 @@ function e($v)
             <?php if (!empty($result) && is_array($result)): ?>
                 <?php foreach ($result as $row): ?>
                     <?php
-                    $harga_gedung = isset($row['HARGA_SEWA']) ? (int)$row['HARGA_SEWA'] : 0;
-                    $nama = isset($row['NAMA_GEDUNG']) ? $row['NAMA_GEDUNG'] : 'Ruangan';
-                    $kapasitas = isset($row['KAPASITAS']) ? $row['KAPASITAS'] : '-';
-                    $alamat = isset($row['ALAMAT']) ? $row['ALAMAT'] : '-';
-                    $deskripsi = isset($row['DESKRIPSI_GEDUNG']) ? $row['DESKRIPSI_GEDUNG'] : '';
-                    $fasilitas = isset($row['fasilitas']) ? $row['fasilitas'] : '';
+                    $harga_gedung = (int)($row['HARGA_SEWA'] ?? 0);
+                    $nama = $row['NAMA_GEDUNG'] ?? 'Ruangan';
+                    $kapasitas = $row['KAPASITAS'] ?? '-';
+                    $alamat = $row['ALAMAT'] ?? '-';
+                    $deskripsi = $row['DESKRIPSI_GEDUNG'] ?? '';
+                    $fasilitas = $row['fasilitas'] ?? '';
                     ?>
 
                     <!-- HERO -->
@@ -61,7 +61,7 @@ function e($v)
                             </h1>
 
                             <div class="mt-3 text-sm text-slate-700 leading-relaxed">
-                                <?php if (trim($deskripsi) !== ''): ?>
+                                <?php if (trim((string)$deskripsi) !== ''): ?>
                                     <div class="max-h-40 overflow-auto pr-2 rounded-2xl border border-slate-200 bg-white/70 p-4">
                                         <?php echo nl2br(e($deskripsi)); ?>
                                     </div>
@@ -122,7 +122,7 @@ function e($v)
                                 </div>
                                 <div class="mt-3 text-sm text-slate-700 leading-relaxed max-h-40 overflow-auto pr-2">
                                     <?php
-                                    if (trim($fasilitas) !== '') echo nl2br(e($fasilitas));
+                                    if (trim((string)$fasilitas) !== '') echo nl2br(e($fasilitas));
                                     else echo '<span class="text-slate-500">Fasilitas belum diinput.</span>';
                                     ?>
                                 </div>
@@ -185,8 +185,8 @@ function e($v)
                             <?php if (!empty($gallery)): ?>
                                 <?php foreach ($gallery as $images): ?>
                                     <?php
-                                    $path = isset($images['PATH']) ? $images['PATH'] : '';
-                                    $img  = isset($images['IMG_NAME']) ? $images['IMG_NAME'] : '';
+                                    $path = $images['PATH'] ?? '';
+                                    $img  = $images['IMG_NAME'] ?? '';
                                     $raw_src = $path . $img;
                                     // Normalisasi: hapus domain lama lalu tambahkan base_url()
                                     $clean_src = preg_replace('#^https?://[^/]+/bookingsmarts/#i', '', $raw_src);

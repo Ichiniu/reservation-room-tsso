@@ -12,21 +12,21 @@ $this->load->helper('text');
  * - $proposal_details (object) => DESKRIPSI_ACARA, FILE_NAME
  */
 
-// ======= SAFE GETTERS (PHP 5.6 friendly) =======
-$harga_sewa = isset($result->HARGA_SEWA) ? (float)$result->HARGA_SEWA : 0;
-$total_keseluruhan = isset($result->TOTAL_KESELURUHAN) ? (float)$result->TOTAL_KESELURUHAN : 0;
-$total_catering = isset($result->TOTAL_HARGA) ? (float)$result->TOTAL_HARGA : 0;
+// ======= SAFE GETTERS (PHP 8.2 compatible) =======
+$harga_sewa = (float)($result->HARGA_SEWA ?? 0);
+$total_keseluruhan = (float)($result->TOTAL_KESELURUHAN ?? 0);
+$total_catering = (float)($result->TOTAL_HARGA ?? 0);
 
 $tax = 0.1 * $harga_sewa;
 
 // tampilkan user/email
 $display_username = !empty($user_username)
     ? $user_username
-    : (isset($result->USERNAME) ? $result->USERNAME : '-');
+    : ($result->USERNAME ?? '-');
 
 $display_email = !empty($user_email)
     ? $user_email
-    : (isset($result->EMAIL) ? $result->EMAIL : '-');
+    : ($result->EMAIL ?? '-');
 
 // proposal info
 $proposal_obj = isset($proposal_details) ? $proposal_details : null;
@@ -147,12 +147,12 @@ if (!empty($result->TANGGAL_PEMESANAN)) {
                         <td class="font-semibold py-1">File Proposal</td>
                         <td class="py-1">:
                             <?php if (!empty($proposal_file_name)): ?>
-                            <a class="text-blue-600 hover:underline"
-                                href="<?= site_url('admin/admin_controls/download_proposal/' . (int)$result->ID_PEMESANAN); ?>">
-                                <?= htmlspecialchars((string)$proposal_file_name, ENT_QUOTES, 'UTF-8'); ?>
-                            </a>
+                                <a class="text-blue-600 hover:underline"
+                                    href="<?= site_url('admin/admin_controls/download_proposal/' . (int)$result->ID_PEMESANAN); ?>">
+                                    <?= htmlspecialchars((string)$proposal_file_name, ENT_QUOTES, 'UTF-8'); ?>
+                                </a>
                             <?php else: ?>
-                            <span class="text-slate-500">Belum ada file</span>
+                                <span class="text-slate-500">Belum ada file</span>
                             <?php endif; ?>
                         </td>
                     </tr>

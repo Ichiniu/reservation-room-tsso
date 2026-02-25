@@ -6,7 +6,7 @@ class Login extends CI_Controller
 	/**
 	 * 
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 		$this->load->library('session');
@@ -17,7 +17,7 @@ class Login extends CI_Controller
 		$this->load->view('login');
 	}
 
-	function sign_in()
+	public function sign_in()
 	{
 		$user = $this->input->post('username');
 		$pass = $this->input->post('password');
@@ -28,13 +28,12 @@ class Login extends CI_Controller
 			array($user, $pass)
 		);
 		if ($result->num_rows() > 0) {
-			$session_data = array(
+			$session_data = [
 				'username' => $user,
 				'logged_in' => TRUE,
 				'session_id' => session_id()
-			);
+			];
 			$this->session->set_userdata($session_data);
-			echo "Login Berhasil Selamat Datang $user";
 			redirect('home/' . $user . '/');
 		} else {
 			$this->output->set_header('refresh:2; url=' . site_url("/login"));

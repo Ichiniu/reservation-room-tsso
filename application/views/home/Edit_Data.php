@@ -1,18 +1,18 @@
 <?php
 $this->load->helper('form');
 
-$u = (isset($user) && is_array($user)) ? $user : array();
+$u = (isset($user) && is_array($user)) ? $user : [];
 
-$username       = isset($u['USERNAME']) ? $u['USERNAME'] : '';
-$nama_lengkap   = isset($u['NAMA_LENGKAP']) ? $u['NAMA_LENGKAP'] : '';
-$email          = isset($u['EMAIL']) ? $u['EMAIL'] : '';
-$alamat         = isset($u['ALAMAT']) ? $u['ALAMAT'] : '';
-$no_telepon     = isset($u['NO_TELEPON']) ? $u['NO_TELEPON'] : '';
-$tanggal_lahir  = isset($u['TANGGAL_LAHIR']) ? $u['TANGGAL_LAHIR'] : '';
+$username       = $u['USERNAME'] ?? '';
+$nama_lengkap   = $u['NAMA_LENGKAP'] ?? '';
+$email          = $u['EMAIL'] ?? '';
+$alamat         = $u['ALAMAT'] ?? '';
+$no_telepon     = $u['NO_TELEPON'] ?? '';
+$tanggal_lahir  = $u['TANGGAL_LAHIR'] ?? '';
 
-$perusahaan      = isset($u['perusahaan']) ? $u['perusahaan'] : '';
-$nama_perusahaan = isset($u['nama_perusahaan']) ? $u['nama_perusahaan'] : '';
-$departemen      = isset($u['departemen']) ? $u['departemen'] : '';
+$perusahaan      = $u['perusahaan'] ?? '';
+$nama_perusahaan = $u['nama_perusahaan'] ?? '';
+$departemen      = $u['departemen'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -44,9 +44,9 @@ $departemen      = isset($u['departemen']) ? $u['departemen'] : '';
         <div class="p-6 overflow-y-auto flex-1 space-y-6">
 
             <?php if ($this->session->flashdata('error')): ?>
-            <div class="p-3 rounded bg-red-100 text-red-700 border border-red-300">
-                <?= htmlspecialchars($this->session->flashdata('error')); ?>
-            </div>
+                <div class="p-3 rounded bg-red-100 text-red-700 border border-red-300">
+                    <?= htmlspecialchars((string)$this->session->flashdata('error')); ?>
+                </div>
             <?php endif; ?>
 
             <!-- READONLY INFO -->
@@ -54,7 +54,7 @@ $departemen      = isset($u['departemen']) ? $u['departemen'] : '';
                 <div>
                     <label class="text-sm text-slate-600">Username</label>
                     <input type="text" readonly class="w-full bg-slate-100 border rounded px-3 py-2"
-                        value="<?= htmlspecialchars($username); ?>">
+                        value="<?= htmlspecialchars((string)($username ?? '')); ?>">
                 </div>
 
                 <div>
@@ -86,35 +86,35 @@ $departemen      = isset($u['departemen']) ? $u['departemen'] : '';
                     <label class="text-sm">Nama Lengkap</label>
                     <input type="text" name="nama_lengkap" required
                         class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200"
-                        value="<?= htmlspecialchars($nama_lengkap); ?>">
+                        value="<?= htmlspecialchars((string)($nama_lengkap ?? '')); ?>">
                 </div>
 
                 <div>
                     <label class="text-sm">Email</label>
                     <input type="email" name="email" required
                         class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200"
-                        value="<?= htmlspecialchars($email); ?>">
+                        value="<?= htmlspecialchars((string)($email ?? '')); ?>">
                 </div>
 
                 <div class="md:col-span-2">
                     <label class="text-sm">Alamat</label>
                     <textarea name="alamat" required
                         class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200"
-                        rows="3"><?= htmlspecialchars($alamat); ?></textarea>
+                        rows="3"><?= htmlspecialchars((string)($alamat ?? '')); ?></textarea>
                 </div>
 
                 <div>
                     <label class="text-sm">No Telepon</label>
                     <input type="text" name="no_telepon" required
                         class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200"
-                        value="<?= htmlspecialchars($no_telepon); ?>">
+                        value="<?= htmlspecialchars((string)($no_telepon ?? '')); ?>">
                 </div>
 
                 <div>
                     <label class="text-sm">Tanggal Lahir</label>
                     <input type="date" name="dob" required
                         class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200"
-                        value="<?= htmlspecialchars($tanggal_lahir); ?>">
+                        value="<?= htmlspecialchars((string)($tanggal_lahir ?? '')); ?>">
                 </div>
             </div>
 

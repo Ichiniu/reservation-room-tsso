@@ -6,7 +6,7 @@
 class Gedung_Model extends CI_Model
 {
 
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 	}
@@ -148,16 +148,16 @@ class Gedung_Model extends CI_Model
 
 		$rows = $this->db->get()->result_array();
 
-		$out = array();
+		$out = [];
 		foreach ($rows as $r) {
-			$out[] = array(
+			$out[] = [
 				'id'     => (int)$r['id'],
 				'tgl'    => $r['tgl'],
 				'start'  => $r['start'],
 				'end'    => $r['end'],
 				'status' => (string)$r['status'],
 				'title'  => 'Booking Ruangan'
-			);
+			];
 		}
 
 		return $out;
@@ -183,7 +183,7 @@ class Gedung_Model extends CI_Model
         ORDER BY pb.TANGGAL_TRANSFER ASC, pb.ID_PEMBAYARAN ASC
     ";
 
-		$query = $this->db->query($sql, array($start_date, $end_date));
+		$query = $this->db->query($sql, [$start_date, $end_date]);
 		return $query->result_array();
 	}
 
@@ -489,7 +489,7 @@ TIME_FORMAT(
 
 	public function check_date($tanggal, $id_gedung, $jam_mulai, $jam_selesai, $exclude_id = 0)
 	{
-		$aktif = array(0, 1, 2, 3);
+		$aktif = [0, 1, 2, 3];
 
 		$this->db->from('pemesanan');
 		$this->db->where('ID_GEDUNG', (int)$id_gedung);
@@ -521,7 +521,7 @@ TIME_FORMAT(
 		$this->db->where('USERNAME', $username);
 		$this->db->where('ID_GEDUNG', (int)$id_gedung);
 		// STATUS 0 = pending, 1 = process - both are considered "draft" bookings
-		$this->db->where_in('STATUS', array(0, 1));
+		$this->db->where_in('STATUS', [0, 1]);
 		$this->db->order_by('ID_PEMESANAN', 'DESC');
 		$this->db->limit(1);
 
@@ -549,9 +549,9 @@ TIME_FORMAT(
 	{
 		// Kalau REQUEST_ID ada, cek dulu apakah sudah pernah dibuat
 		if (isset($data['REQUEST_ID']) && $data['REQUEST_ID'] !== '') {
-			$exist = $this->db->get_where('pemesanan', array('REQUEST_ID' => $data['REQUEST_ID']))->row_array();
+			$exist = $this->db->get_where('pemesanan', ['REQUEST_ID' => $data['REQUEST_ID']])->row_array();
 			if (!empty($exist)) {
-				return (int)$exist['ID_PEMESANAN']; // sudah ada -> pakai yang lama
+				return (int)$exist['ID_PEMESANAN'];
 			}
 		}
 
@@ -563,7 +563,7 @@ TIME_FORMAT(
 		// Jika gagal karena UNIQUE duplicate REQUEST_ID, ambil row yang sudah ada
 		$err = $this->db->error(); // CI3: ['code'=>..., 'message'=>...]
 		if (isset($err['code']) && (int)$err['code'] === 1062 && isset($data['REQUEST_ID'])) {
-			$exist = $this->db->get_where('pemesanan', array('REQUEST_ID' => $data['REQUEST_ID']))->row_array();
+			$exist = $this->db->get_where('pemesanan', ['REQUEST_ID' => $data['REQUEST_ID']])->row_array();
 			if (!empty($exist)) {
 				return (int)$exist['ID_PEMESANAN'];
 			}
@@ -736,14 +736,14 @@ TIME_FORMAT(
 
 		if ($row) {
 			// ✅ Ambil data yang kurang dari tabel pemesanan (karena VIEW V_PEMESANAN mungkin tidak lengkap)
-			$extra_cols = array();
+			$extra_cols = [];
 			if ($this->db->field_exists('TOTAL_PESERTA', 'pemesanan')) $extra_cols[] = 'TOTAL_PESERTA';
 			if ($this->db->field_exists('PODCAST_TYPE', 'pemesanan'))  $extra_cols[] = 'PODCAST_TYPE';
 			if ($this->db->field_exists('DURASI_JAM', 'pemesanan'))    $extra_cols[] = 'DURASI_JAM';
 
 			if (!empty($extra_cols)) {
 				$raw = $this->db->select(implode(',', $extra_cols))
-					->get_where('pemesanan', array('ID_PEMESANAN' => $num))
+					->get_where('pemesanan', ['ID_PEMESANAN' => $num])
 					->row();
 				if ($raw) {
 					if (isset($raw->TOTAL_PESERTA)) $row->TOTAL_PESERTA = (int)$raw->TOTAL_PESERTA;
@@ -756,7 +756,7 @@ TIME_FORMAT(
 			$this->load->helper('pricing');
 
 			// Ambil info perusahaan dari tabel user (karena tidak ada di V_PEMESANAN)
-			$user_data = $this->db->select('perusahaan')->get_where('user', array('USERNAME' => $row->USERNAME))->row();
+			$user_data = $this->db->select('perusahaan')->get_where('user', ['USERNAME' => $row->USERNAME])->row();
 			$perusahaan = $user_data ? $user_data->perusahaan : '';
 			$is_internal = (strtoupper(trim((string)$perusahaan)) === 'INTERNAL');
 
@@ -766,8 +766,8 @@ TIME_FORMAT(
 
 			// Hitung Total Harga Catering (Gunakan HARGA_SATUAN dari View)
 			$total_catering = 0;
-			$harga_pax = isset($row->HARGA_SATUAN) ? (float)$row->HARGA_SATUAN : 0;
-			$jumlah_porsi = isset($row->JUMLAH_CATERING) ? (int)$row->JUMLAH_CATERING : 0;
+			$harga_pax    = (float)($row->HARGA_SATUAN ?? 0);
+			$jumlah_porsi = (int)($row->JUMLAH_CATERING ?? 0);
 			$total_catering = $harga_pax * $jumlah_porsi;
 
 			$row->TOTAL_HARGA = $total_catering;
@@ -850,7 +850,7 @@ TIME_FORMAT(
 	{
 		$id_gedung = (int) $id_gedung;
 		// SELECT dinamis supaya tidak error kalau kolom harga baru belum ditambahkan
-		$cols = array('NAMA_GEDUNG', 'HARGA_SEWA');
+		$cols = ['NAMA_GEDUNG', 'HARGA_SEWA'];
 
 		if ($this->db->field_exists('PRICING_MODE', 'gedung')) $cols[] = 'PRICING_MODE';
 		if ($this->db->field_exists('HARGA_HALF_DAY_PP', 'gedung')) $cols[] = 'HARGA_HALF_DAY_PP';
@@ -928,7 +928,7 @@ TIME_FORMAT(
 	{
 		$id_gedung = (int)$id_gedung;
 		// SELECT dinamis supaya tidak error kalau kolom harga baru belum ditambahkan
-		$cols = array(
+		$cols = [
 			'ID_GEDUNG',
 			'NAMA_GEDUNG',
 			'ALAMAT',
@@ -936,7 +936,7 @@ TIME_FORMAT(
 			'KAPASITAS',
 			'HARGA_SEWA',
 			'fasilitas'
-		);
+		];
 
 		if ($this->db->field_exists('PRICING_MODE', 'gedung')) $cols[] = 'PRICING_MODE';
 		if ($this->db->field_exists('HARGA_HALF_DAY_PP', 'gedung')) $cols[] = 'HARGA_HALF_DAY_PP';
@@ -1090,7 +1090,7 @@ TIME_FORMAT(
 		LIMIT ?
 	";
 
-		$query = $this->db->query($sql, array((int)$limit));
+		$query = $this->db->query($sql, [(int)$limit]);
 		return $query->result_array();
 	}
 }

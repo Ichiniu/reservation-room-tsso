@@ -1,7 +1,7 @@
-<?php 
-$no = 1; 
+<?php
+$no = 1;
 $total_pembayaran = 0;
-$date = date_create(strtotime(time()));
+$date = date_create();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -24,20 +24,20 @@ $date = date_create(strtotime(time()));
                 <th>Tanggal Pembayaran</th>
                 <th>Jumlah Pembayaran</th>
             </tr>
-            <?php foreach($row as $row):?>
-            <tr>
-                <td><?php echo $no++?></td>
-                <td><?php echo $row['NO_ID']?></td>
-                <td><?php echo $row['NAMA_PERAWATAN']?></td>
-                <td><?php echo $row['NAMA_GEDUNG'] ?></td>
-                <td><?php echo $row['TANGGAL_PEMBAYARAN']?></td>
-                <td><?php echo "Rp. ".number_format($row['BIAYA'])?></td>
-            </tr>
-            <?php $total_pembayaran = $row['BIAYA'] + $total_pembayaran?>
-            <?php endforeach;?>
+            <?php foreach ($row as $r): ?>
+                <tr>
+                    <td><?php echo $no++ ?></td>
+                    <td><?php echo $r['NO_ID'] ?></td>
+                    <td><?php echo $r['NAMA_PERAWATAN'] ?></td>
+                    <td><?php echo $r['NAMA_GEDUNG'] ?></td>
+                    <td><?php echo $r['TANGGAL_PEMBAYARAN'] ?></td>
+                    <td><?php echo "Rp. " . number_format($r['BIAYA']) ?></td>
+                </tr>
+                <?php $total_pembayaran = $r['BIAYA'] + $total_pembayaran ?>
+            <?php endforeach; ?>
             <tr>
                 <td colspan="5"><b>Total Keseluruhan</b></td>
-                <td><b><?php echo "Rp. ".number_format($total_pembayaran)?></b></td>
+                <td><b><?php echo "Rp. " . number_format($total_pembayaran) ?></b></td>
             </tr>
         </table>
         <b>Dicetak pada: </b>

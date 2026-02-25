@@ -29,7 +29,7 @@ class Pemesanan_model extends CI_Model
     public function get_submitted_by_username($username)
     {
         $username = trim((string)$username);
-        if ($username === '') return array();
+        if ($username === '') return [];
 
         $rows = $this->db
             ->select('p.ID_PEMESANAN, p.TANGGAL_PEMESANAN, p.JAM_PEMESANAN, p.JAM_SELESAI, p.ID_GEDUNG, g.NAMA_GEDUNG')
@@ -44,8 +44,8 @@ class Pemesanan_model extends CI_Model
 
         // Rapikan jam jadi HH:MM supaya siap dipakai untuk label dropdown
         for ($i = 0; $i < count($rows); $i++) {
-            $rows[$i]['JAM_PEMESANAN'] = $this->time_hm(isset($rows[$i]['JAM_PEMESANAN']) ? $rows[$i]['JAM_PEMESANAN'] : '');
-            $rows[$i]['JAM_SELESAI']   = $this->time_hm(isset($rows[$i]['JAM_SELESAI']) ? $rows[$i]['JAM_SELESAI'] : '');
+            $rows[$i]['JAM_PEMESANAN'] = $this->time_hm($rows[$i]['JAM_PEMESANAN'] ?? '');
+            $rows[$i]['JAM_SELESAI']   = $this->time_hm($rows[$i]['JAM_SELESAI'] ?? '');
         }
 
         return $rows;
@@ -74,8 +74,8 @@ class Pemesanan_model extends CI_Model
         if (!$row) return null;
 
         // Rapikan jam jadi HH:MM
-        $row['JAM_PEMESANAN'] = $this->time_hm(isset($row['JAM_PEMESANAN']) ? $row['JAM_PEMESANAN'] : '');
-        $row['JAM_SELESAI']   = $this->time_hm(isset($row['JAM_SELESAI']) ? $row['JAM_SELESAI'] : '');
+        $row['JAM_PEMESANAN'] = $this->time_hm($row['JAM_PEMESANAN'] ?? '');
+        $row['JAM_SELESAI']   = $this->time_hm($row['JAM_SELESAI'] ?? '');
 
         return $row;
     }

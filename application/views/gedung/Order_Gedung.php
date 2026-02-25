@@ -4,12 +4,8 @@ $this->load->helper('text');
 
 // ✅ Extract ID_GEDUNG with multiple fallback sources
 $id_gedung = 0;
-if (isset($res[0]['ID_GEDUNG'])) {
-    $id_gedung = (int)$res[0]['ID_GEDUNG'];
-} elseif (isset($hasil[0]['ID_GEDUNG'])) {
-    $id_gedung = (int)$hasil[0]['ID_GEDUNG'];
-} elseif (isset($_SERVER['REQUEST_URI'])) {
-    // Extract from URL as last resort: /home/order-gedung/123
+$id_gedung = (int)($res[0]['ID_GEDUNG'] ?? $hasil[0]['ID_GEDUNG'] ?? 0);
+if ($id_gedung === 0 && isset($_SERVER['REQUEST_URI'])) {
     if (preg_match('/order-gedung\/(\d+)/', $_SERVER['REQUEST_URI'], $m)) {
         $id_gedung = (int)$m[1];
     }
@@ -18,15 +14,15 @@ if (isset($res[0]['ID_GEDUNG'])) {
 // ✅ opsi pilihan jam dari controller (fallback aman)
 $allowed_tipe_jam = (isset($allowed_tipe_jam) && is_array($allowed_tipe_jam))
     ? $allowed_tipe_jam
-    : array('CUSTOM', 'HALF_DAY_PAGI', 'HALF_DAY_SIANG', 'FULL_DAY');
+    : ['CUSTOM', 'HALF_DAY_PAGI', 'HALF_DAY_SIANG', 'FULL_DAY'];
 
-$default_tipe_jam = isset($default_tipe_jam) ? $default_tipe_jam : $allowed_tipe_jam[0];
+$default_tipe_jam = $default_tipe_jam ?? $allowed_tipe_jam[0];
 
 // ✅ endpoint JSON jadwal by date (sesuaikan controller/method)
 $jadwalEndpoint = site_url('home/home/jadwal_by_date/' . $id_gedung);
 
 $is_internal_view = !empty($is_internal);
-$pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
+$pricing_mode_view = (string)($pricing_mode ?? 'FLAT');
 ?>
 <!doctype html>
 <html lang="id">
@@ -311,16 +307,16 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                     class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
                                     focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40">
                                     <?php
-                                    $labels_tipe_jam = array(
+                                    $labels_tipe_jam = [
                                         'CUSTOM'         => 'HH:MM - HH:MM (PER JAM)',
                                         'HALF_DAY_PAGI'  => 'HALF DAY (08-12)',
                                         'HALF_DAY_SIANG' => 'HALF DAY (13-16)',
                                         'FULL_DAY'       => 'FULL DAY',
-                                    );
+                                    ];
                                     ?>
                                     <?php foreach ($allowed_tipe_jam as $opt): ?>
-                                        <option value="<?php echo htmlspecialchars($opt, ENT_QUOTES, 'UTF-8'); ?>">
-                                            <?php echo htmlspecialchars(isset($labels_tipe_jam[$opt]) ? $labels_tipe_jam[$opt] : $opt, ENT_QUOTES, 'UTF-8'); ?>
+                                        <option value="<?php echo htmlspecialchars((string)$opt, ENT_QUOTES, 'UTF-8'); ?>">
+                                            <?php echo htmlspecialchars((string)($labels_tipe_jam[$opt] ?? $opt), ENT_QUOTES, 'UTF-8'); ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -480,7 +476,7 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                 :class="showPeserta ? '' : 'lg:col-span-2'">
                                 <label class="block text-xs font-semibold tracking-widest text-slate-500">EMAIL</label>
                                 <input type="email" name="email"
-                                    value="<?php echo htmlspecialchars($email->EMAIL, ENT_QUOTES, 'UTF-8'); ?>" required
+                                    value="<?php echo htmlspecialchars((string)($email->EMAIL ?? ''), ENT_QUOTES, 'UTF-8'); ?>" required
                                     class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900
                                     focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40" />
                             </div>
@@ -501,7 +497,7 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                             <!-- Catering -->
                             <?php
                             $has_active_catering = (isset($catering_list) && is_array($catering_list) && count($catering_list) > 0);
-                            $_phone = isset($catering_phone) ? $catering_phone : '089649261851';
+                            $_phone = $catering_phone ?? '089649261851';
                             ?>
                             <div class="rounded-xl border border-slate-300 bg-white p-5 ring-1 ring-slate-200 <?= !$has_active_catering ? 'lg:col-span-2' : '' ?>">
                                 <label
@@ -570,7 +566,7 @@ $pricing_mode_view = isset($pricing_mode) ? (string)$pricing_mode : 'FLAT';
                                     focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40
                                     disabled:opacity-50 disabled:cursor-not-allowed">
                                         <option value="">Pilih Paket</option>
-                                        <?php if (isset($catering_list) && is_array($catering_list)): ?>
+                                        <?php if (is_array($catering_list ?? null)): ?>
                                             <?php foreach ($catering_list as $r): ?>
                                                 <option value="<?php echo $r['ID_CATERING']; ?>"
                                                     data-harga="<?php echo (float)$r['HARGA']; ?>"

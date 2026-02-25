@@ -76,15 +76,15 @@ $id_gedung = $this->uri->segment(4);
                         <table class="w-full text-sm border border-slate-300 rounded-xl overflow-hidden">
                             <tbody class="divide-y divide-slate-200">
                                 <?php
-                                $order = (isset($res[0]) ? $res[0] : null);
+                                $order = $res[0] ?? null;
 
                                 if (!$order) {
                                     echo '<tr><td class="px-4 py-3">Data pemesanan tidak ditemukan.</td></tr>';
                                 } else {
                                     $id = (int)$order['ID_PEMESANAN'];
 
-                                    $mulai   = (isset($order['JAM_PEMESANAN']) ? $order['JAM_PEMESANAN'] : '');
-                                    $selesai = (isset($order['JAM_SELESAI']) ? $order['JAM_SELESAI'] : '');
+                                    $mulai   = $order['JAM_PEMESANAN'] ?? '';
+                                    $selesai = $order['JAM_SELESAI'] ?? '';
 
                                     // Format times to hours:minutes (HH:MM) — hide seconds
                                     $mulai_fmt = '';
@@ -99,7 +99,7 @@ $id_gedung = $this->uri->segment(4);
                                         if ($t2 !== false) $selesai_fmt = date('H:i', $t2);
                                         else $selesai_fmt = $selesai;
                                     }
-                                    $tipe    = (isset($order['TIPE_JAM']) ? $order['TIPE_JAM'] : 'CUSTOM');
+                                    $tipe    = $order['TIPE_JAM'] ?? 'CUSTOM';
 
                                     if ($tipe === 'HALF_DAY_PAGI') {
                                         $jam_tampil = "HALF DAY PAGI ($mulai_fmt - $selesai_fmt)";
@@ -147,19 +147,19 @@ $id_gedung = $this->uri->segment(4);
                                         <td class="px-4 py-3 text-slate-900"><?php echo $order['NAMA_GEDUNG']; ?></td>
                                     </tr>
 
-                                    <?php if (isset($order['PRICING_MODE']) && $order['PRICING_MODE'] === 'PER_PESERTA'): ?>
+                                    <?php if (($order['PRICING_MODE'] ?? '') === 'PER_PESERTA'): ?>
                                         <tr class="bg-white">
                                             <td class="w-48 px-4 py-3 font-semibold text-slate-700">Total Peserta</td>
                                             <td class="px-2 py-3 text-slate-400">:</td>
-                                            <td class="px-4 py-3 text-slate-900"><?php echo isset($order['TOTAL_PESERTA']) ? (int)$order['TOTAL_PESERTA'] : 0; ?> orang</td>
+                                            <td class="px-4 py-3 text-slate-900"><?php echo (int)($order['TOTAL_PESERTA'] ?? 0); ?> orang</td>
                                         </tr>
-                                    <?php elseif (isset($order['PRICING_MODE']) && $order['PRICING_MODE'] === 'PODCAST_PER_JAM'): ?>
+                                    <?php elseif (($order['PRICING_MODE'] ?? '') === 'PODCAST_PER_JAM'): ?>
                                         <tr class="bg-white">
                                             <td class="w-48 px-4 py-3 font-semibold text-slate-700">Jenis Podcast</td>
                                             <td class="px-2 py-3 text-slate-400">:</td>
                                             <td class="px-4 py-3 text-slate-900">
                                                 <?php
-                                                $pt = isset($order['PODCAST_TYPE']) ? strtoupper(trim((string)$order['PODCAST_TYPE'])) : '';
+                                                $pt = strtoupper(trim((string)($order['PODCAST_TYPE'] ?? '')));
                                                 echo ($pt === 'VIDEO') ? 'Video Streaming' : 'Audio Podcast';
                                                 ?>
                                             </td>
@@ -167,7 +167,7 @@ $id_gedung = $this->uri->segment(4);
                                         <tr class="bg-white">
                                             <td class="w-48 px-4 py-3 font-semibold text-slate-700">Durasi</td>
                                             <td class="px-2 py-3 text-slate-400">:</td>
-                                            <td class="px-4 py-3 text-slate-900"><?php echo isset($order['DURASI_JAM']) ? (int)$order['DURASI_JAM'] : 0; ?> jam</td>
+                                            <td class="px-4 py-3 text-slate-900"><?php echo (int)($order['DURASI_JAM'] ?? 0); ?> jam</td>
                                         </tr>
                                     <?php endif; ?>
 
@@ -175,12 +175,12 @@ $id_gedung = $this->uri->segment(4);
                                         <td class="w-48 px-4 py-3 font-semibold text-slate-700">Harga Ruangan</td>
                                         <td class="px-2 py-3 text-slate-400">:</td>
                                         <td class="px-4 py-3 text-slate-900">
-                                            Rp. <?php echo number_format(isset($order['HARGA_SEWA']) ? (float)$order['HARGA_SEWA'] : 0, 0, ',', '.'); ?>
+                                            Rp. <?php echo number_format((float)($order['HARGA_SEWA'] ?? 0), 0, ',', '.'); ?>
                                             <?php
-                                            $is_internal_view = (isset($order['perusahaan']) && strtoupper(trim((string)$order['perusahaan'])) === 'INTERNAL');
-                                            $pm_view = isset($order['PRICING_MODE']) ? $order['PRICING_MODE'] : '';
-                                            $tp_view = isset($order['TOTAL_PESERTA']) ? (int)$order['TOTAL_PESERTA'] : 0;
-                                            $dj_view = isset($order['DURASI_JAM']) ? (int)$order['DURASI_JAM'] : 0;
+                                            $is_internal_view = (strtoupper(trim((string)($order['perusahaan'] ?? ''))) === 'INTERNAL');
+                                            $pm_view = $order['PRICING_MODE'] ?? '';
+                                            $tp_view = (int)($order['TOTAL_PESERTA'] ?? 0);
+                                            $dj_view = (int)($order['DURASI_JAM'] ?? 0);
                                             ?>
 
                                             <?php if ($is_internal_view): ?>
@@ -202,19 +202,19 @@ $id_gedung = $this->uri->segment(4);
                                     <tr class="bg-white">
                                         <td class="w-48 px-4 py-3 font-semibold text-slate-700">Harga Satuan</td>
                                         <td class="px-2 py-3 text-slate-400">:</td>
-                                        <td class="px-4 py-3 text-slate-900">Rp. <?php echo number_format((float)(isset($order['HARGA_SATUAN']) ? $order['HARGA_SATUAN'] : 0), 0, ',', '.'); ?></td>
+                                        <td class="px-4 py-3 text-slate-900">Rp. <?php echo number_format((float)($order['HARGA_SATUAN'] ?? 0), 0, ',', '.'); ?></td>
                                     </tr>
 
                                     <tr class="bg-white">
                                         <td class="w-48 px-4 py-3 font-semibold text-slate-700">Total Harga Catering</td>
                                         <td class="px-2 py-3 text-slate-400">:</td>
-                                        <td class="px-4 py-3 text-slate-900">Rp. <?php echo number_format((float)(isset($order['TOTAL_HARGA']) ? $order['TOTAL_HARGA'] : 0), 0, ',', '.'); ?></td>
+                                        <td class="px-4 py-3 text-slate-900">Rp. <?php echo number_format((float)($order['TOTAL_HARGA'] ?? 0), 0, ',', '.'); ?></td>
                                     </tr>
 
                                     <?php
-                                    $harga_sewa_val = isset($order['HARGA_SEWA']) ? (float)$order['HARGA_SEWA'] : 0;
-                                    $total_catering_val = isset($order['TOTAL_HARGA']) ? (float)$order['TOTAL_HARGA'] : 0;
-                                    $total_keseluruhan = isset($order['TOTAL_KESELURUHAN']) ? (float)$order['TOTAL_KESELURUHAN'] : ($harga_sewa_val + $total_catering_val);
+                                    $harga_sewa_val = (float)($order['HARGA_SEWA'] ?? 0);
+                                    $total_catering_val = (float)($order['TOTAL_HARGA'] ?? 0);
+                                    $total_keseluruhan = (float)($order['TOTAL_KESELURUHAN'] ?? ($harga_sewa_val + $total_catering_val));
                                     ?>
                                     <tr class="bg-white">
                                         <td class="w-48 px-4 py-3 font-semibold text-slate-700">Total Keseluruhan</td>
@@ -232,7 +232,7 @@ $id_gedung = $this->uri->segment(4);
                     <div class="mt-6 rounded-xl border border-slate-300 bg-slate-50 p-5 ring-1 ring-slate-200">
                         <?php echo form_open_multipart('home/home/upload_proposal/' . $id, ['id' => 'formUpload']); ?>
                         <input type="hidden" name="request_id"
-                            value="<?php echo isset($order['REQUEST_ID']) ? htmlspecialchars($order['REQUEST_ID']) : ''; ?>">
+                            value="<?php echo htmlspecialchars((string)($order['REQUEST_ID'] ?? '')); ?>">
                         <?php if ($this->session->flashdata('upload_error')): ?>
                             <div class="mb-4 p-3 rounded-lg border border-red-200 bg-red-50 text-red-700 text-sm">
                                 <?php echo $this->session->flashdata('upload_error'); ?>
