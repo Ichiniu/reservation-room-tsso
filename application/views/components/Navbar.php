@@ -225,14 +225,16 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
                                 <i class="bi bi-bell"></i> Aktifkan Notifikasi
                             </button>
 
-                            <button id="testSound"
-                                class="ml-2 px-3 py-1 rounded-md text-xs border bg-slate-950 border-gray-300 hover:bg-gray-50">
-                                Test Sound
-                            </button>
-                            <button id="testDesktop"
-                                class="ml-2 px-3 py-1 rounded-md text-xs border bg-slate-950 border-gray-300 hover:bg-gray-50">
-                                Test Desktop
-                            </button>
+                            <div class="px-4 py-0.5 flex items-center gap-2">
+                                <button id="testSound"
+                                    class="flex-1 flex items-center justify-center gap-1 h-5 rounded-md text-[9px] font-bold border border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors shadow-sm">
+                                    <i class="bi bi-volume-up-fill"></i> Test Sound
+                                </button>
+                                <button id="testDesktop"
+                                    class="flex-1 flex items-center justify-center gap-1 h-5 rounded-md text-[9px] font-bold border border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition-colors shadow-sm">
+                                    <i class="bi bi-display"></i> Test Desktop
+                                </button>
+                            </div>
 
                             <div class="px-4 pb-2 text-[11px] text-slate-500 flex items-center gap-2">
                                 <span id="notifDot" class="inline-block w-2 h-2 rounded-full bg-slate-300"></span>

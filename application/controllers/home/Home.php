@@ -35,10 +35,20 @@ class Home extends CI_Controller
 
     // Jika method bukan public, baru wajib login
     if (!in_array($method, $public_methods, true)) {
-        $session_id = $this->session->userdata('username');
-        if (empty($session_id)) {
+        $username = $this->session->userdata('username');
+        if (empty($username)) {
             redirect(site_url('login'));
             exit;
+        }
+
+        // Fix: Auto-refresh foto_profil if missing in session but user is logged in
+        if ($this->session->userdata('foto_profil') === NULL) {
+            $user_data = $this->db->select('FOTO_PROFIL')
+                                  ->get_where('user', ['USERNAME' => $username])
+                                  ->row();
+            if ($user_data) {
+                $this->session->set_userdata('foto_profil', $user_data->FOTO_PROFIL ?? '');
+            }
         }
     }
 }

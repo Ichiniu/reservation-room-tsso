@@ -49,9 +49,10 @@ class Login extends CI_Controller
 
 			if ($authenticated) {
 				$session_data = [
-					'username'   => $user->USERNAME,
-					'logged_in'  => TRUE,
-					'session_id' => session_id()
+					'username'    => $user->USERNAME,
+					'foto_profil' => $user->FOTO_PROFIL ?? '',
+					'logged_in'   => TRUE,
+					'session_id'  => session_id()
 				];
 				$this->session->set_userdata($session_data);
 				redirect('home/' . $user->USERNAME . '/');
