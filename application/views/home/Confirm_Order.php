@@ -251,7 +251,7 @@ $id_gedung = $this->uri->segment(4);
                             </div>
 
                             <div class="mt-5 flex flex-col sm:flex-row gap-3 sm:justify-end">
-                                <a href="<?php echo site_url('home/pemesanan'); ?>"
+                                <a href="<?php echo site_url('home'); ?>"
                                     class="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-50">
                                     Batal
                                 </a>
@@ -272,17 +272,73 @@ $id_gedung = $this->uri->segment(4);
                 <p class="mt-6 text-center text-xs text-slate-500">© <?php echo date('Y'); ?> Smart Office</p>
             </div>
     </main>
+    <!-- POPUP VALIDASI -->
+    <div id="validasiPopup" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-black/40" onclick="tutupPopup()"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl border border-slate-200 w-[90vw] max-w-sm overflow-hidden">
+            <div class="p-6 text-center">
+                <div class="mx-auto mb-4 h-14 w-14 rounded-full bg-red-100 flex items-center justify-center">
+                    <svg class="h-7 w-7 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900">Keperluan Acara Wajib Diisi</h3>
+                <p class="mt-2 text-sm text-slate-600">Silakan isi kolom keperluan acara sebelum submit.</p>
+                <div class="mt-5">
+                    <button type="button" onclick="tutupPopup()"
+                        class="w-full inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-800 transition">
+                        Mengerti
+                    </button>
+                </div>
+            </div>
+            <div class="h-1 bg-slate-100">
+                <div id="popupBar" class="h-full bg-red-500 w-full"></div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        function tutupPopup() {
+            var popup = document.getElementById('validasiPopup');
+            if (popup) popup.classList.add('hidden');
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('formUpload');
+            var form = document.getElementById('formUpload');
             if (!form) return;
 
             form.addEventListener('submit', function(e) {
-                // proposal OPTIONAL: jangan dicegat kalau kosong
-                // kalau mau validasi, lakukan hanya jika user memilih file
-                const f = document.getElementById('proposal');
-                if (f && f.files && f.files.length > 0) {
-                    // opsional: validasi ekstensi di sini kalau perlu
+                var textarea = document.getElementById('textarea1');
+                var value = textarea ? textarea.value.trim() : '';
+
+                if (value === '') {
+                    e.preventDefault();
+
+                    // Show popup
+                    var popup = document.getElementById('validasiPopup');
+                    if (popup) {
+                        popup.classList.remove('hidden');
+
+                        // Progress bar animation (auto close after 4s)
+                        var bar = document.getElementById('popupBar');
+                        if (bar && bar.animate) {
+                            bar.animate([{ width: '100%' }, { width: '0%' }], {
+                                duration: 4000,
+                                easing: 'linear'
+                            });
+                        }
+                        setTimeout(function() { tutupPopup(); }, 4200);
+                    }
+
+                    // Focus textarea
+                    if (textarea) {
+                        textarea.focus();
+                        textarea.classList.add('ring-2', 'ring-red-400', 'border-red-400');
+                        setTimeout(function() {
+                            textarea.classList.remove('ring-2', 'ring-red-400', 'border-red-400');
+                        }, 3000);
+                    }
+                    return;
                 }
             });
         });

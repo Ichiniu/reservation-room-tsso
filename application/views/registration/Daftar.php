@@ -98,7 +98,7 @@
                                 </option>
 
                                 <option value="EKSTERNAL" class="bg-[#071A1A] text-[#D7FFF8]">
-                                    Perusahaan/Instansi/Kalangan Umum (Non TS Group)
+                                    Perusahaan/Instansi/Kalangan Umum (Eksternal)
                                 </option>
                             </select>
 

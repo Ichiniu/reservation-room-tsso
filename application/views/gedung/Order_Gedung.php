@@ -908,6 +908,20 @@ $pricing_mode_view = (string)($pricing_mode ?? 'FLAT');
                             this.onDatePicked(tgl.value);
                         }
                     });
+
+                    // ✅ Re-enable submit button when user navigates back via browser
+                    window.addEventListener('pageshow', function(event) {
+                        var btn = document.getElementById('submit');
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.style.opacity = '1';
+                        }
+                        // Generate fresh request_id to avoid duplicate rejection
+                        var reqInput = document.querySelector('input[name="request_id"]');
+                        if (reqInput) {
+                            reqInput.value = Date.now().toString(36) + Math.random().toString(36).substr(2, 12);
+                        }
+                    });
                 },
 
                 // ✅ submit handler
