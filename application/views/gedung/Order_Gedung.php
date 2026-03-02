@@ -462,7 +462,11 @@ $pricing_mode_view = (string)($pricing_mode ?? 'FLAT');
                                     <option value="VIDEO">Video Streaming</option>
                                 </select>
                                 <p class="mt-2 text-xs text-slate-500">
-                                    *Khusus user eksternal untuk Studio Podcast (tarif per jam sesuai jenis).*
+                                    <?php if (!empty($is_internal)): ?>
+                                        *Pilih jenis podcast: Audio atau Video.*
+                                    <?php else: ?>
+                                        *Khusus user eksternal untuk Studio Podcast (tarif per jam sesuai jenis).*
+                                    <?php endif; ?>
                                 </p>
                             </div>
 
@@ -922,7 +926,7 @@ $pricing_mode_view = (string)($pricing_mode ?? 'FLAT');
                             e.preventDefault();
                             return;
                         }
-                        if (this.tipeJam === 'CUSTOM') {
+                        if (!this.isInternal && this.tipeJam === 'CUSTOM') {
                             this.extraError =
                                 'Untuk ruangan ini (eksternal), tipe jam tidak boleh CUSTOM. Pilih HALF/FULL DAY.';
                             e.preventDefault();
@@ -936,7 +940,7 @@ $pricing_mode_view = (string)($pricing_mode ?? 'FLAT');
                             e.preventDefault();
                             return;
                         }
-                        if (this.tipeJam !== 'CUSTOM') {
+                        if (!this.isInternal && this.tipeJam !== 'CUSTOM') {
                             this.extraError = 'Studio Podcast (eksternal) wajib memilih tipe jam CUSTOM (per jam).';
                             e.preventDefault();
                             return;

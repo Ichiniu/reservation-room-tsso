@@ -341,6 +341,15 @@ class Admin_Controls extends CI_Controller
 
 		// === PROSES POST DULU ===
 		if ($this->input->method(TRUE) === 'POST') {
+
+			// IDEMPOTENCY GUARD: Hanya proses jika status masih PROCESS (0)
+			$current_status = isset($ps['STATUS']) ? (int)$ps['STATUS'] : -1;
+			if ($current_status !== 0) {
+				// Sudah pernah di-approve/reject sebelumnya, abaikan aksi ulang
+				redirect('admin/transaksi');
+				return;
+			}
+
 			$status  = (int) $this->input->post('status-proposal');
 			$remarks = trim((string) $this->input->post('remarks', TRUE));
 
@@ -868,6 +877,14 @@ class Admin_Controls extends CI_Controller
 			return;
 		}
 		$username_user = $ps['USERNAME'];
+
+		// IDEMPOTENCY GUARD: Hanya proses jika pembayaran masih PENDING
+		$current_verif = strtoupper(trim((string)($p['STATUS_VERIF'] ?? '')));
+		if ($current_verif !== 'PENDING') {
+			// Sudah pernah di-confirm/reject sebelumnya, abaikan aksi ulang
+			redirect('admin/pembayaran');
+			return;
+		}
 
 		$this->db->trans_begin();
 

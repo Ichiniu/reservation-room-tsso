@@ -1,0 +1,39 @@
+TC_ID;Modul;Role;Judul Skenario;Preconditions;Steps;Expected Result;Prioritas;Status;Catatan;Evidence LinkA-01;Auth;Admin;Akses admin: proteksi + login berhasil;Akun admin tersedia;"1) Akses URL admin tanpa login
+2) Login admin
+3) Akses menu admin";"Tanpa login ditolak; setelah login semua menu admin bisa diakses";P0;;;A-02;User Management;Admin;List user + search + pagination;Terdapat beberapa user;"1) Buka Kelola User
+2) Search user
+3) Cek pagination";List, search, pagination bekerja dan konsisten;P1;;;A-03;User Management;Admin;Tambah user (valid) berhasil;Admin login;"1) Tambah user dengan data valid
+2) Simpan";User tersimpan dan muncul di list;P1;;;A-04;User Management;Admin;Nonaktifkan user ? user tidak bisa login/booking;Ada user aktif yang bisa diuji;"1) Nonaktifkan user
+2) Coba login/booking sebagai user tsb";User diblok sesuai aturan (login gagal atau akses dibatasi);P0;;;A-05;Ruangan (CRUD);Admin;Tambah ruangan ? muncul di list user;Admin login;"1) Tambah ruangan baru
+2) Simpan
+3) Cek dari sisi user";Ruangan tampil dan bisa dibuka detailnya;P1;;;A-06;Ruangan (CRUD);Admin;Edit ruangan ? perubahan terlihat;Minimal 1 ruangan ada;"1) Edit nama/kapasitas/fasilitas
+2) Simpan
+3) Cek detail";Perubahan tersimpan dan tampil di UI user;P2;;;A-07;Ruangan (CRUD);Admin;Nonaktifkan ruangan ? tidak bisa dipesan;Ruangan aktif tersedia;"1) Nonaktifkan ruangan
+2) Cek daftar ruangan user
+3) Coba booking";Ruangan nonaktif tidak tampil atau tidak bisa dipesan (konsisten);P0;;;A-08;Catering Toggle;Admin;Aktifkan/Nonaktifkan info catering (manual hubungi admin);Fitur toggle catering tersedia;"1) Set catering ON
+2) Cek UI user (How to Order/form)
+3) Set catering OFF
+4) Cek UI lagi";"Saat ON info muncul; saat OFF info disembunyikan/ditandai nonaktif";P2;;;A-09;Booking Verify;Admin;Approve pesanan (Process ? Approve) + email terkirim;"Ada pesanan status Process; SMTP aktif";"1) Buka detail pesanan Process
+2) Approve
+3) Cek status
+4) Cek email user";"Status jadi Approve; email verifikasi pesanan terkirim";P0;;;A-10;Booking Verify;Admin;Reject pesanan TANPA catatan ditolak sistem;Ada pesanan status Process;"1) Klik Reject
+2) Biarkan catatan kosong
+3) Simpan";"Aksi gagal; muncul pesan 'Catatan wajib'; status tetap Process";P0;;;A-11;Booking Verify;Admin;Reject pesanan DENGAN catatan berhasil + email;"Ada pesanan status Process; SMTP aktif";"1) Reject
+2) Isi catatan
+3) Simpan
+4) Cek dari sisi user & email";"Status jadi Rejected; catatan tampil; email reject terkirim";P0;;;A-12;Payment Verify;Admin;Confirm pembayaran (bukti & nominal cocok) ? Submitted + email final;"Ada transaksi menunggu verifikasi; bukti valid; SMTP aktif";"1) Buka transaksi
+2) Cocokkan nominal & bukti
+3) Confirm
+4) Cek status pesanan & email";"Status pesanan jadi Submitted (final); email final terkirim";P0;;;A-13;Payment Verify;Admin;Reject pembayaran TANPA catatan ditolak sistem;Ada transaksi menunggu verifikasi;"1) Klik Reject
+2) Catatan kosong
+3) Simpan";"Aksi gagal; pesan 'Catatan wajib'; status transaksi tidak berubah";P0;;;A-14;Payment Verify;Admin;Reject pembayaran DENGAN catatan (nominal kurang/bukti salah) + email final;"Ada transaksi menunggu verifikasi; SMTP aktif";"1) Reject
+2) Isi catatan (contoh: nominal kurang)
+3) Simpan
+4) Cek user & email";"Transaksi Rejected; pesanan final Rejected; catatan tampil; email final terkirim";P0;;;A-15;Rekap;Admin;Rekap aktivitas: filter tanggal/ruangan/status akurat;Ada data booking beragam status;"1) Buka rekap aktivitas
+2) Filter tanggal dari–sampai
+3) Filter ruangan/status
+4) Bandingkan hasil";"Filter akurat; tidak 'nyasar' data di luar range";P1;;;A-16;Rekap;Admin;Rekap transaksi: filter status/tanggal/nominal + sorting benar;Ada data transaksi beragam status;"1) Buka rekap transaksi
+2) Filter status & range tanggal
+3) Sort by tanggal/nominal";Hasil sesuai filter dan urutan sorting konsisten;P1;;;A-17;Idempotency;Admin;Proteksi aksi ulang: confirm/reject tidak dobel update;Ada transaksi/pesanan yang bisa diuji;"1) Confirm transaksi
+2) Klik confirm lagi / refresh
+3) Ulang untuk reject";"Tidak ada duplikasi; sistem menolak atau mengabaikan aksi ulang dengan aman";P1;;;

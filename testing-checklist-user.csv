@@ -1,0 +1,95 @@
+TC_ID;Modul;Role;Judul Skenario;Preconditions;Steps;Expected Result;Prioritas;Status;Catatan;Evidence Link
+U-01;Auth;User;Register user baru (EKSTERNAL) berhasil;Halaman registrasi tersedia;"1) Buka halaman registrasi
+2) Isi semua field: username, nama, email @gmail, password, alamat, no HP, tanggal lahir
+3) Pilih EKSTERNAL, isi nama perusahaan
+4) Submit";User terdaftar dan redirect ke halaman login;P0;;;
+U-02;Auth;User;Register user baru (INTERNAL) berhasil;Halaman registrasi tersedia;"1) Buka halaman registrasi
+2) Isi semua field
+3) Pilih INTERNAL, pilih departemen
+4) Submit";User terdaftar; nama perusahaan otomatis PT Tiga Serangkai;P0;;;
+U-03;Auth;User;Register gagal: username sudah ada;Ada user dengan username 'test' di DB;"1) Buka registrasi
+2) Isi username 'test' (sudah ada)
+3) Submit";Muncul pesan 'Username sudah ada'; tidak ada duplikasi;P0;;;
+U-04;Auth;User;Register validasi: email harus @gmail;Halaman registrasi tersedia;"1) Isi email dengan @yahoo.com
+2) Submit";Register ditolak: 'Email harus menggunakan domain @gmail';P1;;;
+U-05;Auth;User;Register validasi: usia minimal 18 tahun;Halaman registrasi tersedia;"1) Isi tanggal lahir kurang dari 18 tahun
+2) Submit";Register ditolak: 'Usia minimal 18 tahun';P1;;;
+U-06;Auth;User;Login user berhasil;User sudah terdaftar;"1) Buka halaman login
+2) Isi username dan password
+3) Submit";Login berhasil; redirect ke halaman home;P0;;;
+U-07;Auth;User;Login gagal: password salah;User sudah terdaftar;"1) Buka halaman login
+2) Isi username benar + password salah
+3) Submit";Login ditolak; muncul pesan error;P0;;;
+U-08;Auth;User;Akses halaman user tanpa login;Tidak ada session user;"1) Akses URL home/pemesanan langsung tanpa login";Redirect ke halaman login;P0;;;
+U-09;Auth;User;Logout user;User sudah login;"1) Klik tombol logout";Session dihapus; redirect ke halaman login;P1;;;
+U-10;Booking;User;Booking ruangan (EKSTERNAL) - flow lengkap;User EKSTERNAL login; ruangan tersedia;"1) Buka halaman home
+2) Pilih ruangan
+3) Pilih tanggal (H+10 atau sesuai aturan)
+4) Pilih jam (Half Day / Full Day)
+5) Isi email
+6) Submit order
+7) Isi keperluan acara
+8) Submit proposal";Pesanan tersimpan dengan status PROCESS; notif ke admin terkirim;P0;;;
+U-11;Booking;User;Booking ruangan (INTERNAL) - auto confirmed;User INTERNAL login; ruangan tersedia;"1) Buka halaman home
+2) Pilih ruangan
+3) Pilih tanggal (bisa H+0)
+4) Pilih jam (bebas: custom/half/full)
+5) Isi email
+6) Submit order
+7) Isi keperluan acara
+8) Submit proposal";Pesanan otomatis CONFIRMED (status 3); pembayaran auto CONFIRMED;P0;;;
+U-12;Booking;User;Booking gagal: tanggal/jam konflik;User login; ruangan sudah terbooked di tanggal+jam tersebut;"1) Pilih ruangan yang sudah ada booking
+2) Pilih tanggal dan jam yang sama
+3) Submit";Muncul pesan 'Ruangan sudah terbooking'; booking tidak tersimpan;P0;;;
+U-13;Booking;User;Booking gagal: tanggal kurang dari H+minimum;User EKSTERNAL login;"1) Pilih ruangan
+2) Pilih tanggal besok (kurang dari H+minimum)
+3) Submit";Tanggal tidak bisa dipilih (disabled) atau validasi menolak;P1;;;
+U-14;Booking;User;Booking dengan catering;User login; catering aktif;"1) Pilih ruangan
+2) Isi tanggal, jam, email
+3) Pilih catering: Ya
+4) Pilih paket dan jumlah porsi
+5) Submit";Pesanan tersimpan termasuk data catering dan total harga;P1;;;
+U-15;Pemesanan;User;Lihat list pemesanan;User login; punya beberapa pesanan;"1) Buka halaman Pemesanan
+2) Cek daftar pesanan tampil";Semua pesanan user tampil dengan status yang benar;P1;;;
+U-16;Pemesanan;User;Lihat detail pemesanan;User login; ada pesanan;"1) Buka halaman Pemesanan
+2) Klik salah satu pesanan";Detail pesanan tampil: ruangan, tanggal, jam, status, harga;P1;;;
+U-17;Pembayaran;User;Upload bukti pembayaran;User EKSTERNAL login; ada pesanan status APPROVE;"1) Buka halaman Pembayaran
+2) Pilih pesanan APPROVE
+3) Upload bukti transfer (foto)
+4) Isi nominal dan data bank
+5) Submit";Bukti terupload; status transaksi PENDING; admin mendapat notifikasi;P0;;;
+U-18;Pembayaran;User;Lihat status pembayaran;User login; ada data pembayaran;"1) Buka halaman Pembayaran
+2) Cek status transaksi";Status pembayaran tampil: PENDING/CONFIRMED/REJECTED;P1;;;
+U-19;Profil;User;Edit profil user;User login;"1) Buka halaman Edit Data
+2) Ubah nama/email/alamat/no HP
+3) Simpan";Data terupdate di database dan tampil di profil;P1;;;
+U-20;Profil;User;Edit password;User login;"1) Buka halaman Edit Data
+2) Isi password baru dan confirm password
+3) Simpan";Password berhasil diubah; bisa login dengan password baru;P1;;;
+U-21;Profil;User;Edit password gagal: confirm tidak cocok;User login;"1) Isi password baru
+2) Isi confirm password berbeda
+3) Simpan";Muncul pesan 'Password dan confirm password tidak sama';P1;;;
+U-22;Profil;User;Edit foto profil;User login;"1) Buka halaman Edit Foto
+2) Upload foto baru
+3) Simpan";Foto profil berubah dan tampil di navbar;P2;;;
+U-23;Jadwal;User;Lihat jadwal ruangan;User login;"1) Buka halaman Jadwal
+2) Cek calendar/tabel jadwal";Jadwal ruangan yang sudah CONFIRMED tampil dengan benar;P1;;;
+U-24;Jadwal;User;Filter jadwal per periode;User login;"1) Buka halaman Jadwal
+2) Pilih tanggal mulai dan selesai
+3) Apply filter";Hanya jadwal dalam range yang ditampilkan;P2;;;
+U-25;Catering;User;Lihat menu catering;User login; catering aktif;"1) Buka halaman Catering
+2) Cek daftar menu";Menu catering yang aktif tampil dengan harga;P2;;;
+U-26;Notifikasi;User;Badge notifikasi pemesanan muncul;User login; ada update status pesanan;"1) Admin approve/reject pesanan
+2) Cek badge di navbar user";Badge notifikasi muncul dan angka sesuai;P1;;;
+U-27;Notifikasi;User;Badge notifikasi transaksi muncul;User login; ada update status pembayaran;"1) Admin confirm/reject pembayaran
+2) Cek badge di navbar user";Badge transaksi muncul dan angka sesuai;P1;;;
+U-28;Ulasan;User;Submit ulasan setelah booking selesai;User login; ada pesanan CONFIRMED;"1) Buka halaman Ulasan
+2) Pilih pesanan
+3) Isi rating dan komentar
+4) Submit";Ulasan tersimpan dan tampil (setelah admin approve);P2;;;
+U-29;Security;User;User tidak bisa akses pesanan user lain;User A login; ada pesanan milik User B;"1) Akses URL detail pesanan milik user lain
+2) Coba buka detail";Halaman 404 / akses ditolak; data user lain tidak terlihat;P0;;;
+U-30;Responsive;User;Tampilan mobile responsif;User login via mobile/resize browser;"1) Buka halaman home di mobile
+2) Cek navbar hamburger
+3) Navigasi antar halaman
+4) Booking ruangan";Semua halaman responsive; menu hamburger berfungsi; form booking bisa diisi;P1;;;

@@ -739,6 +739,16 @@ class Home extends CI_Controller
 
 		// data pemesanan (dari view V_PEMESANAN)
 		$data['result'] = $this->gedung_model->get_detail_pesanan($id_pemesanan);
+
+		// SECURITY: pastikan pesanan ini milik user yang sedang login
+		if (!empty($data['result'])) {
+			$pesanan_owner = $data['result']->USERNAME ?? '';
+			if (strcasecmp($pesanan_owner, $username) !== 0) {
+				show_404();
+				return;
+			}
+		}
+
 		$data['flag']   = $this->gedung_model->get_pemesanan_flag($username);
 		$data['trx_flag'] = $this->gedung_model->get_transaksi_flag($username);
 
@@ -1007,7 +1017,7 @@ class Home extends CI_Controller
 					redirect(site_url('edit_data'));
 					return;
 				}
-				$data['PASSWORD'] = $password;
+				$data['PASSWORD'] = password_hash($password, PASSWORD_DEFAULT);
 			}
 
 			// departemen & nama_perusahaan hanya tampil, tidak diupdate

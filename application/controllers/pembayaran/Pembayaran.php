@@ -63,6 +63,13 @@ class Pembayaran extends CI_Controller
             return;
         }
 
+        // SECURITY: pastikan pesanan ini milik user yang sedang login
+        $username = $this->session->userdata('username');
+        if (empty($username) || $pesanan->USERNAME !== $username) {
+            show_error('Anda tidak memiliki akses ke pesanan ini.');
+            return;
+        }
+
         // ===== RULE DISKON =====
         // (FIX PHP 5.x: hilangkan operator ??)
         $perusahaan_val = $pesanan->perusahaan ?? '';

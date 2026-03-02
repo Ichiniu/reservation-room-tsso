@@ -1,7 +1,7 @@
 <?php
-$username   = $this->session->userdata('username');
-$session_id = $this->session->userdata('username');
-$foto_profil = $this->session->userdata('foto_profil'); // ✅ dipakai desktop + mobile
+$username   = (string)($this->session->userdata('username') ?? '');
+$session_id = (string)($this->session->userdata('username') ?? '');
+$foto_profil = (string)($this->session->userdata('foto_profil') ?? '');
 
 $flag     = isset($flag) ? (int)$flag : 0;         // badge PEMESANAN
 $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
@@ -64,6 +64,7 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
             <div class="flex items-center gap-2">
 
                 <!-- MOBILE: PROFILE AVATAR BUTTON (terpisah dari hamburger) -->
+                <?php if ($username !== ''): ?>
                 <div class="relative md:hidden">
                     <button id="mobileProfileBtn" type="button"
                         class="inline-flex items-center justify-center rounded-full border border-black/10 h-9 w-9 hover:bg-slate-100 transition overflow-hidden"
@@ -131,6 +132,12 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
                         </div>
                     </div>
                 </div>
+                <?php else: ?>
+                <!-- MOBILE: LOGIN BUTTON (guest) -->
+                <a href="<?= site_url('login'); ?>" class="md:hidden inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800 transition">
+                    <i class="bi bi-box-arrow-in-right"></i> Login
+                </a>
+                <?php endif; ?>
 
                 <!-- MOBILE: HAMBURGER (hanya navigasi) -->
                 <div class="relative md:hidden">
@@ -181,6 +188,7 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
                 </div>
 
                 <!-- PROFILE (DESKTOP) -->
+                <?php if ($username !== ''): ?>
                 <div class="relative hidden md:block">
                     <button id="profileToggle" type="button"
                         class="profile-toggle flex items-center gap-2 px-3 py-1 rounded-full bg-white hover:bg-slate-100 border border-black/10 transition"
@@ -240,6 +248,12 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
                         </div>
                     </div>
                 </div>
+                <?php else: ?>
+                <!-- DESKTOP: LOGIN BUTTON (guest) -->
+                <a href="<?= site_url('login'); ?>" class="hidden md:inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800 transition">
+                    <i class="bi bi-box-arrow-in-right"></i> Login
+                </a>
+                <?php endif; ?>
             </div>
 
         </div>

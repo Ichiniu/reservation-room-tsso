@@ -19,7 +19,6 @@ $this->load->helper('text');
 </head>
 
 <body class="bg-gray-100 text-gray-800">
-    <?php $this->load->view('components/navbar'); ?>
     <?php $this->load->view('admin/components/sidebar'); ?>
 
     <main class="pt-24 pl-0 md:pl-64 px-4 md:px-6 pb-10">

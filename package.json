@@ -1,6 +1,7 @@
 {
   "devDependencies": {
     "autoprefixer": "^10.4.22",
+    "cypress": "^15.11.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.19"
   },
@@ -24,10 +25,20 @@
     "update-browserslist-db": "^1.2.2"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "test": "cypress run"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "commonjs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ichiniu/reservation-room-tsso.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Ichiniu/reservation-room-tsso/issues"
+  },
+  "homepage": "https://github.com/Ichiniu/reservation-room-tsso#readme"
 }

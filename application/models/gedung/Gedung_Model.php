@@ -704,19 +704,18 @@ TIME_FORMAT(
 
 	public function update_transaksi($id_pemesanan, $data, $remarks)
 	{
-		//$sql = "UPDATE pemesanan SET STATUS = $data WHERE ID_PEMESANAN = $id_pemesanan";
 		$sql = "
 		UPDATE PEMESANAN 
-		SET STATUS = $data,
+		SET STATUS = ?,
 		REMARKS = (
 			CASE 
 			WHEN STATUS = 1 THEN NULL
-			ELSE '$remarks'
+			ELSE ?
 			END
 		)
 		,FLAG = 1
-		WHERE ID_PEMESANAN = $id_pemesanan";
-		$query = $this->db->query($sql);
+		WHERE ID_PEMESANAN = ?";
+		$query = $this->db->query($sql, [(int)$data, $remarks, (int)$id_pemesanan]);
 		return $query;
 	}
 
@@ -788,8 +787,8 @@ TIME_FORMAT(
 
 	public function get_proposal_by_id($id_pemesanan)
 	{
-		$sql = "SELECT * FROM pemesanan_details WHERE ID_PEMESANAN = $id_pemesanan";
-		$query = $this->db->query($sql);
+		$sql = "SELECT * FROM pemesanan_details WHERE ID_PEMESANAN = ?";
+		$query = $this->db->query($sql, [(int)$id_pemesanan]);
 		$hasil = $query->row();
 		return $hasil;
 	}
@@ -953,15 +952,15 @@ TIME_FORMAT(
 
 	public function search_gedung($nama_gedung)
 	{
-		$query = "SELECT ID_GEDUNG, NAMA_GEDUNG, PATH, IMG_NAME FROM HOME_DATA WHERE NAMA_GEDUNG LIKE '%$nama_gedung%'";
-		$sql = $this->db->query($query);
+		$query = "SELECT ID_GEDUNG, NAMA_GEDUNG, PATH, IMG_NAME FROM HOME_DATA WHERE NAMA_GEDUNG LIKE ?";
+		$sql = $this->db->query($query, ['%' . $nama_gedung . '%']);
 		return $sql->result_array();
 	}
 
 	public function get_gedung_img($id_gedung)
 	{
-		$query = "SELECT * FROM GEDUNG_IMG WHERE ID_GEDUNG = $id_gedung";
-		$sql = $this->db->query($query);
+		$query = "SELECT * FROM GEDUNG_IMG WHERE ID_GEDUNG = ?";
+		$sql = $this->db->query($query, [(int)$id_gedung]);
 		return $sql->result_array();
 	}
 
