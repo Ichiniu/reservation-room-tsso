@@ -782,6 +782,12 @@ class Admin_Controls extends CI_Controller
 		$data['res'] = $this->gedung_model->get_pending_transaction();
 		$data['result'] = $this->catering_model->get_all();
 		$data['catering_phone'] = $this->settings_model->get('catering_phone', '089649261851');
+
+		// Data rekening pembayaran
+		$data['payment_bank_name']    = $this->settings_model->get('payment_bank_name', getenv('PAYMENT_BANK_NAME') ?: 'BCA');
+		$data['payment_bank_account'] = $this->settings_model->get('payment_bank_account', getenv('PAYMENT_BANK_ACCOUNT') ?: '');
+		$data['payment_bank_holder']  = $this->settings_model->get('payment_bank_holder', getenv('PAYMENT_BANK_HOLDER') ?: '');
+
 		$this->load->view('admin/list_catering', $data);
 	}
 
@@ -796,6 +802,31 @@ class Admin_Controls extends CI_Controller
 		if (!empty($phone)) {
 			$this->settings_model->set('catering_phone', $phone);
 		}
+		redirect('admin/catering');
+	}
+
+	/**
+	 * Simpan data rekening pembayaran (POST)
+	 */
+	public function save_payment_bank()
+	{
+		$this->load->helper('url');
+		$this->load->model('settings_model');
+
+		$bank_name    = trim((string)$this->input->post('payment_bank_name', TRUE));
+		$bank_account = trim((string)$this->input->post('payment_bank_account', TRUE));
+		$bank_holder  = trim((string)$this->input->post('payment_bank_holder', TRUE));
+
+		if (!empty($bank_name)) {
+			$this->settings_model->set('payment_bank_name', $bank_name);
+		}
+		if (!empty($bank_account)) {
+			$this->settings_model->set('payment_bank_account', $bank_account);
+		}
+		if (!empty($bank_holder)) {
+			$this->settings_model->set('payment_bank_holder', $bank_holder);
+		}
+
 		redirect('admin/catering');
 	}
 

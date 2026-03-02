@@ -386,9 +386,9 @@ function e($v)
                 <div class="mb-4 text-sm rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4">
                     <p class="font-semibold mb-1 text-emerald-900">Transfer ke Rekening</p>
                     <div class="text-slate-700">
-                        <p>Bank <b>BCA</b></p>
-                        <p>No Rekening: <b>1234567890</b></p>
-                        <p>Atas Nama: <b>Tiga Serangkai Smart Office</b></p>
+                        <p>Bank <b><?php echo e($payment_bank_name ?? 'BCA'); ?></b></p>
+                        <p>No Rekening: <b><?php echo e($payment_bank_account ?? '-'); ?></b></p>
+                        <p>Atas Nama: <b><?php echo e($payment_bank_holder ?? '-'); ?></b></p>
                     </div>
                 </div>
 

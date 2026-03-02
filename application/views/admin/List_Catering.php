@@ -67,6 +67,49 @@ $catering_data = isset($result) && is_array($result) ? $result : [];
                 <p class="mt-2 text-xs text-slate-400">Nomor ini akan ditampilkan ke user saat semua catering dinonaktifkan.</p>
             </div>
 
+            <!-- Data Rekening Pembayaran -->
+            <div class="mb-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                <form action="<?= site_url('admin/save_payment_bank') ?>" method="post" class="space-y-3">
+                    <div class="flex items-center gap-2 text-sm text-slate-600 mb-2">
+                        <span class="material-icons text-[20px] text-emerald-600">account_balance</span>
+                        <span class="font-semibold">Rekening Pembayaran</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1">Nama Bank</label>
+                            <input type="text" name="payment_bank_name"
+                                value="<?= htmlspecialchars(isset($payment_bank_name) ? $payment_bank_name : 'BCA') ?>"
+                                class="w-full rounded-xl border border-slate-300 px-4 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600"
+                                placeholder="Contoh: BCA" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1">Nomor Rekening</label>
+                            <input type="text" name="payment_bank_account"
+                                value="<?= htmlspecialchars(isset($payment_bank_account) ? $payment_bank_account : '') ?>"
+                                class="w-full rounded-xl border border-slate-300 px-4 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600"
+                                placeholder="Contoh: 1234567890" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1">Nama Pemilik Rekening</label>
+                            <input type="text" name="payment_bank_holder"
+                                value="<?= htmlspecialchars(isset($payment_bank_holder) ? $payment_bank_holder : '') ?>"
+                                class="w-full rounded-xl border border-slate-300 px-4 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600"
+                                placeholder="Contoh: PT Tiga Serangkai" required>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <p class="text-xs text-slate-400">Data ini akan ditampilkan di halaman pembayaran user.</p>
+                        <button type="submit"
+                            class="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 text-white text-sm font-bold rounded-xl hover:bg-emerald-700 transition shadow-sm">
+                            <span class="material-icons text-sm">save</span>
+                            Simpan Rekening
+                        </button>
+                    </div>
+                </form>
+            </div>
+
             <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="p-6">
                     <div class="overflow-x-auto">

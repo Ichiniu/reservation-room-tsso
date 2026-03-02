@@ -825,6 +825,14 @@ class Home extends CI_Controller
 			$data['result']->REMARKS = $data['catatan_admin_reject'];
 		}
 
+		// =========================
+		// Data Rekening Pembayaran (dari app_settings, fallback ke .env)
+		// =========================
+		$this->load->model('settings_model');
+		$data['payment_bank_name']    = $this->settings_model->get('payment_bank_name', getenv('PAYMENT_BANK_NAME') ?: 'BCA');
+		$data['payment_bank_account'] = $this->settings_model->get('payment_bank_account', getenv('PAYMENT_BANK_ACCOUNT') ?: '');
+		$data['payment_bank_holder']  = $this->settings_model->get('payment_bank_holder', getenv('PAYMENT_BANK_HOLDER') ?: '');
+
 		$this->load->view('home/detail_pemesanan', $data);
 	}
 
