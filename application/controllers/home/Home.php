@@ -20,13 +20,28 @@ class Home extends CI_Controller
 {
 
 	public function __construct()
-	{
-		parent::__construct();
-		$session_id = $this->session->userdata('username');
-		if (empty($session_id)) {
-			redirect(site_url() . '/login');
-		}
-	}
+{
+    parent::__construct();
+
+    // Method yang boleh diakses TANPA login (public)
+    $public_methods = array(
+        'how_to_order',
+        // tambahkan kalau nanti ada public lain:
+        // 'welcome',
+        // 'jadwal_public',
+    );
+
+    $method = $this->router->fetch_method();
+
+    // Jika method bukan public, baru wajib login
+    if (!in_array($method, $public_methods, true)) {
+        $session_id = $this->session->userdata('username');
+        if (empty($session_id)) {
+            redirect(site_url('login'));
+            exit;
+        }
+    }
+}
 
 	// 	public function index()
 	// 	{
@@ -1734,20 +1749,26 @@ class Home extends CI_Controller
 	}
 
 	public function how_to_order()
-	{
-		$username = (string)$this->session->userdata('username');
+{
+    $username = (string) $this->session->userdata('username');
 
-		$data = [
-			'flag' => 0,
-			'trx_flag' => 0
-		];
+    // default untuk guest
+    $data = array(
+        'flag'     => 0,
+        'trx_flag' => 0,
+        'is_guest' => 1,
+    );
 
-		$this->load->model('gedung/gedung_model');
-		$data['flag']     = (int)$this->gedung_model->get_pemesanan_flag($username);
-		$data['trx_flag'] = (int)$this->gedung_model->get_transaksi_flag($username);
+    // kalau sudah login baru hitung flag
+    if ($username !== '') {
+        $this->load->model('gedung/gedung_model');
+        $data['flag']     = (int) $this->gedung_model->get_pemesanan_flag($username);
+        $data['trx_flag'] = (int) $this->gedung_model->get_transaksi_flag($username);
+        $data['is_guest'] = 0;
+    }
 
-		$this->load->view('home/how_to_order', $data);
-	}
+    $this->load->view('home/how_to_order', $data);
+}
 
 	public function jadwal_by_date($id_gedung)
 	{

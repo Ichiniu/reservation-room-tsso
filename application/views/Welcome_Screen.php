@@ -258,8 +258,8 @@ if (!function_exists('get_tagline_for_room')) {
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
 
                     <?php if (!empty($res) && is_array($res)): ?>
-                        <?php foreach ($res as $row): ?>
-                            <?php
+                    <?php foreach ($res as $row): ?>
+                    <?php
                             $raw_path = (!empty($row['PATH']) && !empty($row['IMG_NAME'])) ? ($row['PATH'] . $row['IMG_NAME']) : '';
                             // Normalisasi: hapus domain lama (http://localhost/bookingsmarts/) lalu tambahkan base_url()
                             $img = '';
@@ -277,88 +277,88 @@ if (!function_exists('get_tagline_for_room')) {
                             $tagline = get_tagline_for_room($id, $TAGLINE_BY_ROOM_ID);
                             ?>
 
-                            <article class="group bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-sm
+                    <article class="group bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-sm
                                   hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
 
-                                <div class="relative overflow-hidden">
-                                    <?php if ($img): ?>
-                                        <img src="<?= $img; ?>" alt="<?= e($nama); ?>" loading="lazy"
-                                            class="h-56 w-full object-cover transition duration-500 group-hover:scale-110">
-                                    <?php else: ?>
-                                        <div
-                                            class="h-56 w-full bg-gradient-to-br from-slate-200 to-slate-100 flex items-center justify-center">
-                                            <span class="material-icons text-5xl text-slate-400">meeting_room</span>
-                                        </div>
-                                    <?php endif; ?>
+                        <div class="relative overflow-hidden">
+                            <?php if ($img): ?>
+                            <img src="<?= $img; ?>" alt="<?= e($nama); ?>" loading="lazy"
+                                class="h-56 w-full object-cover transition duration-500 group-hover:scale-110">
+                            <?php else: ?>
+                            <div
+                                class="h-56 w-full bg-gradient-to-br from-slate-200 to-slate-100 flex items-center justify-center">
+                                <span class="material-icons text-5xl text-slate-400">meeting_room</span>
+                            </div>
+                            <?php endif; ?>
 
-                                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent">
-                                    </div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent">
+                            </div>
 
-                                    <div class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full
+                            <div class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full
                                       text-xs font-semibold text-slate-800 flex items-center gap-1 shadow">
-                                        <span class="material-icons text-sm">groups</span>
-                                        <?= e($kap); ?> org
-                                    </div>
+                                <span class="material-icons text-sm">groups</span>
+                                <?= e($kap); ?> org
+                            </div>
 
-                                    <div class="absolute left-4 right-4 bottom-4">
-                                        <h3 class="text-lg font-bold text-white drop-shadow"><?= e($nama); ?></h3>
+                            <div class="absolute left-4 right-4 bottom-4">
+                                <h3 class="text-lg font-bold text-white drop-shadow"><?= e($nama); ?></h3>
 
-                                        <!--  TAGLINE PER RUANGAN -->
-                                        <p
-                                            class="mt-1 text-xs text-white/85 [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] overflow-hidden">
-                                            <?= e($tagline); ?>
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div class="p-5">
-
-                                    <!--  FASILITAS PER RUANGAN -->
-                                    <div class="flex flex-wrap gap-2">
-                                        <?php foreach ($badges as $b): ?>
-                                            <span
-                                                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs">
-                                                <span class="material-icons text-sm"><?= e($b['icon']); ?></span>
-                                                <?= e($b['label']); ?>
-                                            </span>
-                                        <?php endforeach; ?>
-                                    </div>
-
-                                    <!--  DESKRIPSI PER RUANGAN -->
-                                    <p
-                                        class="mt-4 text-sm text-slate-600 [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:3] overflow-hidden">
-                                        <?= e($desc); ?>
-                                    </p>
-                                </div>
-
-                                <div class="px-5 pb-5 flex items-center justify-between">
-                                    <div class="flex items-center gap-2 text-xs text-slate-500">
-                                        <span class="material-icons text-base">schedule</span>
-                                        Respons cepat
-                                    </div>
-
-                                    <!-- public: detail diarahkan ke login -->
-                                    <a href="<?= site_url('login'); ?>" class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-sky-600 text-white text-sm font-semibold
-                                      hover:bg-sky-700 active:scale-[0.99] transition shadow-sm
-                                      focus:outline-none focus:ring-4 focus:ring-sky-200">
-                                        Detail
-                                        <span
-                                            class="material-icons text-base transition group-hover:translate-x-0.5">arrow_forward</span>
-                                    </a>
-                                </div>
-
-                            </article>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <div class="col-span-full">
-                            <div class="rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-                                <div class="mx-auto h-12 w-12 rounded-2xl bg-slate-100 flex items-center justify-center">
-                                    <span class="material-icons text-slate-500">info</span>
-                                </div>
-                                <h4 class="mt-4 text-lg font-bold">Belum ada data ruangan</h4>
-                                <p class="mt-1 text-sm text-slate-600">Silakan tambahkan data ruangan terlebih dahulu.</p>
+                                <!--  TAGLINE PER RUANGAN -->
+                                <p
+                                    class="mt-1 text-xs text-white/85 [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] overflow-hidden">
+                                    <?= e($tagline); ?>
+                                </p>
                             </div>
                         </div>
+
+                        <div class="p-5">
+
+                            <!--  FASILITAS PER RUANGAN -->
+                            <div class="flex flex-wrap gap-2">
+                                <?php foreach ($badges as $b): ?>
+                                <span
+                                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs">
+                                    <span class="material-icons text-sm"><?= e($b['icon']); ?></span>
+                                    <?= e($b['label']); ?>
+                                </span>
+                                <?php endforeach; ?>
+                            </div>
+
+                            <!--  DESKRIPSI PER RUANGAN -->
+                            <p
+                                class="mt-4 text-sm text-slate-600 [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:3] overflow-hidden">
+                                <?= e($desc); ?>
+                            </p>
+                        </div>
+
+                        <div class="px-5 pb-5 flex items-center justify-between">
+                            <div class="flex items-center gap-2 text-xs text-slate-500">
+                                <span class="material-icons text-base">schedule</span>
+                                Respons cepat
+                            </div>
+
+                            <!-- public: detail diarahkan ke login -->
+                            <a href="<?= site_url('login'); ?>" class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-sky-600 text-white text-sm font-semibold
+                                      hover:bg-sky-700 active:scale-[0.99] transition shadow-sm
+                                      focus:outline-none focus:ring-4 focus:ring-sky-200">
+                                Detail
+                                <span
+                                    class="material-icons text-base transition group-hover:translate-x-0.5">arrow_forward</span>
+                            </a>
+                        </div>
+
+                    </article>
+                    <?php endforeach; ?>
+                    <?php else: ?>
+                    <div class="col-span-full">
+                        <div class="rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+                            <div class="mx-auto h-12 w-12 rounded-2xl bg-slate-100 flex items-center justify-center">
+                                <span class="material-icons text-slate-500">info</span>
+                            </div>
+                            <h4 class="mt-4 text-lg font-bold">Belum ada data ruangan</h4>
+                            <p class="mt-1 text-sm text-slate-600">Silakan tambahkan data ruangan terlebih dahulu.</p>
+                        </div>
+                    </div>
                     <?php endif; ?>
 
                 </div>
@@ -371,7 +371,7 @@ if (!function_exists('get_tagline_for_room')) {
     <footer class="bg-white border-t border-black/5 mt-10">
         <div class="max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-5 gap-4 text-sm text-slate-900">
 
-            <a href="<?= site_url('login'); ?>" class="hover:text-slate-700 flex items-center gap-2">
+            <a href="<?= site_url('how-to-order'); ?>" class="hover:text-slate-700 flex items-center gap-2">
                 <i class="bi bi-question-circle"></i> How to Order
             </a>
             <a href="<?= site_url('login'); ?>" class="hover:text-slate-700 flex items-center gap-2">
