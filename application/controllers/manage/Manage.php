@@ -3,7 +3,7 @@
 class Manage extends CI_Controller
 {
 
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 		$this->load->library(['session']);
@@ -14,7 +14,7 @@ class Manage extends CI_Controller
 		}
 	}
 
-	function index()
+	public function index()
 	{
 		if ($this->session->userdata('manage_logged_in')) {
 			redirect('manage/dashboard');
@@ -30,13 +30,13 @@ class Manage extends CI_Controller
 			])->row();
 
 			if ($user && password_verify($password, $user->password)) {
-				$session = array(
+				$session = [
 					'username'         => $user->username, // Legacy support
 					'manage_username'  => $user->username,
 					'manage_nama'      => $user->nama_lengkap,
 					'manage_logged_in' => TRUE,
 					'session_id'       => session_id()
-				);
+				];
 				$this->session->set_userdata($session);
 				redirect('manage/dashboard');
 				return;
@@ -50,7 +50,7 @@ class Manage extends CI_Controller
 		$this->load->view('manage/manage_login');
 	}
 
-	function log_out()
+	public function log_out()
 	{
 		$this->session->unset_userdata([
 			'username',
@@ -62,14 +62,14 @@ class Manage extends CI_Controller
 		redirect('manage');
 	}
 
-	function dashboard()
+	public function dashboard()
 	{
 		$this->load->view('manage/dashboard');
 	}
 
-	function all_export_to_pdf()
+	public function all_export_to_pdf()
 	{
-		$this->load->helper('warsito_pdf_helper');
+		$this->load->helper('pdf_helper');
 		$this->load->model('gedung/gedung_model');
 		$data['row'] = $this->gedung_model->laporan_perawatan_keseluruhan();
 		$object = $this->load->view('manage/pdf_report_all', $data, true);
@@ -77,7 +77,7 @@ class Manage extends CI_Controller
 		generate_pdf($object, $filename, true);
 	}
 
-	function laporan_kegiatan()
+	public function laporan_kegiatan()
 	{
 		$this->load->model('gedung/gedung_model');
 		$start_date = $this->input->get('start_date');
@@ -93,10 +93,10 @@ class Manage extends CI_Controller
 		}
 	}
 
-	function kegiatan_export_pdf($start_date, $end_date)
+	public function kegiatan_export_pdf($start_date, $end_date)
 	{
 		$this->load->model('gedung/gedung_model');
-		$this->load->helper('warsito_pdf_helper');
+		$this->load->helper('pdf_helper');
 		$data['start_date'] = $start_date;
 		$data['end_date'] = $end_date;
 		$data['report'] = $this->gedung_model->jadwal_gedung($start_date, $end_date);

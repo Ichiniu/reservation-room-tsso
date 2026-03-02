@@ -23,7 +23,7 @@ $jumlah_trx = is_numeric($gt) ? (int)$gt : 0;
 $current_uri = uri_string();
 function is_active($uri, $current_uri)
 {
-    if (strpos($current_uri, $uri) !== false) return true;
+    if (str_contains($current_uri, $uri)) return true;
     return false;
 }
 

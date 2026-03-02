@@ -21,7 +21,7 @@ class Pembayaran extends CI_Controller
 
         // Ambil detail pemesanan + perusahaan user + harga
         // (select dibangun dinamis supaya tidak error sebelum ALTER TABLE kolom harga baru)
-        $select = array(
+        $select = [
             'p.ID_PEMESANAN',
             'p.USERNAME',
             'p.ID_GEDUNG',
@@ -35,7 +35,7 @@ class Pembayaran extends CI_Controller
             'g.HARGA_SEWA',
             'c.NAMA_PAKET',
             'c.HARGA AS HARGA_CATERING_SATUAN',
-        );
+        ];
 
         // kolom tambahan pemesanan (eksternal)
         if ($this->db->field_exists('TOTAL_PESERTA', 'pemesanan')) $select[] = 'p.TOTAL_PESERTA';
@@ -65,7 +65,7 @@ class Pembayaran extends CI_Controller
 
         // ===== RULE DISKON =====
         // (FIX PHP 5.x: hilangkan operator ??)
-        $perusahaan_val = (isset($pesanan->perusahaan) && $pesanan->perusahaan !== null) ? $pesanan->perusahaan : '';
+        $perusahaan_val = $pesanan->perusahaan ?? '';
         $perusahaan = strtoupper(trim((string) $perusahaan_val));
         $is_internal = ($perusahaan === 'INTERNAL');
 
@@ -93,7 +93,7 @@ class Pembayaran extends CI_Controller
                 ->row();
 
             if (!$exists) {
-                $data_free = array(
+                $data_free = [
                     'ID_PEMESANAN_RAW'   => $id_pemesanan_raw,
                     'KODE_PEMESANAN'     => 'PMSN000',
                     'TANGGAL_PEMESANAN'  => $pesanan->TANGGAL_PEMESANAN,
@@ -121,7 +121,7 @@ class Pembayaran extends CI_Controller
                     'STATUS_VERIF'       => 'PENDING',
                     'CATATAN_ADMIN'      => 'INTERNAL - Menunggu approval admin',
                     //  CONFIRMED_AT tidak di-set (NULL), karena belum diconfirm
-                );
+                ];
 
                 $this->db->trans_begin();
 
@@ -133,7 +133,7 @@ class Pembayaran extends CI_Controller
                 if ($this->db->trans_status() === FALSE) {
                     $this->db->trans_rollback();
                     $err = $this->db->error();
-                    $msg = isset($err['message']) ? $err['message'] : 'unknown';
+                    $msg = $err['message'] ?? 'unknown';
                     show_error('Gagal menyimpan data pembayaran internal: ' . $msg);
                     return;
                 }
@@ -188,7 +188,7 @@ class Pembayaran extends CI_Controller
             @mkdir($upload_dir, 0755, true);
         }
 
-        $config = array(
+        $config = [
             'upload_path'      => $upload_dir,
             'allowed_types'    => 'jpg|jpeg|png|pdf',
             'max_size'         => 5120,
@@ -197,7 +197,7 @@ class Pembayaran extends CI_Controller
             'detect_mime'      => true,
             'file_ext_tolower' => true,
             'remove_spaces'    => true,
-        );
+        ];
 
         $this->upload->initialize($config);
 
@@ -209,7 +209,7 @@ class Pembayaran extends CI_Controller
         $upload_data    = $this->upload->data();
         $bukti_rel_path = 'assets/images/client-bukti-pembayaran/' . $upload_data['file_name'];
 
-        $data = array(
+        $data = [
             'ID_PEMESANAN_RAW'   => $id_pemesanan_raw,
             'KODE_PEMESANAN'     => 'PMSN000',
             'TANGGAL_PEMESANAN'  => $pesanan->TANGGAL_PEMESANAN,
@@ -227,7 +227,7 @@ class Pembayaran extends CI_Controller
             'BUKTI_MIME'         => $upload_data['file_type'],
 
             'STATUS_VERIF'       => 'PENDING',
-        );
+        ];
 
         $this->db->trans_begin();
 
@@ -235,14 +235,14 @@ class Pembayaran extends CI_Controller
 
         // status setelah user upload bukti (menunggu verifikasi admin)
         $this->db->where('ID_PEMESANAN', $id_pemesanan_raw);
-        $this->db->update('pemesanan', array('STATUS' => 2));
+        $this->db->update('pemesanan', ['STATUS' => 2]);
 
         if ($this->db->trans_status() === FALSE) {
             $this->db->trans_rollback();
             @unlink(FCPATH . $bukti_rel_path);
 
             $err = $this->db->error();
-            $msg = isset($err['message']) ? $err['message'] : 'unknown';
+            $msg = $err['message'] ?? 'unknown';
             show_error('Gagal proses pembayaran: ' . $msg);
             return;
         }

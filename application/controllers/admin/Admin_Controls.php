@@ -1,4 +1,5 @@
 <?php
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * 
@@ -22,12 +23,12 @@ class Admin_Controls extends CI_Controller
 
 
 
-	function index()
+	public function index()
 	{
 		$this->load->view('admin/home');
 	}
 
-	function tambah_gedung()
+	public function tambah_gedung()
 	{
 		$this->load->helper(['form', 'url']);
 		$this->load->model('gedung/gedung_model');
@@ -49,7 +50,7 @@ class Admin_Controls extends CI_Controller
 		};
 
 		$pricing_mode = strtoupper(trim((string)$this->input->post('pricing_mode', true)));
-		$allowed_pm = array('FLAT', 'PER_PESERTA', 'PODCAST_PER_JAM');
+		$allowed_pm = ['FLAT', 'PER_PESERTA', 'PODCAST_PER_JAM'];
 		if (!in_array($pricing_mode, $allowed_pm, true)) $pricing_mode = '';
 
 		$harga_halfday_pp = $parse_int($this->input->post('harga_halfday_pp', true));
@@ -57,14 +58,14 @@ class Admin_Controls extends CI_Controller
 		$harga_audio_per_jam = $parse_int($this->input->post('harga_audio_per_jam', true));
 		$harga_video_per_jam = $parse_int($this->input->post('harga_video_per_jam', true));
 
-		$data_gedung = array(
+		$data_gedung = [
 			'NAMA_GEDUNG'      => $this->input->post('nama_gedung'),
 			'KAPASITAS'        => $this->input->post('kapasitas_gedung'),
 			'ALAMAT'           => $this->input->post('alamat_gedung'),
 			'DESKRIPSI_GEDUNG' => $this->input->post('deskripsi_gedung'),
 			'fasilitas'        => $this->input->post('fasilitas_gedung'),
 			'HARGA_SEWA'       => $this->input->post('harga_sewa')
-		);
+		];
 
 		// kolom harga eksternal (opsional - tidak error sebelum ALTER TABLE)
 		if ($this->db->field_exists('PRICING_MODE', 'gedung') && $pricing_mode !== '') $data_gedung['PRICING_MODE'] = $pricing_mode;
@@ -109,12 +110,12 @@ class Admin_Controls extends CI_Controller
 
 			$files = $this->upload->data();
 
-			$img_data = array(
+			$img_data = [
 				'ID_GEDUNG'   => $id_gedung,
 				'NAMA_GEDUNG' => $this->input->post('nama_gedung'),
 				'PATH'        => $img_path,
 				'IMG_NAME'    => $files['file_name']
-			);
+			];
 
 			$this->gedung_model->insert_gedung_img($img_data);
 		}
@@ -123,7 +124,7 @@ class Admin_Controls extends CI_Controller
 	}
 
 
-	function rekap_aktivitas()
+	public function rekap_aktivitas()
 	{
 		$this->load->model('gedung/gedung_model');
 		$data['result'] = $this->gedung_model->get_pending_transaction();
@@ -132,7 +133,7 @@ class Admin_Controls extends CI_Controller
 		$this->load->view('admin/rekap_aktivitas', $data);
 	}
 
-	function rekap_aktivitas_det($tanggal_awal = null, $tanggal_akhir = null)
+	public function rekap_aktivitas_det($tanggal_awal = null, $tanggal_akhir = null)
 	{
 		$this->load->model('gedung/gedung_model');
 
@@ -213,10 +214,10 @@ class Admin_Controls extends CI_Controller
 	}
 
 
-	function transaksi_export_pdf($start_date, $end_date)
+	public function transaksi_export_pdf($start_date, $end_date)
 	{
 		$this->load->model('gedung/gedung_model');
-		$this->load->helper('warsito_pdf_helper');
+		$this->load->helper('pdf_helper');
 		$data['start_date'] = $start_date;
 		$data['end_date'] = $end_date;
 		$data['report'] = $this->gedung_model->laporan_pembayaran_periodic($start_date, $end_date);
@@ -246,7 +247,7 @@ class Admin_Controls extends CI_Controller
 
 
 
-	function pembayaran()
+	public function pembayaran()
 	{
 		$this->load->model('gedung/gedung_model');
 		$data['result'] = $this->gedung_model->get_pending_transaction();
@@ -264,7 +265,7 @@ class Admin_Controls extends CI_Controller
 		$this->load->view('admin/pembayaran', $data);
 	}
 
-	function delete_jadwal($id_gedung)
+	public function delete_jadwal($id_gedung)
 	{
 		$this->load->model('gedung/gedung_model');
 		$data = array(
@@ -274,7 +275,7 @@ class Admin_Controls extends CI_Controller
 		redirect('admin/dashboard');
 	}
 
-	function pemesanan2()
+	public function pemesanan2()
 	{
 		$this->load->model('gedung/gedung_model');
 		$data['result'] = $this->gedung_model->get_pending_transaction();
@@ -283,7 +284,7 @@ class Admin_Controls extends CI_Controller
 		$this->load->view('admin/pemesanan_2', $data);
 	}
 
-	function read_transaction($id_pembayaran)
+	public function read_transaction($id_pembayaran)
 	{
 		$id_pembayaran = (int)$id_pembayaran;
 
@@ -304,7 +305,7 @@ class Admin_Controls extends CI_Controller
 	}
 
 
-	function transaksi()
+	public function transaksi()
 	{
 		$this->load->model('gedung/gedung_model');
 		$data['pemesanan'] = $this->gedung_model->get_all_pending_transaction();
@@ -335,8 +336,8 @@ class Admin_Controls extends CI_Controller
 		}
 
 		// ambil pemesan (untuk notif user)
-		$ps = $this->db->get_where('pemesanan', array('ID_PEMESANAN' => $temp_id))->row_array();
-		$username_user = (!empty($ps) && isset($ps['USERNAME'])) ? $ps['USERNAME'] : null;
+		$ps = $this->db->get_where('pemesanan', ['ID_PEMESANAN' => $temp_id])->row_array();
+		$username_user = $ps['USERNAME'] ?? null;
 
 		// === PROSES POST DULU ===
 		if ($this->input->method(TRUE) === 'POST') {
@@ -356,7 +357,7 @@ class Admin_Controls extends CI_Controller
 					->get()
 					->row();
 
-				$perusahaan = ($u && isset($u->perusahaan)) ? $u->perusahaan : '';
+				$perusahaan = $u->perusahaan ?? '';
 				$is_internal = (strtoupper(trim((string)$perusahaan)) === 'INTERNAL');
 
 				if ($is_internal) {
@@ -435,7 +436,7 @@ class Admin_Controls extends CI_Controller
 	}
 
 
-	function send_mail($to_email, $pesan)
+	public function send_mail($to_email, $pesan)
 	{
 		$from_email = "Admin Pembayaran";
 		$this->load->library('email');
@@ -450,7 +451,7 @@ class Admin_Controls extends CI_Controller
 		}
 	}
 
-	function download_proposal($id_pemesanan)
+	public function download_proposal($id_pemesanan)
 	{
 		$this->load->helper('download');
 		$this->load->model('gedung/gedung_model');
@@ -475,7 +476,7 @@ class Admin_Controls extends CI_Controller
 	}
 
 
-	function update_transaksi($id_pemesanan)
+	public function update_transaksi($id_pemesanan)
 	{
 		$this->load->model('gedung/gedung_model');
 		$this->load->helper('form');
@@ -483,7 +484,7 @@ class Admin_Controls extends CI_Controller
 		if ($temp_id <= 0) show_404();
 	}
 
-	function tambah_catering($id_catering = null)
+	public function tambah_catering($id_catering = null)
 	{
 		$this->load->helper('form');
 		$this->load->helper('url');
@@ -541,7 +542,7 @@ class Admin_Controls extends CI_Controller
 		$this->load->view('admin/tambah_catering', $data);
 	}
 
-	function delete_catering()
+	public function delete_catering()
 	{
 		$this->load->helper('url');
 		$this->load->model('catering/catering_model');
@@ -555,7 +556,7 @@ class Admin_Controls extends CI_Controller
 	/**
 	 * Toggle status aktif/nonaktif catering (POST)
 	 */
-	function toggle_catering_status()
+	public function toggle_catering_status()
 	{
 		$this->load->helper('url');
 		$this->load->model('catering/catering_model');
@@ -565,14 +566,14 @@ class Admin_Controls extends CI_Controller
 		}
 		redirect('admin/catering');
 	}
-	function delete_gedung($id_gedung)
+	public function delete_gedung($id_gedung)
 	{
 		$this->load->model('gedung/gedung_model');
 		$this->gedung_model->delete_gedung($id_gedung);
 		redirect('admin/gedung');
 	}
 
-	function edit_gedung($id_gedung)
+	public function edit_gedung($id_gedung)
 	{
 		$this->load->model('gedung/gedung_model');
 
@@ -679,10 +680,10 @@ class Admin_Controls extends CI_Controller
 	}
 
 
-	function kegiatan_export_pdf($start_date, $end_date, $id_gedung = null)
+	public function kegiatan_export_pdf($start_date, $end_date, $id_gedung = null)
 	{
 		$this->load->model('gedung/gedung_model');
-		$this->load->helper('warsito_pdf_helper');
+		$this->load->helper('pdf_helper');
 		$data['start_date'] = $start_date;
 		$data['end_date'] = $end_date;
 		$data['report'] = $this->gedung_model->jadwal_gedung($start_date, $end_date, $id_gedung);
@@ -703,40 +704,8 @@ class Admin_Controls extends CI_Controller
 		$filename = "Report Kegiatan.pdf";
 		generate_pdf($object, $filename, true);
 	}
-	function dashboard()
+	public function dashboard()
 	{
-
-
-		/**
-		 * Hapus gambar gedung (DB + filesystem)
-		 * POST params: id_gedung, img_name
-		 */
-		function delete_gedung_image()
-		{
-			$this->load->model('gedung/gedung_model');
-			$this->load->helper('url');
-
-			$id_gedung = (int)$this->input->post('id_gedung');
-			$img_name = $this->input->post('img_name');
-
-			if ($id_gedung <= 0 || empty($img_name)) {
-				$this->output->set_status_header(400);
-				echo "Parameter tidak lengkap";
-				return;
-			}
-
-			// hapus dari DB
-			$deleted = $this->gedung_model->delete_gedung_img($id_gedung, $img_name);
-
-			// hapus file jika ada
-			$file_path = FCPATH . 'assets/images/gedung/' . $img_name;
-			if (is_file($file_path)) {
-				@unlink($file_path);
-			}
-
-			// redirect kembali ke form edit
-			redirect('admin/edit/' . $id_gedung);
-		}
 		$admin_logged_in = $this->session->userdata('admin_logged_in');
 		$admin_username  = $this->session->userdata('admin_username');
 
@@ -788,7 +757,7 @@ class Admin_Controls extends CI_Controller
 	}
 
 
-	function list_user()
+	public function list_user()
 	{
 		$this->load->model('user/user_model');
 		$this->load->model('gedung/gedung_model');
@@ -797,7 +766,7 @@ class Admin_Controls extends CI_Controller
 		$this->load->view('admin/list_user', $data);
 	}
 
-	function list_gedung()
+	public function list_gedung()
 	{
 		$this->load->model('gedung/gedung_model');
 		$data['result'] = $this->gedung_model->get_pending_transaction();
@@ -805,7 +774,7 @@ class Admin_Controls extends CI_Controller
 		$this->load->view('admin/list_gedung', $data);
 	}
 
-	function list_catering()
+	public function list_catering()
 	{
 		$this->load->model('catering/catering_model');
 		$this->load->model('gedung/gedung_model');
@@ -819,7 +788,7 @@ class Admin_Controls extends CI_Controller
 	/**
 	 * Simpan nomor telepon catering (POST)
 	 */
-	function save_catering_phone()
+	public function save_catering_phone()
 	{
 		$this->load->helper('url');
 		$this->load->model('settings_model');
@@ -860,7 +829,7 @@ class Admin_Controls extends CI_Controller
 			return;
 		}
 
-		$catatan = trim((string)$this->input->post('catatan_admin', TRUE));
+		$catatan = trim((string)($this->input->post('catatan_admin', TRUE) ?? ''));
 
 		$ps = $this->db->get_where('pemesanan', ['ID_PEMESANAN' => $id_pemesanan])->row_array();
 		if (!$ps) {
@@ -910,7 +879,7 @@ class Admin_Controls extends CI_Controller
 		if ($this->db->trans_status() === FALSE) {
 			$this->db->trans_rollback();
 			$err = $this->db->error();
-			show_error('Gagal menyimpan data: ' . $err['message']);
+			$msg = $err['message'] ?? 'unknown';
 			return;
 		}
 
@@ -947,8 +916,8 @@ class Admin_Controls extends CI_Controller
 		$this->load->library('notification_service');
 
 		// types sesuai DB kamu
-		$typesI = array('ADMIN_INBOX', 'ADMIN_INBOX_PROCESS');
-		$typesT = array('ADMIN_TRANSAKSI', 'ADMIN_TRANSAKSI_PENDING');
+		$typesI = ['ADMIN_INBOX', 'ADMIN_INBOX_PROCESS'];
+		$typesT = ['ADMIN_TRANSAKSI', 'ADMIN_TRANSAKSI_PENDING'];
 
 		try {
 			$adminKey = 'admin'; // sesuai DB kamu
@@ -956,7 +925,7 @@ class Admin_Controls extends CI_Controller
 			$rawI = $this->notification_service->get_unread($adminKey, $typesI, 30);
 			$rawT = $this->notification_service->get_unread($adminKey, $typesT, 30);
 
-			$itemsI = array();
+			$itemsI = [];
 			if (is_array($rawI)) {
 				foreach ($rawI as $n) {
 					$id = isset($n['id']) ? (int)$n['id'] : 0;
@@ -964,7 +933,7 @@ class Admin_Controls extends CI_Controller
 				}
 			}
 
-			$itemsT = array();
+			$itemsT = [];
 			if (is_array($rawT)) {
 				foreach ($rawT as $n) {
 					$id = isset($n['id']) ? (int)$n['id'] : 0;
@@ -975,17 +944,17 @@ class Admin_Controls extends CI_Controller
 			$countI = (int) $this->notification_service->count_unread($adminKey, $typesI);
 			$countT = (int) $this->notification_service->count_unread($adminKey, $typesT);
 
-			echo json_encode(array(
+			echo json_encode([
 				'ok' => true,
-				'counts' => array('inbox' => $countI, 'transaksi' => $countT),
-				'items'  => array(
+				'counts' => ['inbox' => $countI, 'transaksi' => $countT],
+				'items'  => [
 					'inbox' => array_slice($itemsI, 0, 10),
 					'transaksi' => array_slice($itemsT, 0, 10)
-				)
-			));
+				]
+			]);
 		} catch (Exception $e) {
 			log_message('error', 'notif_poll_v2 ADMIN error: ' . $e->getMessage());
-			echo json_encode(array('ok' => false, 'message' => 'Server error'));
+			echo json_encode(['ok' => false, 'message' => 'Server error']);
 		}
 	}
 

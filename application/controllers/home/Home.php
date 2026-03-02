@@ -1,4 +1,5 @@
 <?php
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @property CI_Loader           $load
@@ -12,7 +13,7 @@
  * @property Gedung_model        $gedung_model
  * @property Catering_Model      $catering_model
  * @property User_model          $user_model
- * @property Chec         $user_model
+ * @property Checkout_model $checkout_model
  */
 
 class Home extends CI_Controller
@@ -100,7 +101,7 @@ class Home extends CI_Controller
 			$tgl = trim((string)$tgl);
 			if ($tgl === '') return '-';
 
-			$bulan = array(
+			$bulan = [
 				1 => 'januari',
 				'februari',
 				'maret',
@@ -113,7 +114,7 @@ class Home extends CI_Controller
 				'oktober',
 				'november',
 				'desember'
-			);
+			];
 
 			$ts = strtotime($tgl);
 			if (!$ts) return $tgl;
@@ -122,7 +123,7 @@ class Home extends CI_Controller
 			$m = (int)date('n', $ts);  // 1..12
 			$y = date('Y', $ts);
 
-			return $d . ' ' . (isset($bulan[$m]) ? $bulan[$m] : '') . ' ' . $y;
+			return $d . ' ' . ($bulan[$m] ?? '') . ' ' . $y;
 		};
 
 		// ===== Helper jam HH:MM =====
@@ -145,15 +146,15 @@ class Home extends CI_Controller
 			$title = trim((string)$title);
 			if ($title === '') return '';
 
-			$m = array();
+			$m = [];
 			if (preg_match('/^\s*(.*?)\s*-\s*([0-9]{4}-[0-9]{2}-[0-9]{2})\s*\((.*?)\)\s*$/', $title, $m)) {
-				$room = trim($m[1]);
-				$tgl  = trim($m[2]);
-				$rng  = trim($m[3]); // "08:00 - 12:00" atau "08:00"
+				$room = trim((string)$m[1]);
+				$tgl  = trim((string)$m[2]);
+				$rng  = trim((string)$m[3]); // "08:00 - 12:00" atau "08:00"
 
 				$rng = preg_replace('/\s+/', ' ', $rng);
 
-				if (strpos($rng, '-') !== false) {
+				if (str_contains($rng, '-')) {
 					$p = explode('-', $rng);
 					$a = isset($p[0]) ? $jam_dot(trim($p[0])) : '';
 					$b = isset($p[1]) ? $jam_dot(trim($p[1])) : '';
@@ -170,12 +171,12 @@ class Home extends CI_Controller
 		};
 
 		// ===== 1) DATA DASAR =====
-		$data = array();
+		$data = [];
 		$data['flag']     = (int)$this->gedung_model->get_pemesanan_flag($username);
 		$data['trx_flag'] = (int)$this->gedung_model->get_transaksi_flag($username);
 
 		$res = $this->gedung_model->get_all();
-		$data['res'] = (is_array($res)) ? $res : array();
+		$data['res'] = (is_array($res)) ? $res : [];
 
 		// ===== 2) FILTER (GET) =====
 		$tanggal     = trim((string)$this->input->get('tanggal', TRUE));
@@ -194,7 +195,7 @@ class Home extends CI_Controller
 		$data['jam_selesai']    = $jam_selesai;
 
 		// ===== 3) HITUNG KETERSEDIAAN =====
-		$availability = array();
+		$availability = [];
 
 		if ($tanggal !== '' && !empty($data['res'])) {
 
@@ -221,13 +222,13 @@ class Home extends CI_Controller
 
 		$rows_ul = $this->Ulasan_model->get_approved(3);
 
-		$ulasan_home = array();
+		$ulasan_home = [];
 		if (!empty($rows_ul) && is_array($rows_ul)) {
 			foreach ($rows_ul as $r) {
 
 				$name = !empty($r['USERNAME']) ? $r['USERNAME'] : 'Customer';
 
-				$rating = isset($r['RATING']) ? (int)$r['RATING'] : 5;
+				$rating = (int)($r['RATING'] ?? 5);
 				if ($rating < 1) $rating = 1;
 				if ($rating > 5) $rating = 5;
 
@@ -240,13 +241,13 @@ class Home extends CI_Controller
 				// title jadi 3 baris kalau formatnya cocok
 				$title_disp = isset($r['TITLE']) ? $title_3baris($r['TITLE']) : '';
 
-				$ulasan_home[] = array(
+				$ulasan_home[] = [
 					'name'    => $name,
 					'rating'  => $rating,
 					'date'    => $date_disp,
 					'title'   => $title_disp,
-					'comment' => isset($r['COMMENT']) ? $r['COMMENT'] : '',
-				);
+					'comment' => $r['COMMENT'] ?? '',
+				];
 			}
 		}
 
@@ -267,13 +268,13 @@ class Home extends CI_Controller
 		$perbedaan = date_diff(new DateTime($tanggal_pesan), new DateTime($min_refund));
 		$c_perbedaan = $perbedaan->format('%d');
 		if ($c_perbedaan > 7) {
-			$data = array('STATUS' => 3);
+			$data = ['STATUS' => 3];
 			$this->gedung_model->cancel_order($id_pemesanan, $data);
 		} else {
-			$data = array('STATUS' => 4);
+			$data = ['STATUS' => 4];
 			$this->gedung_model->cancel_order($id_pemesanan, $data);
 		}
-		$jadwal = array('FINAL_STATUS' => 2);
+		$jadwal = ['FINAL_STATUS' => 2];
 		$this->gedung_model->delete_jadwal($id_pemesanan, $jadwal);
 		redirect('home/pemesanan');
 	}
@@ -320,7 +321,7 @@ class Home extends CI_Controller
 		$this->load->view('gedung/View_Catering', $data);
 	}
 
-	function check_date($date, $id_gedung, $jam_mulai = null, $jam_selesai = null)
+	public function check_date($date, $id_gedung, $jam_mulai = null, $jam_selesai = null)
 	{
 		$this->load->model('gedung/gedung_model');
 		return $this->gedung_model->check_date($date, $id_gedung, $jam_mulai, $jam_selesai);
@@ -330,11 +331,11 @@ class Home extends CI_Controller
 	{
 		if (is_array($gedung_result)) {
 			if (isset($gedung_result[0])) $gedung_result = $gedung_result[0];
-			return isset($gedung_result['NAMA_GEDUNG']) ? $gedung_result['NAMA_GEDUNG'] : '';
+			return $gedung_result['NAMA_GEDUNG'] ?? '';
 		}
 
 		if (is_object($gedung_result)) {
-			return isset($gedung_result->NAMA_GEDUNG) ? $gedung_result->NAMA_GEDUNG : '';
+			return $gedung_result->NAMA_GEDUNG ?? '';
 		}
 
 		return '';
@@ -345,19 +346,19 @@ class Home extends CI_Controller
 	{
 		// pastikan model sudah ada (di order() dan order_gedung() kamu memang load)
 		$g = $this->gedung_model->get_gedung_name($id_gedung);
-		$nama = strtolower(trim($this->_extract_gedung_name($g)));
+		$nama = strtolower(trim((string)$this->_extract_gedung_name($g)));
 
 		// default
 		$days = 10;
 
 		// toleran typo "Amphiater"/"Amphitheater" -> pakai kata kunci "amphi"
-		if (strpos($nama, 'amphi') !== false) {
+		if (str_contains($nama, 'amphi')) {
 			$days = 2;
-		} elseif (strpos($nama, 'smart office meeting room') !== false || strpos($nama, 'meeting room') !== false) {
+		} elseif (str_contains($nama, 'smart office meeting room') || str_contains($nama, 'meeting room')) {
 			$days = 2;
-		} elseif (strpos($nama, 'smart office studio photo') !== false || strpos($nama, 'studio photo') !== false) {
+		} elseif (str_contains($nama, 'smart office studio photo') || str_contains($nama, 'studio photo')) {
 			$days = 3;
-		} elseif (strpos($nama, 'studio podcast') !== false || strpos($nama, 'podcast') !== false) {
+		} elseif (str_contains($nama, 'studio podcast') || str_contains($nama, 'podcast')) {
 			//  Studio Podcast: H-3
 			$days = 3;
 		}
@@ -385,7 +386,7 @@ class Home extends CI_Controller
 			->get()
 			->row();
 
-		$perusahaan = ($u && isset($u->perusahaan)) ? $u->perusahaan : '';
+		$perusahaan = $u->perusahaan ?? '';
 		$data['is_internal'] = (strtoupper(trim((string)$perusahaan)) === 'INTERNAL');
 
 		//  Apply different minimum booking rules based on user type
@@ -440,11 +441,11 @@ class Home extends CI_Controller
 
 		// INTERNAL: semua opsi | EKSTERNAL: podcast per jam = CUSTOM saja, selain itu = half/full day
 		if (!empty($data['is_internal'])) {
-			$data['allowed_tipe_jam'] = array('CUSTOM', 'HALF_DAY_PAGI', 'HALF_DAY_SIANG', 'FULL_DAY');
+			$data['allowed_tipe_jam'] = ['CUSTOM', 'HALF_DAY_PAGI', 'HALF_DAY_SIANG', 'FULL_DAY'];
 		} else {
 			$data['allowed_tipe_jam'] = $is_studio
-				? array('CUSTOM')
-				: array('HALF_DAY_PAGI', 'HALF_DAY_SIANG', 'FULL_DAY');
+				? ['CUSTOM']
+				: ['HALF_DAY_PAGI', 'HALF_DAY_SIANG', 'FULL_DAY'];
 		}
 
 		$data['default_tipe_jam'] = $data['allowed_tipe_jam'][0];
@@ -510,8 +511,8 @@ class Home extends CI_Controller
 		// ===== CATERING DATA =====
 		$id_catering    = null;
 		$jumlah_catering = null;
-		$menu_inputs    = array();
-		$addon_inputs   = array();
+		$menu_inputs    = [];
+		$addon_inputs   = [];
 
 		if ($catering_val === 'ya') {
 			$id_catering = (int)$this->input->post('catering');
@@ -536,7 +537,7 @@ class Home extends CI_Controller
 			if (is_array($addon_enabled)) {
 				foreach ($addon_enabled as $k => $chk) {
 					if ($chk == '1') {
-						$addon_inputs[$k] = isset($addon_values[$k]) ? trim((string)$addon_values[$k]) : '';
+						$addon_inputs[$k] = trim((string)($addon_values[$k] ?? ''));
 					}
 				}
 			}
@@ -552,12 +553,12 @@ class Home extends CI_Controller
 		$gedung_data = $this->gedung_model->get_gedung_name($id_gedung);
 		$nama_gedung = '';
 		if (!empty($gedung_data) && is_array($gedung_data) && is_array($gedung_data[0])) {
-			$nama_gedung = isset($gedung_data[0]['NAMA_GEDUNG']) ? (string)$gedung_data[0]['NAMA_GEDUNG'] : '';
+			$nama_gedung = (string)($gedung_data[0]['NAMA_GEDUNG'] ?? '');
 		}
 
 		$pm_db = '';
-		if (!empty($gedung_data) && is_array($gedung_data) && is_array($gedung_data[0]) && isset($gedung_data[0]['PRICING_MODE'])) {
-			$pm_db = (string)$gedung_data[0]['PRICING_MODE'];
+		if (!empty($gedung_data) && is_array($gedung_data) && is_array($gedung_data[0])) {
+			$pm_db = (string)($gedung_data[0]['PRICING_MODE'] ?? '');
 		}
 
 		$pricing_mode = bs_detect_pricing_mode($nama_gedung, $pm_db);
@@ -587,14 +588,14 @@ class Home extends CI_Controller
 		$obj_calc->PODCAST_TYPE = $podcast_type;
 
 		// Ambil data gedung untuk pricing
-		$g_price = $this->db->get_where('gedung', array('ID_GEDUNG' => $id_gedung))->row();
+		$g_price = $this->db->get_where('gedung', ['ID_GEDUNG' => $id_gedung])->row();
 		if ($g_price) {
 			$obj_calc->HARGA_SEWA = $g_price->HARGA_SEWA;
-			$obj_calc->PRICING_MODE = isset($g_price->PRICING_MODE) ? $g_price->PRICING_MODE : '';
-			$obj_calc->HARGA_HALF_DAY_PP = isset($g_price->HARGA_HALF_DAY_PP) ? $g_price->HARGA_HALF_DAY_PP : 0;
-			$obj_calc->HARGA_FULL_DAY_PP = isset($g_price->HARGA_FULL_DAY_PP) ? $g_price->HARGA_FULL_DAY_PP : 0;
-			$obj_calc->HARGA_AUDIO_PER_JAM = isset($g_price->HARGA_AUDIO_PER_JAM) ? $g_price->HARGA_AUDIO_PER_JAM : 0;
-			$obj_calc->HARGA_VIDEO_PER_JAM = isset($g_price->HARGA_VIDEO_PER_JAM) ? $g_price->HARGA_VIDEO_PER_JAM : 0;
+			$obj_calc->PRICING_MODE = $g_price->PRICING_MODE ?? '';
+			$obj_calc->HARGA_HALF_DAY_PP = $g_price->HARGA_HALF_DAY_PP ?? 0;
+			$obj_calc->HARGA_FULL_DAY_PP = $g_price->HARGA_FULL_DAY_PP ?? 0;
+			$obj_calc->HARGA_AUDIO_PER_JAM = $g_price->HARGA_AUDIO_PER_JAM ?? 0;
+			$obj_calc->HARGA_VIDEO_PER_JAM = $g_price->HARGA_VIDEO_PER_JAM ?? 0;
 		}
 
 		$harga_sewa_ruangan = bs_calc_room_sewa($obj_calc, $is_internal);
@@ -602,14 +603,14 @@ class Home extends CI_Controller
 		//  HITUNG HARGA CATERING
 		$total_harga_catering = 0;
 		if ($id_catering > 0 && $jumlah_catering > 0) {
-			$c_data = $this->db->get_where('catering', array('ID_CATERING' => $id_catering))->row();
+			$c_data = $this->db->get_where('catering', ['ID_CATERING' => $id_catering])->row();
 			if ($c_data) {
 				$total_harga_catering = (float)$c_data->HARGA * (int)$jumlah_catering;
 			}
 		}
 
 		// ===== BUILD PEMESANAN DATA =====
-		$data_pemesanan = array(
+		$data_pemesanan = [
 			'USERNAME'          => $username,
 			'ID_GEDUNG'         => $id_gedung,
 			'TANGGAL_PEMESANAN' => $tgl_pesan,
@@ -621,7 +622,7 @@ class Home extends CI_Controller
 			'JUMLAH_CATERING'   => $jumlah_catering,
 			'STATUS'            => 0,
 			'FLAG'              => 1,
-		);
+		];
 
 		if (!empty($request_id)) {
 			$data_pemesanan['REQUEST_ID'] = $request_id;
@@ -649,14 +650,14 @@ class Home extends CI_Controller
 
 		// ===== SAVE CATERING DETAILS (menu + addon) =====
 		if (!empty($menu_inputs) || !empty($addon_inputs)) {
-			$combined = array_merge($menu_inputs, $addon_inputs);
+			$combined = [...$menu_inputs, ...$addon_inputs];
 			$json_str = json_encode($combined, JSON_UNESCAPED_UNICODE);
 
 			if ($this->db->table_exists('pemesanan_catering_details')) {
-				$this->db->replace('pemesanan_catering_details', array(
+				$this->db->replace('pemesanan_catering_details', [
 					'ID_PEMESANAN' => $id_pemesanan,
 					'DETAIL_JSON'  => $json_str
-				));
+				]);
 			}
 		}
 
@@ -752,16 +753,14 @@ class Home extends CI_Controller
 		$data['nama_lengkap_user'] = $u ? $u->NAMA_LENGKAP : $username;
 
 		// ini buat ditampilkan di detail
-		$data['user_username'] = $u && isset($u->USERNAME) ? $u->USERNAME : $username;
-		$data['user_email']    = $u && isset($u->EMAIL)
-			? $u->EMAIL
-			: (isset($data['result']->EMAIL) ? $data['result']->EMAIL : null);
+		$data['user_username'] = $u->USERNAME ?? $username;
+		$data['user_email']    = $u->EMAIL ?? ($data['result']->EMAIL ?? null);
 
 		// ===== hitung ulang harga sewa (khusus EKSTERNAL) supaya detail & pembayaran konsisten =====
 		if (!empty($data['result'])) {
 			$this->load->helper('pricing');
 
-			$extra_select = array(
+			$extra_select = [
 				'p.ID_PEMESANAN',
 				'p.USERNAME',
 				'p.ID_GEDUNG',
@@ -771,7 +770,7 @@ class Home extends CI_Controller
 				'u.perusahaan',
 				'g.NAMA_GEDUNG',
 				'g.HARGA_SEWA'
-			);
+			];
 
 			if ($this->db->field_exists('TOTAL_PESERTA', 'pemesanan')) $extra_select[] = 'p.TOTAL_PESERTA';
 			if ($this->db->field_exists('PODCAST_TYPE', 'pemesanan')) $extra_select[] = 'p.PODCAST_TYPE';
@@ -790,19 +789,19 @@ class Home extends CI_Controller
 				->row();
 
 			if ($extra) {
-				$perusahaan_val = (isset($extra->perusahaan) && $extra->perusahaan !== null) ? $extra->perusahaan : '';
+				$perusahaan_val = $extra->perusahaan ?? '';
 				$is_internal_user = (strtoupper(trim((string)$perusahaan_val)) === 'INTERNAL');
 				$harga_sewa_calc = (int) bs_calc_room_sewa($extra, $is_internal_user);
 				$durasi_jam = (int) bs_duration_hours_ceil($extra->JAM_PEMESANAN, $extra->JAM_SELESAI);
 
 				// override object hasil dari V_PEMESANAN
 				$data['result']->HARGA_SEWA = $harga_sewa_calc;
-				$data['result']->PRICING_MODE = bs_detect_pricing_mode($extra->NAMA_GEDUNG, isset($extra->PRICING_MODE) ? $extra->PRICING_MODE : '');
+				$data['result']->PRICING_MODE = bs_detect_pricing_mode($extra->NAMA_GEDUNG, $extra->PRICING_MODE ?? '');
 				$data['result']->DURASI_JAM = $durasi_jam;
 				if (isset($extra->TOTAL_PESERTA)) $data['result']->TOTAL_PESERTA = (int)$extra->TOTAL_PESERTA;
 				if (isset($extra->PODCAST_TYPE)) $data['result']->PODCAST_TYPE = (string)$extra->PODCAST_TYPE;
 
-				$total_catering_val = isset($data['result']->TOTAL_HARGA) ? (int)$data['result']->TOTAL_HARGA : 0;
+				$total_catering_val = (int)($data['result']->TOTAL_HARGA ?? 0);
 				$data['result']->TOTAL_KESELURUHAN = (int)$harga_sewa_calc + (int)$total_catering_val;
 			}
 		}
@@ -977,16 +976,16 @@ class Home extends CI_Controller
 
 		if ($this->input->method(TRUE) === 'POST') {
 
-			$nama_lengkap = trim($this->input->post('nama_lengkap', TRUE));
-			$email        = trim($this->input->post('email', TRUE));
-			$alamat       = trim($this->input->post('alamat', TRUE));
-			$no_telepon   = trim($this->input->post('no_telepon', TRUE));
+			$nama_lengkap = trim((string)$this->input->post('nama_lengkap', true));
+			$email        = trim((string)$this->input->post('email', true));
+			$alamat       = trim((string)$this->input->post('alamat', true));
+			$no_telepon   = trim((string)$this->input->post('no_telepon', true));
 			$dob          = $this->input->post('dob', TRUE);
 
 			$password = $this->input->post('password', TRUE);
 			$confirm  = $this->input->post('confirm_pass', TRUE);
 
-			$data = array();
+			$data = [];
 
 			if ($nama_lengkap !== '') $data['NAMA_LENGKAP']  = $nama_lengkap;
 			if ($email !== '')       $data['EMAIL']         = $email;
@@ -1015,7 +1014,7 @@ class Home extends CI_Controller
 			return;
 		}
 
-		$data = array('user' => $existing);
+		$data = ['user' => $existing];
 		$this->load->view('home/edit_data', $data);
 	}
 
@@ -1085,7 +1084,7 @@ class Home extends CI_Controller
 
 		// ===== hitung ulang harga sewa (khusus EKSTERNAL) supaya tampilan & pembayaran konsisten =====
 		$this->load->helper('pricing');
-		$extra_select = array(
+		$extra_select = [
 			'p.ID_PEMESANAN',
 			'p.USERNAME',
 			'p.ID_GEDUNG',
@@ -1095,7 +1094,7 @@ class Home extends CI_Controller
 			'u.perusahaan',
 			'g.NAMA_GEDUNG',
 			'g.HARGA_SEWA'
-		);
+		];
 
 		if ($this->db->field_exists('TOTAL_PESERTA', 'pemesanan')) $extra_select[] = 'p.TOTAL_PESERTA';
 		if ($this->db->field_exists('PODCAST_TYPE', 'pemesanan')) $extra_select[] = 'p.PODCAST_TYPE';
@@ -1115,21 +1114,21 @@ class Home extends CI_Controller
 			->row();
 
 		if ($extra) {
-			$perusahaan_val = (isset($extra->perusahaan) && $extra->perusahaan !== null) ? $extra->perusahaan : '';
+			$perusahaan_val = $extra->perusahaan ?? '';
 			$is_internal = (strtoupper(trim((string)$perusahaan_val)) === 'INTERNAL');
 			$harga_sewa_calc = (int) bs_calc_room_sewa($extra, $is_internal);
 
 			// override untuk view confirm_order
 			if (isset($hasil['res'][0])) {
 				$hasil['res'][0]['HARGA_SEWA'] = $harga_sewa_calc;
-				$hasil['res'][0]['PRICING_MODE'] = bs_detect_pricing_mode($extra->NAMA_GEDUNG, isset($extra->PRICING_MODE) ? $extra->PRICING_MODE : '');
+				$hasil['res'][0]['PRICING_MODE'] = bs_detect_pricing_mode($extra->NAMA_GEDUNG, $extra->PRICING_MODE ?? '');
 				if (isset($extra->TOTAL_PESERTA)) $hasil['res'][0]['TOTAL_PESERTA'] = (int)$extra->TOTAL_PESERTA;
 				if (isset($extra->PODCAST_TYPE)) $hasil['res'][0]['PODCAST_TYPE'] = (string)$extra->PODCAST_TYPE;
 				$durasi_jam = bs_duration_hours_ceil($extra->JAM_PEMESANAN, $extra->JAM_SELESAI);
 				$hasil['res'][0]['DURASI_JAM'] = (int)$durasi_jam;
 				$hasil['res'][0]['perusahaan'] = $perusahaan_val; // Pastikan info perusahaan terbawa ke view
 
-				$total_catering_val = isset($hasil['res'][0]['TOTAL_HARGA']) ? (float)$hasil['res'][0]['TOTAL_HARGA'] : 0;
+				$total_catering_val = (float)($hasil['res'][0]['TOTAL_HARGA'] ?? 0);
 				$hasil['res'][0]['TOTAL_KESELURUHAN'] = (float)$harga_sewa_calc + (float)$total_catering_val;
 
 				//  FALLBACK: pastikan TOTAL_PESERTA terambil dari database
@@ -1257,7 +1256,7 @@ class Home extends CI_Controller
 			$tgl = trim((string)$tgl);
 			if ($tgl === '') return '';
 
-			$bulan = array(
+			$bulan = [
 				1 => 'januari',
 				'februari',
 				'maret',
@@ -1270,7 +1269,7 @@ class Home extends CI_Controller
 				'oktober',
 				'november',
 				'desember'
-			);
+			];
 
 			$ts = strtotime($tgl);
 			if (!$ts) return $tgl;
@@ -1279,7 +1278,7 @@ class Home extends CI_Controller
 			$m = (int)date('n', $ts);
 			$y = date('Y', $ts);
 
-			return $d . ' ' . (isset($bulan[$m]) ? $bulan[$m] : '') . ' ' . $y;
+			return $d . ' ' . ($bulan[$m] ?? '') . ' ' . $y;
 		};
 
 		// ===== helper jam HH:MM =====
@@ -1301,18 +1300,18 @@ class Home extends CI_Controller
 		$rows = $this->Ulasan_model->get_approved(30);
 
 		// mapping biar cocok ke view (name/rating/date/title/comment)
-		$reviews = array();
+		$reviews = [];
 		foreach ($rows as $r) {
 			$created_at = isset($r['CREATED_AT']) ? (string)$r['CREATED_AT'] : '';
 			$created_at_indo = $created_at ? $tgl_indo($created_at) : '';
 
 			// Jika TITLE berisi "Nama - 2026-01-07 (08:00 - 12:00)" -> ubah jadi 3 baris
 			// Kita ubah title jadi ada \n agar di view bisa ditampilkan per baris (atau kamu split)
-			$title_raw = isset($r['TITLE']) ? (string)$r['TITLE'] : '';
+			$title_raw = (string)($r['TITLE'] ?? '');
 			$title_pretty = $title_raw;
 
 			// coba parse format title lama
-			$m = array();
+			$m = [];
 			if (preg_match('/^\s*(.*?)\s*-\s*([0-9]{4}-[0-9]{2}-[0-9]{2})\s*\((.*?)\)\s*$/', $title_raw, $m)) {
 				$room = trim($m[1]);
 				$tgl  = trim($m[2]);
@@ -1320,7 +1319,7 @@ class Home extends CI_Controller
 
 				// ubah jam
 				$rng = preg_replace('/\s+/', ' ', $rng);
-				if (strpos($rng, '-') !== false) {
+				if (str_contains($rng, '-')) {
 					$p = explode('-', $rng);
 					$a = isset($p[0]) ? $jam_dot(trim($p[0])) : '';
 					$b = isset($p[1]) ? $jam_dot(trim($p[1])) : '';
@@ -1333,15 +1332,13 @@ class Home extends CI_Controller
 				$title_pretty = $room . "\n" . $tgl_indo($tgl) . "\n" . $rng;
 			}
 
-			$reviews[] = array(
-				'name'    => isset($r['USERNAME']) ? $r['USERNAME'] : '',
-				'rating'  => isset($r['RATING']) ? (int)$r['RATING'] : 0,
-				//  tanggal ulasan sudah Indo
+			$reviews[] = [
+				'name'    => $r['USERNAME'] ?? '',
+				'rating'  => (int)($r['RATING'] ?? 0),
 				'date'    => $created_at_indo,
-				//  title sudah 3 baris (atau tetap raw kalau formatnya beda)
 				'title'   => $title_pretty,
-				'comment' => isset($r['COMMENT']) ? $r['COMMENT'] : ''
-			);
+				'comment' => $r['COMMENT'] ?? ''
+			];
 		}
 
 		// ===== 2) summary akurat (berdasarkan semua APPROVED) =====
@@ -1349,31 +1346,31 @@ class Home extends CI_Controller
 
 		// ===== 3) dropdown pemesanan (STATUS=3) yang belum pernah diulas =====
 		$username = $this->session->userdata('username');
-		$reservasi_list = array();
+		$reservasi_list = [];
 
 		if (!empty($username)) {
 			$orders = $this->Pemesanan_model->get_submitted_by_username($username);
 
 			// filter agar yang sudah diulas tidak muncul
 			$has_id_pemesanan_col = $this->db->field_exists('ID_PEMESANAN', 'ulasan');
-			$reviewed_ids = $has_id_pemesanan_col ? $this->Ulasan_model->get_reviewed_id_pemesanan_by_username($username) : array();
-			$reviewed_titles = !$has_id_pemesanan_col ? $this->Ulasan_model->get_reviewed_titles_by_username($username) : array();
+			$reviewed_ids = $has_id_pemesanan_col ? $this->Ulasan_model->get_reviewed_id_pemesanan_by_username($username) : [];
+			$reviewed_titles = !$has_id_pemesanan_col ? $this->Ulasan_model->get_reviewed_titles_by_username($username) : [];
 
-			$reviewed_ids_map = array();
+			$reviewed_ids_map = [];
 			foreach ($reviewed_ids as $rid) $reviewed_ids_map[(int)$rid] = true;
 
-			$reviewed_titles_map = array();
+			$reviewed_titles_map = [];
 			foreach ($reviewed_titles as $t) $reviewed_titles_map[$t] = true;
 
 			foreach ($orders as $o) {
 				$id = (int)$o['ID_PEMESANAN'];
 
-				$nama_gedung = isset($o['NAMA_GEDUNG']) ? trim((string)$o['NAMA_GEDUNG']) : '';
-				$tanggal_raw = isset($o['TANGGAL_PEMESANAN']) ? trim((string)$o['TANGGAL_PEMESANAN']) : '';
+				$nama_gedung = trim((string)($o['NAMA_GEDUNG'] ?? ''));
+				$tanggal_raw = trim((string)($o['TANGGAL_PEMESANAN'] ?? ''));
 				$tanggal_indo = $tgl_indo($tanggal_raw);
 
-				$jam_mulai_disp   = $time_hm(isset($o['JAM_PEMESANAN']) ? $o['JAM_PEMESANAN'] : '');
-				$jam_selesai_disp = $time_hm(isset($o['JAM_SELESAI']) ? $o['JAM_SELESAI'] : '');
+				$jam_mulai_disp   = $time_hm($o['JAM_PEMESANAN'] ?? '');
+				$jam_selesai_disp = $time_hm($o['JAM_SELESAI'] ?? '');
 
 				if ($jam_selesai_disp === '00:00') $jam_selesai_disp = '';
 
@@ -1395,15 +1392,12 @@ class Home extends CI_Controller
 					if (isset($reviewed_titles_map[$title_key])) continue;
 				}
 
-				$reservasi_list[] = array(
+				$reservasi_list[] = [
 					'ID_PEMESANAN' => $id,
-					// simpan raw key untuk logika existing (tetap aman)
 					'title_key'    => $title_key,
-					// label yang dipakai view: sudah 3 baris + tanggal indo
 					'label'        => $label_3baris,
-					// kalau butuh juga versi raw:
 					'label_raw'    => $title_key,
-				);
+				];
 			}
 		}
 
@@ -1428,7 +1422,7 @@ class Home extends CI_Controller
 
 		$rating       = (int)$this->input->post('rating');
 		$id_pemesanan = (int)$this->input->post('id_pemesanan');
-		$comment      = trim($this->input->post('comment'));
+		$comment      = trim((string)$this->input->post('comment'));
 
 		if ($rating < 1 || $rating > 5 || $comment === '' || $id_pemesanan <= 0) {
 			$this->session->set_flashdata('error', 'Pemesanan, rating, dan komentar wajib diisi.');
@@ -1451,8 +1445,8 @@ class Home extends CI_Controller
 			return (strlen($t) >= 5) ? substr($t, 0, 5) : $t;
 		};
 
-		$nama_gedung = isset($pesanan['NAMA_GEDUNG']) ? trim((string)$pesanan['NAMA_GEDUNG']) : '';
-		$tanggal     = isset($pesanan['TANGGAL_PEMESANAN']) ? trim((string)$pesanan['TANGGAL_PEMESANAN']) : '';
+		$nama_gedung = trim((string)($pesanan['NAMA_GEDUNG'] ?? ''));
+		$tanggal     = trim((string)($pesanan['TANGGAL_PEMESANAN'] ?? ''));
 
 		// kalau Nama Ruang / tanggal kosong, stop biar tidak tersimpan "- - (...)"
 		if ($nama_gedung === '' || $tanggal === '') {
@@ -1461,8 +1455,8 @@ class Home extends CI_Controller
 			return;
 		}
 
-		$jam_mulai_disp   = $time_hm(isset($pesanan['JAM_PEMESANAN']) ? $pesanan['JAM_PEMESANAN'] : '');
-		$jam_selesai_disp = $time_hm(isset($pesanan['JAM_SELESAI']) ? $pesanan['JAM_SELESAI'] : '');
+		$jam_mulai_disp   = $time_hm($pesanan['JAM_PEMESANAN'] ?? '');
+		$jam_selesai_disp = $time_hm($pesanan['JAM_SELESAI'] ?? '');
 
 		if ($jam_selesai_disp === '00:00') $jam_selesai_disp = '';
 
@@ -1478,14 +1472,14 @@ class Home extends CI_Controller
 			return;
 		}
 
-		$insert = array(
+		$insert = [
 			'USERNAME'   => $username,
 			'RATING'     => $rating,
 			'TITLE'      => $title_key,
 			'COMMENT'    => $comment,
 			'STATUS'     => 'APPROVED',
 			'CREATED_AT' => date('Y-m-d H:i:s')
-		);
+		];
 
 		// optional: jika kolom ID_PEMESANAN sudah ada di tabel ulasan, ikut simpan
 		if ($this->db->field_exists('ID_PEMESANAN', 'ulasan')) {
@@ -1536,8 +1530,8 @@ class Home extends CI_Controller
 		$this->load->library('notification_service');
 
 		// types sesuai DB kamu
-		$typesP = array('USER_PEMESANAN');
-		$typesT = array('USER_TRANSAKSI');
+		$typesP = ['USER_PEMESANAN'];
+		$typesT = ['USER_TRANSAKSI'];
 
 		try {
 			// ambil list unread (lebih dari 5 biar ga miss)
@@ -1545,7 +1539,7 @@ class Home extends CI_Controller
 			$rawT = $this->notification_service->get_unread($username, $typesT, 30);
 
 			// filter berdasarkan since_id
-			$itemsP = array();
+			$itemsP = [];
 			if (is_array($rawP)) {
 				foreach ($rawP as $n) {
 					$id = isset($n['id']) ? (int)$n['id'] : 0;
@@ -1553,7 +1547,7 @@ class Home extends CI_Controller
 				}
 			}
 
-			$itemsT = array();
+			$itemsT = [];
 			if (is_array($rawT)) {
 				foreach ($rawT as $n) {
 					$id = isset($n['id']) ? (int)$n['id'] : 0;
@@ -1564,20 +1558,20 @@ class Home extends CI_Controller
 			$countP = (int) $this->notification_service->count_unread($username, $typesP);
 			$countT = (int) $this->notification_service->count_unread($username, $typesT);
 
-			echo json_encode(array(
+			echo json_encode([
 				'ok' => true,
-				'counts' => array(
+				'counts' => [
 					'pemesanan' => $countP,
 					'transaksi' => $countT
-				),
-				'items' => array(
+				],
+				'items' => [
 					'pemesanan' => array_slice($itemsP, 0, 10),
 					'transaksi' => array_slice($itemsT, 0, 10)
-				)
-			));
+				]
+			]);
 		} catch (Exception $e) {
 			log_message('error', 'notif_poll_v2 USER error: ' . $e->getMessage());
-			echo json_encode(array('ok' => false, 'message' => 'Server error'));
+			echo json_encode(['ok' => false, 'message' => 'Server error']);
 		}
 	}
 
@@ -1659,7 +1653,7 @@ class Home extends CI_Controller
 			$oldPath = ($old && !empty($old->FOTO_PROFIL)) ? $old->FOTO_PROFIL : null;
 
 			// decode base64
-			if (strpos($imgData, 'base64,') !== false) {
+			if (str_contains($imgData, 'base64,')) {
 				$imgData = substr($imgData, strpos($imgData, 'base64,') + 7);
 			}
 			$bin = base64_decode($imgData);
@@ -1687,7 +1681,7 @@ class Home extends CI_Controller
 			$this->session->set_userdata('foto_profil', $relative);
 
 			// hapus file lama kalau ada dan memang file lokal
-			if ($oldPath && strpos($oldPath, 'assets/user-profile/') === 0) {
+			if ($oldPath && str_starts_with($oldPath, 'assets/user-profile/')) {
 				$oldFull = FCPATH . $oldPath;
 				if (is_file($oldFull)) @unlink($oldFull);
 			}
@@ -1780,10 +1774,10 @@ class Home extends CI_Controller
 		if (!$id_gedung || empty($date) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
 			return $this->output
 				->set_status_header(400)
-				->set_output(json_encode(array(
+				->set_output(json_encode([
 					'ok' => false,
 					'message' => 'Parameter tidak valid'
-				)));
+				]));
 		}
 
 		$sql = "
@@ -1819,22 +1813,22 @@ class Home extends CI_Controller
 
 			return $this->output
 				->set_status_header(500)
-				->set_output(json_encode(array(
+				->set_output(json_encode([
 					'ok' => false,
 					'message' => 'Database error: ' . $msg,
 					'code' => $code
-				)));
+				]));
 		}
 
 		$rows = $q->result_array();
 
 		return $this->output
 			->set_status_header(200)
-			->set_output(json_encode(array(
+			->set_output(json_encode([
 				'ok' => true,
 				'date' => $date,
 				'id_gedung' => $id_gedung,
 				'data' => $rows
-			)));
+			]));
 	}
 }

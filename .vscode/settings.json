@@ -1,0 +1,23 @@
+{
+    // ── PHP version target (PHP 8.4) ──────────────────────────────────────
+    "intelephense.environment.phpVersion": "8.4.0",
+
+    // ── Exclude CI system & vendor from deep analysis ─────────────────────
+    "intelephense.files.exclude": [
+        "**/.git/**",
+        "**/node_modules/**",
+        "**/system/**",
+        "**/vendor/**"
+    ],
+
+    // ── Suppress noisy diagnostics that are false-positives for CI3 ───────
+    // get_where(), get_where() dll menerima array - ini valid di CI3
+    "intelephense.diagnostics.undefinedTypes": false,
+    "intelephense.diagnostics.undefinedFunctions": false,
+
+    // ── PHP executable path (XAMPP) ────────────────────────────────────────
+    "php.validate.executablePath": "C:/xampp2/php/php.exe",
+
+    // ── Formatter ─────────────────────────────────────────────────────────
+    "editor.formatOnSave": false
+}

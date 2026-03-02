@@ -65,12 +65,21 @@ $this->load->helper('text');
                             focus:ring-4 focus:ring-sky-100 focus:border-sky-300">
                             <option value="">Semua Bulan</option>
                             <?php
-                                $bulan = array(
-                                    '01' => 'Januari','02' => 'Februari','03' => 'Maret','04' => 'April',
-                                    '05' => 'Mei','06' => 'Juni','07' => 'Juli','08' => 'Agustus',
-                                    '09' => 'September','10' => 'Oktober','11' => 'November','12' => 'Desember'
-                                );
-                                foreach ($bulan as $k => $v) echo "<option value='$k'>$v</option>";
+                            $bulan = array(
+                                '01' => 'Januari',
+                                '02' => 'Februari',
+                                '03' => 'Maret',
+                                '04' => 'April',
+                                '05' => 'Mei',
+                                '06' => 'Juni',
+                                '07' => 'Juli',
+                                '08' => 'Agustus',
+                                '09' => 'September',
+                                '10' => 'Oktober',
+                                '11' => 'November',
+                                '12' => 'Desember'
+                            );
+                            foreach ($bulan as $k => $v) echo "<option value='$k'>$v</option>";
                             ?>
                         </select>
                     </div>
@@ -85,7 +94,7 @@ $this->load->helper('text');
                             focus:ring-4 focus:ring-sky-100 focus:border-sky-300">
                             <option value="">Semua Tahun</option>
                             <?php for ($y = date('Y') - 3; $y <= date('Y') + 1; $y++): ?>
-                            <option value="<?= $y ?>"><?= $y ?></option>
+                                <option value="<?= $y ?>"><?= $y ?></option>
                             <?php endfor; ?>
                         </select>
                     </div>
@@ -159,76 +168,76 @@ $this->load->helper('text');
                                 if (!empty($jadwal_filtered)):
                                     foreach ($jadwal_filtered as $row):
                                         $tglFinal = date('Y-m-d', strtotime($row['TANGGAL_FINAL_PEMESANAN']));
-                                        $ruang = isset($row['NAMA_GEDUNG']) ? $row['NAMA_GEDUNG'] : '';
+                                        $ruang = $row['NAMA_GEDUNG'] ?? '';
                             ?>
-                            <!-- ✅ tambahkan data-room untuk filter ruangan -->
-                            <tr data-date="<?= $tglFinal ?>"
-                                data-room="<?= htmlspecialchars($ruang, ENT_QUOTES, 'UTF-8') ?>"
-                                class="hover:bg-slate-50 transition">
-                                <td class="px-4 py-3">
-                                    <span
-                                        class="inline-flex items-center text-center justify-center h-7 min-w-[28px] px-2 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
-                                        <?= $no++ ?>
-                                    </span>
-                                </td>
+                                        <!-- ✅ tambahkan data-room untuk filter ruangan -->
+                                        <tr data-date="<?= $tglFinal ?>"
+                                            data-room="<?= htmlspecialchars($ruang, ENT_QUOTES, 'UTF-8') ?>"
+                                            class="hover:bg-slate-50 transition">
+                                            <td class="px-4 py-3">
+                                                <span
+                                                    class="inline-flex items-center text-center justify-center h-7 min-w-[28px] px-2 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
+                                                    <?= $no++ ?>
+                                                </span>
+                                            </td>
 
-                                <td class="px-4 py-3 text-center">
-                                    <div class="font-semibold text-slate-900">
-                                        <?= date('d M Y', strtotime($row['TANGGAL_FINAL_PEMESANAN'])) ?>
-                                    </div>
-                                    <div class="text-xs text-slate-500 flex justify-center items-center gap-1 mt-0.5">
-                                        <span class="material-icons text-[14px]">event_available</span>
-                                        Jadwal
-                                    </div>
-                                </td>
+                                            <td class="px-4 py-3 text-center">
+                                                <div class="font-semibold text-slate-900">
+                                                    <?= date('d M Y', strtotime($row['TANGGAL_FINAL_PEMESANAN'])) ?>
+                                                </div>
+                                                <div class="text-xs text-slate-500 flex justify-center items-center gap-1 mt-0.5">
+                                                    <span class="material-icons text-[14px]">event_available</span>
+                                                    Jadwal
+                                                </div>
+                                            </td>
 
-                                <td class="px-4 py-3 text-slate-700 text-center">
-                                    <span
-                                        class="inline-flex items-center gap-1 rounded-full bg-sky-50 text-sky-800 px-3 py-1 text-xs font-semibold">
-                                        <span class="material-icons text-[16px]">schedule</span>
-                                        <?= $row['JAM_MULAI'] . ' - ' . $row['JAM_SELESAI'] ?>
-                                    </span>
-                                </td>
+                                            <td class="px-4 py-3 text-slate-700 text-center">
+                                                <span
+                                                    class="inline-flex items-center gap-1 rounded-full bg-sky-50 text-sky-800 px-3 py-1 text-xs font-semibold">
+                                                    <span class="material-icons text-[16px]">schedule</span>
+                                                    <?= $row['JAM_MULAI'] . ' - ' . $row['JAM_SELESAI'] ?>
+                                                </span>
+                                            </td>
 
-                                <td class="px-4 py-3 text-center">
-                                    <div class="font-bold text-slate-900"><?= $row['NAMA_GEDUNG'] ?></div>
-                                    <div class="text-xs text-slate-500 mt-0.5">Ruangan</div>
-                                </td>
+                                            <td class="px-4 py-3 text-center">
+                                                <div class="font-bold text-slate-900"><?= $row['NAMA_GEDUNG'] ?></div>
+                                                <div class="text-xs text-slate-500 mt-0.5">Ruangan</div>
+                                            </td>
 
-                                <td class="px-4 py-3 text-slate-700 text-center">
-                                    <div
-                                        class="[display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] overflow-hidden">
-                                        <?= $row['DESKRIPSI_ACARA'] ?>
-                                    </div>
-                                </td>
-                            </tr>
-                            <?php
+                                            <td class="px-4 py-3 text-slate-700 text-center">
+                                                <div
+                                                    class="[display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] overflow-hidden">
+                                                    <?= $row['DESKRIPSI_ACARA'] ?>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <?php
                                     endforeach;
                                 else:
-                            ?>
-                            <tr>
-                                <td colspan="5" class="text-center py-10 text-slate-600">
-                                    <div
-                                        class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                                        <span class="material-icons text-slate-500">info</span>
-                                        Tidak ada jadwal dari hari ini ke depan
-                                    </div>
-                                </td>
-                            </tr>
-                            <?php
+                                    ?>
+                                    <tr>
+                                        <td colspan="5" class="text-center py-10 text-slate-600">
+                                            <div
+                                                class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                                                <span class="material-icons text-slate-500">info</span>
+                                                Tidak ada jadwal dari hari ini ke depan
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php
                                 endif;
 
                             else:
-                            ?>
-                            <tr>
-                                <td colspan="5" class="text-center py-10 text-slate-600">
-                                    <div
-                                        class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                                        <span class="material-icons text-slate-500">info</span>
-                                        Tidak ada data
-                                    </div>
-                                </td>
-                            </tr>
+                                ?>
+                                <tr>
+                                    <td colspan="5" class="text-center py-10 text-slate-600">
+                                        <div
+                                            class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                                            <span class="material-icons text-slate-500">info</span>
+                                            Tidak ada data
+                                        </div>
+                                    </td>
+                                </tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
@@ -270,122 +279,122 @@ $this->load->helper('text');
     </div>
 
     <script>
-    var rows = Array.prototype.slice.call(document.querySelectorAll('tbody tr[data-date]'));
-    var bulanSelect = document.getElementById('filterBulan');
-    var tahunSelect = document.getElementById('filterTahun');
-    var ruanganSelect = document.getElementById('filterRuangan'); // ✅
-    var rowsSelect = document.getElementById('rowsPerPage');
-    var prevBtn = document.getElementById('prevBtn');
-    var nextBtn = document.getElementById('nextBtn');
-    var pageInfo = document.getElementById('pageInfo');
-    var totalInfo = document.getElementById('totalInfo');
+        var rows = Array.prototype.slice.call(document.querySelectorAll('tbody tr[data-date]'));
+        var bulanSelect = document.getElementById('filterBulan');
+        var tahunSelect = document.getElementById('filterTahun');
+        var ruanganSelect = document.getElementById('filterRuangan'); // ✅
+        var rowsSelect = document.getElementById('rowsPerPage');
+        var prevBtn = document.getElementById('prevBtn');
+        var nextBtn = document.getElementById('nextBtn');
+        var pageInfo = document.getElementById('pageInfo');
+        var totalInfo = document.getElementById('totalInfo');
 
-    var rowsPerPage = parseInt(rowsSelect.value, 10);
-    var currentPage = 1;
-    var filteredRows = rows.slice();
+        var rowsPerPage = parseInt(rowsSelect.value, 10);
+        var currentPage = 1;
+        var filteredRows = rows.slice();
 
-    // ✅ isi dropdown ruangan dari data tabel (unik, diurutkan)
-    function initRuanganOptions() {
-        var set = {};
-        rows.forEach(function(r) {
-            var room = (r.getAttribute('data-room') || '').trim();
-            if (room) set[room] = true;
-        });
+        // ✅ isi dropdown ruangan dari data tabel (unik, diurutkan)
+        function initRuanganOptions() {
+            var set = {};
+            rows.forEach(function(r) {
+                var room = (r.getAttribute('data-room') || '').trim();
+                if (room) set[room] = true;
+            });
 
-        var rooms = Object.keys(set).sort(function(a, b) {
-            return a.localeCompare(b, 'id');
-        });
+            var rooms = Object.keys(set).sort(function(a, b) {
+                return a.localeCompare(b, 'id');
+            });
 
-        // bersihin option selain default
-        while (ruanganSelect.options.length > 1) ruanganSelect.remove(1);
+            // bersihin option selain default
+            while (ruanganSelect.options.length > 1) ruanganSelect.remove(1);
 
-        rooms.forEach(function(room) {
-            var opt = document.createElement('option');
-            opt.value = room;
-            opt.textContent = room;
-            ruanganSelect.appendChild(opt);
-        });
-    }
-
-    function render() {
-        for (var i = 0; i < rows.length; i++) rows[i].style.display = 'none';
-
-        var totalPages = Math.ceil(filteredRows.length / rowsPerPage);
-        if (!totalPages) totalPages = 1;
-        if (currentPage > totalPages) currentPage = totalPages;
-
-        var start = (currentPage - 1) * rowsPerPage;
-        var end = start + rowsPerPage;
-
-        for (var j = start; j < end && j < filteredRows.length; j++) {
-            filteredRows[j].style.display = '';
+            rooms.forEach(function(room) {
+                var opt = document.createElement('option');
+                opt.value = room;
+                opt.textContent = room;
+                ruanganSelect.appendChild(opt);
+            });
         }
 
-        pageInfo.textContent = 'Halaman ' + currentPage + ' dari ' + totalPages;
-        totalInfo.textContent = 'Menampilkan ' + filteredRows.length + ' dari ' + rows.length + ' data';
+        function render() {
+            for (var i = 0; i < rows.length; i++) rows[i].style.display = 'none';
 
-        prevBtn.disabled = (currentPage === 1);
-        nextBtn.disabled = (currentPage === totalPages);
-    }
+            var totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+            if (!totalPages) totalPages = 1;
+            if (currentPage > totalPages) currentPage = totalPages;
 
-    function applyFilter() {
-        var bulan = bulanSelect.value;
-        var tahun = tahunSelect.value;
-        var ruangan = ruanganSelect.value; // ✅
+            var start = (currentPage - 1) * rowsPerPage;
+            var end = start + rowsPerPage;
 
-        filteredRows = rows.filter(function(r) {
-            var d = r.getAttribute('data-date');
-            var room = (r.getAttribute('data-room') || '');
+            for (var j = start; j < end && j < filteredRows.length; j++) {
+                filteredRows[j].style.display = '';
+            }
 
-            if (bulan && d.indexOf('-' + bulan) === -1) return false;
-            if (tahun && d.indexOf(tahun) !== 0) return false;
-            if (ruangan && room !== ruangan) return false; // ✅ filter ruangan
-            return true;
-        });
+            pageInfo.textContent = 'Halaman ' + currentPage + ' dari ' + totalPages;
+            totalInfo.textContent = 'Menampilkan ' + filteredRows.length + ' dari ' + rows.length + ' data';
 
-        currentPage = 1;
-        render();
-    }
+            prevBtn.disabled = (currentPage === 1);
+            nextBtn.disabled = (currentPage === totalPages);
+        }
 
-    function resetFilter() {
-        bulanSelect.value = '';
-        tahunSelect.value = '';
-        ruanganSelect.value = ''; // ✅
-        filteredRows = rows.slice();
-        currentPage = 1;
-        render();
-    }
+        function applyFilter() {
+            var bulan = bulanSelect.value;
+            var tahun = tahunSelect.value;
+            var ruangan = ruanganSelect.value; // ✅
 
-    prevBtn.onclick = function() {
-        if (currentPage > 1) {
-            currentPage--;
+            filteredRows = rows.filter(function(r) {
+                var d = r.getAttribute('data-date');
+                var room = (r.getAttribute('data-room') || '');
+
+                if (bulan && d.indexOf('-' + bulan) === -1) return false;
+                if (tahun && d.indexOf(tahun) !== 0) return false;
+                if (ruangan && room !== ruangan) return false; // ✅ filter ruangan
+                return true;
+            });
+
+            currentPage = 1;
             render();
         }
-    };
 
-    nextBtn.onclick = function() {
-        var totalPages = Math.ceil(filteredRows.length / rowsPerPage);
-        if (!totalPages) totalPages = 1;
-
-        if (currentPage < totalPages) {
-            currentPage++;
+        function resetFilter() {
+            bulanSelect.value = '';
+            tahunSelect.value = '';
+            ruanganSelect.value = ''; // ✅
+            filteredRows = rows.slice();
+            currentPage = 1;
             render();
         }
-    };
 
-    bulanSelect.onchange = applyFilter;
-    tahunSelect.onchange = applyFilter;
-    ruanganSelect.onchange = applyFilter; // ✅
+        prevBtn.onclick = function() {
+            if (currentPage > 1) {
+                currentPage--;
+                render();
+            }
+        };
 
-    rowsSelect.onchange = function() {
-        rowsPerPage = parseInt(rowsSelect.value, 10);
-        currentPage = 1;
+        nextBtn.onclick = function() {
+            var totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+            if (!totalPages) totalPages = 1;
+
+            if (currentPage < totalPages) {
+                currentPage++;
+                render();
+            }
+        };
+
+        bulanSelect.onchange = applyFilter;
+        tahunSelect.onchange = applyFilter;
+        ruanganSelect.onchange = applyFilter; // ✅
+
+        rowsSelect.onchange = function() {
+            rowsPerPage = parseInt(rowsSelect.value, 10);
+            currentPage = 1;
+            render();
+        };
+
+        // init
+        initRuanganOptions();
         render();
-    };
-
-    // init
-    initRuanganOptions();
-    render();
     </script>
 
 </body>

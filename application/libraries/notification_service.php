@@ -1,10 +1,24 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
+/**
+ * CodeIgniter Notification Service
+ */
 class Notification_service
 {
+  /** @var CI_Controller */
   protected $CI;
+
   protected $initialized = false;
+
+  /**
+   * Returns the CI active-record DB instance with proper type hint.
+   * @return CI_DB_query_builder
+   */
+  protected function db()
+  {
+    return $this->CI->db;
+  }
 
   public function __construct()
   {
@@ -20,7 +34,9 @@ class Notification_service
    */
   private function getCateringPhone()
   {
-    $query = $this->CI->db->get_where('app_settings', array('setting_key' => 'catering_phone'), 1);
+    $this->CI->db->where('setting_key', 'catering_phone');
+    $this->CI->db->limit(1);
+    $query = $this->CI->db->get('app_settings');
     $row = $query->row_array();
     return ($row && isset($row['setting_value']) && $row['setting_value'] !== '') ? $row['setting_value'] : '085112345548';
   }
@@ -37,7 +53,9 @@ class Notification_service
       'read_at'    => null,
       'emailed_at' => null,
     ]);
-    return (int)$this->CI->db->insert_id();
+    /** @var CI_DB_mysqli_driver $db */
+    $db = $this->CI->db;
+    return (int)$db->insert_id();
   }
 
   private function markEmailed($id)
@@ -53,7 +71,7 @@ class Notification_service
   {
     $u = $this->CI->db->query(
       "SELECT EMAIL FROM user WHERE LOWER(USERNAME)=? LIMIT 1",
-      array(strtolower(trim((string)$username)))
+      [(string)strtolower(trim((string)$username))]
     )->row_array();
 
     return ($u && !empty($u['EMAIL'])) ? $u['EMAIL'] : null;
@@ -129,10 +147,10 @@ class Notification_service
       ->row_array();
 
     if (!$row) {
-      return array(
+      return [
         'id' => $id_pemesanan_full,
-        'username' => $fallbackUsername ? $fallbackUsername : '-',
-        'email' => $fallbackEmail ? $fallbackEmail : '-',
+        'username' => $fallbackUsername ?: '-',
+        'email' => $fallbackEmail ?: '-',
         'tanggal' => '-',
         'jam' => '-',
         'ruangan' => '-',
@@ -142,13 +160,13 @@ class Notification_service
         'total_keseluruhan' => '-',
         'status' => '-',
         'keperluan' => '-'
-      );
+      ];
     }
 
     $username = (isset($row['USERNAME']) && $row['USERNAME'] !== '') ? $row['USERNAME'] : $fallbackUsername;
     $email    = (isset($row['EMAIL']) && $row['EMAIL'] !== '') ? $row['EMAIL'] : $fallbackEmail;
 
-    $tanggalRaw = isset($row['TANGGAL_PEMESANAN']) ? $row['TANGGAL_PEMESANAN'] : '';
+    $tanggalRaw = isset($row['TANGGAL_PEMESANAN']) ? (string)$row['TANGGAL_PEMESANAN'] : '';
     if ($tanggalRaw !== '') {
       $ts = strtotime($tanggalRaw);
       $tanggal = $ts ? date('d F Y', $ts) : $tanggalRaw;
@@ -156,8 +174,8 @@ class Notification_service
       $tanggal = '-';
     }
 
-    $jamMulai = isset($row['JAM_PEMESANAN']) ? $row['JAM_PEMESANAN'] : '';
-    $jamAkhir = isset($row['JAM_SELESAI']) ? $row['JAM_SELESAI'] : '';
+    $jamMulai = isset($row['JAM_PEMESANAN']) ? (string)$row['JAM_PEMESANAN'] : '';
+    $jamAkhir = isset($row['JAM_SELESAI']) ? (string)$row['JAM_SELESAI'] : '';
     $jam = ($jamMulai !== '' && $jamAkhir !== '') ? ($jamMulai . ' - ' . $jamAkhir . ' WIB') : '-';
 
     $ruangan = (isset($row['NAMA_GEDUNG']) && $row['NAMA_GEDUNG'] !== '') ? $row['NAMA_GEDUNG'] : '-';
@@ -181,10 +199,10 @@ class Notification_service
 
     $keperluan = (isset($row['DESKRIPSI_ACARA']) && $row['DESKRIPSI_ACARA'] !== '') ? $row['DESKRIPSI_ACARA'] : '-';
 
-    return array(
+    return [
       'id' => $id_pemesanan_full,
-      'username' => $username ? $username : '-',
-      'email' => $email ? $email : '-',
+      'username' => $username ?: '-',
+      'email' => $email ?: '-',
       'tanggal' => $tanggal,
       'jam' => $jam,
       'ruangan' => $ruangan,
@@ -195,7 +213,7 @@ class Notification_service
       'total_keseluruhan' => $totalAllText,
       'status' => $status,
       'keperluan' => $keperluan
-    );
+    ];
   }
 
   private function buildRincianPemesananHtml($d)

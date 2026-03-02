@@ -8,3 +8,11 @@ application/logs/*
 # Session cache files
 application/cache/sessions/*
 !application/cache/sessions/index.html
+
+# Composer
+vendor/
+composer.lock
+
+# IDEs
+.vscode/
+.idea/

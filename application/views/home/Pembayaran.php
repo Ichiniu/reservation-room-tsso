@@ -1,19 +1,22 @@
 <?php
 $no = 1;
 
-function e($v){ return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
+function e($v)
+{
+    return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
+}
 
 function badge_class($statusUpper)
 {
-  $s = strtoupper(trim((string)$statusUpper));
+    $s = strtoupper(trim((string)$statusUpper));
 
-  // Sesuaikan kalau status kamu beda
-  if ($s === 'CONFIRMED' || $s === 'APPROVED') return 'bg-emerald-50 text-emerald-700 border border-emerald-200';
-  if ($s === 'PENDING' || $s === 'PROCESS')   return 'bg-amber-50 text-amber-800 border border-amber-200';
-  if ($s === 'REJECTED' || $s === 'FAILED')   return 'bg-red-50 text-red-700 border border-red-200';
-  if ($s === 'SUBMITED' || $s === 'SUBMITTED')return 'bg-purple-50 text-purple-700 border border-purple-200';
+    // Sesuaikan kalau status kamu beda
+    if ($s === 'CONFIRMED' || $s === 'APPROVED') return 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+    if ($s === 'PENDING' || $s === 'PROCESS')   return 'bg-amber-50 text-amber-800 border border-amber-200';
+    if ($s === 'REJECTED' || $s === 'FAILED')   return 'bg-red-50 text-red-700 border border-red-200';
+    if ($s === 'SUBMITED' || $s === 'SUBMITTED') return 'bg-purple-50 text-purple-700 border border-purple-200';
 
-  return 'bg-slate-50 text-slate-700 border border-slate-200';
+    return 'bg-slate-50 text-slate-700 border border-slate-200';
 }
 ?>
 <!DOCTYPE html>
@@ -107,73 +110,73 @@ function badge_class($statusUpper)
 
                             <tbody class="divide-y divide-slate-100">
                                 <?php if (!empty($res)) : ?>
-                                <?php foreach ($res as $row) : ?>
-                                <?php
-                      $kode   = isset($row['KODE_PEMESANAN']) ? $row['KODE_PEMESANAN'] : '';
-                      $idraw  = isset($row['ID_PEMESANAN_RAW']) ? $row['ID_PEMESANAN_RAW'] : '';
-                      $idbyr  = isset($row['ID_PEMBAYARAN']) ? $row['ID_PEMBAYARAN'] : '';
-                      $atas   = isset($row['ATAS_NAMA_PENGIRIM']) ? $row['ATAS_NAMA_PENGIRIM'] : '-';
-                      $tgl    = isset($row['TANGGAL_TRANSFER']) ? $row['TANGGAL_TRANSFER'] : '';
-                      $nom    = isset($row['NOMINAL_TRANSFER']) ? (int)$row['NOMINAL_TRANSFER'] : 0;
-                      $total  = isset($row['TOTAL_TAGIHAN']) ? (int)$row['TOTAL_TAGIHAN'] : 0;
-                      $status = isset($row['STATUS_VERIF']) ? $row['STATUS_VERIF'] : '-';
-                      $badge  = badge_class($status);
+                                    <?php foreach ($res as $row) : ?>
+                                        <?php
+                                        $kode   = $row['KODE_PEMESANAN'] ?? '';
+                                        $idraw  = $row['ID_PEMESANAN_RAW'] ?? '';
+                                        $idbyr  = $row['ID_PEMBAYARAN'] ?? '';
+                                        $atas   = $row['ATAS_NAMA_PENGIRIM'] ?? '-';
+                                        $tgl    = $row['TANGGAL_TRANSFER'] ?? '';
+                                        $nom    = (int)($row['NOMINAL_TRANSFER'] ?? 0);
+                                        $total  = (int)($row['TOTAL_TAGIHAN'] ?? 0);
+                                        $status = $row['STATUS_VERIF'] ?? '-';
+                                        $badge  = badge_class($status);
 
-                      $idPemesanan = e($kode . $idraw);
-                      $idTransaksi = 'PYMT000' . e($idbyr);
-                    ?>
+                                        $idPemesanan = e($kode . $idraw);
+                                        $idTransaksi = 'PYMT000' . e($idbyr);
+                                        ?>
 
-                                <tr class="table-row hover:bg-slate-50 transition">
-                                    <td class="px-4 py-3">
-                                        <span
-                                            class="inline-flex items-center justify-center h-7 min-w-[28px] px-2 rounded-full bg-slate-100 text-slate-700 text-xs font-bold">
-                                            <?php echo $no++; ?>
-                                        </span>
-                                    </td>
+                                        <tr class="table-row hover:bg-slate-50 transition">
+                                            <td class="px-4 py-3">
+                                                <span
+                                                    class="inline-flex items-center justify-center h-7 min-w-[28px] px-2 rounded-full bg-slate-100 text-slate-700 text-xs font-bold">
+                                                    <?php echo $no++; ?>
+                                                </span>
+                                            </td>
 
-                                    <td class="px-4 py-3 font-bold text-slate-900"><?php echo $idPemesanan; ?></td>
+                                            <td class="px-4 py-3 font-bold text-slate-900"><?php echo $idPemesanan; ?></td>
 
-                                    <td class="px-4 py-3 text-slate-700">
-                                        <span
-                                            class="inline-flex items-center gap-1 rounded-full bg-sky-50 text-sky-800 px-3 py-1 text-xs font-semibold">
-                                            <span class="material-icons text-[16px]">receipt</span>
-                                            <?php echo $idTransaksi; ?>
-                                        </span>
-                                    </td>
+                                            <td class="px-4 py-3 text-slate-700">
+                                                <span
+                                                    class="inline-flex items-center gap-1 rounded-full bg-sky-50 text-sky-800 px-3 py-1 text-xs font-semibold">
+                                                    <span class="material-icons text-[16px]">receipt</span>
+                                                    <?php echo $idTransaksi; ?>
+                                                </span>
+                                            </td>
 
-                                    <td class="px-4 py-3 text-slate-700"><?php echo e($atas); ?></td>
+                                            <td class="px-4 py-3 text-slate-700"><?php echo e($atas); ?></td>
 
-                                    <!-- TANGGAL (diformat JS) -->
-                                    <td class="px-4 py-3 text-slate-700 date-cell" data-date="<?php echo e($tgl); ?>">
-                                        <?php echo e($tgl); ?>
-                                    </td>
+                                            <!-- TANGGAL (diformat JS) -->
+                                            <td class="px-4 py-3 text-slate-700 date-cell" data-date="<?php echo e($tgl); ?>">
+                                                <?php echo e($tgl); ?>
+                                            </td>
 
-                                    <td class="px-4 py-3 text-slate-700 font-semibold">
-                                        Rp <?php echo number_format($nom, 0, ',', '.'); ?>
-                                    </td>
+                                            <td class="px-4 py-3 text-slate-700 font-semibold">
+                                                Rp <?php echo number_format($nom, 0, ',', '.'); ?>
+                                            </td>
 
-                                    <td class="px-4 py-3 text-slate-700 font-semibold">
-                                        Rp <?php echo number_format($total, 0, ',', '.'); ?>
-                                    </td>
+                                            <td class="px-4 py-3 text-slate-700 font-semibold">
+                                                Rp <?php echo number_format($total, 0, ',', '.'); ?>
+                                            </td>
 
-                                    <td class="px-4 py-3">
-                                        <span
-                                            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold <?php echo $badge; ?>">
-                                            <?php echo e(strtoupper(trim((string)$status))); ?>
-                                        </span>
-                                    </td>
-                                </tr>
-                                <?php endforeach; ?>
+                                            <td class="px-4 py-3">
+                                                <span
+                                                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold <?php echo $badge; ?>">
+                                                    <?php echo e(strtoupper(trim((string)$status))); ?>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
                                 <?php else : ?>
-                                <tr>
-                                    <td colspan="8" class="px-4 py-10 text-center text-slate-600">
-                                        <div
-                                            class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                                            <span class="material-icons text-slate-500">info</span>
-                                            Belum ada pembayaran yang dikonfirmasi
-                                        </div>
-                                    </td>
-                                </tr>
+                                    <tr>
+                                        <td colspan="8" class="px-4 py-10 text-center text-slate-600">
+                                            <div
+                                                class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                                                <span class="material-icons text-slate-500">info</span>
+                                                Belum ada pembayaran yang dikonfirmasi
+                                            </div>
+                                        </td>
+                                    </tr>
                                 <?php endif; ?>
                             </tbody>
                         </table>
@@ -218,85 +221,85 @@ function badge_class($statusUpper)
     <?php $this->load->view('components/footer'); ?>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function() {
 
-        // ===== format tanggal Indonesia (tanpa padStart agar aman) =====
-        var bulanIndo = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September',
-            'Oktober', 'November', 'Desember'
-        ];
+            // ===== format tanggal Indonesia (tanpa padStart agar aman) =====
+            var bulanIndo = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September',
+                'Oktober', 'November', 'Desember'
+            ];
 
-        var dateCells = document.querySelectorAll('.date-cell');
-        for (var i = 0; i < dateCells.length; i++) {
-            var el = dateCells[i];
-            var raw = el.getAttribute('data-date');
-            if (!raw) continue;
+            var dateCells = document.querySelectorAll('.date-cell');
+            for (var i = 0; i < dateCells.length; i++) {
+                var el = dateCells[i];
+                var raw = el.getAttribute('data-date');
+                if (!raw) continue;
 
-            var d = new Date(raw);
-            if (isNaN(d)) continue;
+                var d = new Date(raw);
+                if (isNaN(d)) continue;
 
-            var dd = d.getDate();
-            var tgl = (dd < 10 ? '0' + dd : '' + dd);
+                var dd = d.getDate();
+                var tgl = (dd < 10 ? '0' + dd : '' + dd);
 
-            el.textContent = tgl + ' ' + bulanIndo[d.getMonth()] + ' ' + d.getFullYear();
-        }
-
-        // ===== pagination =====
-        var rows = Array.prototype.slice.call(document.querySelectorAll('.table-row'));
-        var rowsSelect = document.getElementById('rowsPerPage');
-        var prevBtn = document.getElementById('prevBtn');
-        var nextBtn = document.getElementById('nextBtn');
-        var pageInfo = document.getElementById('pageInfo');
-
-        var rowsPerPage = parseInt(rowsSelect.value, 10);
-        if (!rowsPerPage || rowsPerPage < 1) rowsPerPage = 10;
-
-        var currentPage = 1;
-
-        function renderTable() {
-            var totalPages = Math.ceil(rows.length / rowsPerPage);
-            if (!totalPages) totalPages = 1;
-
-            for (var i = 0; i < rows.length; i++) rows[i].style.display = 'none';
-
-            var start = (currentPage - 1) * rowsPerPage;
-            var end = start + rowsPerPage;
-
-            for (var j = start; j < end && j < rows.length; j++) {
-                rows[j].style.display = '';
+                el.textContent = tgl + ' ' + bulanIndo[d.getMonth()] + ' ' + d.getFullYear();
             }
 
-            pageInfo.textContent = 'Page ' + currentPage + ' of ' + totalPages;
-            prevBtn.disabled = (currentPage === 1);
-            nextBtn.disabled = (currentPage === totalPages);
-        }
+            // ===== pagination =====
+            var rows = Array.prototype.slice.call(document.querySelectorAll('.table-row'));
+            var rowsSelect = document.getElementById('rowsPerPage');
+            var prevBtn = document.getElementById('prevBtn');
+            var nextBtn = document.getElementById('nextBtn');
+            var pageInfo = document.getElementById('pageInfo');
 
-        rowsSelect.addEventListener('change', function() {
-            var v = parseInt(this.value, 10);
-            if (!v || v < 1) v = 10;
-            rowsPerPage = v;
-            currentPage = 1;
+            var rowsPerPage = parseInt(rowsSelect.value, 10);
+            if (!rowsPerPage || rowsPerPage < 1) rowsPerPage = 10;
+
+            var currentPage = 1;
+
+            function renderTable() {
+                var totalPages = Math.ceil(rows.length / rowsPerPage);
+                if (!totalPages) totalPages = 1;
+
+                for (var i = 0; i < rows.length; i++) rows[i].style.display = 'none';
+
+                var start = (currentPage - 1) * rowsPerPage;
+                var end = start + rowsPerPage;
+
+                for (var j = start; j < end && j < rows.length; j++) {
+                    rows[j].style.display = '';
+                }
+
+                pageInfo.textContent = 'Page ' + currentPage + ' of ' + totalPages;
+                prevBtn.disabled = (currentPage === 1);
+                nextBtn.disabled = (currentPage === totalPages);
+            }
+
+            rowsSelect.addEventListener('change', function() {
+                var v = parseInt(this.value, 10);
+                if (!v || v < 1) v = 10;
+                rowsPerPage = v;
+                currentPage = 1;
+                renderTable();
+            });
+
+            prevBtn.addEventListener('click', function() {
+                if (currentPage > 1) {
+                    currentPage = currentPage - 1;
+                    renderTable();
+                }
+            });
+
+            nextBtn.addEventListener('click', function() {
+                var totalPages = Math.ceil(rows.length / rowsPerPage);
+                if (!totalPages) totalPages = 1;
+
+                if (currentPage < totalPages) {
+                    currentPage = currentPage + 1;
+                    renderTable();
+                }
+            });
+
             renderTable();
         });
-
-        prevBtn.addEventListener('click', function() {
-            if (currentPage > 1) {
-                currentPage = currentPage - 1;
-                renderTable();
-            }
-        });
-
-        nextBtn.addEventListener('click', function() {
-            var totalPages = Math.ceil(rows.length / rowsPerPage);
-            if (!totalPages) totalPages = 1;
-
-            if (currentPage < totalPages) {
-                currentPage = currentPage + 1;
-                renderTable();
-            }
-        });
-
-        renderTable();
-    });
     </script>
 
 </body>

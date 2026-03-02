@@ -7,7 +7,7 @@ class Notification_model extends CI_Model
 
     public function create($data)
     {
-        $row = array(
+        $row = [
             'username'   => $data['username'],
             'type'       => $data['type'],
             'title'      => $data['title'],
@@ -16,7 +16,7 @@ class Notification_model extends CI_Model
             'created_at' => date('Y-m-d H:i:s'),
             'read_at'    => null,
             'emailed_at' => null,
-        );
+        ];
         $this->db->insert($this->table, $row);
         return (int)$this->db->insert_id();
     }
@@ -36,9 +36,9 @@ class Notification_model extends CI_Model
 
     public function mark_emailed($id)
     {
-        $this->db->where('id', (int)$id)->update($this->table, array(
+        $this->db->where('id', (int)$id)->update($this->table, [
             'emailed_at' => date('Y-m-d H:i:s')
-        ));
+        ]);
     }
 
     // ====== wrapper supaya controller bisa panggil count_unread() ======
@@ -90,9 +90,9 @@ class Notification_model extends CI_Model
         if (empty($typesOrLike)) {
             $this->db->where('username', $username);
             $this->db->where('read_at IS NULL', null, false);
-            $this->db->update($this->table, array(
+            $this->db->update($this->table, [
                 'read_at' => date('Y-m-d H:i:s')
-            ));
+            ]);
             return;
         }
 
@@ -112,9 +112,9 @@ class Notification_model extends CI_Model
         }
 
         $this->db->where('read_at IS NULL', null, false);
-        $this->db->update($this->table, array(
+        $this->db->update($this->table, [
             'read_at' => date('Y-m-d H:i:s')
-        ));
+        ]);
     }
     public function mark_emailed_by_id($id)
     {
@@ -128,7 +128,7 @@ class Notification_model extends CI_Model
     }
 
 
-    public function get_unread_since($username, $types = array(), $since_id = 0, $limit = 20)
+    public function get_unread_since($username, $types = [], $since_id = 0, $limit = 20)
     {
         $this->db->from($this->table);
         $this->db->where('username', $username);

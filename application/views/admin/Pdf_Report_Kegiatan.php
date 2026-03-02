@@ -84,17 +84,8 @@ $nama_gedung_filter = isset($nama_gedung_filter) ? $nama_gedung_filter : '';
       ?>
 
         <?php
-        $jamMulai = '';
-        if (isset($row['JAM_MULAI']) && $row['JAM_MULAI'] != '') {
-          $jamMulai = $row['JAM_MULAI'];
-        } elseif (isset($row['JAM_PEMESANAN']) && $row['JAM_PEMESANAN'] != '') {
-          $jamMulai = $row['JAM_PEMESANAN'];
-        }
-
-        $jamSelesai = '';
-        if (isset($row['JAM_SELESAI']) && $row['JAM_SELESAI'] != '') {
-          $jamSelesai = $row['JAM_SELESAI'];
-        }
+        $jamMulai = $row['JAM_MULAI'] ?? $row['JAM_PEMESANAN'] ?? '';
+        $jamSelesai = $row['JAM_SELESAI'] ?? '';
 
         $jamText = '-';
         if ($jamMulai != '' && $jamSelesai != '') {

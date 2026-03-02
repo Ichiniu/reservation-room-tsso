@@ -1,8 +1,8 @@
 <?php
 // Welcome screen (public)
-$this->load->helper(array('text', 'url'));
+$this->load->helper(['text', 'url']);
 
-$total = (isset($res) && is_array($res)) ? count($res) : 0;
+$total = count((array)($res ?? []));
 function e($v)
 {
     return html_escape((string)$v);
@@ -14,31 +14,31 @@ function e($v)
    - Key array = ID_GEDUNG (ID ruangan di DB)
    - Isi = list badge icon + label (Material Icons)
    ========================================================================= */
-$FACILITY_BY_ROOM_ID = array(
+$FACILITY_BY_ROOM_ID = [
     // RUANG 1 (ID_GEDUNG = 1) -> Meeting Room
-    1 => array(
-        array('icon' => 'tv',        'label' => 'TV LED'),
-        array('icon' => 'wifi',      'label' => 'WiFi'),
-        array('icon' => 'ac_unit',   'label' => 'AC'),
-        array('icon' => 'volume_up', 'label' => 'Sound'),
-    ),
+    1 => [
+        ['icon' => 'tv',        'label' => 'TV LED'],
+        ['icon' => 'wifi',      'label' => 'WiFi'],
+        ['icon' => 'ac_unit',   'label' => 'AC'],
+        ['icon' => 'volume_up', 'label' => 'Sound'],
+    ],
 
     // RUANG 2 (ID_GEDUNG = 2) -> Amphitheater
-    2 => array(
-        array('icon' => 'present_to_all', 'label' => 'Proyektor'),
-        array('icon' => 'wifi',           'label' => 'WiFi'),
-        array('icon' => 'ac_unit',        'label' => 'AC'),
-        array('icon' => 'volume_up',      'label' => 'Sound'),
-    ),
+    2 => [
+        ['icon' => 'present_to_all', 'label' => 'Proyektor'],
+        ['icon' => 'wifi',           'label' => 'WiFi'],
+        ['icon' => 'ac_unit',        'label' => 'AC'],
+        ['icon' => 'volume_up',      'label' => 'Sound'],
+    ],
 
     // RUANG 3 (ID_GEDUNG = 3) -> Studio Podcast
-    3 => array(
-        array('icon' => 'mic',        'label' => 'Mic'),
-        array('icon' => 'headphones', 'label' => 'Headset'),
-        array('icon' => 'graphic_eq', 'label' => 'Audio'),
-        array('icon' => 'videocam',   'label' => 'Kamera'),
-    ),
-);
+    3 => [
+        ['icon' => 'mic',        'label' => 'Mic'],
+        ['icon' => 'headphones', 'label' => 'Headset'],
+        ['icon' => 'graphic_eq', 'label' => 'Audio'],
+        ['icon' => 'videocam',   'label' => 'Kamera'],
+    ],
+];
 
 /* =========================================================================
     PENGATURAN DESKRIPSI PER RUANGAN (EDIT DI SINI)
@@ -46,42 +46,42 @@ $FACILITY_BY_ROOM_ID = array(
    - Ini yang mengganti teks:
      "Ruangan nyaman dengan penataan modern..."
    ========================================================================= */
-$DESC_BY_ROOM_ID = array(
+$DESC_BY_ROOM_ID = [
     1 => "Meeting Room nyaman untuk rapat, presentasi, dan diskusi internal. Tata ruang rapi, suasana fokus, siap dipakai kegiatan resmi.",
-    2 => "Amphitheater luas untuk seminar, pelatihan, dan acara skala besar. Visibilitas bagus, audio jelas, cocok untuk event formal maupun publik.",
+    2 => "Amphitheater luas untuk seminar, pelatihan, and acara skala besar. Visibilitas bagus, audio jelas, cocok untuk event formal maupun publik.",
     3 => "Studio Podcast untuk rekaman audio/video, talkshow, dan konten kreatif. Setup mendukung produksi konten dengan kualitas suara lebih rapi.",
-);
+];
 
 /* =========================================================================
     PENGATURAN TAGLINE OVERLAY (EDIT DI SINI)
    -------------------------------------------------------------------------
    - Ini yang mengganti teks kecil di overlay bawah nama ruangan.
    ========================================================================= */
-$TAGLINE_BY_ROOM_ID = array(
+$TAGLINE_BY_ROOM_ID = [
     1 => "Cocok untuk rapat, presentasi, dan diskusi tim.",
     2 => "Ideal untuk seminar, pelatihan, dan event skala besar.",
     3 => "Untuk rekaman podcast, talkshow, dan konten kreatif.",
-);
+];
 
 /* =========================================================================
    (OPSIONAL) Fallback fasilitas kalau ada ruangan baru ID 4,5,6 dst.
    ========================================================================= */
-$FACILITY_POOL_FALLBACK = array(
-    array('icon' => 'wifi',        'label' => 'WiFi'),
-    array('icon' => 'ac_unit',     'label' => 'AC'),
-    array('icon' => 'volume_up',   'label' => 'Sound'),
-    array('icon' => 'present_to_all', 'label' => 'Proyektor'),
-    array('icon' => 'tv',          'label' => 'TV'),
-    array('icon' => 'mic',         'label' => 'Mic'),
-    array('icon' => 'draw',        'label' => 'Whiteboard'),
-    array('icon' => 'power',       'label' => 'Power'),
-);
+$FACILITY_POOL_FALLBACK = [
+    ['icon' => 'wifi',        'label' => 'WiFi'],
+    ['icon' => 'ac_unit',     'label' => 'AC'],
+    ['icon' => 'volume_up',   'label' => 'Sound'],
+    ['icon' => 'present_to_all', 'label' => 'Proyektor'],
+    ['icon' => 'tv',          'label' => 'TV'],
+    ['icon' => 'mic',         'label' => 'Mic'],
+    ['icon' => 'draw',        'label' => 'Whiteboard'],
+    ['icon' => 'power',       'label' => 'Power'],
+];
 
 /* ===== Shuffle deterministik untuk fallback (biar stabil) ===== */
 if (!function_exists('seeded_shuffle')) {
     function seeded_shuffle($items, $seed)
     {
-        $items = array_values($items);
+        $items = array_values((array)$items);
         $n = count($items);
 
         $state = (int)$seed;
@@ -102,7 +102,7 @@ if (!function_exists('seeded_shuffle')) {
 if (!function_exists('get_facilities_for_room')) {
     function get_facilities_for_room($id, $map, $fallbackPool, $take = 4)
     {
-        if (isset($map[$id]) && is_array($map[$id]) && count($map[$id]) > 0) {
+        if (is_array($map[$id] ?? null) && count($map[$id]) > 0) {
             return $map[$id];
         }
         $seed = (int)abs(crc32((string)$id));
@@ -115,7 +115,7 @@ if (!function_exists('get_facilities_for_room')) {
 if (!function_exists('get_desc_for_room')) {
     function get_desc_for_room($id, $map, $fallback = "Ruangan nyaman dengan penataan modern, siap digunakan untuk kegiatan internal maupun eksternal.")
     {
-        if (isset($map[$id]) && trim((string)$map[$id]) !== '') return $map[$id];
+        if (trim((string)($map[$id] ?? '')) !== '') return $map[$id];
         return $fallback;
     }
 }
@@ -124,7 +124,7 @@ if (!function_exists('get_desc_for_room')) {
 if (!function_exists('get_tagline_for_room')) {
     function get_tagline_for_room($id, $map, $fallback = "Cocok untuk rapat, presentasi, dan kegiatan resmi.")
     {
-        if (isset($map[$id]) && trim((string)$map[$id]) !== '') return $map[$id];
+        if (trim((string)($map[$id] ?? '')) !== '') return $map[$id];
         return $fallback;
     }
 }
@@ -267,9 +267,9 @@ if (!function_exists('get_tagline_for_room')) {
                                 $clean = preg_replace('#^https?://[^/]+/bookingsmarts/#i', '', $raw_path);
                                 $img = base_url($clean);
                             }
-                            $nama = isset($row['NAMA_GEDUNG']) ? $row['NAMA_GEDUNG'] : 'Ruangan';
-                            $kap  = isset($row['KAPASITAS']) ? $row['KAPASITAS'] : '-';
-                            $id   = isset($row['ID_GEDUNG']) ? (int)$row['ID_GEDUNG'] : 0;
+                            $nama = $row['NAMA_GEDUNG'] ?? 'Ruangan';
+                            $kap  = $row['KAPASITAS'] ?? '-';
+                            $id   = (int)($row['ID_GEDUNG'] ?? 0);
 
                             // ✅ ambil fasilitas, tagline, deskripsi sesuai ID
                             $badges  = get_facilities_for_room($id, $FACILITY_BY_ROOM_ID, $FACILITY_POOL_FALLBACK, 4);

@@ -144,16 +144,16 @@ $this->load->helper('text');
                             <?php if (!empty($pemesanan)) : ?>
                                 <?php foreach ($pemesanan as $row): ?>
                                     <?php
-                                    $id = isset($row['ID_PEMESANAN']) ? $row['ID_PEMESANAN'] : '-';
-                                    $user = isset($row['USERNAME']) ? $row['USERNAME'] : '-';
-                                    $tglRaw = isset($row['TANGGAL_PEMESANAN']) ? $row['TANGGAL_PEMESANAN'] : '';
+                                    $id = $row['ID_PEMESANAN'] ?? '-';
+                                    $user = $row['USERNAME'] ?? '-';
+                                    $tglRaw = $row['TANGGAL_PEMESANAN'] ?? '';
                                     $tglIndo = format_tanggal_indo($tglRaw);
 
                                     // buat filter tanggal (yyyy-mm-dd)
                                     $tglForFilter = !empty($tglRaw) ? date('Y-m-d', strtotime($tglRaw)) : '';
 
-                                    $gedung = isset($row['NAMA_GEDUNG']) ? $row['NAMA_GEDUNG'] : '-';
-                                    $status = isset($row['STATUS']) ? $row['STATUS'] : '-';
+                                    $gedung = $row['NAMA_GEDUNG'] ?? '-';
+                                    $status = $row['STATUS'] ?? '-';
                                     $statusUpper = strtoupper(trim((string)$status));
 
                                     // jam

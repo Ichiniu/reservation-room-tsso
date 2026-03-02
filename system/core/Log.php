@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2015, British Columbia Institute of Technology
+ * Copyright (c) 2019 - 2022, CodeIgniter Foundation
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,10 +28,11 @@
  *
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2015, British Columbia Institute of Technology (http://bcit.ca/)
- * @license	http://opensource.org/licenses/MIT	MIT License
- * @link	http://codeigniter.com
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
+ * @copyright	Copyright (c) 2014 - 2019, British Columbia Institute of Technology (https://bcit.ca/)
+ * @copyright	Copyright (c) 2019 - 2022, CodeIgniter Foundation (https://codeigniter.com/)
+ * @license	https://opensource.org/licenses/MIT	MIT License
+ * @link	https://codeigniter.com
  * @since	Version 1.0.0
  * @filesource
  */
@@ -44,7 +45,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @subpackage	Libraries
  * @category	Logging
  * @author		EllisLab Dev Team
- * @link		http://codeigniter.com/user_guide/general/errors.html
+ * @link		https://codeigniter.com/userguide3/general/errors.html
  */
 class CI_Log {
 
@@ -54,6 +55,13 @@ class CI_Log {
 	 * @var string
 	 */
 	protected $_log_path;
+
+	/**
+	 * Log filename
+	 *
+	 * @var string
+	 */
+	protected $_log_filename;
 
 	/**
 	 * File permissions
@@ -84,13 +92,6 @@ class CI_Log {
 	protected $_date_fmt = 'Y-m-d H:i:s';
 
 	/**
-	 * Filename extension
-	 *
-	 * @var	string
-	 */
-	protected $_file_ext;
-
-	/**
 	 * Whether or not the logger can write to the log files
 	 *
 	 * @var bool
@@ -104,6 +105,13 @@ class CI_Log {
 	 */
 	protected $_levels = array('ERROR' => 1, 'DEBUG' => 2, 'INFO' => 3, 'ALL' => 4);
 
+	/**
+	 * mbstring.func_overload flag
+	 *
+	 * @var	bool
+	 */
+	protected static $func_overload;
+
 	// --------------------------------------------------------------------
 
 	/**
@@ -115,9 +123,24 @@ class CI_Log {
 	{
 		$config =& get_config();
 
-		$this->_log_path = ($config['log_path'] !== '') ? $config['log_path'] : APPPATH.'logs/';
-		$this->_file_ext = (isset($config['log_file_extension']) && $config['log_file_extension'] !== '')
-			? ltrim($config['log_file_extension'], '.') : 'php';
+		isset(self::$func_overload) OR self::$func_overload = ( ! is_php('8.0') && extension_loaded('mbstring') && @ini_get('mbstring.func_overload'));
+
+		$this->_log_path = ($config['log_path'] !== '')
+			? rtrim($config['log_path'], '/\\').DIRECTORY_SEPARATOR : APPPATH.'logs'.DIRECTORY_SEPARATOR;
+
+		if (isset($config['log_filename']) && $config['log_filename'] !== '')
+		{
+			$this->_log_filename = $config['log_filename'];
+		}
+		elseif (isset($config['log_file_extension']) && $config['log_file_extension'] !== '')
+		{
+			$ext = ltrim($config['log_file_extension'], '.');
+			$this->_log_filename = 'log-'.date('Y-m-d').'.'.$ext;
+		}
+		else
+		{
+			$this->_log_filename = 'log-'.date('Y-m-d').'.php';
+		}
 
 		file_exists($this->_log_path) OR mkdir($this->_log_path, 0755, TRUE);
 
@@ -154,8 +177,8 @@ class CI_Log {
 	 *
 	 * Generally this function will be called using the global log_message() function
 	 *
-	 * @param	string	the error level: 'error', 'debug' or 'info'
-	 * @param	string	the error message
+	 * @param	string	$level 	The error level: 'error', 'debug' or 'info'
+	 * @param	string	$msg 	The error message
 	 * @return	bool
 	 */
 	public function write_log($level, $msg)
@@ -173,14 +196,14 @@ class CI_Log {
 			return FALSE;
 		}
 
-		$filepath = $this->_log_path.'log-'.date('Y-m-d').'.'.$this->_file_ext;
+		$filepath = $this->_log_path.$this->_log_filename;
 		$message = '';
 
 		if ( ! file_exists($filepath))
 		{
 			$newfile = TRUE;
 			// Only add protection to php files
-			if ($this->_file_ext === 'php')
+			if (substr($this->_log_filename, -3, 3) === 'php')
 			{
 				$message .= "<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>\n\n";
 			}
@@ -190,6 +213,8 @@ class CI_Log {
 		{
 			return FALSE;
 		}
+
+		flock($fp, LOCK_EX);
 
 		// Instantiating DateTime with microseconds appended to initial date is needed for proper support of this format
 		if (strpos($this->_date_fmt, 'u') !== FALSE)
@@ -204,13 +229,11 @@ class CI_Log {
 			$date = date($this->_date_fmt);
 		}
 
-		$message .= $level.' - '.$date.' --> '.$msg."\n";
+		$message .= $this->_format_line($level, $date, $msg);
 
-		flock($fp, LOCK_EX);
-
-		for ($written = 0, $length = strlen($message); $written < $length; $written += $result)
+		for ($written = 0, $length = self::strlen($message); $written < $length; $written += $result)
 		{
-			if (($result = fwrite($fp, substr($message, $written))) === FALSE)
+			if (($result = fwrite($fp, self::substr($message, $written))) === FALSE)
 			{
 				break;
 			}
@@ -227,4 +250,58 @@ class CI_Log {
 		return is_int($result);
 	}
 
+	// --------------------------------------------------------------------
+
+	/**
+	 * Format the log line.
+	 *
+	 * This is for extensibility of log formatting
+	 * If you want to change the log format, extend the CI_Log class and override this method
+	 *
+	 * @param	string	$level 	The error level
+	 * @param	string	$date 	Formatted date string
+	 * @param	string	$message 	The log message
+	 * @return	string	Formatted log line with a new line character at the end
+	 */
+	protected function _format_line($level, $date, $message)
+	{
+		return $level.' - '.$date.' --> '.$message.PHP_EOL;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Byte-safe strlen()
+	 *
+	 * @param	string	$str
+	 * @return	int
+	 */
+	protected static function strlen($str)
+	{
+		return (self::$func_overload)
+			? mb_strlen($str, '8bit')
+			: strlen($str);
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Byte-safe substr()
+	 *
+	 * @param	string	$str
+	 * @param	int	$start
+	 * @param	int	$length
+	 * @return	string
+	 */
+	protected static function substr($str, $start, $length = NULL)
+	{
+		if (self::$func_overload)
+		{
+			return mb_substr($str, $start, $length, '8bit');
+		}
+
+		return isset($length)
+			? substr($str, $start, $length)
+			: substr($str, $start);
+	}
 }

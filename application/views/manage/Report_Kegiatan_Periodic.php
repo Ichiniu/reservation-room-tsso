@@ -76,7 +76,7 @@ $no = 1;
                         <?php
                         $grand_total_peserta = 0;
                         foreach ($report as $row):
-                            $tp = !empty($row['TOTAL_PESERTA']) ? (int)$row['TOTAL_PESERTA'] : 0;
+                            $tp = (int)($row['TOTAL_PESERTA'] ?? 0);
                             $grand_total_peserta += $tp;
                         ?>
                             <tr>

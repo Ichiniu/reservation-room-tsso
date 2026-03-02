@@ -25,14 +25,14 @@ if (!function_exists('bs_detect_pricing_mode')) {
         $namaU = strtoupper(trim((string)$nama_gedung));
         if ($namaU === '') return 'FLAT';
 
-        if (strpos($namaU, 'PODCAST') !== false) return 'PODCAST_PER_JAM';
+        if (str_contains($namaU, 'PODCAST')) return 'PODCAST_PER_JAM';
 
         if (
-            strpos($namaU, 'MEETING') !== false ||
-            strpos($namaU, 'AMPHI') !== false ||
-            strpos($namaU, 'AMPHITHEATER') !== false ||
-            strpos($namaU, 'AMPITHEATER') !== false ||
-            strpos($namaU, 'AMPHITEATER') !== false
+            str_contains($namaU, 'MEETING') ||
+            str_contains($namaU, 'AMPHI') ||
+            str_contains($namaU, 'AMPHITHEATER') ||
+            str_contains($namaU, 'AMPITHEATER') ||
+            str_contains($namaU, 'AMPHITEATER')
         ) return 'PER_PESERTA';
 
         return 'FLAT';
@@ -65,8 +65,8 @@ if (!function_exists('bs_duration_hours_ceil')) {
 if (!function_exists('bs_get_val')) {
     function bs_get_val($row, $key, $default = null)
     {
-        if (is_array($row) && array_key_exists($key, $row)) return $row[$key];
-        if (is_object($row) && isset($row->$key)) return $row->$key;
+        if (is_array($row)) return $row[$key] ?? $default;
+        if (is_object($row)) return $row->$key ?? $default;
         return $default;
     }
 }

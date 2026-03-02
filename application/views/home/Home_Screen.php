@@ -3,7 +3,7 @@ $session_id = $this->session->userdata('username');
 $this->load->helper(array('text', 'url'));
 $user  = $this->uri->segment(2);
 
-$total = (isset($res) && is_array($res)) ? count($res) : 0;
+$total = is_array($res ?? null) ? count($res) : 0;
 
 function e($v)
 {
@@ -16,31 +16,31 @@ function e($v)
    - Key array = ID_GEDUNG (ID ruangan di DB)
    - Isi = list badge icon + label (Material Icons)
    ========================================================================= */
-$FACILITY_BY_ROOM_ID = array(
+$FACILITY_BY_ROOM_ID = [
     // RUANG 1 (ID_GEDUNG = 1) -> Meeting Room
-    1 => array(
-        array('icon' => 'tv',        'label' => 'TV LED'),
-        array('icon' => 'wifi',      'label' => 'WiFi'),
-        array('icon' => 'ac_unit',   'label' => 'AC'),
-        array('icon' => 'volume_up', 'label' => 'Sound'),
-    ),
+    1 => [
+        ['icon' => 'tv',        'label' => 'TV LED'],
+        ['icon' => 'wifi',      'label' => 'WiFi'],
+        ['icon' => 'ac_unit',   'label' => 'AC'],
+        ['icon' => 'volume_up', 'label' => 'Sound'],
+    ],
 
     // RUANG 2 (ID_GEDUNG = 2) -> Amphitheater
-    2 => array(
-        array('icon' => 'present_to_all', 'label' => 'Proyektor'),
-        array('icon' => 'wifi',           'label' => 'WiFi'),
-        array('icon' => 'ac_unit',        'label' => 'AC'),
-        array('icon' => 'volume_up',      'label' => 'Sound'),
-    ),
+    2 => [
+        ['icon' => 'present_to_all', 'label' => 'Proyektor'],
+        ['icon' => 'wifi',           'label' => 'WiFi'],
+        ['icon' => 'ac_unit',        'label' => 'AC'],
+        ['icon' => 'volume_up',      'label' => 'Sound'],
+    ],
 
     // RUANG 3 (ID_GEDUNG = 3) -> Studio Podcast
-    3 => array(
-        array('icon' => 'mic',         'label' => 'Mic'),
-        array('icon' => 'headphones',  'label' => 'Headset'),
-        array('icon' => 'graphic_eq',  'label' => 'Audio'),
-        array('icon' => 'videocam',    'label' => 'Kamera'),
-    ),
-);
+    3 => [
+        ['icon' => 'mic',         'label' => 'Mic'],
+        ['icon' => 'headphones',  'label' => 'Headset'],
+        ['icon' => 'graphic_eq',  'label' => 'Audio'],
+        ['icon' => 'videocam',    'label' => 'Kamera'],
+    ],
+];
 
 /* =========================================================================
    ✅ PENGATURAN DESKRIPSI PER RUANGAN (EDIT DI SINI)
@@ -49,42 +49,42 @@ $FACILITY_BY_ROOM_ID = array(
      "Ruangan nyaman dengan penataan modern, siap digunakan..."
    - Key array = ID_GEDUNG
    ========================================================================= */
-$DESC_BY_ROOM_ID = array(
+$DESC_BY_ROOM_ID = [
     // RUANG 1 (Meeting Room)
-    1 => "Meeting Room nyaman untuk rapat, presentasi, dan diskusi internal. Tata ruang rapi, suasana fokus, siap dipakai kegiatan resmi.",
+    1 => "Meeting Room nyaman untuk rapat, presentasi, and diskusi internal. Tata ruang rapi, suasana fokus, siap dipakai kegiatan resmi.",
 
     // RUANG 2 (Amphitheater)
-    2 => "Amphitheater luas untuk seminar, pelatihan, dan acara skala besar. Visibilitas bagus, audio jelas, cocok untuk event formal maupun publik.",
+    2 => "Amphitheater luas untuk seminar, pelatihan, and acara skala besar. Visibilitas bagus, audio jelas, cocok untuk event formal maupun publik.",
 
     // RUANG 3 (Studio Podcast)
-    3 => "Studio Podcast untuk rekaman audio/video, talkshow, dan konten kreatif. Setup mendukung produksi konten dengan kualitas suara yang lebih rapi.",
-);
+    3 => "Studio Podcast untuk rekaman audio/video, talkshow, and konten kreatif. Setup mendukung produksi konten dengan kualitas suara yang lebih rapi.",
+];
 
 /* =========================================================================
    ✅ PENGATURAN TAGLINE DI ATAS GAMBAR (EDIT DI SINI)
    -------------------------------------------------------------------------
    - Ini yang mengganti teks kecil di bawah nama ruangan (overlay gambar).
    ========================================================================= */
-$TAGLINE_BY_ROOM_ID = array(
-    1 => "Cocok untuk rapat, presentasi, dan diskusi tim.",
-    2 => "Ideal untuk seminar, pelatihan, dan event skala besar.",
-    3 => "Untuk rekaman podcast, talkshow, dan konten kreatif.",
-);
+$TAGLINE_BY_ROOM_ID = [
+    1 => "Cocok untuk rapat, presentasi, and diskusi tim.",
+    2 => "Ideal untuk seminar, pelatihan, and event skala besar.",
+    3 => "Untuk rekaman podcast, talkshow, and konten kreatif.",
+];
 
 /* =========================================================================
    (OPSIONAL) Fallback fasilitas kalau ID ruangan tidak ada di mapping.
    Misal ada ruangan baru ID 4,5,6 dll -> tetap dapat badge “otomatis”.
    ========================================================================= */
-$FACILITY_POOL_FALLBACK = array(
-    array('icon' => 'wifi',        'label' => 'WiFi'),
-    array('icon' => 'ac_unit',     'label' => 'AC'),
-    array('icon' => 'volume_up',   'label' => 'Sound'),
-    array('icon' => 'videocam',    'label' => 'Proyektor'),
-    array('icon' => 'tv',          'label' => 'TV'),
-    array('icon' => 'mic',         'label' => 'Mic'),
-    array('icon' => 'draw',        'label' => 'Whiteboard'),
-    array('icon' => 'power',       'label' => 'Power'),
-);
+$FACILITY_POOL_FALLBACK = [
+    ['icon' => 'wifi',        'label' => 'WiFi'],
+    ['icon' => 'ac_unit',     'label' => 'AC'],
+    ['icon' => 'volume_up',   'label' => 'Sound'],
+    ['icon' => 'videocam',    'label' => 'Proyektor'],
+    ['icon' => 'tv',          'label' => 'TV'],
+    ['icon' => 'mic',         'label' => 'Mic'],
+    ['icon' => 'draw',        'label' => 'Whiteboard'],
+    ['icon' => 'power',       'label' => 'Power'],
+];
 
 /* ===== Shuffle deterministik untuk fallback (biar stabil) ===== */
 if (!function_exists('seeded_shuffle')) {
@@ -111,7 +111,7 @@ if (!function_exists('seeded_shuffle')) {
 if (!function_exists('get_facilities_for_room')) {
     function get_facilities_for_room($id, $map, $fallbackPool, $take = 4)
     {
-        if (isset($map[$id]) && is_array($map[$id]) && count($map[$id]) > 0) {
+        if (is_array($map[$id] ?? null) && count($map[$id]) > 0) {
             return $map[$id];
         }
         $seed = (int)abs(crc32((string)$id));
@@ -124,16 +124,16 @@ if (!function_exists('get_facilities_for_room')) {
 if (!function_exists('get_desc_for_room')) {
     function get_desc_for_room($id, $map, $fallback = "Ruangan nyaman dengan penataan modern, siap digunakan untuk kegiatan internal maupun eksternal.")
     {
-        if (isset($map[$id]) && trim((string)$map[$id]) !== '') return $map[$id];
+        if (trim((string)($map[$id] ?? '')) !== '') return $map[$id];
         return $fallback;
     }
 }
 
 /* ===== Ambil tagline per ruangan (mapping -> fallback) ===== */
 if (!function_exists('get_tagline_for_room')) {
-    function get_tagline_for_room($id, $map, $fallback = "Cocok untuk rapat, presentasi, dan kegiatan resmi.")
+    function get_tagline_for_room($id, $map, $fallback = "Cocok untuk rapat, presentasi, and kegiatan resmi.")
     {
-        if (isset($map[$id]) && trim((string)$map[$id]) !== '') return $map[$id];
+        if (trim((string)($map[$id] ?? '')) !== '') return $map[$id];
         return $fallback;
     }
 }
@@ -145,7 +145,7 @@ if (!function_exists('formatTanggalIndo')) {
         $tgl = trim((string)$tgl);
         if ($tgl === '') return '-';
 
-        $bulan = array(
+        $bulan = [
             1 => 'januari',
             'februari',
             'maret',
@@ -158,7 +158,7 @@ if (!function_exists('formatTanggalIndo')) {
             'oktober',
             'november',
             'desember'
-        );
+        ];
 
         $ts = strtotime($tgl);
         if (!$ts) return $tgl;
@@ -167,7 +167,7 @@ if (!function_exists('formatTanggalIndo')) {
         $m = (int)date('n', $ts);
         $y = date('Y', $ts);
 
-        $namaBulan = isset($bulan[$m]) ? $bulan[$m] : '';
+        $namaBulan = $bulan[$m] ?? '';
         return $d . ' ' . $namaBulan . ' ' . $y;
     }
 }
@@ -177,7 +177,7 @@ if (!function_exists('bulanKeAngka')) {
     function bulanKeAngka($nama)
     {
         $nama = strtolower(trim((string)$nama));
-        $map = array(
+        $map = [
             'januari' => 1,
             'jan' => 1,
             'februari' => 2,
@@ -205,8 +205,8 @@ if (!function_exists('bulanKeAngka')) {
             'desember' => 12,
             'des' => 12,
             'dec' => 12,
-        );
-        return isset($map[$nama]) ? (int)$map[$nama] : 0;
+        ];
+        return (int)($map[$nama] ?? 0);
     }
 }
 
@@ -237,11 +237,11 @@ if (!function_exists('parse_title_3lines')) {
 
         $timeRaw = '';
         if (preg_match('/\(([^)]*)\)/', $t, $mt)) {
-            $timeRaw = trim($mt[1]);
+            $timeRaw = trim((string)$mt[1]);
         }
         if ($timeRaw === '') {
             if (preg_match('/\b(\d{1,2}[:.]\d{2})\s*-\s*(\d{1,2}[:.]\d{2})\b/i', $t, $tm)) {
-                $timeRaw = trim($tm[1]) . ' - ' . trim($tm[2]);
+                $timeRaw = trim((string)$tm[1]) . ' - ' . trim((string)$tm[2]);
             }
         }
 
@@ -253,7 +253,7 @@ if (!function_exists('parse_title_3lines')) {
             $jam = preg_replace('/\s*-\s*/', ' - ', $jam);
             if (stripos($jam, 'wib') === false) $jam .= ' wib';
             $jam = preg_replace('/\s*wib\s*/i', ' wib', $jam);
-            $jam = trim($jam);
+            $jam = trim((string)$jam);
         }
 
         $nama = $t;
@@ -262,15 +262,15 @@ if (!function_exists('parse_title_3lines')) {
         $nama = preg_replace('/\b\d{1,2}[:.]\d{2}\s*-\s*\d{1,2}[:.]\d{2}\b/i', '', $nama);
         $nama = preg_replace('/\s*wib\b/i', '', $nama);
         $nama = preg_replace('/\s+/', ' ', $nama);
-        $nama = trim($nama);
-        $nama = rtrim($nama, '-');
-        $nama = trim($nama);
+        $nama = trim((string)$nama);
+        $nama = rtrim((string)$nama, '-');
+        $nama = trim((string)$nama);
 
         if ($nama === '') $nama = $original;
 
         $tgl = ($dateRawYmd !== '') ? formatTanggalIndo($dateRawYmd) : '-';
 
-        return array('nama' => $nama, 'tgl' => $tgl, 'jam' => $jam);
+        return ['nama' => $nama, 'tgl' => $tgl, 'jam' => $jam];
     }
 }
 
@@ -299,9 +299,9 @@ if (!function_exists('stars_html')) {
 $ul_total = 0;
 $ul_avg   = 0;
 
-if (isset($ulasan_summary) && is_array($ulasan_summary)) {
-    if (isset($ulasan_summary['total'])) $ul_total = (int)$ulasan_summary['total'];
-    if (isset($ulasan_summary['avg']))   $ul_avg   = (float)$ulasan_summary['avg'];
+if (is_array($ulasan_summary ?? null)) {
+    $ul_total = (int)($ulasan_summary['total'] ?? 0);
+    $ul_avg   = (float)($ulasan_summary['avg'] ?? 0);
 }
 $ul_avgRounded = (int)round($ul_avg);
 
@@ -410,7 +410,7 @@ $ulasan_count = is_array($ulasan_home) ? count($ulasan_home) : 0;
                             Pilih Ruangan dengan Tampilan Modern
                         </h2>
                         <p class="mt-2 text-sm md:text-base text-slate-600">
-                            Cocok untuk rapat, presentasi, dan kegiatan resmi. Pilih ruangan sesuai kapasitas dan kebutuhan.
+                            Cocok untuk rapat, presentasi, and kegiatan resmi. Pilih ruangan sesuai kapasitas and kebutuhan.
                         </p>
                     </div>
 
@@ -426,19 +426,19 @@ $ulasan_count = is_array($ulasan_home) ? count($ulasan_home) : 0;
             <section>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
 
-                    <?php if (!empty($res) && is_array($res)): ?>
+                    <?php if (is_array($res ?? null)): ?>
                         <?php foreach (array_slice($res, 0, 3) as $row): ?>
                             <?php
-                            $raw_path = (!empty($row['PATH']) && !empty($row['IMG_NAME'])) ? ($row['PATH'] . $row['IMG_NAME']) : '';
+                            $raw_path = ($row['PATH'] ?? '') !== '' && ($row['IMG_NAME'] ?? '') !== '' ? ($row['PATH'] . $row['IMG_NAME']) : '';
                             // Normalisasi: hapus domain lama lalu tambahkan base_url()
                             $img = '';
                             if ($raw_path !== '') {
                                 $clean = preg_replace('#^https?://[^/]+/bookingsmarts/#i', '', $raw_path);
                                 $img = base_url($clean);
                             }
-                            $nama = isset($row['NAMA_GEDUNG']) ? $row['NAMA_GEDUNG'] : 'Ruangan';
-                            $kap  = isset($row['KAPASITAS']) ? $row['KAPASITAS'] : '-';
-                            $id   = isset($row['ID_GEDUNG']) ? (int)$row['ID_GEDUNG'] : 0;
+                            $nama = $row['NAMA_GEDUNG'] ?? 'Ruangan';
+                            $kap  = $row['KAPASITAS'] ?? '-';
+                            $id   = (int)($row['ID_GEDUNG'] ?? 0);
 
                             // ✅ FASILITAS PER ID RUANGAN
                             $badges  = get_facilities_for_room($id, $FACILITY_BY_ROOM_ID, $FACILITY_POOL_FALLBACK, 4);
@@ -571,23 +571,23 @@ $ulasan_count = is_array($ulasan_home) ? count($ulasan_home) : 0;
                         </div>
 
                         <div class="mt-6">
-                            <?php if (!empty($ulasan_home) && $ulasan_count > 0): ?>
+                            <?php if (is_array($ulasan_home ?? null) && $ulasan_count > 0): ?>
                                 <div id="reviewMarquee" class="marquee-wrap overflow-hidden">
                                     <div id="reviewTrack" class="marquee-track flex gap-6 py-1"
                                         style="animation-duration: 18s;">
                                         <?php for ($loop = 0; $loop < 2; $loop++): ?>
                                             <?php foreach ($ulasan_home as $r): ?>
                                                 <?php
-                                                $nm = isset($r['name']) ? $r['name'] : 'Customer';
-                                                $dt_raw = isset($r['date']) ? $r['date'] : '';
+                                                $nm = $r['name'] ?? 'Customer';
+                                                $dt_raw = $r['date'] ?? '';
                                                 $dt = formatTanggalIndo($dt_raw);
 
-                                                $rt = isset($r['rating']) ? (int)$r['rating'] : 5;
+                                                $rt = (int)($r['rating'] ?? 5);
                                                 if ($rt < 1) $rt = 1;
                                                 if ($rt > 5) $rt = 5;
 
-                                                $tt = isset($r['title']) ? $r['title'] : '';
-                                                $cm = isset($r['comment']) ? $r['comment'] : '';
+                                                $tt = $r['title'] ?? '';
+                                                $cm = $r['comment'] ?? '';
 
                                                 $inisial = strtoupper(substr((string)$nm, 0, 1));
                                                 if ($inisial === '') $inisial = 'U';
