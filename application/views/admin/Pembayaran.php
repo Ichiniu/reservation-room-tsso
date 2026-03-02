@@ -111,7 +111,7 @@ $notifCount = !empty($notifs_admin_trx) ? count($notifs_admin_trx) : 0;
                             class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-teal-300">
                             <option value="">Semua Status</option>
                             <option value="PENDING">PENDING</option>
-                            <option value="APPROVED">APPROVED</option>
+                            <option value="CONFIRMED">CONFIRMED</option>
                             <option value="REJECTED">REJECTED</option>
                         </select>
                     </div>

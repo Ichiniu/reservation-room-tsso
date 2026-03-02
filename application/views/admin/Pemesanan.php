@@ -15,7 +15,6 @@ $this->load->helper('text');
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
-
 </head>
 
 <body class="bg-gray-100 text-gray-800">
@@ -44,7 +43,6 @@ $this->load->helper('text');
                     <select id="filterStatus"
                         class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-teal-300">
                         <option value="">Semua Status</option>
-                        <option value="PROPOSAL APPROVE">PROPOSAL APPROVE</option>
                         <option value="PROCESS">PROCESS</option>
                     </select>
                 </div>
@@ -55,7 +53,7 @@ $this->load->helper('text');
                         class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300">
                 </div>
 
-                <!--  SORT BY BUTTON (seperti gambar) -->
+                <!--  SORT BY BUTTON -->
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1">Urutkan</label>
 
@@ -87,7 +85,6 @@ $this->load->helper('text');
                                 class="sortItem w-full flex items-center justify-between px-3 py-2 text-sm hover:bg-gray-50">
                                 <span>Terbaru</span>
                                 <span class="check hidden text-teal-600">
-                                    <!-- check icon -->
                                     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none"
                                         xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                         <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2.2"
@@ -119,17 +116,17 @@ $this->load->helper('text');
             </div>
 
             <div class="text-xs text-gray-500 mb-4">
-                * Filter berjalan otomatis saat mengetik / memilih status / memilih tanggal. Pagination mengikuti hasil
-                filter.
+                * Filter berjalan otomatis saat mengetik / memilih status / memilih tanggal. Pagination mengikuti hasil filter.
             </div>
             <!-- ================= END FILTER ================= -->
 
-            <!-- ================= TABLE (scroll hanya tabel) ================= -->
+            <!-- ================= TABLE ================= -->
             <div id="tableScroll" class="border border-slate-200 rounded-lg overflow-hidden">
                 <div class="max-h-[420px] overflow-auto">
                     <table class="w-full text-sm">
                         <thead class="sticky top-0 z-20 bg-gray-100 border-b border-slate-200">
                             <tr class="text-center text-slate-700">
+                                <th class="px-4 py-3 font-semibold w-16">No</th>
                                 <th class="px-4 py-3 font-semibold">ID Pemesanan</th>
                                 <th class="px-4 py-3 font-semibold">Nama User</th>
                                 <th class="px-4 py-3 font-semibold">Tanggal Pemesanan</th>
@@ -141,6 +138,14 @@ $this->load->helper('text');
                         </thead>
 
                         <tbody id="tableBody" class="divide-y divide-slate-200">
+
+                            <!-- row pesan kosong untuk hasil filter -->
+                            <tr id="noResultsRow" class="hidden">
+                                <td colspan="8" class="px-4 py-8 text-center text-gray-500">
+                                    Data pemesanan tidak ditemukan.
+                                </td>
+                            </tr>
+
                             <?php if (!empty($pemesanan)) : ?>
                                 <?php foreach ($pemesanan as $row): ?>
                                     <?php
@@ -149,7 +154,7 @@ $this->load->helper('text');
                                     $tglRaw = $row['TANGGAL_PEMESANAN'] ?? '';
                                     $tglIndo = format_tanggal_indo($tglRaw);
 
-                                    // buat filter tanggal (yyyy-mm-dd)
+                                    // filter tanggal (yyyy-mm-dd)
                                     $tglForFilter = !empty($tglRaw) ? date('Y-m-d', strtotime($tglRaw)) : '';
 
                                     $gedung = $row['NAMA_GEDUNG'] ?? '-';
@@ -175,6 +180,10 @@ $this->load->helper('text');
                                         data-id="<?= htmlspecialchars((string)$id, ENT_QUOTES, 'UTF-8'); ?>"
                                         data-status="<?= htmlspecialchars((string)$statusUpper, ENT_QUOTES, 'UTF-8'); ?>"
                                         data-date="<?= htmlspecialchars((string)$tglForFilter, ENT_QUOTES, 'UTF-8'); ?>">
+
+                                        <!-- ✅ No dikosongkan, nanti diisi JS agar selalu mulai dari 1 -->
+                                        <td class="px-4 py-3 col-no font-semibold text-slate-800"></td>
+
                                         <td class="px-4 py-3 id font-medium text-slate-800">
                                             <?= htmlspecialchars((string)$id, ENT_QUOTES, 'UTF-8'); ?>
                                         </td>
@@ -196,15 +205,14 @@ $this->load->helper('text');
                                         </td>
 
                                         <td class="px-4 py-3 status">
-                                            <span
-                                                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold <?= $badge; ?>">
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold <?= $badge; ?>">
                                                 <?= htmlspecialchars((string)$statusUpper, ENT_QUOTES, 'UTF-8'); ?>
                                             </span>
                                         </td>
 
                                         <td class="px-4 py-3">
                                             <a href="<?= site_url('admin/detail_transaksi/' . $row['ID_PEMESANAN']); ?>"
-                                                class="inline-flex items-center justify-center w-9 h-9 rounded-lg hover:bg-blue-50 text-blue-600">
+                                                class="inline-flex items-center justify-center rounded-lg px-3 py-2 hover:bg-blue-50 text-blue-600">
                                                 <span class="text-xs font-semibold">Detail</span>
                                             </a>
                                         </td>
@@ -212,7 +220,7 @@ $this->load->helper('text');
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="7" class="px-4 py-8 text-center text-gray-500">
+                                    <td colspan="8" class="px-4 py-8 text-center text-gray-500">
                                         Data pemesanan tidak ditemukan.
                                     </td>
                                 </tr>
@@ -251,9 +259,12 @@ $this->load->helper('text');
         </div>
     </main>
 
-    <!-- ================= SCRIPT (AUTO FILTER + SORT BUTTON + PAGINATION) ================= -->
+    <!-- ================= SCRIPT (AUTO FILTER + SORT + PAGINATION + NO FIX) ================= -->
     <script>
         (function() {
+            const tbody = document.getElementById("tableBody");
+            const noResultsRow = document.getElementById("noResultsRow");
+
             const rows = Array.from(document.querySelectorAll(".table-row"));
             let filteredRows = [...rows];
 
@@ -282,6 +293,10 @@ $this->load->helper('text');
                 return (s || "").toString().trim().toLowerCase().replace(/\s+/g, "");
             }
 
+            function onlyDigits(s) {
+                return (s || "").toString().replace(/\D/g, "");
+            }
+
             function setSortCheck() {
                 sortItems.forEach(btn => {
                     const check = btn.querySelector(".check");
@@ -301,29 +316,64 @@ $this->load->helper('text');
                         return sortMode === "new" ? db.localeCompare(da) : da.localeCompare(db);
                     }
 
-                    // tie breaker by ID (angka)
-                    const ia = parseInt(a.dataset.id || "0", 10) || 0;
-                    const ib = parseInt(b.dataset.id || "0", 10) || 0;
+                    // tie breaker by ID (ambil angka dari ID seperti PMSN000193)
+                    const ia = parseInt(onlyDigits(a.dataset.id), 10) || 0;
+                    const ib = parseInt(onlyDigits(b.dataset.id), 10) || 0;
 
                     return sortMode === "new" ? (ib - ia) : (ia - ib);
                 });
             }
 
+            function reorderDomByFiltered() {
+                if (!tbody) return;
+
+                // agar row non-filter tetap ada, tapi ditaruh belakang
+                const setFiltered = new Set(filteredRows);
+                const rest = rows.filter(r => !setFiltered.has(r));
+
+                // jaga noResultsRow tetap paling atas
+                if (noResultsRow) tbody.appendChild(noResultsRow);
+
+                // append semua row sesuai urutan terbaru (appendChild = memindahkan node)
+                [...filteredRows, ...rest].forEach(r => tbody.appendChild(r));
+            }
+
             function renderTable() {
+                // pastikan DOM urut sesuai hasil sort
+                reorderDomByFiltered();
+
+                // hide semua dulu
                 rows.forEach(row => row.style.display = "none");
+
+                // tampilkan / sembunyikan row "no results"
+                if (noResultsRow) {
+                    if (filteredRows.length === 0) noResultsRow.classList.remove("hidden");
+                    else noResultsRow.classList.add("hidden");
+                }
+
+                const totalPages = Math.max(1, Math.ceil(filteredRows.length / rowsPerPage));
+                if (currentPage > totalPages) currentPage = totalPages;
 
                 const start = (currentPage - 1) * rowsPerPage;
                 const end = start + rowsPerPage;
 
-                filteredRows.slice(start, end).forEach(row => {
+                // show halaman aktif + ✅ isi ulang No mulai dari 1
+                filteredRows.slice(start, end).forEach((row, idx) => {
                     row.style.display = "";
+
+                    const noCell = row.querySelector(".col-no");
+                    if (noCell) {
+                        // ✅ nomor global sesuai hasil filter/sort (page 1 selalu mulai 1)
+                        noCell.textContent = (start + idx + 1);
+
+                        // kalau mau reset tiap halaman: gunakan ini
+                        // noCell.textContent = (idx + 1);
+                    }
                 });
 
-                const totalPages = Math.max(1, Math.ceil(filteredRows.length / rowsPerPage));
                 pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
-
                 prevBtn.disabled = currentPage === 1;
-                nextBtn.disabled = currentPage === totalPages;
+                nextBtn.disabled = (currentPage === totalPages) || (filteredRows.length === 0);
             }
 
             function applyFilter() {
@@ -348,12 +398,7 @@ $this->load->helper('text');
                 renderTable();
             }
 
-            // ===== SORT DROPDOWN BEHAVIOR =====
-            function openSortMenu() {
-                if (!sortMenu) return;
-                sortMenu.classList.remove("hidden");
-            }
-
+            // ===== SORT DROPDOWN =====
             function closeSortMenu() {
                 if (!sortMenu) return;
                 sortMenu.classList.add("hidden");
@@ -365,16 +410,12 @@ $this->load->helper('text');
                     sortMenu.classList.toggle("hidden");
                 });
 
-                // klik di luar => tutup
                 document.addEventListener("click", () => closeSortMenu());
-
-                // ESC => tutup
                 document.addEventListener("keydown", (e) => {
                     if (e.key === "Escape") closeSortMenu();
                 });
             }
 
-            // klik item sort
             sortItems.forEach(btn => {
                 btn.addEventListener("click", (e) => {
                     e.preventDefault();
@@ -433,6 +474,7 @@ $this->load->helper('text');
             renderTable();
         })();
     </script>
+
     <script>
         function markNotifRead(notifId) {
             if (!notifId) return;
@@ -446,8 +488,6 @@ $this->load->helper('text');
                 })
                 .then(r => r.json())
                 .then(res => {
-                    // optional: kalau sukses, refresh unread-count
-                    // panggil fungsi kamu yang update badge (mis. fetchUnreadCount())
                     console.log('mark-read:', res);
                     if (typeof fetchUnreadCount === 'function') fetchUnreadCount();
                 })
@@ -456,5 +496,4 @@ $this->load->helper('text');
     </script>
 
 </body>
-
 </html>

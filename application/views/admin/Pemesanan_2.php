@@ -43,7 +43,7 @@ $this->load->helper('text');
                         <option value="">Semua Status</option>
                         <option value="SUBMITED">SUBMITED</option>
                         <option value="PROCESS">PROCESS</option>
-                        <option value="PROPOSAL APPROVE">PROPOSAL APPROVE</option>
+                        <option value="APPROVE">APPROVE</option>
                         <option value="APPROVE & PAID">APPROVE & PAID</option>
                         <option value="REJECTED">REJECTED</option>
                     </select>
