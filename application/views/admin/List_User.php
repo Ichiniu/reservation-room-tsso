@@ -24,13 +24,13 @@ $this->load->helper('text');
     <main class="pt-24 md:pl-64 px-4 md:px-6 pb-10 transition-all duration-300">
 
         <!-- HEADER -->
-        <div class="max-w-6xl mx-auto mb-6">
+        <div class="max-w-xl mb-6">
             <h1 class="text-2xl font-bold text-slate-800">Daftar User</h1>
             <p class="text-sm text-slate-500">Data pengguna yang terdaftar</p>
         </div>
 
         <!-- CARD -->
-        <div class="max-w-6xl mx-auto bg-white rounded-xl shadow-md p-6">
+        <div class="max-w-1xl mx-auto bg-white rounded-xl shadow-md p-6">
 
             <div class="overflow-x-auto max-h-[420px] overflow-y-auto relative">
                 <table class="min-w-[900px] w-full text-sm border border-slate-200 rounded-lg bg-white">
@@ -53,27 +53,30 @@ $this->load->helper('text');
                         foreach ($res as $row):
                             $date = date_create($row['TANGGAL_LAHIR']);
                         ?>
-                            <tr class="table-row hover:bg-slate-50">
-                                <td class="px-4 py-3 text-center"><?= $no++ ?></td>
-                                <td class="px-4 py-3 text-center font-medium"><?= $row['USERNAME']; ?></td>
-                                <td class="px-4 py-3 text-center"><?= !empty($row['NAMA_LENGKAP']) ? $row['NAMA_LENGKAP'] : '-'; ?></td>
-                                <td class="px-4 py-3 text-center"><?= $row['EMAIL']; ?></td>
-                                <td class="px-4 py-3 text-center"><?= $row['NO_TELEPON']; ?></td>
-                                <td class="px-4 py-3 text-center"><?= !empty($row['nama_perusahaan']) ? $row['nama_perusahaan'] : '-'; ?></td>
-                                <td class="px-4 py-3 text-center"><?= !empty($row['departemen']) ? $row['departemen'] : '-'; ?></td>
-                                <td class="px-4 py-3 text-center"><?= $row['ALAMAT']; ?></td>
-                                <td class="px-4 py-3 text-center">
-                                    <?= format_tanggal_indo($row['TANGGAL_LAHIR']); ?>
-                                </td>
-                            </tr>
+                        <tr class="table-row hover:bg-slate-50">
+                            <td class="px-4 py-3 text-center"><?= $no++ ?></td>
+                            <td class="px-4 py-3 text-center font-medium"><?= $row['USERNAME']; ?></td>
+                            <td class="px-4 py-3 text-center">
+                                <?= !empty($row['NAMA_LENGKAP']) ? $row['NAMA_LENGKAP'] : '-'; ?></td>
+                            <td class="px-4 py-3 text-center"><?= $row['EMAIL']; ?></td>
+                            <td class="px-4 py-3 text-center"><?= $row['NO_TELEPON']; ?></td>
+                            <td class="px-4 py-3 text-center">
+                                <?= !empty($row['nama_perusahaan']) ? $row['nama_perusahaan'] : '-'; ?></td>
+                            <td class="px-4 py-3 text-center">
+                                <?= !empty($row['departemen']) ? $row['departemen'] : '-'; ?></td>
+                            <td class="px-4 py-3 text-center"><?= $row['ALAMAT']; ?></td>
+                            <td class="px-4 py-3 text-center">
+                                <?= format_tanggal_indo($row['TANGGAL_LAHIR']); ?>
+                            </td>
+                        </tr>
                         <?php endforeach; ?>
 
                         <?php if (empty($res)): ?>
-                            <tr>
-                                <td colspan="9" class="px-4 py-6 text-center text-slate-500">
-                                    Data user belum tersedia
-                                </td>
-                            </tr>
+                        <tr>
+                            <td colspan="9" class="px-4 py-6 text-center text-slate-500">
+                                Data user belum tersedia
+                            </td>
+                        </tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
@@ -110,52 +113,52 @@ $this->load->helper('text');
 
     <!-- PAGINATION SCRIPT -->
     <script>
-        const rows = document.querySelectorAll(".table-row");
-        const rowsPerPageSelect = document.getElementById("rowsPerPage");
-        const pageInfo = document.getElementById("pageInfo");
-        const prevBtn = document.getElementById("prevBtn");
-        const nextBtn = document.getElementById("nextBtn");
+    const rows = document.querySelectorAll(".table-row");
+    const rowsPerPageSelect = document.getElementById("rowsPerPage");
+    const pageInfo = document.getElementById("pageInfo");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
 
-        let currentPage = 1;
-        let rowsPerPage = parseInt(rowsPerPageSelect.value);
+    let currentPage = 1;
+    let rowsPerPage = parseInt(rowsPerPageSelect.value);
 
-        function renderTable() {
-            const start = (currentPage - 1) * rowsPerPage;
-            const end = start + rowsPerPage;
+    function renderTable() {
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
 
-            rows.forEach((row, index) => {
-                row.style.display = index >= start && index < end ? "" : "none";
-            });
-
-            const totalPages = Math.ceil(rows.length / rowsPerPage) || 1;
-            pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
-
-            prevBtn.disabled = currentPage === 1;
-            nextBtn.disabled = currentPage === totalPages;
-        }
-
-        rowsPerPageSelect.addEventListener("change", () => {
-            rowsPerPage = parseInt(rowsPerPageSelect.value);
-            currentPage = 1;
-            renderTable();
+        rows.forEach((row, index) => {
+            row.style.display = index >= start && index < end ? "" : "none";
         });
 
-        prevBtn.onclick = () => {
-            if (currentPage > 1) {
-                currentPage--;
-                renderTable();
-            }
-        };
+        const totalPages = Math.ceil(rows.length / rowsPerPage) || 1;
+        pageInfo.innerText = `Page ${currentPage} of ${totalPages}`;
 
-        nextBtn.onclick = () => {
-            const totalPages = Math.ceil(rows.length / rowsPerPage);
-            if (currentPage < totalPages) {
-                currentPage++;
-                renderTable();
-            }
-        };
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = currentPage === totalPages;
+    }
 
+    rowsPerPageSelect.addEventListener("change", () => {
+        rowsPerPage = parseInt(rowsPerPageSelect.value);
+        currentPage = 1;
         renderTable();
+    });
+
+    prevBtn.onclick = () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderTable();
+        }
+    };
+
+    nextBtn.onclick = () => {
+        const totalPages = Math.ceil(rows.length / rowsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderTable();
+        }
+    };
+
+    renderTable();
     </script>
 
 </body>

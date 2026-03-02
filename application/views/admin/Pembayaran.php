@@ -327,6 +327,7 @@ $notifCount = !empty($notifs_admin_trx) ? count($notifs_admin_trx) : 0;
 
     <script>
     (function() {
+        const tbody = document.getElementById("tableBody");
         const allRows = Array.from(document.querySelectorAll(".table-row"));
         let filteredRows = [...allRows];
 
@@ -356,6 +357,23 @@ $notifCount = !empty($notifs_admin_trx) ? count($notifs_admin_trx) : 0;
         const notifToggle = document.getElementById("notifToggle");
         const notifPanel = document.getElementById("notifPanel");
         const notifChevron = document.getElementById("notifChevron");
+
+        // empty row (untuk kasus hasil filter = 0)
+        let emptyRowEl = null;
+
+        function getEmptyRow() {
+            if (emptyRowEl) return emptyRowEl;
+            emptyRowEl = document.createElement("tr");
+            emptyRowEl.dataset.emptyRow = "1";
+            emptyRowEl.innerHTML =
+                `<td colspan="7" class="px-4 py-8 text-center text-slate-500">Tidak ada data sesuai filter</td>`;
+            return emptyRowEl;
+        }
+
+        function removeEmptyRowIfAny() {
+            const ex = tbody ? tbody.querySelector('tr[data-empty-row="1"]') : null;
+            if (ex) ex.remove();
+        }
 
         if (notifToggle && notifPanel) {
             notifToggle.addEventListener("click", () => {
@@ -416,8 +434,20 @@ $notifCount = !empty($notifs_admin_trx) ? count($notifs_admin_trx) : 0;
             render();
         }
 
+        // ✅ RENDER FIX: susun ulang DOM tbody mengikuti urutan filteredRows
         function render() {
-            allRows.forEach(r => r.style.display = "none");
+            if (!tbody) return;
+
+            // kalau server memang tidak punya data (tidak ada .table-row)
+            if (allRows.length === 0) {
+                totalAmount.textContent = "Rp 0";
+                pageInfo.textContent = "Page 1 of 1 • Showing 0-0 of 0";
+                prevBtn.disabled = true;
+                nextBtn.disabled = true;
+                return;
+            }
+
+            removeEmptyRowIfAny();
 
             const totalRows = filteredRows.length;
             const totalPages = Math.max(1, Math.ceil(totalRows / rowsPerPage));
@@ -425,19 +455,29 @@ $notifCount = !empty($notifs_admin_trx) ? count($notifs_admin_trx) : 0;
 
             const start = (currentPage - 1) * rowsPerPage;
             const end = start + rowsPerPage;
+            const pageRows = filteredRows.slice(start, end);
 
-            filteredRows.forEach((r, i) => {
-                if (i >= start && i < end) r.style.display = "";
+            // lepaskan semua row dari tbody dulu (biar urutan bisa dibentuk ulang)
+            allRows.forEach(r => {
+                if (r.parentNode === tbody) tbody.removeChild(r);
             });
 
-            let no = start + 1;
-            filteredRows.forEach((r, i) => {
-                if (i >= start && i < end) {
+            // kalau hasil filter kosong, tampilkan placeholder
+            if (totalRows === 0) {
+                tbody.appendChild(getEmptyRow());
+            } else {
+                const frag = document.createDocumentFragment();
+
+                pageRows.forEach((r, idx) => {
                     const cell = r.querySelector(".cell-no");
-                    if (cell) cell.textContent = no++;
-                }
-            });
+                    if (cell) cell.textContent = String(start + idx + 1); // ✅ nomor urut sesuai tampilan
+                    frag.appendChild(r); // ✅ append sesuai urutan sort + page
+                });
 
+                tbody.appendChild(frag);
+            }
+
+            // total amount (sesuai filter, bukan per halaman)
             let total = 0;
             filteredRows.forEach(r => {
                 total += parseFloat(r.dataset.nominal || "0") || 0;
@@ -445,12 +485,13 @@ $notifCount = !empty($notifs_admin_trx) ? count($notifs_admin_trx) : 0;
             totalAmount.textContent = "Rp " + total.toLocaleString("id-ID");
 
             const showingFrom = totalRows === 0 ? 0 : start + 1;
-            const showingTo = Math.min(end, totalRows);
+            const showingTo = totalRows === 0 ? 0 : Math.min(end, totalRows);
+
             pageInfo.textContent =
                 `Page ${currentPage} of ${totalPages} • Showing ${showingFrom}-${showingTo} of ${totalRows}`;
 
-            prevBtn.disabled = currentPage <= 1;
-            nextBtn.disabled = currentPage >= totalPages;
+            prevBtn.disabled = currentPage <= 1 || totalRows === 0;
+            nextBtn.disabled = currentPage >= totalPages || totalRows === 0;
 
             if (scrollBox) scrollBox.scrollTop = 0;
         }

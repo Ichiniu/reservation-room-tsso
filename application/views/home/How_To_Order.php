@@ -51,10 +51,21 @@
                     <div class="flex-1">
                         <h2 class="text-base font-bold text-amber-900">Aturan Catering (Wajib Dibaca)</h2>
                         <p class="mt-1 text-sm text-amber-900/90">
-                            Jika memilih <b>memakai catering</b>, maka pemesanan wajib dilakukan minimal <b>H-2</b>
-                            (dua hari sebelum tanggal acara). Jika kurang dari H-2, pemesanan catering tidak dapat
-                            diproses.
+                            Jika membutuhkan <b>catering</b>, pemesanan wajib dilakukan minimal <b>H-2</b> (dua hari
+                            sebelum tanggal acara).
+                            Jika kurang dari H-2, permintaan catering <b>tidak dapat diproses</b>.
                         </p>
+
+                        <div class="mt-3 rounded-2xl border border-amber-200 bg-white/70 p-4 text-sm text-amber-900/90">
+                            <div class="flex items-start gap-2">
+                                <span class="material-icons text-base">support_agent</span>
+                                <div>
+                                    <b>Penting:</b> Permintaan catering <b>tidak diajukan melalui sistem</b>.
+                                    Untuk catering, silakan <b>hubungi admin</b> (melalui kontak yang tersedia di
+                                    aplikasi).
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -118,26 +129,24 @@
                             class="h-10 w-10 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-extrabold">
                             4</div>
                         <div class="flex-1">
-                            <h3 class="text-lg font-bold">Isi Form Jadwal & Opsi Catering</h3>
+                            <h3 class="text-lg font-bold">Isi Form Jadwal</h3>
                             <p class="mt-1 text-sm text-slate-600">
-                                User mengisi jadwal yang dibutuhkan (tanggal & jam).
-                                Lalu memilih apakah <b>memakai catering</b> atau <b>tidak</b>.
+                                User mengisi jadwal yang dibutuhkan (<b>tanggal</b> & <b>jam</b>), lalu klik tombol
+                                <b>Lanjutkan</b>.
                             </p>
 
                             <div
                                 class="mt-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-                                <div class="flex items-center gap-2">
+                                <div class="flex items-start gap-2">
                                     <span class="material-icons text-base text-slate-600">info</span>
-                                    <span>
-                                        Jika memilih catering, pastikan tanggal acara masih memenuhi syarat minimal
-                                        <b>H-2</b>.
-                                    </span>
+                                    <div>
+                                        Jika membutuhkan <b>catering</b>, pastikan tanggal acara masih memenuhi syarat
+                                        minimal <b>H-2</b>
+                                        dan <b>hubungi admin</b> karena catering diproses <b>secara manual</b> (di luar
+                                        sistem).
+                                    </div>
                                 </div>
                             </div>
-
-                            <p class="mt-3 text-sm text-slate-600">
-                                Jika tidak memakai catering (atau sudah sesuai aturan), klik tombol <b>Lanjutkan</b>.
-                            </p>
                         </div>
                     </div>
                 </article>
@@ -154,6 +163,18 @@
                                 User diarahkan ke halaman detail konfirmasi sesuai data yang sudah diisi.
                                 Pada tahap ini user <b>wajib mengisi Keperluan Acara</b>, lalu klik <b>Submit</b>.
                             </p>
+
+                            <div
+                                class="mt-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
+                                <div class="flex items-start gap-2">
+                                    <span class="material-icons text-base text-slate-600">support_agent</span>
+                                    <div>
+                                        Jika ada kebutuhan <b>catering</b>, silakan <b>hubungi admin</b>. (Opsional)
+                                        kamu bisa menuliskan catatan kebutuhan catering di
+                                        <b>Keperluan Acara</b> agar admin lebih mudah memahami permintaan.
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </article>
@@ -193,12 +214,11 @@
                         <div class="flex-1">
                             <h3 class="text-lg font-bold">Status: Approve → Masuk Halaman Pembayaran</h3>
                             <p class="mt-1 text-sm text-slate-600">
-                                Jika disetujui, status berubah menjadi <b>Approve</b> dan user diarahkan ke
-                                halaman <b>Pembayaran</b>.
+                                Jika disetujui, status berubah menjadi <b>Approve</b> dan user diarahkan ke halaman
+                                <b>Pembayaran</b>.
                             </p>
                             <p class="mt-2 text-sm text-slate-600">
-                                Di halaman pembayaran, user memilih:
-                                <b>Bayar</b> atau <b>Tidak</b>.
+                                Di halaman pembayaran, user memilih: <b>Bayar</b> atau <b>Tidak</b>.
                                 Jika <b>Tidak</b>, sistem kembali ke proses awal.
                             </p>
                         </div>
