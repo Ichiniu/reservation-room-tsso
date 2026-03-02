@@ -65,6 +65,7 @@ $route['admin/tambah_catering'] = 'admin/admin_controls/tambah_catering';
 $route['admin/delete_catering'] = 'admin/admin_controls/delete_catering';
 $route['admin/toggle_catering_status'] = 'admin/admin_controls/toggle_catering_status';
 $route['admin/save_catering_phone'] = 'admin/admin_controls/save_catering_phone';
+$route['admin/save_payment_bank'] = 'admin/admin_controls/save_payment_bank';
 $route['admin/rekap_aktivitas'] = 'admin/admin_controls/rekap_aktivitas';
 $route['admin/rekap_pembayaran'] = 'admin/admin_controls/rekap_pembayaran';
 $route['admin/rekap_pembayaran/details'] = 'admin/admin_controls/rekap_pembayaran_det/$1/$2';
