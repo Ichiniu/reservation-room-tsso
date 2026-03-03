@@ -16,9 +16,9 @@ $departemen      = $u['departemen'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Data Diri</title>
 
     <!-- Material Icons & Tailwind -->
@@ -26,130 +26,174 @@ $departemen      = $u['departemen'] ?? '';
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-slate-200 h-screen overflow-hidden flex items-center justify-center px-4">
+<body class="bg-slate-100 min-h-screen">
+    <!-- Wrapper: di mobile tidak "menggantung", halaman boleh scroll normal -->
+    <div class="min-h-screen flex justify-center items-start px-3 py-5 sm:px-6 sm:py-10">
+        <div class="w-full max-w-3xl">
+            <div class="bg-white border border-slate-200 shadow-sm sm:shadow-lg rounded-2xl overflow-hidden">
 
-    <div class="w-full max-w-3xl bg-white rounded-xl shadow-lg
-                h-[90vh] flex flex-col border border-slate-200">
-
-        <!-- HEADER (FIXED) -->
-        <div class="p-6 border-b bg-white rounded-t-xl shrink-0">
-            <h2 class="text-xl font-bold text-slate-800 mb-1 flex items-center gap-2">
-                <span class="material-icons text-blue-600">person</span>
-                Edit Data Diri
-            </h2>
-            <p class="text-sm text-slate-500">Perbarui informasi akun Anda</p>
-        </div>
-
-        <!-- CONTENT (SCROLLABLE) -->
-        <div class="p-6 overflow-y-auto flex-1 space-y-6">
-
-            <?php if ($this->session->flashdata('error')): ?>
-                <div class="p-3 rounded bg-red-100 text-red-700 border border-red-300">
-                    <?= htmlspecialchars((string)$this->session->flashdata('error')); ?>
-                </div>
-            <?php endif; ?>
-
-            <!-- READONLY INFO -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="text-sm text-slate-600">Username</label>
-                    <input type="text" readonly class="w-full bg-slate-100 border rounded px-3 py-2"
-                        value="<?= htmlspecialchars((string)($username ?? '')); ?>">
+                <!-- HEADER: sticky saat scroll (lebih enak di mobile) -->
+                <div class="sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-slate-200 px-4 py-4 sm:px-6 sm:py-5">
+                    <div class="flex items-start gap-3">
+                        <span class="material-icons text-blue-600 mt-0.5">person</span>
+                        <div class="flex-1">
+                            <h1 class="text-lg sm:text-xl font-bold text-slate-800 leading-tight">Edit Data Diri</h1>
+                            <p class="text-xs sm:text-sm text-slate-500">Perbarui informasi akun Anda</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div>
-                    <label class="text-sm text-slate-600">Perusahaan</label>
-                    <input type="text" readonly class="w-full bg-slate-100 border rounded px-3 py-2"
-                        value="<?= htmlspecialchars($perusahaan); ?>">
-                </div>
+                <!-- CONTENT: biarkan page scroll (tidak nested scroll di mobile) -->
+                <div class="px-4 py-5 sm:px-6 sm:py-6 space-y-5">
 
-                <div>
-                    <label class="text-sm text-slate-600">Nama Perusahaan</label>
-                    <input type="text" readonly class="w-full bg-slate-100 border rounded px-3 py-2"
-                        value="<?= htmlspecialchars($nama_perusahaan); ?>">
-                    <p class="text-xs text-slate-500 mt-1">Hanya tampil, tidak bisa diganti</p>
-                </div>
+                    <?php if ($this->session->flashdata('error')): ?>
+                        <div class="p-3 rounded-xl bg-red-50 text-red-700 border border-red-200 text-sm">
+                            <?= htmlspecialchars((string)$this->session->flashdata('error'), ENT_QUOTES, 'UTF-8'); ?>
+                        </div>
+                    <?php endif; ?>
 
-                <div>
-                    <label class="text-sm text-slate-600">Departemen</label>
-                    <input type="text" readonly class="w-full bg-slate-100 border rounded px-3 py-2"
-                        value="<?= htmlspecialchars($departemen); ?>">
-                    <p class="text-xs text-slate-500 mt-1">Hanya tampil, tidak bisa diganti</p>
+                    <?php if ($this->session->flashdata('success')): ?>
+                        <div class="p-3 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 text-sm">
+                            <?= htmlspecialchars((string)$this->session->flashdata('success'), ENT_QUOTES, 'UTF-8'); ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <!-- READONLY INFO (lebih rapi, tidak bikin form "gantung") -->
+                    <section class="rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-5">
+                        <div class="flex items-center justify-between gap-3 mb-3">
+                            <div class="text-sm font-semibold text-slate-800">Informasi Akun</div>
+                            <div class="text-xs text-slate-500">Tidak bisa diubah</div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Username</label>
+                                <input type="text" readonly
+                                    class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800"
+                                    value="<?= htmlspecialchars((string)$username, ENT_QUOTES, 'UTF-8'); ?>">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Perusahaan</label>
+                                <input type="text" readonly
+                                    class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800"
+                                    value="<?= htmlspecialchars((string)$perusahaan, ENT_QUOTES, 'UTF-8'); ?>">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Perusahaan</label>
+                                <input type="text" readonly
+                                    class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800"
+                                    value="<?= htmlspecialchars((string)$nama_perusahaan, ENT_QUOTES, 'UTF-8'); ?>">
+                                <p class="text-[11px] text-slate-500 mt-1">Hanya tampil, tidak bisa diganti</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Departemen</label>
+                                <input type="text" readonly
+                                    class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800"
+                                    value="<?= htmlspecialchars((string)$departemen, ENT_QUOTES, 'UTF-8'); ?>">
+                                <p class="text-[11px] text-slate-500 mt-1">Hanya tampil, tidak bisa diganti</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <?php echo form_open('edit_data'); ?>
+
+                    <!-- EDITABLE FORM -->
+                    <section class="space-y-4">
+                        <div class="flex items-center gap-2">
+                            <span class="material-icons text-slate-500 text-base">edit</span>
+                            <div class="text-sm font-semibold text-slate-800">Data Pribadi</div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Lengkap</label>
+                                <input type="text" name="nama_lengkap" required autocomplete="name"
+                                    class="w-full border border-slate-200 rounded-xl px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+                                    value="<?= htmlspecialchars((string)$nama_lengkap, ENT_QUOTES, 'UTF-8'); ?>">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Email</label>
+                                <input type="email" name="email" required autocomplete="email"
+                                    class="w-full border border-slate-200 rounded-xl px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+                                    value="<?= htmlspecialchars((string)$email, ENT_QUOTES, 'UTF-8'); ?>">
+                            </div>
+
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Alamat</label>
+                                <textarea name="alamat" required autocomplete="street-address"
+                                    class="w-full border border-slate-200 rounded-xl px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+                                    rows="3"><?= htmlspecialchars((string)$alamat, ENT_QUOTES, 'UTF-8'); ?></textarea>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">No Telepon</label>
+                                <input type="tel" name="no_telepon" required autocomplete="tel"
+                                    class="w-full border border-slate-200 rounded-xl px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+                                    value="<?= htmlspecialchars((string)$no_telepon, ENT_QUOTES, 'UTF-8'); ?>">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Tanggal Lahir</label>
+                                <input type="date" name="dob" required
+                                    class="w-full border border-slate-200 rounded-xl px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+                                    value="<?= htmlspecialchars((string)$tanggal_lahir, ENT_QUOTES, 'UTF-8'); ?>">
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="h-px bg-slate-200"></div>
+
+                    <!-- PASSWORD -->
+                    <section class="space-y-4">
+                        <div class="flex items-center gap-2">
+                            <span class="material-icons text-slate-500 text-base">lock</span>
+                            <div class="text-sm font-semibold text-slate-800">Keamanan</div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Password Baru (opsional)</label>
+                                <input type="password" name="password" autocomplete="new-password"
+                                    class="w-full border border-slate-200 rounded-xl px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+                                    placeholder="Kosongkan jika tidak ingin ubah">
+                                <p class="text-[11px] text-slate-500 mt-1">Minimal 8 karakter disarankan</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Konfirmasi Password Baru</label>
+                                <input type="password" name="confirm_pass" autocomplete="new-password"
+                                    class="w-full border border-slate-200 rounded-xl px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+                                    placeholder="Ulangi password baru">
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- ACTIONS: di mobile enak, tombol full lebar -->
+                    <div class="pt-2">
+                        <button type="submit"
+                            class="w-full rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-3 flex items-center justify-center gap-2">
+                            <span class="material-icons text-base">save</span>
+                            Simpan Perubahan
+                        </button>
+
+                        <p class="text-xs text-slate-500 text-center mt-2">
+                            Pastikan data sudah benar sebelum menyimpan.
+                        </p>
+                    </div>
+
+                    <?php echo form_close(); ?>
+
                 </div>
             </div>
 
-            <?php echo form_open('edit_data'); ?>
-
-            <!-- EDITABLE FORM -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="text-sm">Nama Lengkap</label>
-                    <input type="text" name="nama_lengkap" required
-                        class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200"
-                        value="<?= htmlspecialchars((string)($nama_lengkap ?? '')); ?>">
-                </div>
-
-                <div>
-                    <label class="text-sm">Email</label>
-                    <input type="email" name="email" required
-                        class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200"
-                        value="<?= htmlspecialchars((string)($email ?? '')); ?>">
-                </div>
-
-                <div class="md:col-span-2">
-                    <label class="text-sm">Alamat</label>
-                    <textarea name="alamat" required
-                        class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200"
-                        rows="3"><?= htmlspecialchars((string)($alamat ?? '')); ?></textarea>
-                </div>
-
-                <div>
-                    <label class="text-sm">No Telepon</label>
-                    <input type="text" name="no_telepon" required
-                        class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200"
-                        value="<?= htmlspecialchars((string)($no_telepon ?? '')); ?>">
-                </div>
-
-                <div>
-                    <label class="text-sm">Tanggal Lahir</label>
-                    <input type="date" name="dob" required
-                        class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200"
-                        value="<?= htmlspecialchars((string)($tanggal_lahir ?? '')); ?>">
-                </div>
-            </div>
-
-            <hr>
-
-            <!-- PASSWORD -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="text-sm">Password Baru (opsional)</label>
-                    <input type="password" name="password"
-                        class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200"
-                        placeholder="Kosongkan jika tidak ingin ubah password">
-                </div>
-
-                <div>
-                    <label class="text-sm">Confirm Password Baru</label>
-                    <input type="password" name="confirm_pass"
-                        class="w-full border rounded px-3 py-2 focus:ring focus:ring-blue-200"
-                        placeholder="Ulangi password baru">
-                </div>
-            </div>
-
-            <div class="pt-4">
-                <button type="submit"
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg flex items-center justify-center gap-2">
-                    <span class="material-icons">save</span>
-                    Simpan Perubahan
-                </button>
-            </div>
-
-            <?php echo form_close(); ?>
-
+            <!-- Footer spacing biar gak mepet bawah di mobile -->
+            <div class="h-6"></div>
         </div>
     </div>
 
 </body>
-
 </html>

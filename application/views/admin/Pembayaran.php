@@ -14,7 +14,6 @@ $notifCount = !empty($notifs_admin_trx) ? count($notifs_admin_trx) : 0;
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-
 </head>
 
 <body class="bg-slate-200 min-h-screen">
@@ -32,21 +31,19 @@ $notifCount = !empty($notifs_admin_trx) ? count($notifs_admin_trx) : 0;
         <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-sm border border-slate-200">
 
             <!-- Card header -->
-            <div
-                class="p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div class="p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div class="text-sm text-slate-600">
                     Data pembayaran ditampilkan berdasarkan filter yang dipilih.
                 </div>
 
-                <!--  tombol notifikasi (toggle) -->
+                <!-- tombol notifikasi (toggle) -->
                 <button id="notifToggle" type="button"
                     class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-sm text-slate-700">
                     <i class="material-icons text-base">notifications</i>
                     <span class="font-medium">Notifikasi</span>
 
                     <?php if ($notifCount > 0): ?>
-                        <span
-                            class="ml-1 inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full bg-red-500 text-white text-xs font-semibold">
+                        <span class="ml-1 inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full bg-red-500 text-white text-xs font-semibold">
                             <?= (int)$notifCount; ?>
                         </span>
                     <?php else: ?>
@@ -59,7 +56,7 @@ $notifCount = !empty($notifs_admin_trx) ? count($notifs_admin_trx) : 0;
 
             <div class="p-5">
 
-                <!--  NOTIFIKASI DIPINDAH KE SINI (DI ATAS FILTER) -->
+                <!-- NOTIFIKASI -->
                 <?php if (!empty($notifs_admin_trx)): ?>
                     <div id="notifPanel" class="mb-5 hidden">
                         <div class="rounded-xl border border-yellow-200 bg-yellow-50 overflow-hidden">
@@ -222,18 +219,25 @@ $notifCount = !empty($notifs_admin_trx) ? count($notifs_admin_trx) : 0;
                             </thead>
 
                             <tbody id="tableBody" class="divide-y divide-slate-200">
+                                <!-- ✅ tampil saat hasil filter kosong -->
+                                <tr id="noResultsRow" class="hidden">
+                                    <td colspan="7" class="px-4 py-8 text-center text-slate-500">
+                                        Data pembayaran tidak ditemukan.
+                                    </td>
+                                </tr>
+
                                 <?php if (!empty($pembayaran)): ?>
                                     <?php foreach ($pembayaran as $row): ?>
                                         <?php
-                                        $idPembayaran = (int)$row['ID_PEMBAYARAN'];
+                                        $idPembayaran  = (int)$row['ID_PEMBAYARAN'];
                                         $kodeTransaksi = 'PB' . str_pad($row['ID_PEMBAYARAN'], 6, '0', STR_PAD_LEFT);
                                         $kodePemesanan = $row['KODE_PEMESANAN'] . $row['ID_PEMESANAN_RAW'];
-                                        $nama = !empty($row['NAMA_LENGKAP']) ? (string)$row['NAMA_LENGKAP'] : (string)($row['ATAS_NAMA_PENGIRIM'] ?? '');
-                                        $status = strtoupper(trim((string)($row['STATUS_VERIF'] ?? '')));
-                                        $nominal = (float)$row['NOMINAL_TRANSFER'];
+                                        $nama          = !empty($row['NAMA_LENGKAP']) ? (string)$row['NAMA_LENGKAP'] : (string)($row['ATAS_NAMA_PENGIRIM'] ?? '');
+                                        $status        = strtoupper(trim((string)($row['STATUS_VERIF'] ?? '')));
+                                        $nominal       = (float)$row['NOMINAL_TRANSFER'];
 
                                         $badge = 'bg-slate-100 text-slate-700';
-                                        if ($status === 'APPROVED') $badge = 'bg-emerald-100 text-emerald-700';
+                                        if ($status === 'CONFIRMED' || $status === 'APPROVED') $badge = 'bg-emerald-100 text-emerald-700';
                                         else if ($status === 'REJECTED') $badge = 'bg-red-100 text-red-700';
                                         else if ($status === 'PENDING') $badge = 'bg-yellow-100 text-yellow-800';
                                         ?>
@@ -243,7 +247,8 @@ $notifCount = !empty($notifs_admin_trx) ? count($notifs_admin_trx) : 0;
                                             data-nominal="<?= htmlspecialchars((string)$nominal, ENT_QUOTES, 'UTF-8'); ?>"
                                             data-idpay="<?= htmlspecialchars((string)$idPembayaran, ENT_QUOTES, 'UTF-8'); ?>">
 
-                                            <td class="px-4 py-3 cell-no"></td>
+                                            <!-- ✅ No dikosongkan, diisi JS agar selalu mulai 1 sesuai sort/filter -->
+                                            <td class="px-4 py-3 cell-no font-semibold text-slate-800"></td>
 
                                             <td class="px-4 py-3 font-medium text-slate-800">
                                                 <?= htmlspecialchars($kodeTransaksi, ENT_QUOTES, 'UTF-8'); ?>
@@ -262,8 +267,7 @@ $notifCount = !empty($notifs_admin_trx) ? count($notifs_admin_trx) : 0;
                                             </td>
 
                                             <td class="px-4 py-3">
-                                                <span
-                                                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold <?= $badge; ?>">
+                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold <?= $badge; ?>">
                                                     <?= htmlspecialchars($status, ENT_QUOTES, 'UTF-8'); ?>
                                                 </span>
                                             </td>
@@ -322,11 +326,13 @@ $notifCount = !empty($notifs_admin_trx) ? count($notifs_admin_trx) : 0;
             </div>
         </div>
         <!-- /CARD -->
-
     </main>
 
     <script>
         (function() {
+            const tbody = document.getElementById("tableBody");
+            const noResultsRow = document.getElementById("noResultsRow");
+
             const allRows = Array.from(document.querySelectorAll(".table-row"));
             let filteredRows = [...allRows];
 
@@ -349,8 +355,8 @@ $notifCount = !empty($notifs_admin_trx) ? count($notifs_admin_trx) : 0;
             let currentPage = 1;
             let rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10;
 
-            // default sort
-            let sortMode = "nominal_desc"; // nominal_desc | nominal_asc | new | old
+            // ✅ default tampilan = TERBARU
+            let sortMode = "new"; // nominal_desc | nominal_asc | new | old
 
             // Notif UI
             const notifToggle = document.getElementById("notifToggle");
@@ -389,16 +395,27 @@ $notifCount = !empty($notifs_admin_trx) ? count($notifs_admin_trx) : 0;
 
                     if (sortMode === "nominal_desc") {
                         if (nb !== na) return nb - na;
-                        return idb - ida;
+                        return idb - ida; // tie breaker terbaru
                     }
                     if (sortMode === "nominal_asc") {
                         if (na !== nb) return na - nb;
                         return idb - ida;
                     }
-                    if (sortMode === "new") return idb - ida;
-                    if (sortMode === "old") return ida - idb;
+                    if (sortMode === "new") return idb - ida; // terbaru
+                    if (sortMode === "old") return ida - idb; // terlama
                     return 0;
                 });
+            }
+
+            // ✅ PENTING: ubah urutan DOM sesuai hasil sort, supaya tampilan & nomor selalu benar
+            function reorderDomByFiltered() {
+                if (!tbody) return;
+
+                const setFiltered = new Set(filteredRows);
+                const rest = allRows.filter(r => !setFiltered.has(r));
+
+                if (noResultsRow) tbody.appendChild(noResultsRow);
+                [...filteredRows, ...rest].forEach(r => tbody.appendChild(r));
             }
 
             function applyFilter() {
@@ -417,40 +434,51 @@ $notifCount = !empty($notifs_admin_trx) ? count($notifs_admin_trx) : 0;
             }
 
             function render() {
+                // urutkan DOM mengikuti sorted array
+                reorderDomByFiltered();
+
+                // hide semua row data
                 allRows.forEach(r => r.style.display = "none");
 
                 const totalRows = filteredRows.length;
+
+                // tampilkan row "no results" jika filter kosong
+                if (noResultsRow) {
+                    if (totalRows === 0) noResultsRow.classList.remove("hidden");
+                    else noResultsRow.classList.add("hidden");
+                }
+
                 const totalPages = Math.max(1, Math.ceil(totalRows / rowsPerPage));
                 if (currentPage > totalPages) currentPage = totalPages;
 
                 const start = (currentPage - 1) * rowsPerPage;
                 const end = start + rowsPerPage;
 
-                filteredRows.forEach((r, i) => {
-                    if (i >= start && i < end) r.style.display = "";
+                // show halaman aktif + ✅ nomor selalu mulai 1 sesuai hasil filter/sort
+                filteredRows.slice(start, end).forEach((r, idx) => {
+                    r.style.display = "";
+                    const cell = r.querySelector(".cell-no");
+                    if (cell) cell.textContent = (start + idx + 1); // page 1 selalu mulai 1
+                    // kalau mau reset tiap halaman: cell.textContent = (idx + 1);
                 });
 
-                let no = start + 1;
-                filteredRows.forEach((r, i) => {
-                    if (i >= start && i < end) {
-                        const cell = r.querySelector(".cell-no");
-                        if (cell) cell.textContent = no++;
-                    }
-                });
-
+                // total nominal sesuai filter
                 let total = 0;
                 filteredRows.forEach(r => {
                     total += parseFloat(r.dataset.nominal || "0") || 0;
                 });
-                totalAmount.textContent = "Rp " + total.toLocaleString("id-ID");
+                if (totalAmount) totalAmount.textContent = "Rp " + total.toLocaleString("id-ID");
 
+                // page info
                 const showingFrom = totalRows === 0 ? 0 : start + 1;
                 const showingTo = Math.min(end, totalRows);
-                pageInfo.textContent =
-                    `Page ${currentPage} of ${totalPages} • Showing ${showingFrom}-${showingTo} of ${totalRows}`;
 
-                prevBtn.disabled = currentPage <= 1;
-                nextBtn.disabled = currentPage >= totalPages;
+                if (pageInfo) {
+                    pageInfo.textContent = `Page ${currentPage} of ${totalPages} • Showing ${showingFrom}-${showingTo} of ${totalRows}`;
+                }
+
+                if (prevBtn) prevBtn.disabled = (currentPage <= 1) || (totalRows === 0);
+                if (nextBtn) nextBtn.disabled = (currentPage >= totalPages) || (totalRows === 0);
 
                 if (scrollBox) scrollBox.scrollTop = 0;
             }
@@ -470,7 +498,7 @@ $notifCount = !empty($notifs_admin_trx) ? count($notifs_admin_trx) : 0;
             sortItems.forEach(btn => {
                 btn.addEventListener("click", (e) => {
                     e.preventDefault();
-                    sortMode = btn.dataset.sort || "nominal_desc";
+                    sortMode = btn.dataset.sort || "new";
                     setSortCheck();
                     closeSortMenu();
                     sortFilteredRows();
@@ -480,41 +508,52 @@ $notifCount = !empty($notifs_admin_trx) ? count($notifs_admin_trx) : 0;
             });
 
             // filter events
-            filterText.addEventListener("input", applyFilter);
-            filterStatus.addEventListener("change", applyFilter);
+            if (filterText) filterText.addEventListener("input", applyFilter);
+            if (filterStatus) filterStatus.addEventListener("change", applyFilter);
 
-            resetBtn.addEventListener("click", function() {
-                filterText.value = "";
-                filterStatus.value = "";
-                sortMode = "nominal_desc";
-                setSortCheck();
-                applyFilter();
-            });
+            if (resetBtn) {
+                resetBtn.addEventListener("click", function() {
+                    if (filterText) filterText.value = "";
+                    if (filterStatus) filterStatus.value = "";
 
-            rowsPerPageSelect.addEventListener("change", function() {
-                rowsPerPage = parseInt(this.value, 10) || 10;
-                currentPage = 1;
-                render();
-            });
+                    // ✅ reset balik ke TERBARU
+                    sortMode = "new";
+                    setSortCheck();
 
-            prevBtn.addEventListener("click", function() {
-                if (currentPage > 1) {
-                    currentPage--;
+                    applyFilter();
+                });
+            }
+
+            if (rowsPerPageSelect) {
+                rowsPerPageSelect.addEventListener("change", function() {
+                    rowsPerPage = parseInt(this.value, 10) || 10;
+                    currentPage = 1;
                     render();
-                }
-            });
+                });
+            }
 
-            nextBtn.addEventListener("click", function() {
-                const totalPages = Math.max(1, Math.ceil(filteredRows.length / rowsPerPage));
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    render();
-                }
-            });
+            if (prevBtn) {
+                prevBtn.addEventListener("click", function() {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        render();
+                    }
+                });
+            }
+
+            if (nextBtn) {
+                nextBtn.addEventListener("click", function() {
+                    const totalPages = Math.max(1, Math.ceil(filteredRows.length / rowsPerPage));
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        render();
+                    }
+                });
+            }
 
             // init
             setSortCheck();
-            applyFilter();
+            applyFilter(); // ini otomatis: filter kosong -> sortMode "new" -> tampil terbaru
         })();
     </script>
 
