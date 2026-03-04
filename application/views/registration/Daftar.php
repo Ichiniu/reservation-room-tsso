@@ -445,6 +445,45 @@
         el.addEventListener('blur', () => validateField(el));
     });
 
+    /* =========================
+       AJAX — Cek ketersediaan username & nama_lengkap
+       Dipanggil saat blur (user pindah ke field lain)
+    ========================== */
+    const CHECK_URL = '<?= site_url("registration/check_availability") ?>';
+
+    async function checkAvailability(fieldName, inputEl) {
+        const value = (inputEl.value || '').trim();
+        if (value.length < 3) return; // terlalu pendek — skip, biarkan validasi lokal handle
+
+        try {
+            const res = await fetch(`${CHECK_URL}?field=${encodeURIComponent(fieldName)}&value=${encodeURIComponent(value)}`);
+            const data = await res.json();
+
+            if (!data.available) {
+                const labels = {
+                    username:     'Username sudah digunakan orang lain.',
+                    nama_lengkap: 'Nama lengkap sudah terdaftar.'
+                };
+                setError(inputEl, labels[fieldName] || 'Sudah terdaftar.');
+            } else {
+                // Hanya tampilkan centang jika memang tidak ada error lokal
+                const localOk = validateField(inputEl);
+                if (localOk) setOK(inputEl, '✓ Tersedia');
+            }
+        } catch (e) {
+            // Jika AJAX gagal (network error dll) — abaikan, biarkan backend handle saat submit
+            console.warn('checkAvailability error:', e);
+        }
+    }
+
+    document.getElementById('username').addEventListener('blur', function () {
+        checkAvailability('username', this);
+    });
+
+    document.getElementById('nama_lengkap').addEventListener('blur', function () {
+        checkAvailability('nama_lengkap', this);
+    });
+
     const form = document.getElementById('formReg');
     form.addEventListener('submit', (e) => {
         syncPerusahaanUI();

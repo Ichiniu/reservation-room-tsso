@@ -110,9 +110,10 @@ $departemen      = $u['departemen'] ?? '';
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Lengkap</label>
-                                <input type="text" name="nama_lengkap" required autocomplete="name"
+                                <input type="text" id="edit_nama_lengkap" name="nama_lengkap" required autocomplete="name"
                                     class="w-full border border-slate-200 rounded-xl px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
                                     value="<?= htmlspecialchars((string)$nama_lengkap, ENT_QUOTES, 'UTF-8'); ?>">
+                                <p id="msg_nama_lengkap" class="text-xs mt-1 hidden"></p>
                             </div>
 
                             <div>
@@ -195,5 +196,73 @@ $departemen      = $u['departemen'] ?? '';
         </div>
     </div>
 
+<script>
+    (function () {
+        const input    = document.getElementById('edit_nama_lengkap');
+        const msgEl    = document.getElementById('msg_nama_lengkap');
+        const CHECK_URL = '<?= site_url("registration/check_availability") ?>';
+        // Nama awal user saat halaman dibuka — dipakai untuk skip cek jika tidak berubah
+        const originalName = (input ? input.defaultValue : '').trim();
+
+        if (!input) return;
+
+        function setMsg(text, isError) {
+            msgEl.textContent  = text;
+            msgEl.className    = 'text-xs mt-1 ' + (isError ? 'text-red-500' : 'text-emerald-600');
+            msgEl.classList.remove('hidden');
+            // Border merah / normal
+            if (isError) {
+                input.classList.add('border-red-400', 'ring-2', 'ring-red-100');
+                input.classList.remove('border-slate-200');
+            } else {
+                input.classList.remove('border-red-400', 'ring-2', 'ring-red-100');
+                input.classList.add('border-slate-200');
+            }
+        }
+
+        function clearMsg() {
+            msgEl.textContent = '';
+            msgEl.classList.add('hidden');
+            input.classList.remove('border-red-400', 'ring-2', 'ring-red-100');
+            input.classList.add('border-slate-200');
+        }
+
+        // Reset pesan saat user mengetik ulang
+        input.addEventListener('input', clearMsg);
+
+        input.addEventListener('blur', async function () {
+            const value = this.value.trim();
+
+            // Jika sama dengan nama awal → tidak perlu cek (tidak berubah)
+            if (value === originalName || value.length < 3) {
+                clearMsg();
+                return;
+            }
+
+            try {
+                const res  = await fetch(`${CHECK_URL}?field=nama_lengkap&value=${encodeURIComponent(value)}`);
+                const data = await res.json();
+
+                if (!data.available) {
+                    setMsg('✗ Nama lengkap sudah digunakan akun lain.', true);
+                } else {
+                    setMsg('✓ Nama lengkap tersedia.', false);
+                }
+            } catch (e) {
+                // Network error — abaikan, biarkan backend handle
+                console.warn('cek nama_lengkap gagal:', e);
+            }
+        });
+
+        // Blok submit jika field masih ditandai error
+        input.closest('form').addEventListener('submit', function (e) {
+            if (input.classList.contains('border-red-400')) {
+                e.preventDefault();
+                input.focus();
+                setMsg('✗ Nama lengkap sudah digunakan akun lain. Gunakan nama yang berbeda.', true);
+            }
+        });
+    })();
+</script>
 </body>
 </html>

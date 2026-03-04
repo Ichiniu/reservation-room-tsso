@@ -123,13 +123,24 @@ class Registration extends CI_Controller
 			return;
 		}
 
-		// cek username sudah ada
+		// cek username sudah ada (case-insensitive: 'admin' = 'ADMIN')
 		$this->db->select('USERNAME');
-		$this->db->where('USERNAME', $data['USERNAME']);
+		$this->db->where('LOWER(USERNAME) =', strtolower($data['USERNAME']), false);
 		$result = $this->db->get('user');
 
 		if ($result->num_rows() > 0) {
 			echo "Username sudah ada";
+			$this->output->set_header('refresh:2; url=' . site_url("/registration"));
+			return;
+		}
+
+		// cek nama_lengkap sudah ada (case-insensitive: 'wahyu' = 'WAHYU')
+		$this->db->select('NAMA_LENGKAP');
+		$this->db->where('LOWER(NAMA_LENGKAP) =', strtolower($data['NAMA_LENGKAP']), false);
+		$result_nama = $this->db->get('user');
+
+		if ($result_nama->num_rows() > 0) {
+			echo "Nama lengkap sudah terdaftar";
 			$this->output->set_header('refresh:2; url=' . site_url("/registration"));
 			return;
 		}
@@ -139,5 +150,34 @@ class Registration extends CI_Controller
 
 		echo "Registrasi Berhasil";
 		$this->output->set_header('refresh:2; url=' . site_url("/login"));
+	}
+
+	/**
+	 * AJAX endpoint — cek ketersediaan username / nama_lengkap
+	 * GET/POST: /registration/check_availability?field=username&value=xxx
+	 * Response: JSON { "available": true|false }
+	 */
+	public function check_availability()
+	{
+		$this->output->set_content_type('application/json');
+
+		$field = $this->input->get_post('field', true);
+		$value = trim((string)$this->input->get_post('value', true));
+
+		// Hanya izinkan field yang diperbolehkan
+		$allowed = ['username' => 'USERNAME', 'nama_lengkap' => 'NAMA_LENGKAP'];
+
+		if (!array_key_exists($field, $allowed) || $value === '') {
+			echo json_encode(['available' => true]);
+			return;
+		}
+
+		$col = $allowed[$field];
+		// Gunakan LOWER() agar case-insensitive: 'wahyu' == 'WAHYU'
+		$this->db->select($col);
+		$this->db->where("LOWER({$col}) =", strtolower($value), false);
+		$result = $this->db->get('user');
+
+		echo json_encode(['available' => $result->num_rows() === 0]);
 	}
 }

@@ -45,6 +45,7 @@ $route['pembayaran/upload_bukti'] = 'pembayaran/pembayaran/upload_bukti';
 $route['pembayaran'] = 'pembayaran/pembayaran';
 $route['pembayaran/frm_pembayaran'] = 'pembayaran/pembayaran/index';
 $route['registration/status'] = 'registration/registration/add_user';
+$route['registration/check_availability'] = 'registration/registration/check_availability';
 $route['edit_data/(:any)'] = 'home/home/edit_data/$1';
 $route['registration'] = 'registration/registration';
 $route['register'] = 'registration/registration';

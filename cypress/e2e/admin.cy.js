@@ -897,7 +897,9 @@ describe('Admin Final Comprehensive Tests (Level 1–4)', () => {
         // Harus 200 tanpa PHP error body
         expect(res.status).to.be.oneOf([200, 302, 404])
         if (res.status === 200) {
-          expect(res.body).to.not.include('Fatal error')
+          // res.body bisa berupa Object (JSON) bukan string — konversi dulu
+          const bodyStr = typeof res.body === 'string' ? res.body : JSON.stringify(res.body)
+          expect(bodyStr).to.not.include('Fatal error')
         }
       })
     })

@@ -1032,6 +1032,22 @@ class Home extends CI_Controller
 
 			// departemen & nama_perusahaan hanya tampil, tidak diupdate
 
+			// ── Validasi: nama_lengkap tidak boleh sama dengan user LAIN di DB (case-insensitive) ──
+			if ($nama_lengkap !== '') {
+				$cek = $this->db
+					->select('USERNAME')
+					->from('user')
+					->where('LOWER(NAMA_LENGKAP) =', strtolower($nama_lengkap), false)
+					->where('USERNAME !=', $user)         // kecualikan diri sendiri
+					->get();
+
+				if ($cek->num_rows() > 0) {
+					$this->session->set_flashdata('error', 'Nama lengkap sudah digunakan oleh akun lain.');
+					redirect(site_url('edit_data'));
+					return;
+				}
+			}
+
 			if (!empty($data)) {
 				$this->user_model->update_data($user, $data);
 				$this->session->set_flashdata('success_popup', 'Data anda berhasil diubah.');

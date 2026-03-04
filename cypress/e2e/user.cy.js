@@ -52,8 +52,9 @@ describe('User Final Comprehensive Tests (Level 1–4)', () => {
     // Level 3: Dynamic UI — pilih INTERNAL menampilkan field departemen
     it('U-01b [Dynamic UI]: Pilih INTERNAL → field departemen muncul', () => {
       cy.visit('/registration')
-      // Semua option INTERNAL punya value="INTERNAL" — select by VALUE bukan by text
-      cy.get('select[name="perusahaan"]').select('INTERNAL')
+      // invoke('val') + trigger bypass masalah "matched more than one option"
+      // yang terjadi ketika ada beberapa option dengan value/text 'INTERNAL'
+      cy.get('select[name="perusahaan"]').invoke('val', 'INTERNAL').trigger('change')
       cy.get('#wrapDepartemen').should('be.visible')
       cy.get('#wrapEksternal').should('not.be.visible')
     })
