@@ -125,7 +125,7 @@ class Registration extends CI_Controller
 
 		// cek username sudah ada (case-insensitive: 'admin' = 'ADMIN')
 		$this->db->select('USERNAME');
-		$this->db->where('LOWER(USERNAME) =', strtolower($data['USERNAME']), false);
+		$this->db->where('LOWER(USERNAME) = ' . $this->db->escape(strtolower($data['USERNAME'])), null, false);
 		$result = $this->db->get('user');
 
 		if ($result->num_rows() > 0) {
@@ -136,7 +136,7 @@ class Registration extends CI_Controller
 
 		// cek nama_lengkap sudah ada (case-insensitive: 'wahyu' = 'WAHYU')
 		$this->db->select('NAMA_LENGKAP');
-		$this->db->where('LOWER(NAMA_LENGKAP) =', strtolower($data['NAMA_LENGKAP']), false);
+		$this->db->where('LOWER(NAMA_LENGKAP) = ' . $this->db->escape(strtolower($data['NAMA_LENGKAP'])), null, false);
 		$result_nama = $this->db->get('user');
 
 		if ($result_nama->num_rows() > 0) {
@@ -173,9 +173,9 @@ class Registration extends CI_Controller
 		}
 
 		$col = $allowed[$field];
-		// Gunakan LOWER() agar case-insensitive: 'wahyu' == 'WAHYU'
+		// Gunakan LOWER() + escape() agar case-insensitive dan aman dari SQL injection
 		$this->db->select($col);
-		$this->db->where("LOWER({$col}) =", strtolower($value), false);
+		$this->db->where("LOWER({$col}) = " . $this->db->escape(strtolower($value)), null, false);
 		$result = $this->db->get('user');
 
 		echo json_encode(['available' => $result->num_rows() === 0]);

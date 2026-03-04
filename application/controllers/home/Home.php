@@ -1037,7 +1037,7 @@ class Home extends CI_Controller
 				$cek = $this->db
 					->select('USERNAME')
 					->from('user')
-					->where('LOWER(NAMA_LENGKAP) =', strtolower($nama_lengkap), false)
+					->where('LOWER(NAMA_LENGKAP) = ' . $this->db->escape(strtolower($nama_lengkap)), null, false)
 					->where('USERNAME !=', $user)         // kecualikan diri sendiri
 					->get();
 
