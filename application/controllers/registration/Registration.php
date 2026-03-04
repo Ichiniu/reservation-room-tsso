@@ -5,6 +5,7 @@
  * @property CI_Input $input
  * @property CI_DB_query_builder $db
  * @property CI_Output $output
+ * @property CI_Session $session
  * @property User_model $user_model
  */
 class Registration extends CI_Controller
@@ -14,6 +15,7 @@ class Registration extends CI_Controller
 	{
 		parent::__construct();
 		$this->load->helper('form');
+		$this->load->library('session');
 	}
 
 	public function index()
@@ -26,25 +28,26 @@ class Registration extends CI_Controller
 		$this->load->model('user/user_model');
 
 		// ambil input dasar
-		$username = trim((string)$this->input->post('username', true));
+		$username     = trim((string)$this->input->post('username', true));
 		$nama_lengkap = trim((string)$this->input->post('nama_lengkap', true));
-		$password = $this->input->post('password', true);
-		$email = trim((string)$this->input->post('email', true));
-		$alamat = trim((string)$this->input->post('alamat', true));
-		$no_telepon = trim((string)$this->input->post('no_telepon', true));
-		$dob = $this->input->post('dob', true);
+		$password     = $this->input->post('password', true);
+		$email        = trim((string)$this->input->post('email', true));
+		$alamat       = trim((string)$this->input->post('alamat', true));
+		$no_telepon   = trim((string)$this->input->post('no_telepon', true));
+		$dob          = $this->input->post('dob', true);
 
 		//  perusahaan logic
-		$perusahaan = $this->input->post('perusahaan', true); // INTERNAL / EKSTERNAL
+		$perusahaan      = $this->input->post('perusahaan', true); // INTERNAL / EKSTERNAL
 		$nama_perusahaan = null;
-		$departemen = null;
+		$departemen      = null;
 
 		if ($perusahaan === 'INTERNAL') {
 			$departemen = trim((string)$this->input->post('departemen', true));
 
 			if ($departemen === '') {
-				echo "Departemen wajib dipilih untuk INTERNAL";
-				$this->output->set_header('refresh:2; url=' . site_url("/registration"));
+				$this->session->set_flashdata('flash_msg', 'Departemen wajib dipilih untuk INTERNAL.');
+				$this->session->set_flashdata('flash_type', 'error');
+				redirect('/registration');
 				return;
 			}
 
@@ -54,15 +57,17 @@ class Registration extends CI_Controller
 			$nama_perusahaan = trim((string)$this->input->post('nama_perusahaan', true));
 
 			if ($nama_perusahaan === '') {
-				echo "Nama perusahaan wajib diisi untuk EKSTERNAL";
-				$this->output->set_header('refresh:2; url=' . site_url("/registration"));
+				$this->session->set_flashdata('flash_msg', 'Nama perusahaan wajib diisi untuk EKSTERNAL.');
+				$this->session->set_flashdata('flash_type', 'error');
+				redirect('/registration');
 				return;
 			}
 
 			$departemen = null;
 		} else {
-			echo "Perusahaan wajib dipilih";
-			$this->output->set_header('refresh:2; url=' . site_url("/registration"));
+			$this->session->set_flashdata('flash_msg', 'Perusahaan wajib dipilih.');
+			$this->session->set_flashdata('flash_type', 'error');
+			redirect('/registration');
 			return;
 		}
 
@@ -83,20 +88,23 @@ class Registration extends CI_Controller
 		// ===== server-side validation =====
 		// email must be valid and use gmail domain
 		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-			echo "Format email tidak valid";
-			$this->output->set_header('refresh:2; url=' . site_url("/registration"));
+			$this->session->set_flashdata('flash_msg', 'Format email tidak valid.');
+			$this->session->set_flashdata('flash_type', 'error');
+			redirect('/registration');
 			return;
 		}
 		if (!preg_match('/@gmail(\.[a-z]{2,})?$/i', $email)) {
-			echo "Email harus menggunakan domain @gmail";
-			$this->output->set_header('refresh:2; url=' . site_url("/registration"));
+			$this->session->set_flashdata('flash_msg', 'Email harus menggunakan domain @gmail.');
+			$this->session->set_flashdata('flash_type', 'error');
+			redirect('/registration');
 			return;
 		}
 
 		// phone: must be digits only and have 11-13 digits
 		if (!preg_match('/^\d{11,14}$/', $no_telepon)) {
-			echo "No telepon harus 11 sampai 13 digit angka (hanya angka diperbolehkan)";
-			$this->output->set_header('refresh:2; url=' . site_url("/registration"));
+			$this->session->set_flashdata('flash_msg', 'No telepon harus 11 sampai 13 digit angka (hanya angka diperbolehkan).');
+			$this->session->set_flashdata('flash_type', 'error');
+			redirect('/registration');
 			return;
 		}
 		// normalize phone in data (safe)
@@ -105,21 +113,24 @@ class Registration extends CI_Controller
 		if (!empty($dob)) {
 			try {
 				$birth = new DateTime($dob);
-				$now = new DateTime();
-				$age = $now->diff($birth)->y;
+				$now   = new DateTime();
+				$age   = $now->diff($birth)->y;
 				if ($age < 18) {
-					echo "Usia minimal 18 tahun";
-					$this->output->set_header('refresh:2; url=' . site_url("/registration"));
+					$this->session->set_flashdata('flash_msg', 'Usia minimal 18 tahun.');
+					$this->session->set_flashdata('flash_type', 'error');
+					redirect('/registration');
 					return;
 				}
 			} catch (Exception $e) {
-				echo "Format tanggal lahir tidak valid";
-				$this->output->set_header('refresh:2; url=' . site_url("/registration"));
+				$this->session->set_flashdata('flash_msg', 'Format tanggal lahir tidak valid.');
+				$this->session->set_flashdata('flash_type', 'error');
+				redirect('/registration');
 				return;
 			}
 		} else {
-			echo "Tanggal lahir wajib diisi";
-			$this->output->set_header('refresh:2; url=' . site_url("/registration"));
+			$this->session->set_flashdata('flash_msg', 'Tanggal lahir wajib diisi.');
+			$this->session->set_flashdata('flash_type', 'error');
+			redirect('/registration');
 			return;
 		}
 
@@ -129,15 +140,17 @@ class Registration extends CI_Controller
 		$result = $this->db->get('user');
 
 		if ($result->num_rows() > 0) {
-			echo "Username sudah ada";
-			$this->output->set_header('refresh:2; url=' . site_url("/registration"));
+			$this->session->set_flashdata('flash_msg', 'Username sudah digunakan. Silakan pilih username lain.');
+			$this->session->set_flashdata('flash_type', 'error');
+			redirect('/registration');
 			return;
 		}
 
 		// insert
 		$this->user_model->insert($data);
 
-		echo "Registrasi Berhasil";
-		$this->output->set_header('refresh:2; url=' . site_url("/login"));
+		$this->session->set_flashdata('flash_msg', 'Registrasi berhasil! Silakan login.');
+		$this->session->set_flashdata('flash_type', 'success');
+		redirect('/login');
 	}
 }

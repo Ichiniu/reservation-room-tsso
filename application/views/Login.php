@@ -6,6 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Login User</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Toastify -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <style>
+        .toastify {
+            font-family: ui-sans-serif, system-ui, sans-serif;
+            border-radius: 12px !important;
+            padding: 12px 20px !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25) !important;
+        }
+    </style>
 </head>
 
 <body class="min-h-screen w-full text-white relative overflow-hidden
@@ -101,7 +114,7 @@
                     </button>
 
                     <div class="mt-4 text-center text-xs text-white/60">
-                        Pastikan username & password benar.
+                        Pastikan username &amp; password benar.
                     </div>
                 </form>
 
@@ -124,6 +137,7 @@
     </main>
 
     <script>
+    /* ===== Toggle Password ===== */
     const btn = document.getElementById("togglePassword");
     const pass = document.getElementById("password");
     const eyeOpen = document.getElementById("eyeOpen");
@@ -135,6 +149,34 @@
         eyeOpen.classList.toggle("hidden", !isPassword);
         eyeClosed.classList.toggle("hidden", isPassword);
     });
+
+    /* ===== Toast from Flash Session ===== */
+    <?php
+        $flash_msg  = $this->session->flashdata('flash_msg');
+        $flash_type = $this->session->flashdata('flash_type');
+        if ($flash_msg):
+    ?>
+    (function() {
+        const msg  = <?= json_encode($flash_msg) ?>;
+        const type = <?= json_encode($flash_type ?? 'info') ?>;
+
+        const colors = {
+            success : { bg: 'linear-gradient(135deg,#0A7F81,#2CC7C0)', icon: '✅' },
+            error   : { bg: 'linear-gradient(135deg,#7f1d1d,#dc2626)',  icon: '❌' },
+            info    : { bg: 'linear-gradient(135deg,#1e3a5f,#3b82f6)',  icon: 'ℹ️' },
+        };
+        const cfg = colors[type] || colors.info;
+
+        Toastify({
+            text      : cfg.icon + '  ' + msg,
+            duration  : 4000,
+            gravity   : 'top',
+            position  : 'right',
+            stopOnFocus: true,
+            style     : { background: cfg.bg },
+        }).showToast();
+    })();
+    <?php endif; ?>
     </script>
 
 </body>

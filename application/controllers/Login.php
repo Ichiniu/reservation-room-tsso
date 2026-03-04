@@ -55,12 +55,15 @@ class Login extends CI_Controller
 					'session_id'  => session_id()
 				];
 				$this->session->set_userdata($session_data);
+				$this->session->set_flashdata('flash_msg', 'Selamat datang, ' . $user->USERNAME . '! Login berhasil.');
+				$this->session->set_flashdata('flash_type', 'success');
 				redirect('home/' . $user->USERNAME . '/');
 				return;
 			}
 		}
 
-		$this->output->set_header('refresh:2; url=' . site_url("/login"));
-		echo "Login Gagal. Username atau Password salah.";
+		$this->session->set_flashdata('flash_msg', 'Login Gagal. Username atau Password salah.');
+		$this->session->set_flashdata('flash_type', 'error');
+		redirect('login');
 	}
 }

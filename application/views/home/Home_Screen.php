@@ -319,6 +319,9 @@ $ulasan_count = is_array($ulasan_home) ? count($ulasan_home) : 0;
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Toastify -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <style>
         @keyframes review-marquee {
             0% {
@@ -679,6 +682,41 @@ $ulasan_count = is_array($ulasan_home) ? count($ulasan_home) : 0;
             track.style.animationDuration = dur + 's';
         })();
     </script>
+
+    <?php
+        $flash_msg  = $this->session->flashdata('flash_msg');
+        $flash_type = $this->session->flashdata('flash_type');
+        if ($flash_msg):
+    ?>
+    <script>
+    (function() {
+        const msg  = <?= json_encode($flash_msg) ?>;
+        const type = <?= json_encode($flash_type ?? 'info') ?>;
+        const colors = {
+            success : { bg: 'linear-gradient(135deg,#0A7F81,#2CC7C0)', icon: '\u2705' },
+            error   : { bg: 'linear-gradient(135deg,#7f1d1d,#dc2626)',  icon: '\u274C' },
+            info    : { bg: 'linear-gradient(135deg,#1e3a5f,#3b82f6)',  icon: '\u2139\uFE0F' },
+        };
+        const cfg = colors[type] || colors.info;
+        Toastify({
+            text      : cfg.icon + '  ' + msg,
+            duration  : 4000,
+            gravity   : 'top',
+            position  : 'right',
+            stopOnFocus: true,
+            style     : {
+                background   : cfg.bg,
+                borderRadius : '12px',
+                padding      : '12px 20px',
+                fontSize     : '14px',
+                fontWeight   : '500',
+                boxShadow    : '0 8px 32px rgba(0,0,0,0.25)',
+                fontFamily   : 'ui-sans-serif, system-ui, sans-serif',
+            },
+        }).showToast();
+    })();
+    </script>
+    <?php endif; ?>
 
 </body>
 

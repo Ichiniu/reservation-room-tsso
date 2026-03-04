@@ -9,6 +9,19 @@
 
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Toastify -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <style>
+        .toastify {
+            font-family: ui-sans-serif, system-ui, sans-serif;
+            border-radius: 12px !important;
+            padding: 12px 20px !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25) !important;
+        }
+    </style>
 </head>
 
 <body class="min-h-screen overflow-y-auto text-white relative overflow-x-hidden bg-slate-900">
@@ -460,6 +473,15 @@
 
         if (!ok) {
             e.preventDefault();
+            /* toast validasi client-side */
+            Toastify({
+                text: '❌  Harap periksa kembali data yang Anda isi.',
+                duration: 3500,
+                gravity: 'top',
+                position: 'right',
+                stopOnFocus: true,
+                style: { background: 'linear-gradient(135deg,#7f1d1d,#dc2626)' },
+            }).showToast();
             if (firstInvalid) {
                 firstInvalid.focus({
                     preventScroll: false
@@ -471,6 +493,33 @@
             }
         }
     });
+    /* ===== Toast from Flash Session ===== */
+    <?php
+        $flash_msg  = $this->session->flashdata('flash_msg');
+        $flash_type = $this->session->flashdata('flash_type');
+        if ($flash_msg):
+    ?>
+    (function() {
+        const msg  = <?= json_encode($flash_msg) ?>;
+        const type = <?= json_encode($flash_type ?? 'info') ?>;
+
+        const colors = {
+            success : { bg: 'linear-gradient(135deg,#0A7F81,#2CC7C0)', icon: '\u2705' },
+            error   : { bg: 'linear-gradient(135deg,#7f1d1d,#dc2626)',  icon: '\u274C' },
+            info    : { bg: 'linear-gradient(135deg,#1e3a5f,#3b82f6)',  icon: '\u2139\uFE0F' },
+        };
+        const cfg = colors[type] || colors.info;
+
+        Toastify({
+            text      : cfg.icon + '  ' + msg,
+            duration  : 4000,
+            gravity   : 'top',
+            position  : 'right',
+            stopOnFocus: true,
+            style     : { background: cfg.bg },
+        }).showToast();
+    })();
+    <?php endif; ?>
     </script>
 
 </body>

@@ -1070,8 +1070,10 @@ class Home extends CI_Controller
 
 	public function logout()
 	{
+		$this->session->set_flashdata('flash_msg', 'Anda telah berhasil logout. Sampai jumpa!');
+		$this->session->set_flashdata('flash_type', 'info');
 		$this->session->sess_destroy();
-		redirect(base_url());
+		redirect(site_url('login'));
 	}
 
 	public function gedung_details($id_gedung)

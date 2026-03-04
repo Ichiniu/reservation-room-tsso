@@ -775,6 +775,147 @@ class Admin_Controls extends CI_Controller
 		$this->load->view('admin/list_user', $data);
 	}
 
+	public function edit_user($username)
+	{
+		$this->load->model('user/user_model');
+		$this->load->model('gedung/gedung_model');
+
+		$username = urldecode((string)$username);
+		if (empty($username)) {
+			redirect('admin/list-user');
+			return;
+		}
+
+		$row = $this->db->get_where('user', ['USERNAME' => $username])->row_array();
+		if (!$row) {
+			$this->session->set_flashdata('flash_msg', 'User tidak ditemukan.');
+			$this->session->set_flashdata('flash_type', 'error');
+			redirect('admin/list-user');
+			return;
+		}
+
+		$data['result'] = $this->gedung_model->get_pending_transaction();
+		$data['user']   = $row;
+		$this->load->view('admin/edit_user', $data);
+	}
+
+	public function save_user($username)
+	{
+		$this->load->model('user/user_model');
+
+		$username = urldecode((string)$username);
+		if (empty($username)) {
+			redirect('admin/list-user');
+			return;
+		}
+
+		// Ambil data POST
+		$nama_lengkap      = trim((string)$this->input->post('nama_lengkap', true));
+		$email             = trim((string)$this->input->post('email', true));
+		$no_telepon        = trim((string)$this->input->post('no_telepon', true));
+		$dob               = $this->input->post('dob', true);
+		$perusahaan        = $this->input->post('perusahaan', true);
+		$departemen        = trim((string)$this->input->post('departemen', true));
+		$nama_perusahaan   = trim((string)$this->input->post('nama_perusahaan', true));
+		$alamat            = trim((string)$this->input->post('alamat', true));
+		$password_baru     = $this->input->post('password_baru', true);
+
+		// Validasi minimal
+		if (empty($nama_lengkap) || empty($email)) {
+			$this->session->set_flashdata('flash_msg', 'Nama lengkap dan email wajib diisi.');
+			$this->session->set_flashdata('flash_type', 'error');
+			redirect('admin/edit-user/' . urlencode($username));
+			return;
+		}
+
+		$update = [
+			'NAMA_LENGKAP'    => $nama_lengkap,
+			'EMAIL'           => $email,
+			'NO_TELEPON'      => $no_telepon,
+			'TANGGAL_LAHIR'   => $dob ?: null,
+			'perusahaan'      => $perusahaan,
+			'departemen'      => ($perusahaan === 'INTERNAL') ? $departemen : null,
+			'nama_perusahaan' => ($perusahaan === 'EKSTERNAL') ? $nama_perusahaan : null,
+			'ALAMAT'          => $alamat,
+		];
+
+		// Update password hanya jika diisi
+		if (!empty($password_baru)) {
+			if (strlen($password_baru) < 6) {
+				$this->session->set_flashdata('flash_msg', 'Password baru minimal 6 karakter.');
+				$this->session->set_flashdata('flash_type', 'error');
+				redirect('admin/edit-user/' . urlencode($username));
+				return;
+			}
+			$update['PASSWORD'] = password_hash($password_baru, PASSWORD_DEFAULT);
+		}
+
+		$this->db->where('USERNAME', $username)->update('user', $update);
+
+		$this->session->set_flashdata('flash_msg', 'Data user ' . $username . ' berhasil diperbarui.');
+		$this->session->set_flashdata('flash_type', 'success');
+		redirect('admin/list-user');
+	}
+
+	public function delete_user($username)
+	{
+		if ($this->input->method(true) !== 'POST') {
+			redirect('admin/list-user');
+			return;
+		}
+
+		$username = urldecode((string)$username);
+		if (empty($username)) {
+			redirect('admin/list-user');
+			return;
+		}
+
+		// Safety: jangan hapus admin itu sendiri
+		if (strtolower($username) === 'admin') {
+			$this->session->set_flashdata('flash_msg', 'Akun admin tidak dapat dihapus.');
+			$this->session->set_flashdata('flash_type', 'error');
+			redirect('admin/list-user');
+			return;
+		}
+
+		$this->db->where('USERNAME', $username)->delete('user');
+
+		$this->session->set_flashdata('flash_msg', 'User ' . $username . ' berhasil dihapus.');
+		$this->session->set_flashdata('flash_type', 'success');
+		redirect('admin/list-user');
+	}
+
+	public function reset_password($username)
+	{
+		if ($this->input->method(true) !== 'POST') {
+			redirect('admin/list-user');
+			return;
+		}
+
+		$username = urldecode((string)$username);
+		if (empty($username)) {
+			redirect('admin/list-user');
+			return;
+		}
+
+		$password_baru = $this->input->post('password_baru', true);
+
+		if (empty($password_baru) || strlen($password_baru) < 6) {
+			$this->session->set_flashdata('flash_msg', 'Password baru minimal 6 karakter.');
+			$this->session->set_flashdata('flash_type', 'error');
+			redirect('admin/list-user');
+			return;
+		}
+
+		$hashed = password_hash($password_baru, PASSWORD_DEFAULT);
+
+		$this->db->where('USERNAME', $username)->update('user', ['PASSWORD' => $hashed]);
+
+		$this->session->set_flashdata('flash_msg', 'Password user ' . $username . ' berhasil direset.');
+		$this->session->set_flashdata('flash_type', 'success');
+		redirect('admin/list-user');
+	}
+
 	public function list_gedung()
 	{
 		$this->load->model('gedung/gedung_model');
