@@ -134,9 +134,9 @@ class Registration extends CI_Controller
 			return;
 		}
 
-		// cek username sudah ada
+		// cek username sudah ada (case-insensitive: 'admin' = 'ADMIN')
 		$this->db->select('USERNAME');
-		$this->db->where('USERNAME', $data['USERNAME']);
+		$this->db->where('LOWER(USERNAME) = ' . $this->db->escape(strtolower($data['USERNAME'])), null, false);
 		$result = $this->db->get('user');
 
 		if ($result->num_rows() > 0) {
@@ -146,11 +146,51 @@ class Registration extends CI_Controller
 			return;
 		}
 
+		// cek nama_lengkap sudah ada (case-insensitive: 'wahyu' = 'WAHYU')
+		$this->db->select('NAMA_LENGKAP');
+		$this->db->where('LOWER(NAMA_LENGKAP) = ' . $this->db->escape(strtolower($data['NAMA_LENGKAP'])), null, false);
+		$result_nama = $this->db->get('user');
+
+		if ($result_nama->num_rows() > 0) {
+			echo "Nama lengkap sudah terdaftar";
+			$this->output->set_header('refresh:2; url=' . site_url("/registration"));
+			return;
+		}
+
 		// insert
 		$this->user_model->insert($data);
 
 		$this->session->set_flashdata('flash_msg', 'Registrasi berhasil! Silakan login.');
 		$this->session->set_flashdata('flash_type', 'success');
 		redirect('/login');
+	}
+
+	/**
+	 * AJAX endpoint — cek ketersediaan username / nama_lengkap
+	 * GET/POST: /registration/check_availability?field=username&value=xxx
+	 * Response: JSON { "available": true|false }
+	 */
+	public function check_availability()
+	{
+		$this->output->set_content_type('application/json');
+
+		$field = $this->input->get_post('field', true);
+		$value = trim((string)$this->input->get_post('value', true));
+
+		// Hanya izinkan field yang diperbolehkan
+		$allowed = ['username' => 'USERNAME', 'nama_lengkap' => 'NAMA_LENGKAP'];
+
+		if (!array_key_exists($field, $allowed) || $value === '') {
+			echo json_encode(['available' => true]);
+			return;
+		}
+
+		$col = $allowed[$field];
+		// Gunakan LOWER() + escape() agar case-insensitive dan aman dari SQL injection
+		$this->db->select($col);
+		$this->db->where("LOWER({$col}) = " . $this->db->escape(strtolower($value)), null, false);
+		$result = $this->db->get('user');
+
+		echo json_encode(['available' => $result->num_rows() === 0]);
 	}
 }
