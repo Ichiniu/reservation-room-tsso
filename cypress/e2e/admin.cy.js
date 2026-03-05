@@ -539,6 +539,8 @@ describe('Admin Final Comprehensive Tests (Level 1–4)', () => {
             const newName = `Paket EDITED ${TEST_LABEL}`
             cy.get('input[name="nama_paket"]').clear().type(newName)
             cy.get('button[type="submit"], input[type="submit"]').first().click()
+            // Tunggu redirect selesai → kunjungi list catering → baru cari nama baru
+            cy.visit('/admin/catering')
             cy.contains(newName).should('exist')
           }
         } else {

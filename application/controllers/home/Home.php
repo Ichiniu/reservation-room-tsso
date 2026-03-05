@@ -13,7 +13,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @property Gedung_model        $gedung_model
  * @property Catering_Model      $catering_model
  * @property User_model          $user_model
- * @property Checkout_model $checkout_model
+ * @property Checkout_model      $checkout_model
+ * @property Notification_service $notification_service
+ * @property settings_model      $settings_model
+ * @property Ulasan_model        $Ulasan_model
  */
 
 class Home extends CI_Controller
@@ -683,8 +686,6 @@ class Home extends CI_Controller
 	{
 		$username = $this->session->userdata('username');
 		$this->load->model('gedung/gedung_model');
-		// NOTE: do not clear pemesanan flag here — inbox badge should remain
-		// based on STATUS='PROCESS' so users still see the badge after opening.
 
 		$data['res'] = $this->gedung_model->get_pemesanan($username);
 		$data['flag']     = $this->gedung_model->get_pemesanan_flag($username);
@@ -692,19 +693,24 @@ class Home extends CI_Controller
 
 		$data['no_data'] = "Data Kosong";
 		$data['rows'] = $this->gedung_model->count_pemesanan($username);
-		$username = $this->session->userdata('username');
 
 		$data['notifs_pemesanan'] = $this->db->order_by('id', 'DESC')
 			->limit(10)
-			->like('type', 'USER_PEMESANAN_', 'after')
-			->get_where('notifications', [
-				'username' => $username,
-				'read_at'  => null
-			])
+			->where('username', $username)
+			->like('type', 'USER_PEMESANAN', 'after')
+			->where('read_at IS NULL', null, false)
+			->get('notifications')
 			->result_array();
+
+		// ✅ Auto mark-read: badge Pemesanan user hilang saat buka halaman ini
+		$this->db->where('username', $username)
+			->like('type', 'USER_PEMESANAN', 'after')
+			->where('read_at IS NULL', null, false)
+			->update('notifications', ['read_at' => date('Y-m-d H:i:s')]);
 
 		$this->load->view('home/pemesanan', $data);
 	}
+
 
 	public function pembayaran()
 	{
@@ -719,19 +725,24 @@ class Home extends CI_Controller
 
 		$data['notifs_transaksi'] = $this->db->order_by('id', 'DESC')
 			->limit(10)
-			->like('type', 'USER_TRANSAKSI_', 'after')
-			->get_where('notifications', [
-				'username' => $username,
-				'read_at'  => null
-			])
+			->where('username', $username)
+			->like('type', 'USER_TRANSAKSI', 'after')
+			->where('read_at IS NULL', null, false)
+			->get('notifications')
 			->result_array();
+
+		// ✅ Auto mark-read: badge Transaksi user hilang saat buka halaman ini
 		$this->db->where('username', $username)
-			->like('type', 'USER_TRANSAKSI_', 'after')
+			->group_start()
+			->where('type', 'USER_TRANSAKSI')
+			->or_where('type', 'REVIEW_REQUEST')
+			->group_end()
 			->where('read_at IS NULL', null, false)
 			->update('notifications', ['read_at' => date('Y-m-d H:i:s')]);
 
 		$this->load->view('home/pembayaran', $data);
 	}
+
 
 
 	public function detail_pemesanan($id_pemesanan)
@@ -1563,28 +1574,25 @@ class Home extends CI_Controller
 	{
 		header('Content-Type: application/json; charset=utf-8');
 
-		// pakai username (bukan id_user)
-		$username = (string) $this->session->userdata('username');
+		$username = (string)$this->session->userdata('username');
 		if ($username === '') {
 			echo json_encode(array('ok' => false, 'message' => 'Unauthorized'));
 			return;
 		}
 
-		$since_p = (int) $this->input->get('since_p');
-		$since_t = (int) $this->input->get('since_t');
+		$since_p = (int)$this->input->get('since_p');
+		$since_t = (int)$this->input->get('since_t');
 
 		$this->load->library('notification_service');
 
-		// types sesuai DB kamu
-		$typesP = ['USER_PEMESANAN'];
-		$typesT = ['USER_TRANSAKSI'];
+		// Ambil semua tipe yang relevan untuk Pemesanan & Transaksi
+		$typesP = ['USER_PEMESANAN', 'USER_INBOX'];
+		$typesT = ['USER_TRANSAKSI', 'REVIEW_REQUEST'];
 
 		try {
-			// ambil list unread (lebih dari 5 biar ga miss)
 			$rawP = $this->notification_service->get_unread($username, $typesP, 30);
 			$rawT = $this->notification_service->get_unread($username, $typesT, 30);
 
-			// filter berdasarkan since_id
 			$itemsP = [];
 			if (is_array($rawP)) {
 				foreach ($rawP as $n) {
@@ -1601,8 +1609,8 @@ class Home extends CI_Controller
 				}
 			}
 
-			$countP = (int) $this->notification_service->count_unread($username, $typesP);
-			$countT = (int) $this->notification_service->count_unread($username, $typesT);
+			$countP = (int)$this->notification_service->count_unread($username, $typesP);
+			$countT = (int)$this->notification_service->count_unread($username, $typesT);
 
 			echo json_encode([
 				'ok' => true,
@@ -1615,7 +1623,7 @@ class Home extends CI_Controller
 					'transaksi' => array_slice($itemsT, 0, 10)
 				]
 			]);
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			log_message('error', 'notif_poll_v2 USER error: ' . $e->getMessage());
 			echo json_encode(['ok' => false, 'message' => 'Server error']);
 		}

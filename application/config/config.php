@@ -41,7 +41,7 @@ if (isset($_SERVER['HTTP_HOST'])) {
 | variable so that it is blank.
 |
 */
-$config['index_page'] = 'index.php';
+$config['index_page'] = '';
 
 /*
 |--------------------------------------------------------------------------
@@ -58,7 +58,7 @@ $config['index_page'] = 'index.php';
 |
 | WARNING: If you set this to 'PATH_INFO', URIs will always be URL-decoded!
 */
-$config['uri_protocol']    = 'REQUEST_URI';
+$config['uri_protocol']    = 'AUTO';
 
 /*
 |--------------------------------------------------------------------------
@@ -368,7 +368,6 @@ $config['encryption_key'] = getenv('ENCRYPTION_KEY') ?: 'as5f1a5f2da0f5s2faas5d2
 */
 $config['sess_driver'] = 'files';
 $config['sess_cookie_name'] = 'ci_session';
-$config['sess_samesite'] = 'Lax';
 $config['sess_expiration'] = 7200;
 
 /**
@@ -380,6 +379,9 @@ $config['sess_save_path'] = APPPATH . 'cache/sessions';
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;
 $config['sess_regenerate_destroy'] = FALSE;
+
+// Auto-detect HTTPS (untuk ngrok / reverse proxy)
+$config['sess_samesite'] = 'Lax';
 
 
 /*
@@ -400,9 +402,15 @@ $config['sess_regenerate_destroy'] = FALSE;
 $config['cookie_prefix']    = '';
 $config['cookie_domain']    = '';
 $config['cookie_path']        = '/';
-$config['cookie_secure']	= FALSE; // Set TRUE if using HTTPS
-$config['cookie_httponly'] 	= TRUE;
-$config['cookie_samesite']	= 'Lax';
+
+// Auto-detect HTTPS: support localhost (HTTP) & ngrok/reverse-proxy (HTTPS)
+$_isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+    || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
+    || (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] === 'on');
+
+$config['cookie_secure']    = $_isHttps;  // TRUE otomatis kalau HTTPS (ngrok)
+$config['cookie_httponly']  = TRUE;
+$config['cookie_samesite']  = $_isHttps ? 'None' : 'Lax'; // 'None' wajib untuk cross-origin HTTPS
 
 /*
 |--------------------------------------------------------------------------
