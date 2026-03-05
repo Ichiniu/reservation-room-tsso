@@ -2,7 +2,20 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
+ * @property CI_Loader           $load
+ * @property CI_Input            $input
+ * @property CI_DB_query_builder $db
+ * @property CI_Output           $output
+ * @property CI_Session          $session
+ * @property CI_URI              $uri
+ * @property CI_Upload           $upload
+ * @property CI_Email            $email
  * 
+ * @property Gedung_model        $gedung_model
+ * @property Notification_service $notification_service
+ * @property User_model          $user_model
+ * @property Catering_Model      $catering_model
+ * @property settings_model      $settings_model
  */
 class Admin_Controls extends CI_Controller
 {
@@ -262,6 +275,12 @@ class Admin_Controls extends CI_Controller
 			])
 			->result_array();
 
+		// ✅ Auto mark-read: badge Transaksi admin hilang saat admin buka halaman ini
+		$this->db->where('username', 'admin')
+			->like('type', 'ADMIN_TRANSAKSI', 'after')
+			->where('read_at IS NULL', null, false)
+			->update('notifications', ['read_at' => date('Y-m-d H:i:s')]);
+
 		$this->load->view('admin/pembayaran', $data);
 	}
 
@@ -320,8 +339,15 @@ class Admin_Controls extends CI_Controller
 			])
 			->result_array();
 
+		// ✅ Auto mark-read: badge Inbox hilang saat admin buka halaman ini
+		$this->db->where('username', 'admin')
+			->like('type', 'ADMIN_INBOX', 'after')
+			->where('read_at IS NULL', null, false)
+			->update('notifications', ['read_at' => date('Y-m-d H:i:s')]);
+
 		$this->load->view('admin/pemesanan', $data);
 	}
+
 
 	public function detail_transaksi($id_pemesanan)
 	{
@@ -1130,8 +1156,16 @@ class Admin_Controls extends CI_Controller
 				}
 			}
 
-			$countI = (int) $this->notification_service->count_unread($adminKey, $typesI);
-			$countT = (int) $this->notification_service->count_unread($adminKey, $typesT);
+			$this->load->model('gedung/gedung_model');
+			$countI_DB = (int)$this->gedung_model->get_pending_transaction(); // proposal pending
+			$countT_DB = (int)$this->gedung_model->get_unread_transaction(); // pembayaran pending
+
+			$countI_Notif = (int)$this->notification_service->count_unread($adminKey, $typesI);
+			$countT_Notif = (int)$this->notification_service->count_unread($adminKey, $typesT);
+
+			// Gunakan nilai terbesar (atau sum, tapi biasanya max lebih aman untuk menghindari double count jika ada notif yang belum di-read)
+			$countI = max($countI_DB, $countI_Notif);
+			$countT = max($countT_DB, $countT_Notif);
 
 			echo json_encode([
 				'ok' => true,
@@ -1141,7 +1175,7 @@ class Admin_Controls extends CI_Controller
 					'transaksi' => array_slice($itemsT, 0, 10)
 				]
 			]);
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			log_message('error', 'notif_poll_v2 ADMIN error: ' . $e->getMessage());
 			echo json_encode(['ok' => false, 'message' => 'Server error']);
 		}

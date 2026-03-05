@@ -30,29 +30,39 @@ class Notifications extends CI_Controller
     {
         header('Content-Type: application/json; charset=utf-8');
 
-        // deteksi role
-        $role = $this->session->userdata('admin_username') ? 'admin' : 'user';
+        $username = (string)$this->session->userdata('username');
+        if ($username === '') {
+            $username = (string)$this->session->userdata('admin_username');
+        }
 
-        // sesuaikan type sesuai sistemmu
-        $types = ($role === 'admin')
-            ? ['ADMIN_INBOX']
-            : ['USER_INBOX'];
+        if ($username === '') {
+            echo json_encode(['ok' => false, 'count' => 0]);
+            return;
+        }
+
+        // Tipe yang dianggap "unread" untuk badge utama (Desktop Notif)
+        $types = (strtolower($username) === 'admin')
+            ? ['ADMIN_INBOX', 'ADMIN_TRANSAKSI']
+            : ['USER_PEMESANAN', 'USER_TRANSAKSI', 'REVIEW_REQUEST'];
 
         try {
-            $count = $this->notification_service->count_unread($role, $types);
+            $count = $this->notification_service->count_unread($username, $types);
 
             echo json_encode([
                 'ok' => true,
+                'count' => (int)$count, // JS di navbar.php pakai "count"
                 'unread_count' => (int)$count
             ]);
         } catch (Throwable $e) {
             log_message('error', 'unread_count error: ' . $e->getMessage());
             echo json_encode([
                 'ok' => false,
+                'count' => 0,
                 'message' => 'Server error'
             ]);
         }
     }
+
 
 
 
@@ -60,35 +70,39 @@ class Notifications extends CI_Controller
     {
         header('Content-Type: application/json; charset=utf-8');
 
-        $notif_id = $this->input->post('id'); // pastikan JS kirim "id"
-        if (empty($notif_id)) {
-            echo json_encode([
-                'ok' => false,
-                'message' => 'ID tidak valid'
-            ]);
-            $notif_id = $this->input->post('id');
-            if (empty($notif_id)) $notif_id = $this->input->post('notif_id');
-            if (empty($notif_id)) $notif_id = $this->input->post('notification_id');
+        $username = (string)$this->session->userdata('username');
+        if ($username === '') return;
 
-            // BONUS: kalau ternyata kamu kirim lewat GET (kadang JS begitu)
-            if (empty($notif_id)) $notif_id = $this->input->get('id');
-            if (empty($notif_id)) $notif_id = $this->input->get('notif_id');
-
-            return;
-        }
+        $notif_id = $this->input->post('id');
+        $type_req = $this->input->post('type');
 
         try {
-            $ok = $this->notif_model->mark_read_by_id((int)$notif_id);
+            if (!empty($notif_id)) {
+                $ok = $this->notif_model->mark_read_by_id((int)$notif_id);
+            } elseif (!empty($type_req)) {
+                $types = $this->mapTypes($type_req);
+                if (strtolower($type_req) === 'transaksi') {
+                    $types[] = 'REVIEW_REQUEST';
+                    // Juga bersihkan flag legacy di tabel pembayaran
+                    $this->load->model('gedung/gedung_model');
+                    $this->gedung_model->clear_transaksi_flag($username);
+                }
 
-            echo json_encode([
-                'ok' => (bool)$ok
-            ]);
+                $this->db->where('username', $username)
+                    ->where_in('type', $types)
+                    ->where('read_at IS NULL', null, false)
+                    ->update('notifications', ['read_at' => date('Y-m-d H:i:s')]);
+                $ok = true;
+            } else {
+                echo json_encode(['ok' => false, 'message' => 'No ID or Type']);
+                return;
+            }
+
+            echo json_encode(['ok' => (bool)$ok]);
         } catch (Throwable $e) {
             log_message('error', 'mark_read error: ' . $e->getMessage());
-            echo json_encode([
-                'ok' => false,
-                'message' => 'Server error'
-            ]);
+            echo json_encode(['ok' => false, 'message' => 'Server error']);
         }
     }
+
 }

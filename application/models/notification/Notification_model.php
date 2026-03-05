@@ -116,6 +116,17 @@ class Notification_model extends CI_Model
             'read_at' => date('Y-m-d H:i:s')
         ]);
     }
+    public function mark_read_by_id($id)
+    {
+        if (empty($id)) return false;
+
+        $this->db->set('read_at', date('Y-m-d H:i:s'));
+        $this->db->where('id', (int)$id);
+        $this->db->where('read_at IS NULL', null, false);
+
+        return $this->db->update('notifications');
+    }
+
     public function mark_emailed_by_id($id)
     {
         if (empty($id)) return false;

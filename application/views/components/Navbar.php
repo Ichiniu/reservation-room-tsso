@@ -367,42 +367,6 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
     }
 </script>
 
-<script>
-    (async function() {
-        if (!("Notification" in window)) return;
-
-        // permission - idealnya via tombol, tapi ini versi cepat
-        if (Notification.permission === "default") {
-            try {
-                await Notification.requestPermission();
-            } catch (e) {}
-        }
-
-        let last = 0;
-
-        async function poll() {
-            try {
-                const res = await fetch("<?= site_url('api/notif/unread-count') ?>", {
-                    credentials: "same-origin"
-                });
-                const data = await res.json();
-
-                const count = Number(data.count || 0);
-                if (Notification.permission === "granted" && count > last) {
-                    new Notification("Booking Smarts", {
-                        body: "Ada notifikasi baru."
-                    });
-                }
-                last = count;
-            } catch (e) {
-                console.log("notif error", e);
-            }
-        }
-
-        poll();
-        setInterval(poll, 15000);
-    })();
-</script>
 
 <script>
     (function() {
@@ -674,6 +638,13 @@ $trx_flag = isset($trx_flag) ? (int)$trx_flag : 0; // badge TRANSAKSI
         // run polling
         poll();
         setInterval(poll, 8000);
+
+        // Init UI Status
+        if (typeof setNotifUI === 'function') {
+            const isGranted = Notification.permission === "granted";
+            const isLocalOn = localStorage.getItem("bm_notif_enabled_" + USERNAME) === "1";
+            setNotifUI(isGranted && isLocalOn);
+        }
 
         // wire click handlers
         // Keep pemesanan badge persistent (based on STATUS='PROCESS').
