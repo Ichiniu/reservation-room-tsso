@@ -240,7 +240,9 @@ class Admin_Controls extends CI_Controller
 		$data['user_username'] = !empty($data['result']->USERNAME) ? $data['result']->USERNAME : '';
 		$data['user_email']    = !empty($data['result']->EMAIL) ? $data['result']->EMAIL : '';
 		$data['nama_lengkap_user'] = !empty($data['result']->NAMA_LENGKAP) ? $data['result']->NAMA_LENGKAP : $data['user_username'];
-		$data['proposal_details'] = null;
+		// Load proposal details
+		$temp_id = (int) preg_replace('/\D+/', '', (string)$data['result']->ID_PEMESANAN);
+		$data['proposal_details'] = $this->gedung_model->get_proposal_by_id($temp_id);
 
 		$this->load->view('admin/Detail_Pemesanan', $data);
 	}

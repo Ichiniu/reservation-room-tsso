@@ -31,9 +31,19 @@ function safe($v) { return htmlspecialchars((string)($v ?? ''), ENT_QUOTES, 'UTF
     <main class="pt-24 md:pl-64 px-4 md:px-6 pb-10 transition-all duration-300">
 
         <!-- HEADER -->
-        <div class="mb-6">
-            <h1 class="text-2xl font-bold text-slate-800">Daftar User</h1>
-            <p class="text-sm text-slate-500">Kelola seluruh pengguna yang terdaftar</p>
+        <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-800">Daftar User</h1>
+                <p class="text-sm text-slate-500">Kelola seluruh pengguna yang terdaftar</p>
+            </div>
+            <!-- SEARCH INPUT -->
+            <div class="relative w-full sm:w-64 cursor-text">
+                <input type="text" id="searchInput" placeholder="Cari nama atau username..." 
+                       class="w-full rounded-xl border border-slate-200 pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 transition shadow-sm">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="bi bi-search text-slate-400"></i>
+                </div>
+            </div>
         </div>
 
         <!-- CARD -->
@@ -233,28 +243,47 @@ function safe($v) { return htmlspecialchars((string)($v ?? ''), ENT_QUOTES, 'UTF
     </div>
 
     <script>
-    /* ===== Pagination ===== */
-    const allRows = document.querySelectorAll('.table-row');
+    /* ===== Search & Pagination ===== */
+    const allRows = Array.from(document.querySelectorAll('.table-row'));
+    let filteredRows = [...allRows];
     const rowsPerPageSel = document.getElementById('rowsPerPage');
     const pageInfo       = document.getElementById('pageInfo');
     const prevBtn        = document.getElementById('prevBtn');
     const nextBtn        = document.getElementById('nextBtn');
+    const searchInput    = document.getElementById('searchInput');
     let currentPage = 1;
 
     function renderTable() {
+        allRows.forEach(r => r.style.display = 'none');
         const rpm = parseInt(rowsPerPageSel.value);
         const start = (currentPage - 1) * rpm;
         const end   = start + rpm;
-        allRows.forEach((r, i) => r.style.display = (i >= start && i < end) ? '' : 'none');
-        const total = Math.ceil(allRows.length / rpm) || 1;
-        pageInfo.textContent = `Halaman ${currentPage} dari ${total} · ${allRows.length} data`;
+        filteredRows.forEach((r, i) => {
+            if (i >= start && i < end) r.style.display = '';
+        });
+        const total = Math.ceil(filteredRows.length / rpm) || 1;
+        pageInfo.textContent = `Halaman ${currentPage} dari ${total} · ${filteredRows.length} data`;
         prevBtn.disabled = currentPage === 1;
         nextBtn.disabled = currentPage === total;
     }
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            filteredRows = allRows.filter(row => {
+                const username = row.cells[1] ? row.cells[1].textContent.toLowerCase() : '';
+                const fullname = row.cells[2] ? row.cells[2].textContent.toLowerCase() : '';
+                return username.includes(searchTerm) || fullname.includes(searchTerm);
+            });
+            currentPage = 1;
+            renderTable();
+        });
+    }
+
     rowsPerPageSel.addEventListener('change', () => { currentPage = 1; renderTable(); });
     prevBtn.addEventListener('click', () => { if (currentPage > 1) { currentPage--; renderTable(); } });
     nextBtn.addEventListener('click', () => {
-        const total = Math.ceil(allRows.length / parseInt(rowsPerPageSel.value));
+        const total = Math.ceil(filteredRows.length / parseInt(rowsPerPageSel.value));
         if (currentPage < total) { currentPage++; renderTable(); }
     });
     renderTable();

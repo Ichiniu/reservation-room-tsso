@@ -17,7 +17,7 @@ $harga_sewa = (float)($result->HARGA_SEWA ?? 0);
 $total_keseluruhan = (float)($result->TOTAL_KESELURUHAN ?? 0);
 $total_catering = (float)($result->TOTAL_HARGA ?? 0);
 
-$tax = 0.1 * $harga_sewa;
+$tax = 0; // Pajak dinonaktifkan (di set ke 0)
 
 // tampilkan user/email
 $display_username = !empty($user_username)
@@ -126,10 +126,6 @@ if (!empty($result->TANGGAL_PEMESANAN)) {
                         <td class="font-semibold py-1">Total Catering</td>
                         <td class="py-1">: Rp <?= number_format($total_catering); ?></td>
                     </tr>
-                    <tr>
-                        <td class="font-semibold py-1">Pajak 10%</td>
-                        <td class="py-1">: Rp <?= number_format($tax); ?></td>
-                    </tr>
                     <tr class="font-bold text-red-600">
                         <td class="py-2">Total Keseluruhan</td>
                         <td class="py-2">: Rp <?= number_format($total_keseluruhan + $tax); ?></td>
@@ -143,7 +139,7 @@ if (!empty($result->TANGGAL_PEMESANAN)) {
                         <td class="py-1">:
                             <?= nl2br(htmlspecialchars((string)$deskripsi_acara, ENT_QUOTES, 'UTF-8')); ?></td>
                     </tr>
-                    <tr>
+                    <!-- <tr>
                         <td class="font-semibold py-1">File Proposal</td>
                         <td class="py-1">:
                             <?php if (!empty($proposal_file_name)): ?>
@@ -155,7 +151,7 @@ if (!empty($result->TANGGAL_PEMESANAN)) {
                                 <span class="text-slate-500">Belum ada file</span>
                             <?php endif; ?>
                         </td>
-                    </tr>
+                    </tr> -->
                 </tbody>
             </table>
 
