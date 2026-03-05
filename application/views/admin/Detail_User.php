@@ -105,6 +105,17 @@ $tipe     = strtoupper($u['perusahaan'] ?? '');
                         <?php endif; ?>
                     </div>
                 </div>
+
+                <!-- ===== ALAMAT (MOVED TO LEFT) ===== -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mt-6">
+                    <h3 class="text-base font-bold text-slate-700 mb-3 flex items-center gap-2">
+                        <span class="material-icons text-rose-400">location_on</span>
+                        Alamat
+                    </h3>
+                    <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
+                        <?= !empty($u['ALAMAT']) ? safe_d($u['ALAMAT']) : '<span class="text-slate-400">—</span>' ?>
+                    </p>
+                </div>
             </div>
 
             <!-- ===== INFO DETAIL ===== -->
@@ -177,17 +188,6 @@ $tipe     = strtoupper($u['perusahaan'] ?? '');
                     </dl>
                 </div>
 
-                <!-- Alamat -->
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                    <h3 class="text-base font-bold text-slate-700 mb-3 flex items-center gap-2">
-                        <span class="material-icons text-rose-400">location_on</span>
-                        Alamat
-                    </h3>
-                    <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
-                        <?= !empty($u['ALAMAT']) ? safe_d($u['ALAMAT']) : '<span class="text-slate-400">—</span>' ?>
-                    </p>
-                </div>
-
                 <!-- Riwayat Pemesanan -->
                 <?php if (!empty($bookings)): ?>
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
@@ -199,30 +199,36 @@ $tipe     = strtoupper($u['perusahaan'] ?? '');
                         <table class="w-full text-sm">
                             <thead class="bg-slate-50 rounded-xl">
                                 <tr>
-                                    <th class="px-3 py-2 text-left text-xs font-semibold text-slate-500">ID</th>
-                                    <th class="px-3 py-2 text-left text-xs font-semibold text-slate-500">Ruangan</th>
-                                    <th class="px-3 py-2 text-left text-xs font-semibold text-slate-500">Tanggal</th>
-                                    <th class="px-3 py-2 text-left text-xs font-semibold text-slate-500">Jam</th>
-                                    <th class="px-3 py-2 text-left text-xs font-semibold text-slate-500">Status</th>
+                                    <th class="px-3 py-3 text-left text-xs font-semibold text-slate-600">ID</th>
+                                    <th class="px-3 py-3 text-left text-xs font-semibold text-slate-600">Ruangan</th>
+                                    <th class="px-3 py-3 text-left text-xs font-semibold text-slate-600">Tanggal</th>
+                                    <th class="px-3 py-3 text-left text-xs font-semibold text-slate-600">Jam</th>
+                                    <th class="px-3 py-3 text-left text-xs font-semibold text-slate-600">Status</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-100">
+                            <tbody class="divide-y divide-slate-100" id="bookingTableBody">
                                 <?php foreach ($bookings as $b): ?>
-                                <tr class="hover:bg-slate-50">
-                                    <td class="px-3 py-2 text-slate-500 font-mono text-xs">PMSN<?= str_pad($b['ID_PEMESANAN'] ?? '', 6, '0', STR_PAD_LEFT) ?></td>
-                                    <td class="px-3 py-2 text-slate-700"><?= safe_d($b['NAMA_GEDUNG'] ?? '-') ?></td>
-                                    <td class="px-3 py-2 text-slate-600"><?= safe_d($b['TANGGAL_PEMESANAN'] ?? '-') ?></td>
-                                    <td class="px-3 py-2 text-slate-600"><?= safe_d(substr($b['JAM_PEMESANAN'] ?? '', 0, 5)) ?> – <?= safe_d(substr($b['JAM_SELESAI'] ?? '', 0, 5)) ?></td>
-                                    <td class="px-3 py-2">
+                                <tr class="booking-row hover:bg-slate-50 transition">
+                                    <td class="px-3 py-3 text-slate-500 font-mono text-[11px]">
+                                        <?php 
+                                            $raw_id = (string)($b['ID_PEMESANAN'] ?? '');
+                                            $clean_id = preg_replace('/\D+/', '', $raw_id);
+                                            echo 'PMSN' . str_pad($clean_id, 6, '0', STR_PAD_LEFT);
+                                        ?>
+                                    </td>
+                                    <td class="px-3 py-3 text-slate-700 font-medium"><?= safe_d($b['NAMA_GEDUNG'] ?? '-') ?></td>
+                                    <td class="px-3 py-3 text-slate-600"><?= safe_d($b['TANGGAL_PEMESANAN'] ?? '-') ?></td>
+                                    <td class="px-3 py-3 text-slate-600"><?= safe_d(substr($b['JAM_PEMESANAN'] ?? '', 0, 5)) ?> – <?= safe_d(substr($b['JAM_SELESAI'] ?? '', 0, 5)) ?></td>
+                                    <td class="px-3 py-3">
                                         <?php $st = (int)($b['STATUS'] ?? -1); ?>
                                         <?php if ($st === 3): ?>
-                                            <span class="px-2 py-0.5 rounded-full text-xs bg-emerald-100 text-emerald-700 font-semibold">Confirmed</span>
+                                            <span class="px-2 py-0.5 rounded-full text-[11px] bg-emerald-100 text-emerald-700 font-bold uppercase tracking-wider">Confirmed</span>
                                         <?php elseif ($st === 1): ?>
-                                            <span class="px-2 py-0.5 rounded-full text-xs bg-sky-100 text-sky-700 font-semibold">Approved</span>
+                                            <span class="px-2 py-0.5 rounded-full text-[11px] bg-sky-100 text-sky-700 font-bold uppercase tracking-wider">Approved</span>
                                         <?php elseif ($st === 4): ?>
-                                            <span class="px-2 py-0.5 rounded-full text-xs bg-red-100 text-red-600 font-semibold">Rejected</span>
+                                            <span class="px-2 py-0.5 rounded-full text-[11px] bg-red-100 text-red-600 font-bold uppercase tracking-wider">Rejected</span>
                                         <?php else: ?>
-                                            <span class="px-2 py-0.5 rounded-full text-xs bg-amber-100 text-amber-700 font-semibold">Pending</span>
+                                            <span class="px-2 py-0.5 rounded-full text-[11px] bg-amber-100 text-amber-700 font-bold uppercase tracking-wider">Pending</span>
                                         <?php endif; ?>
                                     </td>
                                 </tr>
@@ -230,12 +236,59 @@ $tipe     = strtoupper($u['perusahaan'] ?? '');
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- PAGINATION -->
+                    <div class="mt-4 flex items-center justify-between border-t border-slate-50 pt-4 px-1">
+                        <p class="text-xs text-slate-400" id="bookingPageInfo"></p>
+                        <div class="flex gap-2">
+                            <button id="prevBooking" class="h-8 w-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition">
+                                <span class="material-icons text-sm">chevron_left</span>
+                            </button>
+                            <button id="nextBooking" class="h-8 w-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition">
+                                <span class="material-icons text-sm">chevron_right</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <?php endif; ?>
 
             </div>
         </div>
     </main>
+
+    <script>
+    /* ===== Pagination Riwayat Pemesanan ===== */
+    (function() {
+        const rows = document.querySelectorAll('.booking-row');
+        if (rows.length === 0) return;
+
+        const perPage = 5;
+        let currentPage = 1;
+        const totalPages = Math.ceil(rows.length / perPage);
+
+        const pageInfo = document.getElementById('bookingPageInfo');
+        const prevBtn  = document.getElementById('prevBooking');
+        const nextBtn  = document.getElementById('nextBooking');
+
+        function render() {
+            const start = (currentPage - 1) * perPage;
+            const end   = start + perPage;
+
+            rows.forEach((row, i) => {
+                row.style.display = (i >= start && i < end) ? '' : 'none';
+            });
+
+            pageInfo.textContent = `Halaman ${currentPage} dari ${totalPages} (${rows.length} pesanan)`;
+            prevBtn.disabled = (currentPage === 1);
+            nextBtn.disabled = (currentPage === totalPages);
+        }
+
+        prevBtn.addEventListener('click', () => { if (currentPage > 1) { currentPage--; render(); } });
+        nextBtn.addEventListener('click', () => { if (currentPage < totalPages) { currentPage++; render(); } });
+
+        render();
+    })();
+    </script>
 
 </body>
 </html>

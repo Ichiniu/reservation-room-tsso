@@ -81,6 +81,7 @@ $route['admin/pembayaran-air'] = 'admin/admin_controls/pembayaran_air';
 $route['admin/pembayaran-kebersihan'] = 'admin/admin_controls/pembayaran_kebersihan';
 $route['admin/list'] = 'admin/admin_controls/list_user';
 $route['admin/list-user'] = 'admin/admin_controls/list_user';
+$route['admin/detail-user/(:any)'] = 'admin/admin_controls/detail_user/$1';
 $route['admin/edit-user/(:any)'] = 'admin/admin_controls/edit_user/$1';
 $route['admin/save-user/(:any)'] = 'admin/admin_controls/save_user/$1';
 $route['admin/delete-user/(:any)'] = 'admin/admin_controls/delete_user/$1';

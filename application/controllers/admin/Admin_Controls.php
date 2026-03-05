@@ -827,6 +827,34 @@ class Admin_Controls extends CI_Controller
 		$this->load->view('admin/edit_user', $data);
 	}
 
+	public function detail_user($username)
+	{
+		$this->load->model('user/user_model');
+		$this->load->model('gedung/gedung_model');
+
+		$username = urldecode((string)$username);
+		if (empty($username)) {
+			redirect('admin/list-user');
+			return;
+		}
+
+		$row = $this->db->get_where('user', ['USERNAME' => $username])->row_array();
+		if (!$row) {
+			$this->session->set_flashdata('flash_msg', 'User tidak ditemukan.');
+			$this->session->set_flashdata('flash_type', 'error');
+			redirect('admin/list-user');
+			return;
+		}
+
+		$data['result'] = $this->gedung_model->get_pending_transaction();
+		$data['user']   = $row;
+
+		// Ambil riwayat pemesanan user ini
+		$data['bookings'] = $this->db->get_where('V_PEMESANAN', ['USERNAME' => $username])->result_array();
+
+		$this->load->view('admin/Detail_User', $data);
+	}
+
 	public function save_user($username)
 	{
 		$this->load->model('user/user_model');
