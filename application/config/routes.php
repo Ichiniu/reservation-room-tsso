@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-$route['default_controller'] = 'home/home';
+$route['default_controller'] = 'welcome';
 $route['login'] = 'login';
 $route['home/search'] = 'home/home/search_gedung/$1';
 $route['home/details/(:any)'] = 'home/home/gedung_details/$1';

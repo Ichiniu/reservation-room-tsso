@@ -934,6 +934,17 @@ class Admin_Controls extends CI_Controller
 			return;
 		}
 
+		// Check dependency in pemesanan table
+		$this->db->where('USERNAME', $username);
+		$booking_count = $this->db->count_all_results('pemesanan');
+
+		if ($booking_count > 0) {
+			$this->session->set_flashdata('flash_msg', 'User ' . $username . ' tidak bisa dihapus karena masih memiliki ' . $booking_count . ' data pemesanan ruangan.');
+			$this->session->set_flashdata('flash_type', 'error');
+			redirect('admin/list-user');
+			return;
+		}
+
 		$this->db->where('USERNAME', $username)->delete('user');
 
 		$this->session->set_flashdata('flash_msg', 'User ' . $username . ' berhasil dihapus.');
