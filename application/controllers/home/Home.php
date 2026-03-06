@@ -603,6 +603,15 @@ class Home extends CI_Controller
 		// Ambil data gedung untuk pricing
 		$g_price = $this->db->get_where('gedung', ['ID_GEDUNG' => $id_gedung])->row();
 		if ($g_price) {
+			// Validasi Kapasitas (Server-side)
+			if ($total_peserta > 0 && !empty($g_price->KAPASITAS)) {
+				if ($total_peserta > $g_price->KAPASITAS) {
+					$this->session->set_flashdata('error', 'Pesanan gagal: Jumlah peserta (' . $total_peserta . ') melebihi kapasitas maksimal ruangan (' . $g_price->KAPASITAS . ' orang).');
+					redirect('home/order-gedung/' . $id_gedung);
+					return;
+				}
+			}
+
 			$obj_calc->HARGA_SEWA = $g_price->HARGA_SEWA;
 			$obj_calc->PRICING_MODE = $g_price->PRICING_MODE ?? '';
 			$obj_calc->HARGA_HALF_DAY_PP = $g_price->HARGA_HALF_DAY_PP ?? 0;

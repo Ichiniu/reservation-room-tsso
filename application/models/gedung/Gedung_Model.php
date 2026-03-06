@@ -849,7 +849,7 @@ TIME_FORMAT(
 	{
 		$id_gedung = (int) $id_gedung;
 		// SELECT dinamis supaya tidak error kalau kolom harga baru belum ditambahkan
-		$cols = ['NAMA_GEDUNG', 'HARGA_SEWA'];
+		$cols = ['ID_GEDUNG', 'NAMA_GEDUNG', 'KAPASITAS', 'HARGA_SEWA'];
 
 		if ($this->db->field_exists('PRICING_MODE', 'gedung')) $cols[] = 'PRICING_MODE';
 		if ($this->db->field_exists('HARGA_HALF_DAY_PP', 'gedung')) $cols[] = 'HARGA_HALF_DAY_PP';

@@ -23,6 +23,7 @@ $jadwalEndpoint = site_url('home/home/jadwal_by_date/' . $id_gedung);
 
 $is_internal_view = !empty($is_internal);
 $pricing_mode_view = (string)($pricing_mode ?? 'FLAT');
+$kapasitas_max = (int)($hasil[0]['KAPASITAS'] ?? 100);
 ?>
 <!doctype html>
 <html lang="id">
@@ -34,6 +35,9 @@ $pricing_mode_view = (string)($pricing_mode ?? 'FLAT');
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
 </head>
 
 <body class="min-h-screen bg-slate-200 text-slate-900 selection:bg-slate-200 selection:text-slate-900">
@@ -167,7 +171,7 @@ $pricing_mode_view = (string)($pricing_mode ?? 'FLAT');
                                     </button>
 
                                     <!-- DROPDOWN KALENDER -->
-                                    <div x-show="calOpen" @click.outside="calOpen=false" x-transition
+                                    <div x-cloak x-show="calOpen" @click.outside="calOpen=false" x-transition
                                         class="absolute left-0 mt-2 w-[320px] bg-white rounded-2xl border border-slate-200 shadow-xl z-30 p-4">
 
                                         <!-- Header: Navigasi + Month/Year -->
@@ -368,7 +372,7 @@ $pricing_mode_view = (string)($pricing_mode ?? 'FLAT');
                                 </template>
 
                                 <!-- MODAL WHEEL -->
-                                <div x-show="wheelOpen" x-transition
+                                <div x-cloak x-show="wheelOpen" x-transition
                                     class="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
                                     <div class="absolute inset-0 bg-black/40" @click="closeWheel()"></div>
 
@@ -477,7 +481,7 @@ $pricing_mode_view = (string)($pricing_mode ?? 'FLAT');
 
                             <!-- EMAIL -->
                             <div class="rounded-xl border border-slate-300 bg-white p-5 ring-1 ring-slate-200"
-                                :class="showPeserta ? '' : 'lg:col-span-2'">
+                                :class="showPeserta || showPodcast ? '' : 'lg:col-span-2'">
                                 <label class="block text-xs font-semibold tracking-widest text-slate-500">EMAIL</label>
                                 <input type="email" name="email"
                                     value="<?php echo htmlspecialchars((string)($email->EMAIL ?? ''), ENT_QUOTES, 'UTF-8'); ?>" required
@@ -490,11 +494,20 @@ $pricing_mode_view = (string)($pricing_mode ?? 'FLAT');
                                 class="rounded-xl border border-slate-300 bg-white p-5 ring-1 ring-slate-200">
                                 <label class="block text-xs font-semibold tracking-widest text-slate-500">TOTAL
                                     PESERTA</label>
-                                <input type="number" name="total_peserta" x-model="totalPeserta" min="1" step="1"
-                                    :required="showPeserta" placeholder="Masukkan jumlah peserta" class="mt-2 w-full rounded-xl bg-white border border-slate-300 px-4 py-3 text-slate-900 placeholder:text-slate-400
+                                <input type="number" name="total_peserta" x-model="totalPeserta" min="1" :max="maxKapasitas" step="1"
+                                    :required="showPeserta" placeholder="Masukkan jumlah peserta" 
+                                    :class="totalPeserta > maxKapasitas ? 'border-red-500 ring-2 ring-red-500/20' : 'border-slate-300'"
+                                    class="mt-2 w-full rounded-xl bg-white border px-4 py-3 text-slate-900 placeholder:text-slate-400
                                     focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:border-blue-700/40" />
+                                
+                                <template x-if="totalPeserta > maxKapasitas">
+                                    <p class="mt-2 text-xs font-bold text-red-600 animate-pulse">
+                                        ⚠️ Maaf, kapasitas maksimal ruangan ini adalah <span x-text="maxKapasitas"></span> orang.
+                                    </p>
+                                </template>
+
                                 <p class="mt-2 text-xs text-slate-500">
-                                    *Untuk Meeting Room &amp; Amphitheater. (Harga terhitung 0 untuk user Internal).*
+                                    *Max Kapasitas: <span class="font-semibold text-slate-800"><?php echo $kapasitas_max; ?></span> orang.*
                                 </p>
                             </div>
 
@@ -666,6 +679,7 @@ $pricing_mode_view = (string)($pricing_mode ?? 'FLAT');
                 tipeJam: <?php echo json_encode($default_tipe_jam); ?>,
                 allowedTipeJam: <?php echo json_encode(array_values($allowed_tipe_jam)); ?>,
                 defaultTipeJam: <?php echo json_encode($default_tipe_jam); ?>,
+                maxKapasitas: <?php echo $kapasitas_max; ?>,
 
                 // ✅ display tanggal Indonesia
                 tglDisplay: '',
@@ -937,6 +951,11 @@ $pricing_mode_view = (string)($pricing_mode ?? 'FLAT');
                         const n = parseInt(this.totalPeserta || '0', 10);
                         if (!n || n < 1) {
                             this.extraError = 'Total peserta wajib diisi (minimal 1).';
+                            e.preventDefault();
+                            return;
+                        }
+                        if (n > this.maxKapasitas) {
+                            this.extraError = 'Maaf, total peserta (' + n + ') melebihi kapasitas ruangan (' + this.maxKapasitas + ').';
                             e.preventDefault();
                             return;
                         }
