@@ -18,8 +18,7 @@ function safe($v) { return htmlspecialchars((string)($v ?? ''), ENT_QUOTES, 'UTF
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <style>
         /* Dropdown */
-        .action-menu { display:none; position:absolute; right:0; top:100%; z-index:50; min-width:160px; }
-        .action-wrap:focus-within .action-menu,
+        .action-menu { display:none; position:fixed; z-index:9999; min-width:160px; }
         .action-menu.open { display:block; }
     </style>
 </head>
@@ -290,22 +289,57 @@ function safe($v) { return htmlspecialchars((string)($v ?? ''), ENT_QUOTES, 'UTF
 
     /* ===== Dropdown ===== */
     let openMenu = null;
+    let currentBtn = null;
+
+    function positionMenu() {
+        if (!openMenu || !currentBtn) return;
+        const btnRect = currentBtn.getBoundingClientRect();
+        const menuHeight = openMenu.offsetHeight;
+        let topPos = btnRect.bottom + 4;
+        
+        if (topPos + menuHeight > window.innerHeight && btnRect.top - menuHeight > 0) {
+            topPos = btnRect.top - menuHeight - 4;
+        }
+        
+        openMenu.style.top = topPos + 'px';
+        openMenu.style.left = (btnRect.right - openMenu.offsetWidth) + 'px';
+    }
 
     function toggleMenu(btn) {
         const menu = btn.nextElementSibling;
-        if (openMenu && openMenu !== menu) { openMenu.classList.remove('open'); }
-        menu.classList.toggle('open');
-        openMenu = menu.classList.contains('open') ? menu : null;
-        btn.setAttribute('aria-expanded', menu.classList.contains('open'));
+        if (openMenu && openMenu !== menu) { 
+            openMenu.classList.remove('open'); 
+        }
+        
+        if (menu.classList.contains('open')) {
+            menu.classList.remove('open');
+            openMenu = null;
+            currentBtn = null;
+            btn.setAttribute('aria-expanded', 'false');
+        } else {
+            menu.classList.add('open');
+            openMenu = menu;
+            currentBtn = btn;
+            btn.setAttribute('aria-expanded', 'true');
+            positionMenu();
+        }
     }
 
     // Tutup dropdown saat klik di luar
     document.addEventListener('click', function(e) {
         if (!e.target.closest('.action-wrap')) {
-            document.querySelectorAll('.action-menu.open').forEach(m => m.classList.remove('open'));
-            openMenu = null;
+            if (openMenu) {
+                openMenu.classList.remove('open');
+                openMenu = null;
+                currentBtn = null;
+            }
         }
     });
+
+    window.addEventListener('resize', positionMenu);
+    document.addEventListener('scroll', function() {
+        if (openMenu) positionMenu();
+    }, true);
 
     /* ===== Modal Hapus ===== */
     const deleteModal    = document.getElementById('deleteModal');
@@ -314,7 +348,7 @@ function safe($v) { return htmlspecialchars((string)($v ?? ''), ENT_QUOTES, 'UTF
     const baseDeleteUrl  = '<?= site_url("admin/delete-user/") ?>';
 
     function openDeleteModal(username) {
-        if (openMenu) { openMenu.classList.remove('open'); openMenu = null; }
+        if (openMenu) { openMenu.classList.remove('open'); openMenu = null; currentBtn = null; }
         deleteUsername.textContent = username;
         deleteForm.action = baseDeleteUrl + encodeURIComponent(username);
         deleteModal.classList.remove('hidden');
@@ -330,7 +364,7 @@ function safe($v) { return htmlspecialchars((string)($v ?? ''), ENT_QUOTES, 'UTF
     const baseResetUrl  = '<?= site_url("admin/reset-password/") ?>';
 
     function openResetModal(username) {
-        if (openMenu) { openMenu.classList.remove('open'); openMenu = null; }
+        if (openMenu) { openMenu.classList.remove('open'); openMenu = null; currentBtn = null; }
         resetUsername.textContent = username;
         resetForm.action = baseResetUrl + encodeURIComponent(username);
         resetPwInput.value = '';
