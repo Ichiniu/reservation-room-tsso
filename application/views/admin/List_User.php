@@ -226,15 +226,12 @@ function safe($v) { return htmlspecialchars((string)($v ?? ''), ENT_QUOTES, 'UTF
                 </div>
                 <form id="resetForm" method="post" action="">
                     <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>">
-                    <div class="mb-4">
-                        <label class="block text-xs font-semibold tracking-widest text-slate-600 mb-1.5">PASSWORD BARU</label>
-                        <input type="password" id="resetPwInput" name="password_baru" required minlength="6"
-                               placeholder="Minimal 6 karakter"
-                               class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-400">
-                    </div>
+                    <p class="text-sm text-slate-600 mb-5">
+                        Sistem akan meng-generate password baru secara acak untuk user ini.
+                    </p>
                     <div class="flex gap-3">
                         <button type="button" onclick="closeResetModal()" class="flex-1 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">Batal</button>
-                        <button type="submit" class="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition">Reset</button>
+                        <button type="submit" class="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition">Ya, Reset</button>
                     </div>
                 </form>
             </div>
@@ -360,14 +357,12 @@ function safe($v) { return htmlspecialchars((string)($v ?? ''), ENT_QUOTES, 'UTF
     const resetModal    = document.getElementById('resetModal');
     const resetForm     = document.getElementById('resetForm');
     const resetUsername = document.getElementById('resetUsername');
-    const resetPwInput  = document.getElementById('resetPwInput');
     const baseResetUrl  = '<?= site_url("admin/reset-password/") ?>';
 
     function openResetModal(username) {
         if (openMenu) { openMenu.classList.remove('open'); openMenu = null; currentBtn = null; }
         resetUsername.textContent = username;
         resetForm.action = baseResetUrl + encodeURIComponent(username);
-        resetPwInput.value = '';
         resetModal.classList.remove('hidden');
     }
     function closeResetModal() { resetModal.classList.add('hidden'); }
@@ -396,6 +391,28 @@ function safe($v) { return htmlspecialchars((string)($v ?? ''), ENT_QUOTES, 'UTF
     })();
     <?php endif; ?>
     </script>
+    
+    <!-- ========== MODAL SUCCESS RESET PASSWORD ========== -->
+    <?php if ($this->session->flashdata('flash_reset_password')): ?>
+    <div id="successResetModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm">
+            <div class="p-6 text-center">
+                <div class="mx-auto mb-4 h-14 w-14 rounded-full bg-emerald-100 flex items-center justify-center">
+                    <i class="bi bi-check-lg text-2xl text-emerald-600"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800 mb-2">Berhasil Direset!</h3>
+                <p class="text-sm text-slate-500 mb-5">
+                    Password baru untuk user <strong class="text-slate-700"><?= safe($this->session->flashdata('flash_reset_username')) ?></strong> adalah:
+                </p>
+                <div class="mb-6 mx-auto px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl relative">
+                    <code class="text-xl tracking-wider font-mono font-bold text-slate-800 select-all"><?= safe($this->session->flashdata('flash_reset_password')) ?></code>
+                    <p class="text-xs text-slate-400 mt-2">Salin password di atas</p>
+                </div>
+                <button onclick="document.getElementById('successResetModal').remove()" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-sm font-semibold transition">Tutup</button>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
 
 </body>
 </html>

@@ -965,20 +965,17 @@ class Admin_Controls extends CI_Controller
 			return;
 		}
 
-		$password_baru = $this->input->post('password_baru', true);
-
-		if (empty($password_baru) || strlen($password_baru) < 6) {
-			$this->session->set_flashdata('flash_msg', 'Password baru minimal 6 karakter.');
-			$this->session->set_flashdata('flash_type', 'error');
-			redirect('admin/list-user');
-			return;
-		}
+		// Load string helper to generate random password
+		$this->load->helper('string');
+		$password_baru = random_string('alnum', 8);
 
 		$hashed = password_hash($password_baru, PASSWORD_DEFAULT);
 
 		$this->db->where('USERNAME', $username)->update('user', ['PASSWORD' => $hashed]);
 
 		$this->session->set_flashdata('flash_msg', 'Password user ' . $username . ' berhasil direset.');
+		$this->session->set_flashdata('flash_reset_password', $password_baru);
+		$this->session->set_flashdata('flash_reset_username', $username);
 		$this->session->set_flashdata('flash_type', 'success');
 		redirect('admin/list-user');
 	}

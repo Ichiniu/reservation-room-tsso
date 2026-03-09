@@ -32,7 +32,7 @@ $departemen      = $u['departemen'] ?? '';
         <div class="w-full max-w-3xl">
             <div class="bg-white border border-slate-200 shadow-sm sm:shadow-lg rounded-2xl overflow-hidden">
 
-                <!-- HEADER: sticky saat scroll (lebih enak di mobile) -->
+                <!-- HEADER -->
                 <div class="sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-slate-200 px-4 py-4 sm:px-6 sm:py-5">
                     <div class="flex items-start gap-3">
                         <span class="material-icons text-blue-600 mt-0.5">person</span>
@@ -43,7 +43,7 @@ $departemen      = $u['departemen'] ?? '';
                     </div>
                 </div>
 
-                <!-- CONTENT: biarkan page scroll (tidak nested scroll di mobile) -->
+                <!-- CONTENT -->
                 <div class="px-4 py-5 sm:px-6 sm:py-6 space-y-5">
 
                     <?php if ($this->session->flashdata('error')): ?>
@@ -58,7 +58,7 @@ $departemen      = $u['departemen'] ?? '';
                         </div>
                     <?php endif; ?>
 
-                    <!-- READONLY INFO (lebih rapi, tidak bikin form "gantung") -->
+                    <!-- READONLY INFO -->
                     <section class="rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-5">
                         <div class="flex items-center justify-between gap-3 mb-3">
                             <div class="text-sm font-semibold text-slate-800">Informasi Akun</div>
@@ -98,7 +98,7 @@ $departemen      = $u['departemen'] ?? '';
                         </div>
                     </section>
 
-                    <?php echo form_open('edit_data'); ?>
+                    <?php echo form_open('edit_data', ['id' => 'formEditData']); ?>
 
                     <!-- EDITABLE FORM -->
                     <section class="space-y-4">
@@ -158,22 +158,49 @@ $departemen      = $u['departemen'] ?? '';
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-xs font-semibold text-slate-600 mb-1">Password Baru (opsional)</label>
-                                <input type="password" name="password" autocomplete="new-password"
-                                    class="w-full border border-slate-200 rounded-xl px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
-                                    placeholder="Kosongkan jika tidak ingin ubah">
+                                <div class="relative">
+                                    <input
+                                        type="password"
+                                        id="password_baru"
+                                        name="password"
+                                        autocomplete="new-password"
+                                        class="w-full border border-slate-200 rounded-xl px-3 py-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+                                        placeholder="Kosongkan jika tidak ingin ubah">
+                                    <button
+                                        type="button"
+                                        class="absolute inset-y-0 right-0 px-3 flex items-center text-slate-500 hover:text-slate-700"
+                                        data-toggle-password="password_baru"
+                                        aria-label="Lihat password">
+                                        <span class="material-icons text-[20px]">visibility_off</span>
+                                    </button>
+                                </div>
                                 <p class="text-[11px] text-slate-500 mt-1">Minimal 8 karakter disarankan</p>
                             </div>
 
                             <div>
                                 <label class="block text-xs font-semibold text-slate-600 mb-1">Konfirmasi Password Baru</label>
-                                <input type="password" name="confirm_pass" autocomplete="new-password"
-                                    class="w-full border border-slate-200 rounded-xl px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
-                                    placeholder="Ulangi password baru">
+                                <div class="relative">
+                                    <input
+                                        type="password"
+                                        id="confirm_pass"
+                                        name="confirm_pass"
+                                        autocomplete="new-password"
+                                        class="w-full border border-slate-200 rounded-xl px-3 py-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+                                        placeholder="Ulangi password baru">
+                                    <button
+                                        type="button"
+                                        class="absolute inset-y-0 right-0 px-3 flex items-center text-slate-500 hover:text-slate-700"
+                                        data-toggle-password="confirm_pass"
+                                        aria-label="Lihat konfirmasi password">
+                                        <!-- <span class="material-icons text-[20px]">visibility</span> -->
+                                    </button>
+                                </div>
+                                <p id="msg_confirm_pass" class="text-xs mt-1 hidden"></p>
                             </div>
                         </div>
                     </section>
 
-                    <!-- ACTIONS: di mobile enak, tombol full lebar -->
+                    <!-- ACTIONS -->
                     <div class="pt-2">
                         <button type="submit"
                             class="w-full rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-3 flex items-center justify-center gap-2">
@@ -191,26 +218,24 @@ $departemen      = $u['departemen'] ?? '';
                 </div>
             </div>
 
-            <!-- Footer spacing biar gak mepet bawah di mobile -->
             <div class="h-6"></div>
         </div>
     </div>
 
 <script>
     (function () {
-        const input    = document.getElementById('edit_nama_lengkap');
-        const msgEl    = document.getElementById('msg_nama_lengkap');
+        const input     = document.getElementById('edit_nama_lengkap');
+        const msgEl     = document.getElementById('msg_nama_lengkap');
         const CHECK_URL = '<?= site_url("registration/check_availability") ?>';
-        // Nama awal user saat halaman dibuka — dipakai untuk skip cek jika tidak berubah
         const originalName = (input ? input.defaultValue : '').trim();
 
         if (!input) return;
 
         function setMsg(text, isError) {
-            msgEl.textContent  = text;
-            msgEl.className    = 'text-xs mt-1 ' + (isError ? 'text-red-500' : 'text-emerald-600');
+            msgEl.textContent = text;
+            msgEl.className   = 'text-xs mt-1 ' + (isError ? 'text-red-500' : 'text-emerald-600');
             msgEl.classList.remove('hidden');
-            // Border merah / normal
+
             if (isError) {
                 input.classList.add('border-red-400', 'ring-2', 'ring-red-100');
                 input.classList.remove('border-slate-200');
@@ -227,13 +252,11 @@ $departemen      = $u['departemen'] ?? '';
             input.classList.add('border-slate-200');
         }
 
-        // Reset pesan saat user mengetik ulang
         input.addEventListener('input', clearMsg);
 
         input.addEventListener('blur', async function () {
             const value = this.value.trim();
 
-            // Jika sama dengan nama awal → tidak perlu cek (tidak berubah)
             if (value === originalName || value.length < 3) {
                 clearMsg();
                 return;
@@ -246,21 +269,126 @@ $departemen      = $u['departemen'] ?? '';
                 if (!data.available) {
                     setMsg('✗ Nama lengkap sudah digunakan akun lain.', true);
                 } else {
-                    setMsg('✓ Nama lengkap tersedia.', false);
+                    setMsg('✔ Nama lengkap tersedia.', false);
                 }
             } catch (e) {
-                // Network error — abaikan, biarkan backend handle
                 console.warn('cek nama_lengkap gagal:', e);
             }
         });
 
-        // Blok submit jika field masih ditandai error
         input.closest('form').addEventListener('submit', function (e) {
             if (input.classList.contains('border-red-400')) {
                 e.preventDefault();
                 input.focus();
                 setMsg('✗ Nama lengkap sudah digunakan akun lain. Gunakan nama yang berbeda.', true);
             }
+        });
+    })();
+
+    (function () {
+        const form            = document.getElementById('formEditData');
+        const passwordInput   = document.getElementById('password_baru');
+        const confirmInput    = document.getElementById('confirm_pass');
+        const confirmMsg      = document.getElementById('msg_confirm_pass');
+        const toggleButtons   = document.querySelectorAll('[data-toggle-password]');
+
+        if (!form || !passwordInput || !confirmInput || !confirmMsg) return;
+
+        function setConfirmMessage(text, isError) {
+            confirmMsg.textContent = text;
+            confirmMsg.className   = 'text-xs mt-1 ' + (isError ? 'text-red-500' : 'text-emerald-600');
+            confirmMsg.classList.remove('hidden');
+
+            if (isError) {
+                confirmInput.classList.add('border-red-400', 'ring-2', 'ring-red-100');
+                confirmInput.classList.remove('border-slate-200');
+            } else {
+                confirmInput.classList.remove('border-red-400', 'ring-2', 'ring-red-100');
+                confirmInput.classList.add('border-slate-200');
+            }
+        }
+
+        function clearConfirmMessage() {
+            confirmMsg.textContent = '';
+            confirmMsg.classList.add('hidden');
+            confirmInput.classList.remove('border-red-400', 'ring-2', 'ring-red-100');
+            confirmInput.classList.add('border-slate-200');
+        }
+
+        function validateConfirmPassword() {
+            const password = passwordInput.value;
+            const confirm  = confirmInput.value;
+
+            if (password === '' && confirm === '') {
+                clearConfirmMessage();
+                return true;
+            }
+
+            if (password !== '' && confirm === '') {
+                clearConfirmMessage();
+                return false;
+            }
+
+            if (password === '' && confirm !== '') {
+                setConfirmMessage('✗ Isi Password Baru terlebih dahulu.', true);
+                return false;
+            }
+
+            if (password !== confirm) {
+                setConfirmMessage('✗ Konfirmasi password tidak sama.', true);
+                return false;
+            }
+
+            setConfirmMessage('✔ Konfirmasi password sesuai.', false);
+            return true;
+        }
+
+        passwordInput.addEventListener('input', validateConfirmPassword);
+        confirmInput.addEventListener('input', validateConfirmPassword);
+        passwordInput.addEventListener('blur', validateConfirmPassword);
+        confirmInput.addEventListener('blur', validateConfirmPassword);
+
+        form.addEventListener('submit', function (e) {
+            const password = passwordInput.value.trim();
+            const confirm  = confirmInput.value.trim();
+
+            if (password === '' && confirm !== '') {
+                e.preventDefault();
+                confirmInput.focus();
+                setConfirmMessage('✗ Password Baru masih kosong, sedangkan konfirmasi sudah diisi.', true);
+                return;
+            }
+
+            if (password !== '' && confirm === '') {
+                e.preventDefault();
+                confirmInput.focus();
+                setConfirmMessage('✗ Konfirmasi Password Baru wajib diisi.', true);
+                return;
+            }
+
+            if ((password !== '' || confirm !== '') && !validateConfirmPassword()) {
+                e.preventDefault();
+                confirmInput.focus();
+                return;
+            }
+        });
+
+        toggleButtons.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                const targetId = this.getAttribute('data-toggle-password');
+                const input    = document.getElementById(targetId);
+                const icon     = this.querySelector('.material-icons');
+
+                if (!input || !icon) return;
+
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.textContent = 'visibility';
+                } else {
+                    input.type = 'password';
+                    icon.textContent = 'visibility_off';
+                }
+            });
         });
     })();
 </script>
