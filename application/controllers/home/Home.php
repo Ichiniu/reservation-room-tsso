@@ -1458,6 +1458,19 @@ class Home extends CI_Controller
 					if (isset($reviewed_titles_map[$title_key])) continue;
 				}
 
+				// ===== VALIDASI WAKTU ULASAN (H s/d H+3) =====
+				$now_ts = time();
+				$tgl_p  = $o['TANGGAL_PEMESANAN'];
+				$jam_s  = (!empty($o['JAM_SELESAI']) && $o['JAM_SELESAI'] !== '00:00') ? $o['JAM_SELESAI'] : '23:59:00';
+				$finish_ts = strtotime($tgl_p . ' ' . $jam_s);
+
+				// 1. Belum selesai kegiatan -> sembunyikan dari dropdown (atau biarkan tapi tidak bisa submit)
+				if ($now_ts < $finish_ts) continue;
+
+				// 2. Sudah lewat H+3 -> sembunyikan (akan dihandle auto oleh cron)
+				$limit_ts = strtotime($tgl_p . ' +3 days 23:59:59');
+				if ($now_ts > $limit_ts) continue;
+
 				$reservasi_list[] = [
 					'ID_PEMESANAN' => $id,
 					'title_key'    => $title_key,
@@ -1500,6 +1513,25 @@ class Home extends CI_Controller
 		$pesanan = $this->Pemesanan_model->get_one_submitted_by_id_and_username($id_pemesanan, $username);
 		if (empty($pesanan)) {
 			$this->session->set_flashdata('error', 'Pemesanan tidak valid / bukan milik kamu / belum status submitted.');
+			redirect('home/ulasan');
+			return;
+		}
+
+		// ===== VALIDASI WAKTU ULASAN (H s/d H+3) =====
+		$now_ts    = time();
+		$tgl_p     = $pesanan['TANGGAL_PEMESANAN'];
+		$jam_s     = (!empty($pesanan['JAM_SELESAI']) && $pesanan['JAM_SELESAI'] !== '00:00') ? $pesanan['JAM_SELESAI'] : '23:59:00';
+		$finish_ts = strtotime($tgl_p . ' ' . $jam_s);
+
+		if ($now_ts < $finish_ts) {
+			$this->session->set_flashdata('error', 'Gagal: Kegiatan belum berakhir. Anda baru bisa mengisi ulasan setelah jam ' . substr($jam_s, 0, 5) . ' hari ini.');
+			redirect('home/ulasan');
+			return;
+		}
+
+		$limit_ts = strtotime($tgl_p . ' +3 days 23:59:59');
+		if ($now_ts > $limit_ts) {
+			$this->session->set_flashdata('error', 'Gagal: Batas waktu ulasan manual (H+3) telah berakhir.');
 			redirect('home/ulasan');
 			return;
 		}

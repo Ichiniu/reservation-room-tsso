@@ -59,8 +59,10 @@ class AutoReview extends CI_Controller
             }
         }
 
-        // Jadi kita pilih pemesanan dengan DATE(TANGGAL_PEMESANAN) <= (today - 3 days) untuk auto-fill
-        $cutoff_date = date('Y-m-d', strtotime('-3 days'));
+        // User punya waktu dari Hari H sampai H+3 untuk mengisi manual.
+        // Maka, kita auto-fill yang sudah lewat dari H+3 (yaitu H+4 ke atas).
+        // Jika hari ini tanggal 14, maka yang tanggal 10 (10,11,12,13) sudah habis waktunya.
+        $cutoff_date = date('Y-m-d', strtotime('-4 days'));
 
         $rows = $this->db->select('p.ID_PEMESANAN, p.USERNAME')
             ->from('pemesanan p')
@@ -91,12 +93,12 @@ class AutoReview extends CI_Controller
             // cek apakah sudah diulas
             if ($this->ulasan_model->exists_for_pemesanan($id, $username, $title_key)) continue;
 
-            // simpan ulasan otomatis: rating 5, komentar '-' (atau kosong), APPROVED
+            // simpan ulasan otomatis: rating 5, komentar kosong (tanpa komentar), APPROVED
             $insert = [
                 'USERNAME' => $username,
                 'RATING'   => 5,
                 'TITLE'    => $title_key,
-                'COMMENT'  => '-',
+                'COMMENT'  => '',
                 'STATUS'   => 'APPROVED',
                 'CREATED_AT' => date('Y-m-d H:i:s')
             ];
