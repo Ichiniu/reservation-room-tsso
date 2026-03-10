@@ -26,6 +26,6 @@
     </div>
 
     <div class="text-center text-xs text-slate-700 pb-4">
-        © <?= date('Y'); ?> Smart Office – E-Booking Room
+        © 2026 Reserve TSSO
     </div>
 </footer>

@@ -222,9 +222,9 @@ $catering_data = isset($result) && is_array($result) ? $result : [];
                 </div>
             </div>
 
-            <footer class="mt-12 text-center">
-                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">© <?php echo date('Y'); ?> Smart Office • Admin Panel</p>
-            </footer>
+            <footer class="mt-auto text-xs text-gray-500 text-center py-4">
+        © <?= date('Y'); ?> Smart Office • Admin Panel
+    </footer>
         </div>
     </main>
 

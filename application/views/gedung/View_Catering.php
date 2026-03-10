@@ -25,12 +25,12 @@ function pick_label($pick)
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
-<body class="min-h-screen bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200 text-slate-900">
+<body class="min-h-screen bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200 text-slate-900 flex flex-col">
 
     <?php $this->load->view('components/navbar'); ?>
     <?php $this->load->view('components/header'); ?>
 
-    <main class="py-8">
+    <main class="py-8 flex-1">
         <div class="max-w-6xl mx-auto px-4 space-y-6">
 
             <!-- HERO -->
@@ -54,7 +54,7 @@ function pick_label($pick)
                         </h1>
 
                         <p class="mt-2 text-sm md:text-base text-slate-600">
-                            Pilih paket sesuai kebutuhan acara. Menu tampil per kategori dan mudah dibaca.
+                            Pilih paket sesuai kebutuhan acara.
                         </p>
                     </div>
 

@@ -8,7 +8,7 @@ $nama_lengkap   = $u['NAMA_LENGKAP'] ?? '';
 $email          = $u['EMAIL'] ?? '';
 $alamat         = $u['ALAMAT'] ?? '';
 $no_telepon     = $u['NO_TELEPON'] ?? '';
-$tanggal_lahir  = $u['TANGGAL_LAHIR'] ?? '';
+$tanggal_lahir  = $u['TANGGAL_LAHIR'] ?? ''; 
 
 $perusahaan      = $u['perusahaan'] ?? '';
 $nama_perusahaan = $u['nama_perusahaan'] ?? '';

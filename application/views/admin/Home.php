@@ -502,12 +502,13 @@ if ($selM !== '' && $selY !== '') {
                                 </div>
                             </div>
 
-                            <div class="p-4 flex items-center justify-between text-xs text-slate-500 border-t border-slate-200">
+                            <!-- <div class="p-4 flex items-center justify-between text-xs text-slate-500 border-t border-slate-200">
                                 <span>© <?= date('Y'); ?> Smart Office • Admin Panel</span>
                                 <span class="hidden sm:inline">Modern Dashboard</span>
-                            </div>
+                            </div> -->
                     </div>
                 </div>
+                
 
                 <script>
                     // AUTO SUBMIT FILTER REVENUE (tanpa tombol)

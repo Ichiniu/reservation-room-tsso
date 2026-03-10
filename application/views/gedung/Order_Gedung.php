@@ -664,7 +664,7 @@ $kapasitas_max = (int)($hasil[0]['KAPASITAS'] ?? 100);
         </div>
     </main>
 
-    <?php $this->load->view('components/footer'); ?>
+    
 
     <script>
         function orderForm() {

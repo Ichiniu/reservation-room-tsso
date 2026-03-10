@@ -14,11 +14,12 @@ $this->load->helper('text');
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
-<body class="min-h-screen bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200 text-slate-900">
+<body class="min-h-screen bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200 text-slate-900 flex flex-col">
     <?php $this->load->view('components/navbar'); ?>
     <?php $this->load->view('components/header'); ?>
 
-    <div class="max-w-6xl mx-auto px-4 py-8 space-y-6">
+    <main class="flex-1 px-4 py-8">
+        <div class="max-w-6xl mx-auto space-y-6">
 
         <!-- HERO -->
         <section
@@ -396,7 +397,10 @@ $this->load->helper('text');
         initRuanganOptions();
         render();
     </script>
+        </div>
+    </main>
 
+    <?php $this->load->view('components/footer'); ?>
 </body>
 
 </html>
