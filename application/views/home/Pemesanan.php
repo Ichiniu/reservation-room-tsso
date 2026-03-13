@@ -23,11 +23,11 @@ $id_gedung = $this->uri->segment(3);
     <link rel="icon" href="<?php echo base_url(); ?>assets/home/assets/img/favicon/favicon-32x32.png" sizes="32x32">
 </head>
 
-<body class="min-h-screen bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200 text-slate-900">
+<body class="min-h-screen bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200 text-slate-900 flex flex-col">
     <?php $this->load->view('components/navbar'); ?>
     <?php $this->load->view('components/header'); ?>
 
-    <main class="py-8">
+    <main class="py-8 flex-1">
         <div class="max-w-7xl mx-auto px-4 space-y-6">
 
             <!-- HERO -->
