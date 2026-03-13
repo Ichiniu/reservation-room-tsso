@@ -47,9 +47,12 @@ $route['pembayaran'] = 'pembayaran/pembayaran';
 $route['pembayaran/frm_pembayaran'] = 'pembayaran/pembayaran/index';
 $route['registration/status'] = 'registration/registration/add_user';
 $route['registration/check_availability'] = 'registration/registration/check_availability';
+$route['registration/verify_email'] = 'registration/registration/verify_email';
+$route['registration/resend_verification'] = 'registration/registration/resend_verification';
 $route['edit_data/(:any)'] = 'home/home/edit_data/$1';
 $route['registration'] = 'registration/registration';
 $route['register'] = 'registration/registration';
+
 
 $route['admin'] = 'admin/login';
 $route['admin/edit/(:any)'] = 'admin/admin_controls/edit_gedung/$1';

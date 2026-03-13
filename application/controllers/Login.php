@@ -3,9 +3,6 @@
 class Login extends CI_Controller
 {
 
-	/**
-	 * 
-	 */
 	public function __construct()
 	{
 		parent::__construct();
@@ -31,7 +28,7 @@ class Login extends CI_Controller
 		if ($user) {
 			$authenticated = false;
 
-			// 2. Cek apakah password sudah ter-hash (hash password_hash selalu dimulai dengan '$')
+			// 2. Cek apakah password sudah ter-hash
 			if (strpos((string)$user->PASSWORD, '$') === 0) {
 				if (password_verify($password, $user->PASSWORD)) {
 					$authenticated = true;
@@ -40,7 +37,6 @@ class Login extends CI_Controller
 				// 3. Fallback: Cek plain-text (koneksi lama)
 				if ($password === $user->PASSWORD) {
 					$authenticated = true;
-					// Update ke hash agar selanjutnya aman
 					$new_hash = password_hash($password, PASSWORD_DEFAULT);
 					$this->db->where('USERNAME', $username);
 					$this->db->update('user', ['PASSWORD' => $new_hash]);
@@ -48,6 +44,18 @@ class Login extends CI_Controller
 			}
 
 			if ($authenticated) {
+				// 4. CEK EMAIL VERIFICATION
+				$is_verified = isset($user->is_verified) ? (int)$user->is_verified : 1;
+
+				if ($is_verified === 0) {
+					// Akun belum diverifikasi email
+					$this->session->set_flashdata('flash_msg', 'Akun belum diverifikasi. Silakan cek email Anda untuk link verifikasi.');
+					$this->session->set_flashdata('flash_type', 'error');
+					$this->session->set_flashdata('unverified_email', $user->EMAIL ?? '');
+					redirect('login');
+					return;
+				}
+
 				$session_data = [
 					'username'    => $user->USERNAME,
 					'foto_profil' => $user->FOTO_PROFIL ?? '',

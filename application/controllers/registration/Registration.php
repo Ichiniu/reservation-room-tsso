@@ -6,6 +6,7 @@
  * @property CI_DB_query_builder $db
  * @property CI_Output $output
  * @property CI_Session $session
+ * @property CI_Email $email
  * @property User_model $user_model
  */
 class Registration extends CI_Controller
@@ -36,7 +37,7 @@ class Registration extends CI_Controller
 		$no_telepon   = trim((string)$this->input->post('no_telepon', true));
 		$dob          = $this->input->post('dob', true);
 
-		//  perusahaan logic
+		// perusahaan logic
 		$perusahaan      = $this->input->post('perusahaan', true); // INTERNAL / EKSTERNAL
 		$nama_perusahaan = null;
 		$departemen      = null;
@@ -51,7 +52,6 @@ class Registration extends CI_Controller
 				return;
 			}
 
-			// set otomatis biar ga NULL
 			$nama_perusahaan = 'PT Tiga Serangkai Pustaka Mandiri';
 		} elseif ($perusahaan === 'EKSTERNAL') {
 			$nama_perusahaan = trim((string)$this->input->post('nama_perusahaan', true));
@@ -71,7 +71,7 @@ class Registration extends CI_Controller
 			return;
 		}
 
-		// data insert (samakan dengan nama kolom DB kamu)
+		// data insert
 		$data = [
 			'USERNAME'        => $username,
 			'NAMA_LENGKAP'    => $nama_lengkap,
@@ -86,7 +86,6 @@ class Registration extends CI_Controller
 		];
 
 		// ===== server-side validation =====
-		// email must be valid and use gmail domain
 		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 			$this->session->set_flashdata('flash_msg', 'Format email tidak valid.');
 			$this->session->set_flashdata('flash_type', 'error');
@@ -100,14 +99,12 @@ class Registration extends CI_Controller
 			return;
 		}
 
-		// phone: must be digits only and have 11-13 digits
 		if (!preg_match('/^\d{11,14}$/', $no_telepon)) {
 			$this->session->set_flashdata('flash_msg', 'No telepon harus 11 sampai 13 digit angka (hanya angka diperbolehkan).');
 			$this->session->set_flashdata('flash_type', 'error');
 			redirect('/registration');
 			return;
 		}
-		// normalize phone in data (safe)
 		$data['NO_TELEPON'] = $no_telepon;
 
 		if (!empty($dob)) {
@@ -134,7 +131,7 @@ class Registration extends CI_Controller
 			return;
 		}
 
-		// cek username sudah ada (case-insensitive: 'admin' = 'ADMIN')
+		// cek username sudah ada (case-insensitive)
 		$this->db->select('USERNAME');
 		$this->db->where('LOWER(USERNAME) = ' . $this->db->escape(strtolower($data['USERNAME'])), null, false);
 		$result = $this->db->get('user');
@@ -146,27 +143,242 @@ class Registration extends CI_Controller
 			return;
 		}
 
-		// cek nama_lengkap sudah ada (case-insensitive: 'wahyu' = 'WAHYU')
+		// cek nama_lengkap sudah ada (case-insensitive)
 		$this->db->select('NAMA_LENGKAP');
 		$this->db->where('LOWER(NAMA_LENGKAP) = ' . $this->db->escape(strtolower($data['NAMA_LENGKAP'])), null, false);
 		$result_nama = $this->db->get('user');
 
 		if ($result_nama->num_rows() > 0) {
-			echo "Nama lengkap sudah terdaftar";
-			$this->output->set_header('refresh:2; url=' . site_url("/registration"));
+			$this->session->set_flashdata('flash_msg', 'Nama lengkap sudah terdaftar. Silakan gunakan nama lain.');
+			$this->session->set_flashdata('flash_type', 'error');
+			redirect('/registration');
 			return;
 		}
 
-		// insert
+		// ===== EMAIL VERIFICATION: Generate token =====
+		$token = bin2hex(random_bytes(32)); // 64-char hex token
+		$expires_at = date('Y-m-d H:i:s', strtotime('+24 hours'));
+
+		$data['is_verified']        = 0;
+		$data['verification_token'] = $token;
+		$data['token_expires_at']   = $expires_at;
+
+		// insert user
 		$this->user_model->insert($data);
 
-		$this->session->set_flashdata('flash_msg', 'Registrasi berhasil! Silakan login.');
+		// Kirim email verifikasi
+		$this->_send_verification_email($email, $username, $nama_lengkap, $token);
+
+		$this->session->set_flashdata('flash_msg', 'Registrasi berhasil! Silakan cek email Anda untuk verifikasi akun.');
 		$this->session->set_flashdata('flash_type', 'success');
 		redirect('/login');
 	}
 
 	/**
-	 * AJAX endpoint — cek ketersediaan username / nama_lengkap
+	 * Endpoint verifikasi email - dipanggil saat user klik link di email
+	 * URL: /registration/verify_email?token=xxxx
+	 */
+	public function verify_email()
+	{
+		$token = trim((string)$this->input->get('token', true));
+
+		if (empty($token)) {
+			$this->load->view('registration/verify_result', [
+				'success' => false,
+				'message' => 'Token verifikasi tidak valid.',
+			]);
+			return;
+		}
+
+		// Cari user dengan token ini
+		$user = $this->db->get_where('user', [
+			'verification_token' => $token,
+		])->row();
+
+		if (!$user) {
+			$this->load->view('registration/verify_result', [
+				'success' => false,
+				'message' => 'Token verifikasi tidak ditemukan atau sudah digunakan.',
+			]);
+			return;
+		}
+
+		// Cek apakah sudah terverifikasi
+		if ((int)$user->is_verified === 1) {
+			$this->load->view('registration/verify_result', [
+				'success' => true,
+				'message' => 'Akun Anda sudah terverifikasi sebelumnya. Silakan login.',
+			]);
+			return;
+		}
+
+		// Cek expired
+		if (!empty($user->token_expires_at) && strtotime($user->token_expires_at) < time()) {
+			$this->load->view('registration/verify_result', [
+				'success'      => false,
+				'message'      => 'Token verifikasi sudah kedaluwarsa. Silakan kirim ulang email verifikasi.',
+				'show_resend'  => true,
+				'email'        => $user->EMAIL ?? '',
+			]);
+			return;
+		}
+
+		// VERIFIKASI berhasil!
+		$this->db->where('USERNAME', $user->USERNAME);
+		$this->db->update('user', [
+			'is_verified'        => 1,
+			'verification_token' => null,
+			'token_expires_at'   => null,
+		]);
+
+		$this->load->view('registration/verify_result', [
+			'success' => true,
+			'message' => 'Email berhasil diverifikasi! Akun Anda sekarang aktif.',
+		]);
+	}
+
+	/**
+	 * Kirim ulang email verifikasi
+	 * POST: /registration/resend_verification (email via POST)
+	 */
+	public function resend_verification()
+	{
+		$email = trim((string)$this->input->post('email', true));
+
+		if (empty($email)) {
+			$this->session->set_flashdata('flash_msg', 'Email wajib diisi.');
+			$this->session->set_flashdata('flash_type', 'error');
+			redirect('/login');
+			return;
+		}
+
+		$user = $this->db->get_where('user', ['EMAIL' => $email])->row();
+
+		if (!$user) {
+			$this->session->set_flashdata('flash_msg', 'Email tidak ditemukan.');
+			$this->session->set_flashdata('flash_type', 'error');
+			redirect('/login');
+			return;
+		}
+
+		if ((int)$user->is_verified === 1) {
+			$this->session->set_flashdata('flash_msg', 'Akun sudah terverifikasi. Silakan login.');
+			$this->session->set_flashdata('flash_type', 'info');
+			redirect('/login');
+			return;
+		}
+
+		// Generate token baru
+		$token = bin2hex(random_bytes(32));
+		$expires_at = date('Y-m-d H:i:s', strtotime('+24 hours'));
+
+		$this->db->where('USERNAME', $user->USERNAME);
+		$this->db->update('user', [
+			'verification_token' => $token,
+			'token_expires_at'   => $expires_at,
+		]);
+
+		$this->_send_verification_email($user->EMAIL, $user->USERNAME, $user->NAMA_LENGKAP, $token);
+
+		$this->session->set_flashdata('flash_msg', 'Email verifikasi berhasil dikirim ulang! Silakan cek inbox Anda.');
+		$this->session->set_flashdata('flash_type', 'success');
+		redirect('/login');
+	}
+
+	/**
+	 * Private: Kirim email verifikasi
+	 */
+	private function _send_verification_email($to_email, $username, $nama_lengkap, $token)
+	{
+		$this->load->config('notification', true);
+
+		$smtp     = $this->config->item('smtp', 'notification');
+		$from     = $this->config->item('mail_from', 'notification');
+		$fromName = $this->config->item('mail_from_name', 'notification');
+
+		$this->load->library('email');
+
+		if (is_array($smtp) && !empty($smtp)) {
+			if (!isset($smtp['mailtype'])) $smtp['mailtype'] = 'html';
+			if (!isset($smtp['charset']))  $smtp['charset']  = 'utf-8';
+			if (!isset($smtp['newline']))  $smtp['newline']  = "\r\n";
+			if (!isset($smtp['crlf']))     $smtp['crlf']     = "\r\n";
+			$this->email->initialize($smtp);
+		}
+
+		$verify_link = site_url('registration/verify_email?token=' . urlencode($token));
+
+		$nama = htmlspecialchars((string)$nama_lengkap, ENT_QUOTES, 'UTF-8');
+		$user = htmlspecialchars((string)$username, ENT_QUOTES, 'UTF-8');
+		$link = htmlspecialchars($verify_link, ENT_QUOTES, 'UTF-8');
+
+		$html = '<!doctype html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f5f7fb;font-family:Arial,Helvetica,sans-serif;color:#111827;">
+  <table width="100%" cellspacing="0" cellpadding="0" style="padding:24px 0;">
+    <tr><td align="center">
+      <table width="600" cellspacing="0" cellpadding="0" style="max-width:600px;background:#fff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden;">
+        <tr>
+          <td style="padding:24px 22px;border-bottom:1px solid #e5e7eb;text-align:center;">
+            <div style="font-size:12px;letter-spacing:3px;color:#6b7280;font-weight:bold;">BOOKING SMARTS</div>
+            <div style="font-size:22px;font-weight:bold;margin-top:8px;color:#111827;">Verifikasi Email Anda</div>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:24px 22px;">
+            <div style="font-size:14px;line-height:22px;">
+              Halo <b>' . $nama . '</b> (<code>' . $user . '</code>),<br><br>
+              Terima kasih telah mendaftar di <b>Booking Smarts - Smart Office</b>.<br>
+              Silakan klik tombol di bawah ini untuk memverifikasi email Anda dan mengaktifkan akun:
+            </div>
+            <div style="margin:24px 0;text-align:center;">
+              <a href="' . $link . '" style="display:inline-block;text-decoration:none;background:linear-gradient(135deg,#0A7F81,#2CC7C0);color:#fff;padding:14px 32px;border-radius:12px;font-size:15px;font-weight:bold;letter-spacing:0.5px;">
+                Verifikasi Email Saya
+              </a>
+            </div>
+            <div style="font-size:12px;color:#6b7280;line-height:18px;">
+              Link ini berlaku selama <b>24 jam</b>. Jika link kadaluwarsa, Anda bisa meminta kirim ulang dari halaman login.<br><br>
+              Jika Anda tidak merasa mendaftar, abaikan email ini.
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:0 22px 18px 22px;">
+            <div style="border:1px solid #e5e7eb;border-radius:10px;padding:12px;font-size:11px;color:#6b7280;word-break:break-all;">
+              <b>Jika tombol tidak berfungsi, salin link berikut ke browser:</b><br>
+              <a href="' . $link . '" style="color:#2563eb;">' . $link . '</a>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:14px 22px;background:#f9fafb;border-top:1px solid #e5e7eb;font-size:12px;color:#6b7280;text-align:center;">
+            Email ini dikirim otomatis oleh sistem Booking Smarts.<br>
+            &copy; ' . date('Y') . ' Smart Office Tiga Serangkai
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>';
+
+		$this->email->clear(true);
+		$this->email->from($from, $fromName);
+		$this->email->to($to_email);
+		$this->email->subject('Verifikasi Email - Booking Smarts');
+		$this->email->message($html);
+
+		$ok = $this->email->send();
+		if (!$ok) {
+			log_message('error', 'VERIFY EMAIL FAIL: ' . $this->email->print_debugger(['headers', 'subject', 'body']));
+		}
+
+		return $ok;
+	}
+
+	/**
+	 * AJAX endpoint - cek ketersediaan username / nama_lengkap
 	 * GET/POST: /registration/check_availability?field=username&value=xxx
 	 * Response: JSON { "available": true|false }
 	 */
@@ -177,7 +389,6 @@ class Registration extends CI_Controller
 		$field = $this->input->get_post('field', true);
 		$value = trim((string)$this->input->get_post('value', true));
 
-		// Hanya izinkan field yang diperbolehkan
 		$allowed = ['username' => 'USERNAME', 'nama_lengkap' => 'NAMA_LENGKAP'];
 
 		if (!array_key_exists($field, $allowed) || $value === '') {
@@ -186,7 +397,6 @@ class Registration extends CI_Controller
 		}
 
 		$col = $allowed[$field];
-		// Gunakan LOWER() + escape() agar case-insensitive dan aman dari SQL injection
 		$this->db->select($col);
 		$this->db->where("LOWER({$col}) = " . $this->db->escape(strtolower($value)), null, false);
 		$result = $this->db->get('user');
